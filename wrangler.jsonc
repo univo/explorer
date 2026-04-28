@@ -1,0 +1,53 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "explorer",
+	"workers_dev": true,
+	"preview_urls": false,
+	"compatibility_date": "2026-01-20",
+	"compatibility_flags": ["nodejs_compat"],
+	"main": "@tanstack/react-start/server-entry",
+	"dev": {
+		"port": 3001
+	},
+	"placement": {
+		"region": "aws:us-east-1"
+	},
+	"limits": {
+		"cpu_ms": 300000
+	},
+	"observability": {
+		"logs": {
+			"enabled": true
+		}
+	},
+	"vars": {
+		"LOG_LEVEL": "DEBUG",
+		"ENVIRONMENT": "DEVELOPMENT"
+	},
+	"assets": {
+		"run_worker_first": ["/api/*"],
+		"not_found_handling": "single-page-application"
+	},
+	"env": {
+		"staging": {
+			"vars": {
+				"LOG_LEVEL": "DEBUG",
+				"ENVIRONMENT": "STAGING"
+			},
+			"route": {
+				"custom_domain": true,
+				"pattern": "staging.explorer.univo.app"
+			}
+		},
+		"production": {
+			"vars": {
+				"LOG_LEVEL": "DEBUG",
+				"ENVIRONMENT": "PRODUCTION"
+			},
+			"route": {
+				"custom_domain": true,
+				"pattern": "explorer.univo.app"
+			}
+		}
+	}
+}

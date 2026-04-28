@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+	--view-width: 608px;
+	--header-height: 44px;
+}
+
+@theme {
+	--color-primary-50: #d8f1f6;
+	--color-primary-100: #a9e4ec;
+	--color-primary-200: #71c8d2;
+	--color-primary-300: #36a6b1;
+	--color-primary-400: #26888f;
+	--color-primary-500: #15616d;
+	--color-primary-600: #0d3b42;
+	--color-primary-700: #051517;
+	--color-primary-800: #000000;
+	--color-primary-900: #000000;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: gray transparent;
+	}
+}

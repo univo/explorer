@@ -1,0 +1,58 @@
+{
+	"private": true,
+	"type": "module",
+	"name": "explorer",
+	"imports": {
+		"#/*": "./src/*"
+	},
+	"scripts": {
+		"test": "vitest run",
+		"dev": "vite dev --port 3000",
+		"cf-typegen": "wrangler types",
+		"preview": "npm run build:staging && vite preview --port 3000",
+		"build:staging": "CLOUDFLARE_ENV=staging vite build",
+		"build:production": "CLOUDFLARE_ENV=production vite build",
+		"deploy:staging": "npm run build:staging && wrangler deploy",
+		"deploy:production": "npm run build:production && wrangler deploy",
+		"tail:staging": "wrangler tail --env staging",
+		"tail:production": "wrangler tail --env production"
+	},
+	"dependencies": {
+		"@clickhouse/client-web": "1.14.0",
+		"@cloudflare/vite-plugin": "1.32.2",
+		"@ponder/utils": "0.2.16",
+		"@tailwindcss/vite": "^4.1.18",
+		"@tanstack/react-devtools": "0.10.2",
+		"@tanstack/react-query": "5.99.0",
+		"@tanstack/react-router": "1.168.21",
+		"@tanstack/react-router-devtools": "1.166.13",
+		"@tanstack/react-router-ssr-query": "1.166.11",
+		"@tanstack/react-start": "1.167.39",
+		"@tanstack/router-plugin": "1.167.22",
+		"clsx": "2.1.0",
+		"cmdk": "1.1.1",
+		"dataloader": "2.2.3",
+		"radix-ui": "1.4.3",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0",
+		"tailwindcss": "^4.1.18",
+		"univo": "0.1.18",
+		"valibot": "1.3.1",
+		"viem": "2.37.8",
+		"zustand": "5.0.8"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@tanstack/devtools-vite": "0.6.0",
+		"@types/node": "22.19.15",
+		"@types/react": "^19.2.0",
+		"@types/react-dom": "^19.2.0",
+		"@vitejs/plugin-react": "^5.0.4",
+		"@vitejs/plugin-rsc": "0.5.24",
+		"typescript": "^5.7.2",
+		"vite": "^7.1.7",
+		"vite-tsconfig-paths": "^5.1.4",
+		"vitest": "^3.0.5",
+		"wrangler": "4.76.0"
+	}
+}
