@@ -51,11 +51,7 @@ function Header(props: { address: `0x${string}` }) {
 	);
 }
 
-// We render a component with an initial cursor. It fetches and renders the event container that will
-// publish the start and end cursors to a store. Whenever we bring the loading indicator into view It
-// will get the latest cursor from the store and render this new component with that as the cursor
-
-const useCursor = create(() => {
+const useCursor = create<string | null>(() => {
 	// TODO: Add cache alignment here? Probably to the nearest minute
 
 	return createId({
@@ -70,13 +66,21 @@ const useCursor = create(() => {
 	});
 });
 
-function updateCursor(cursor: string) {
+function updateCursor(cursor: string | null) {
 	useCursor.setState((previous) => {
-		if (cursor < previous) {
-			return cursor;
+		if (previous === null) {
+			return null; // We already know the earliest event
 		}
 
-		return previous;
+		if (cursor === null) {
+			return null; // We have found the earliest event
+		}
+
+		if (cursor < previous) {
+			return cursor; // We have found an earlier event
+		}
+
+		return previous; // Ignore
 	});
 }
 
@@ -119,7 +123,7 @@ function Events(props: { address: `0x${string}` }) {
 	);
 }
 
-export function EventsContainer(props: { cursor: string; children: ReactNode }) {
+export function EventsContainer(props: { cursor: string | null; children?: ReactNode }) {
 	useEffect(() => {
 		updateCursor(props.cursor);
 	});
@@ -130,6 +134,14 @@ export function EventsContainer(props: { cursor: string; children: ReactNode }) 
 		rootMargin: "1000px 0px 1000px 0px",
 		onChange: (inView, entry) => setHeight(inView ? 0 : entry.boundingClientRect.height),
 	});
+
+	if (props.cursor === null) {
+		return (
+			<div className="flex items-center justify-center h-16">
+				<p className="text-gray-500 text-sm">No more events</p>
+			</div>
+		);
+	}
 
 	return (
 		<div
@@ -157,3 +169,6 @@ function LoadingIndicator(props: { onVisible: () => void }) {
 		</div>
 	);
 }
+
+// TODO: Add header timestamps
+// TODO: Ensure that the cursor is per-view, right now it's getting mixed up

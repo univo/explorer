@@ -3,14 +3,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { formatTime } from "@/utils";
 import type { Account } from "@/state/account";
 import { AddressSchema } from "@/components/views";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventsContainer } from "@/views/address-view";
-import { formatTime } from "@/utils";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForAccount } from "@/indexes/account-v1";
+import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { Erc20ApprovalV1AccountDescription } from "@/events/erc20-approval-v1/component";
 import { Erc20TransferV1AccountDescription } from "@/events/erc20-transfer-v1/component";
 import { NativeTransferV1AccountDescription } from "@/events/native-transfer-v1/component";
@@ -20,7 +21,6 @@ import { CancelPendingTxV1AccountDescription } from "@/events/cancel-pending-tx-
 import { InputDataMessageV1AccountDescription } from "@/events/input-data-message-v1/component";
 import { EnsNameRegisteredV1AccountDescription } from "@/events/ens-name-registered-v1/component";
 import { ContractDeploymentV1AccountDescription } from "@/events/contract-deployment-v1/component";
-import { RelativeTimestamp } from "@/components/relative-timestamp";
 
 async function AddressEvents(props: { address: `0x${string}`; cursor: string | undefined }) {
 	const ids = await getEventIdsForAccount(props.address, {
@@ -30,7 +30,7 @@ async function AddressEvents(props: { address: `0x${string}`; cursor: string | u
 	});
 
 	if (ids.length === 0) {
-		return null; // TODO: Return no more events text
+		return <EventsContainer cursor={null} />;
 	}
 
 	const events = await getEventsForIds(ids);
