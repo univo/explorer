@@ -131,7 +131,11 @@ export function EventsContainer(props: { cursor: string | null; children?: React
 	const [height, setHeight] = useState(0);
 
 	const { ref } = useInView({
+		// This is our naive method for ensuring we render hidden blocks before they scroll back into view
 		rootMargin: "1000px 0px 1000px 0px",
+
+		// This is pretty safe because our app never sees a lot of browser resizing. On desktop the width of each
+		// view is static. On mobile the only way to resize is to adjust the orientation.
 		onChange: (inView, entry) => setHeight(inView ? 0 : entry.boundingClientRect.height),
 	});
 
