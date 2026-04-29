@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { numberToHex } from "viem";
 import type { ReactNode } from "react";
-import { Fragment, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -24,39 +24,31 @@ export function AddressView(props: { address: `0x${string}` }) {
 }
 
 function Header(props: { address: `0x${string}` }) {
-	return (
-		<Suspense
-			fallback={
-				<div className="bg-white px-3 py-3 flex items-center justify-between border-b border-gray-200">
-					<div className="flex items-center gap-2 overflow-hidden">
-						<p className="text-gray-900 font-semibold text-base select-all">Account</p>
-						<p className="text-gray-500 text-base select-all truncate">{props.address}</p>
-					</div>
-
-					<div className="flex items-center gap-2">
-						<IconButton href={`https://etherscan.io/address/${props.address}`}>
-							<EtherscanIcon className="shrink-0 size-4" />
-						</IconButton>
-
-						<CloseViewButton view={props.address} />
-					</div>
-				</div>
-			}
-		>
-			<HeaderInner address={props.address} />
-		</Suspense>
-	);
-}
-
-function HeaderInner(props: { address: `0x${string}` }) {
-	// Rn suspense queries are the only ones that don't cause the component to unmount briefly, not sure why
-
 	const query = useSuspenseQuery({
 		queryKey: ["AddressHeader", props.address],
 		queryFn: () => createFromFetch(fetch(`/rsc/AddressHeader?address=${props.address}`)),
 	});
 
-	return query.data;
+	if (query.status === "success") {
+		return <Suspense>{query.data}</Suspense>;
+	}
+
+	return (
+		<div className="bg-white px-3 py-3 flex items-center justify-between border-b border-gray-200">
+			<div className="flex items-center gap-2 overflow-hidden">
+				<p className="text-gray-900 font-semibold text-base select-all">Account</p>
+				<p className="text-gray-500 text-base select-all truncate">{props.address}</p>
+			</div>
+
+			<div className="flex items-center gap-2">
+				<IconButton href={`https://etherscan.io/address/${props.address}`}>
+					<EtherscanIcon className="shrink-0 size-4" />
+				</IconButton>
+
+				<CloseViewButton view={props.address} />
+			</div>
+		</div>
+	);
 }
 
 // We render a component with an initial cursor. It fetches and renders the event container that will
@@ -119,7 +111,7 @@ function Events(props: { address: `0x${string}` }) {
 	return (
 		<div className="relative grow overflow-scroll isolate">
 			{query.data.pages.map((page, index) => {
-				return <Fragment key={index}>{page}</Fragment>;
+				return <Suspense key={index}>{page}</Suspense>;
 			})}
 
 			{query.hasNextPage && <LoadingIndicator onVisible={() => fetchNextPage()} />}
