@@ -156,7 +156,7 @@ export function EventsContainer(props: { cursor: string | null; children?: React
 		// We could probably add margin here to prevent the flash as hidden blocks return. Also note that this
 		// virtualisation happens according to the document as the root, which means it applies to horizontal
 		// scrolling too when we have a large number of horizontal views
-		rootMargin: "0px 0px 0px 0px",
+		rootMargin: "0px 608px 0px 608px",
 
 		// This is pretty safe because our app never sees a lot of browser resizing. On desktop the width of each
 		// view is static. On mobile the only way to resize is to adjust the orientation.
