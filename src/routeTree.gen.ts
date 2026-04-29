@@ -10,14 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
+import { Route as RscAddressHeaderRouteImport } from './routes/rsc/AddressHeader'
+import { Route as RscAddressEventsRouteImport } from './routes/rsc/AddressEvents'
 import { Route as ApiUnivoRouteImport } from './routes/api/univo'
 import { Route as ApiTxTxRouteImport } from './routes/api/tx.$tx'
 import { Route as ApiBlockNumberNumberRouteImport } from './routes/api/block-number.$number'
-import { Route as ApiAddressAddressRouteImport } from './routes/api/address.$address'
 
 const SplatRoute = SplatRouteImport.update({
   id: '/$',
   path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RscAddressHeaderRoute = RscAddressHeaderRouteImport.update({
+  id: '/rsc/AddressHeader',
+  path: '/rsc/AddressHeader',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RscAddressEventsRoute = RscAddressEventsRouteImport.update({
+  id: '/rsc/AddressEvents',
+  path: '/rsc/AddressEvents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUnivoRoute = ApiUnivoRouteImport.update({
@@ -35,23 +46,20 @@ const ApiBlockNumberNumberRoute = ApiBlockNumberNumberRouteImport.update({
   path: '/api/block-number/$number',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAddressAddressRoute = ApiAddressAddressRouteImport.update({
-  id: '/api/address/$address',
-  path: '/api/address/$address',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/api/univo': typeof ApiUnivoRoute
-  '/api/address/$address': typeof ApiAddressAddressRoute
+  '/rsc/AddressEvents': typeof RscAddressEventsRoute
+  '/rsc/AddressHeader': typeof RscAddressHeaderRoute
   '/api/block-number/$number': typeof ApiBlockNumberNumberRoute
   '/api/tx/$tx': typeof ApiTxTxRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/api/univo': typeof ApiUnivoRoute
-  '/api/address/$address': typeof ApiAddressAddressRoute
+  '/rsc/AddressEvents': typeof RscAddressEventsRoute
+  '/rsc/AddressHeader': typeof RscAddressHeaderRoute
   '/api/block-number/$number': typeof ApiBlockNumberNumberRoute
   '/api/tx/$tx': typeof ApiTxTxRoute
 }
@@ -59,7 +67,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/$': typeof SplatRoute
   '/api/univo': typeof ApiUnivoRoute
-  '/api/address/$address': typeof ApiAddressAddressRoute
+  '/rsc/AddressEvents': typeof RscAddressEventsRoute
+  '/rsc/AddressHeader': typeof RscAddressHeaderRoute
   '/api/block-number/$number': typeof ApiBlockNumberNumberRoute
   '/api/tx/$tx': typeof ApiTxTxRoute
 }
@@ -68,21 +77,24 @@ export interface FileRouteTypes {
   fullPaths:
     | '/$'
     | '/api/univo'
-    | '/api/address/$address'
+    | '/rsc/AddressEvents'
+    | '/rsc/AddressHeader'
     | '/api/block-number/$number'
     | '/api/tx/$tx'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
     | '/api/univo'
-    | '/api/address/$address'
+    | '/rsc/AddressEvents'
+    | '/rsc/AddressHeader'
     | '/api/block-number/$number'
     | '/api/tx/$tx'
   id:
     | '__root__'
     | '/$'
     | '/api/univo'
-    | '/api/address/$address'
+    | '/rsc/AddressEvents'
+    | '/rsc/AddressHeader'
     | '/api/block-number/$number'
     | '/api/tx/$tx'
   fileRoutesById: FileRoutesById
@@ -90,7 +102,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   ApiUnivoRoute: typeof ApiUnivoRoute
-  ApiAddressAddressRoute: typeof ApiAddressAddressRoute
+  RscAddressEventsRoute: typeof RscAddressEventsRoute
+  RscAddressHeaderRoute: typeof RscAddressHeaderRoute
   ApiBlockNumberNumberRoute: typeof ApiBlockNumberNumberRoute
   ApiTxTxRoute: typeof ApiTxTxRoute
 }
@@ -102,6 +115,20 @@ declare module '@tanstack/react-router' {
       path: '/$'
       fullPath: '/$'
       preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rsc/AddressHeader': {
+      id: '/rsc/AddressHeader'
+      path: '/rsc/AddressHeader'
+      fullPath: '/rsc/AddressHeader'
+      preLoaderRoute: typeof RscAddressHeaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rsc/AddressEvents': {
+      id: '/rsc/AddressEvents'
+      path: '/rsc/AddressEvents'
+      fullPath: '/rsc/AddressEvents'
+      preLoaderRoute: typeof RscAddressEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/univo': {
@@ -125,20 +152,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBlockNumberNumberRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/address/$address': {
-      id: '/api/address/$address'
-      path: '/api/address/$address'
-      fullPath: '/api/address/$address'
-      preLoaderRoute: typeof ApiAddressAddressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   ApiUnivoRoute: ApiUnivoRoute,
-  ApiAddressAddressRoute: ApiAddressAddressRoute,
+  RscAddressEventsRoute: RscAddressEventsRoute,
+  RscAddressHeaderRoute: RscAddressHeaderRoute,
   ApiBlockNumberNumberRoute: ApiBlockNumberNumberRoute,
   ApiTxTxRoute: ApiTxTxRoute,
 }

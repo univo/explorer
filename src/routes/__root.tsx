@@ -5,6 +5,7 @@ import { Devtools } from "@/components/devtools";
 import { Navigation } from "@/components/navigation";
 import { SearchDialog } from "@/components/search-dialog";
 import { GlobalLoading } from "@/components/global-loading";
+import { QueryClientProvider } from "@/components/query-client-provider";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -34,12 +35,16 @@ function Root() {
 			</head>
 
 			<body className="bg-gray-50 h-svh flex flex-col">
-				<Navigation />
-				<SearchDialog />
-				<GlobalLoading />
-				<Outlet />
-				<Devtools />
-				<Scripts />
+				<QueryClientProvider>
+					<Navigation />
+					<SearchDialog />
+					<GlobalLoading />
+
+					<Outlet />
+
+					<Devtools />
+					<Scripts />
+				</QueryClientProvider>
 			</body>
 		</html>
 	);
