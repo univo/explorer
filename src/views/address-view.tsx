@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { numberToHex } from "viem";
 import type { ReactNode } from "react";
-import { Fragment, Suspense, useEffect } from "react";
+import { Fragment, Suspense, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -132,9 +132,24 @@ export function EventsContainer(props: { cursor: string; children: ReactNode }) 
 		updateCursor(props.cursor);
 	});
 
+	const [height, setHeight] = useState(0);
+
+	const { ref } = useInView({
+		rootMargin: "1000px 0px 1000px 0px",
+		onChange: (inView, entry) => setHeight(inView ? 0 : entry.boundingClientRect.height),
+	});
+
 	return (
-		<div className="w-full relative border-b border-gray-200">
-			<div className="divide-y divide-gray-200 overflow-hidden">{props.children}</div>
+		<div
+			ref={ref}
+			className="w-full relative border-b border-gray-200"
+			style={{
+				height: height > 0 ? height : undefined,
+				minHeight: height > 0 ? height : undefined,
+				maxHeight: height > 0 ? height : undefined,
+			}}
+		>
+			<div className="divide-y divide-gray-200 overflow-hidden">{height > 0 ? undefined : props.children}</div>
 		</div>
 	);
 }
