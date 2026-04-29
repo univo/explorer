@@ -7,7 +7,7 @@ import type { Account } from "@/state/account";
 import { AddressSchema } from "@/components/views";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventsContainer } from "@/views/address-view";
-import { formatRelativeDate, formatTime } from "@/utils";
+import { formatTime } from "@/utils";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForAccount } from "@/indexes/account-v1";
@@ -20,6 +20,7 @@ import { CancelPendingTxV1AccountDescription } from "@/events/cancel-pending-tx-
 import { InputDataMessageV1AccountDescription } from "@/events/input-data-message-v1/component";
 import { EnsNameRegisteredV1AccountDescription } from "@/events/ens-name-registered-v1/component";
 import { ContractDeploymentV1AccountDescription } from "@/events/contract-deployment-v1/component";
+import { RelativeTimestamp } from "@/components/relative-timestamp";
 
 async function AddressEvents(props: { address: `0x${string}`; cursor: string | undefined }) {
 	const ids = await getEventIdsForAccount(props.address, {
@@ -125,7 +126,9 @@ function EventTimestamp(props: { timestamp: Date }) {
 	}
 
 	return (
-		<p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatRelativeDate(props.timestamp)}</p>
+		<p className="text-sm text-gray-500 text-right text-nowrap select-all">
+			<RelativeTimestamp timestamp={props.timestamp} />
+		</p>
 	);
 }
 
