@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { Suspense, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
-import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 import { createId } from "@/helpers";
 import { Spinner } from "@/components/spinner";
@@ -24,7 +24,7 @@ export function AddressView(props: { address: `0x${string}` }) {
 }
 
 function Header(props: { address: `0x${string}` }) {
-	const query = useSuspenseQuery({
+	const query = useQuery({
 		queryKey: ["AddressHeader", props.address],
 		queryFn: () => createFromFetch(fetch(`/rsc/AddressHeader?address=${props.address}`)),
 	});
