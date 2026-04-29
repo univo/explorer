@@ -38,13 +38,18 @@ async function AddressEvents(props: { address: `0x${string}`; cursor: string | u
 
 	// TODO
 	// The grouping header needs to be a part of the event payload itself. For each event we check
-	// if the previous event crosses a day boundary (or is undefined) and render a header
+	// if the previous event crosses a day boundary (or is undefined) and render a header. We need
+	// also to check the boundary of each event container to determine if there should be a header
 
 	// TODO: Remove this and pass only the address
 	const account = { chain: 1, address: props.address, name_tag: null, label: null };
 
 	// Cursor will be null if we received fewer than 100 events. To indicate to client there is no new next page.
 	const cursor = ordered[ordered.length - 1].id;
+
+	// TODO
+	// Return a length value to the events container so it knows if it received less than the
+	// requested number of events and knows there is no futher pages to query
 
 	return (
 		<EventsContainer cursor={cursor}>
@@ -117,6 +122,8 @@ const ONE_DAY = 24 * 60 * 60 * 1000;
 // 	}
 // }
 
+// TODO: This should be a fixed width to prevent content layout shift. This fixed width would vary on desktop/mobile
+
 function EventTimestamp(props: { timestamp: Date }) {
 	const delta = Date.now() - props.timestamp.getTime();
 
@@ -136,6 +143,7 @@ const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ address: AddressSchema, cursor: v.string() }))
 	.handler(({ data }) => renderToReadableStream(<AddressEvents address={data.address} cursor={data.cursor} />));
 
+// TODO: Add CDN caching
 // TODO: We can cache immutably based on the timestamp in the cursor
 
 export const Route = createFileRoute("/rsc/AddressEvents")({

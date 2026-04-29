@@ -153,8 +153,10 @@ export function EventsContainer(props: { cursor: string | null; children?: React
 	const [height, setHeight] = useState(0);
 
 	const { ref } = useInView({
-		// This is our naive method for ensuring we render hidden blocks before they scroll back into view
-		rootMargin: "1000px 0px 1000px 0px",
+		// We could probably add margin here to prevent the flash as hidden blocks return. Also note that this
+		// virtualisation happens according to the document as the root, which means it applies to horizontal
+		// scrolling too when we have a large number of horizontal views
+		rootMargin: "0px 0px 0px 0px",
 
 		// This is pretty safe because our app never sees a lot of browser resizing. On desktop the width of each
 		// view is static. On mobile the only way to resize is to adjust the orientation.
