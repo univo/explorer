@@ -142,12 +142,8 @@ export function EventsContainer(props: { cursor: string; children: ReactNode }) 
 	return (
 		<div
 			ref={ref}
+			style={{ height: height > 0 ? height : undefined }}
 			className="w-full relative border-b border-gray-200"
-			style={{
-				height: height > 0 ? height : undefined,
-				minHeight: height > 0 ? height : undefined,
-				maxHeight: height > 0 ? height : undefined,
-			}}
 		>
 			<div className="divide-y divide-gray-200 overflow-hidden">{height > 0 ? undefined : props.children}</div>
 		</div>
