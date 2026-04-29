@@ -1,9 +1,8 @@
 "use client";
 
-import { create } from "zustand";
 import { numberToHex } from "viem";
-import type { ReactNode } from "react";
-import { Suspense, useEffect, useState } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
+import { createContext, Suspense, useContext, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -14,12 +13,67 @@ import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CloseViewButton } from "@/components/close-view-button";
 
+type CursorContextValue = {
+	value: string | null;
+	update: Dispatch<SetStateAction<string | null>>;
+};
+
+const CursorContext = createContext<CursorContextValue | null>(null);
+
+function createInitialCursor() {
+	// TODO: Add cache alignment here? Probably to the nearest minute
+	return createId({
+		block_timestamp: numberToHex(Math.floor(Date.now() / 1000)),
+
+		// All other fields are irrelevant
+		table_id: 0,
+		chain_id: "0x1",
+		tx_index: "0x0",
+		log_index: "0x0",
+		block_number: "0x0",
+	});
+}
+
+function useCursor() {
+	const context = useContext(CursorContext);
+
+	if (context === null) {
+		throw new Error("CursorContext missing for AddressView");
+	}
+
+	return context;
+}
+
+function getNextCursor(previous: string | null, nextCursor: string | null) {
+	if (previous === null) {
+		return null; // We already know the earliest event
+	}
+
+	if (nextCursor === null) {
+		return null; // We have found the earliest event
+	}
+
+	if (nextCursor < previous) {
+		return nextCursor; // We have found an earlier event
+	}
+
+	return previous; // Ignore
+}
+
+function CursorProvider(props: { children?: ReactNode }) {
+	const [value, update] = useState<string | null>(() => createInitialCursor());
+
+	return <CursorContext.Provider value={{ value, update }}>{props.children}</CursorContext.Provider>;
+}
+
 export function AddressView(props: { address: `0x${string}` }) {
 	return (
-		<div className="h-full flex flex-col bg-white">
-			<Header address={props.address} />
-			<Events address={props.address} />
-		</div>
+		<CursorProvider>
+			<div className="h-full flex flex-col bg-white">
+				<Header address={props.address} />
+				<Events address={props.address} />
+			</div>
+		</CursorProvider>
 	);
 }
 
@@ -50,45 +104,12 @@ function HeaderFallback(props: { address: `0x${string}` }) {
 	);
 }
 
-const useCursor = create<string | null>(() => {
-	// TODO: Add cache alignment here? Probably to the nearest minute
-
-	return createId({
-		block_timestamp: numberToHex(Math.floor(Date.now() / 1000)),
-
-		// All other fields are irrelevant
-		table_id: 0,
-		chain_id: "0x1",
-		tx_index: "0x0",
-		log_index: "0x0",
-		block_number: "0x0",
-	});
-});
-
-function updateCursor(cursor: string | null) {
-	useCursor.setState((previous) => {
-		if (previous === null) {
-			return null; // We already know the earliest event
-		}
-
-		if (cursor === null) {
-			return null; // We have found the earliest event
-		}
-
-		if (cursor < previous) {
-			return cursor; // We have found an earlier event
-		}
-
-		return previous; // Ignore
-	});
-}
-
 function Events(props: { address: `0x${string}` }) {
 	const cursor = useCursor();
 
 	const query = useInfiniteQuery({
-		initialPageParam: cursor,
-		getNextPageParam: () => cursor,
+		initialPageParam: cursor.value,
+		getNextPageParam: () => cursor.value,
 		queryKey: ["AddressEvents", props.address],
 		queryFn: (ctx) => createFromFetch(fetch(`/rsc/AddressEvents?address=${props.address}&cursor=${ctx.pageParam}`)),
 	});
@@ -123,8 +144,10 @@ function Events(props: { address: `0x${string}` }) {
 }
 
 export function EventsContainer(props: { cursor: string | null; children?: ReactNode }) {
+	const cursor = useCursor();
+
 	useEffect(() => {
-		updateCursor(props.cursor);
+		cursor.update((previous) => getNextCursor(previous, props.cursor));
 	});
 
 	const [height, setHeight] = useState(0);
@@ -174,4 +197,3 @@ function LoadingIndicator(props: { onVisible: () => void }) {
 }
 
 // TODO: Add header timestamps
-// TODO: Ensure that the cursor is per-view, right now it's getting mixed up
