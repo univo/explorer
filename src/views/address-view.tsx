@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { numberToHex } from "viem";
 import type { ReactNode } from "react";
-import { Fragment, Suspense } from "react";
+import { Fragment, Suspense, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -78,6 +78,16 @@ const useCursor = create(() => {
 	});
 });
 
+function updateCursor(cursor: string) {
+	useCursor.setState((previous) => {
+		if (cursor < previous) {
+			return cursor;
+		}
+
+		return previous;
+	});
+}
+
 function Events(props: { address: `0x${string}` }) {
 	const cursor = useCursor();
 
@@ -118,8 +128,12 @@ function Events(props: { address: `0x${string}` }) {
 }
 
 export function EventsContainer(props: { cursor: string; children: ReactNode }) {
+	useEffect(() => {
+		updateCursor(props.cursor);
+	});
+
 	return (
-		<div className="w-full relative">
+		<div className="w-full relative border-b border-gray-200">
 			<div className="divide-y divide-gray-200 overflow-hidden">{props.children}</div>
 		</div>
 	);
