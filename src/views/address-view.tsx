@@ -30,16 +30,15 @@ function Header(props: { address: `0x${string}` }) {
 	});
 
 	if (query.status === "success") {
-		return <Suspense>{query.data}</Suspense>;
+		return <Suspense fallback={<HeaderFallback address={props.address} />}>{query.data}</Suspense>;
 	}
 
-	return (
-		<div className="bg-white px-3 py-3 flex items-center justify-between border-b border-gray-200">
-			<div className="flex items-center gap-2 overflow-hidden">
-				<p className="text-gray-900 font-semibold text-base select-all">Account</p>
-				<p className="text-gray-500 text-base select-all truncate">{props.address}</p>
-			</div>
+	return <HeaderFallback address={props.address} />;
+}
 
+function HeaderFallback(props: { address: `0x${string}` }) {
+	return (
+		<div className="bg-white px-3 py-3 flex items-center justify-end border-b border-gray-200">
 			<div className="flex items-center gap-2">
 				<IconButton href={`https://etherscan.io/address/${props.address}`}>
 					<EtherscanIcon className="shrink-0 size-4" />
