@@ -33,7 +33,7 @@ export function EventTableRow(props: { id: string; children: ReactNode }) {
 			onMouseDown={(event) => handleClick(event)}
 			onMouseLeave={() => setHoveredPrefix(null)}
 			onMouseEnter={() => setHoveredPrefix(prefix)}
-			className="cursor-pointer overflow-hidden data-[hovered=true]:bg-gray-50"
+			className="flex cursor-pointer overflow-hidden data-[hovered=true]:bg-gray-50"
 		>
 			{props.children}
 		</div>

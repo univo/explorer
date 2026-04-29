@@ -50,8 +50,13 @@ async function AddressEvents(props: { address: `0x${string}`; cursor: string | u
 			{ordered.map((event) => {
 				return (
 					<EventTableRow key={event.id} id={event.id}>
-						<AccountEventDescription account={account} event={event} />
-						<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
+						<div className="px-3 py-1.5 overflow-hidden grow">
+							<AccountEventDescription account={account} event={event} />
+						</div>
+
+						<div className="px-3 py-1.5 overflow-hidden shrink-0">
+							<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
+						</div>
 					</EventTableRow>
 				);
 			})}

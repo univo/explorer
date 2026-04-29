@@ -18,9 +18,7 @@ export function AddressView(props: { address: `0x${string}` }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header address={props.address} />
-			<Suspense fallback={<p>Idk why this hows</p>}>
-				<Events address={props.address} />
-			</Suspense>
+			<Events address={props.address} />
 		</div>
 	);
 }
@@ -120,7 +118,11 @@ function Events(props: { address: `0x${string}` }) {
 }
 
 export function EventsContainer(props: { cursor: string; children: ReactNode }) {
-	return props.children;
+	return (
+		<div className="w-full relative">
+			<div className="divide-y divide-gray-200 overflow-hidden">{props.children}</div>
+		</div>
+	);
 }
 
 function LoadingIndicator(props: { onVisible: () => void }) {
@@ -133,7 +135,7 @@ function LoadingIndicator(props: { onVisible: () => void }) {
 	});
 
 	return (
-		<div ref={ref} className="flex justify-center items-center h-24">
+		<div ref={ref} className="flex justify-center items-center h-16">
 			<Spinner className="size-4" />
 		</div>
 	);
