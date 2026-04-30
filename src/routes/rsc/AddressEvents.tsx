@@ -7,8 +7,8 @@ import { formatTime } from "@/utils";
 import type { Account } from "@/state/account";
 import { AddressSchema } from "@/components/views";
 import { getOrderedEvents, parseId } from "@/helpers";
-import { EventsContainer } from "@/views/address-view";
 import { getEventsForIds, type Event } from "@/db/events";
+import { StopCursorContainer } from "@/views/address-view";
 import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForAccount } from "@/indexes/account-v1";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
@@ -22,15 +22,15 @@ import { InputDataMessageV1AccountDescription } from "@/events/input-data-messag
 import { EnsNameRegisteredV1AccountDescription } from "@/events/ens-name-registered-v1/component";
 import { ContractDeploymentV1AccountDescription } from "@/events/contract-deployment-v1/component";
 
-async function AddressEvents(props: { address: `0x${string}`; cursor: string | undefined }) {
+async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
 		order: "latest",
-		cursor: props.cursor,
+		cursor: props.startCursor,
 	});
 
 	if (ids.length === 0) {
-		return <EventsContainer cursor={null} />;
+		return <StopCursorContainer startCursor={props.startCursor} stopCursor={null} />;
 	}
 
 	const events = await getEventsForIds(ids);
@@ -44,15 +44,10 @@ async function AddressEvents(props: { address: `0x${string}`; cursor: string | u
 	// TODO: Remove this and pass only the address
 	const account = { chain: 1, address: props.address, name_tag: null, label: null };
 
-	// Cursor will be null if we received fewer than 100 events. To indicate to client there is no new next page.
-	const cursor = ordered[ordered.length - 1].id;
-
-	// TODO
-	// Return a length value to the events container so it knows if it received less than the
-	// requested number of events and knows there is no futher pages to query
+	const stopCursor = ids.length < 100 ? null : ordered[ordered.length - 1].id;
 
 	return (
-		<EventsContainer cursor={cursor}>
+		<StopCursorContainer startCursor={props.startCursor} stopCursor={stopCursor}>
 			{ordered.map((event) => {
 				return (
 					<EventTableRow key={event.id} id={event.id}>
@@ -66,7 +61,7 @@ async function AddressEvents(props: { address: `0x${string}`; cursor: string | u
 					</EventTableRow>
 				);
 			})}
-		</EventsContainer>
+		</StopCursorContainer>
 	);
 }
 
@@ -110,6 +105,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
+// TODO: Add header timestamp
+
 // function HeaderTimestamp(props: { timestamp: Date }) {
 // 	const delta = Date.now() - props.timestamp.getTime();
 
@@ -141,7 +138,7 @@ function EventTimestamp(props: { timestamp: Date }) {
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ address: AddressSchema, cursor: v.string() }))
-	.handler(({ data }) => renderToReadableStream(<AddressEvents address={data.address} cursor={data.cursor} />));
+	.handler(({ data }) => renderToReadableStream(<AddressEvents address={data.address} startCursor={data.cursor} />));
 
 // TODO: Add CDN caching
 // TODO: We can cache immutably based on the timestamp in the cursor

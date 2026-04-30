@@ -1,79 +1,25 @@
 "use client";
 
 import { numberToHex } from "viem";
-import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { createContext, Suspense, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { createContext, Suspense, useContext, useEffect, useState } from "react";
 
+import { raise } from "@/utils";
 import { createId } from "@/helpers";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CloseViewButton } from "@/components/close-view-button";
 
-type CursorContextValue = {
-	value: string | null;
-	update: Dispatch<SetStateAction<string | null>>;
-};
-
-const CursorContext = createContext<CursorContextValue | null>(null);
-
-function createInitialCursor() {
-	// TODO: Add cache alignment here? Probably to the nearest minute
-	return createId({
-		block_timestamp: numberToHex(Math.floor(Date.now() / 1000)),
-
-		// All other fields are irrelevant
-		table_id: 0,
-		chain_id: "0x1",
-		tx_index: "0x0",
-		log_index: "0x0",
-		block_number: "0x0",
-	});
-}
-
-function useCursor() {
-	const context = useContext(CursorContext);
-
-	if (context === null) {
-		throw new Error("CursorContext missing for AddressView");
-	}
-
-	return context;
-}
-
-function getNextCursor(previous: string | null, nextCursor: string | null) {
-	if (previous === null) {
-		return null; // We already know the earliest event
-	}
-
-	if (nextCursor === null) {
-		return null; // We have found the earliest event
-	}
-
-	if (nextCursor < previous) {
-		return nextCursor; // We have found an earlier event
-	}
-
-	return previous; // Ignore
-}
-
-function CursorProvider(props: { children?: ReactNode }) {
-	const [value, update] = useState<string | null>(() => createInitialCursor());
-
-	return <CursorContext.Provider value={{ value, update }}>{props.children}</CursorContext.Provider>;
-}
-
 export function AddressView(props: { address: `0x${string}` }) {
 	return (
-		<CursorProvider>
-			<div className="h-full flex flex-col bg-white">
-				<Header address={props.address} />
-				<Events address={props.address} />
-			</div>
-		</CursorProvider>
+		<div className="h-full flex flex-col bg-white">
+			<Header address={props.address} />
+			<Events address={props.address} />
+		</div>
 	);
 }
 
@@ -104,52 +50,119 @@ function HeaderFallback(props: { address: `0x${string}` }) {
 	);
 }
 
-function Events(props: { address: `0x${string}` }) {
-	const cursor = useCursor();
+type CursorContextValue = {
+	cursors: Map<string, string | null | undefined>;
+	insertNextCursor: (startCursor: string) => void;
+	insertStopCursor: (startCursor: string, stopCursor: string | null) => void;
+};
 
-	const query = useInfiniteQuery({
-		initialPageParam: cursor.value,
-		getNextPageParam: () => cursor.value,
-		queryKey: ["AddressEvents", props.address],
-		queryFn: (ctx) => createFromFetch(fetch(`/rsc/AddressEvents?address=${props.address}&cursor=${ctx.pageParam}`)),
+const CursorContext = createContext<CursorContextValue | null>(null);
+
+function getNextCursor(cursors: Map<string, string | null | undefined>): string | null {
+	let final_cursor: string | undefined;
+
+	for (const [key, value] of cursors) {
+		if (value === null) return null;
+		if (value === undefined) return key;
+		final_cursor = value;
+	}
+
+	if (final_cursor === undefined) {
+		throw new Error("Expected atleast the initial cursor");
+	}
+
+	return final_cursor;
+}
+
+function Events(props: { address: `0x${string}` }) {
+	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
+		// TODO: Add cache alignment to the initial cursor
+
+		const initialCursor = createId({
+			block_timestamp: numberToHex(Math.floor(Date.now() / 1000)),
+			table_id: 0, // Irrelevant
+			chain_id: "0x1", // Irrelvant but must specify a known chain id
+			tx_index: "0x0", // Irrelevant
+			log_index: "0x0", // Irrelevant
+			block_number: "0x0", // Irrelevant
+		});
+
+		return new Map().set(initialCursor, undefined);
 	});
 
-	function fetchNextPage() {
-		if (query.hasNextPage && !query.isFetching) {
-			query.fetchNextPage();
-		}
+	function insertNextCursor(startCursor: string) {
+		setCursors((cursors) => {
+			const result = new Map(cursors); // Must be a new map to force react to rerender
+			result.set(startCursor, undefined);
+			return result;
+		});
 	}
 
-	if (query.status === "pending") {
-		return (
-			<div className="relative grow overflow-scroll isolate">
-				<LoadingIndicator onVisible={() => fetchNextPage()} />
-			</div>
-		);
+	function insertStopCursor(startCursor: string, stopCursor: string | null) {
+		setCursors((cursors) => {
+			const result = new Map(cursors); // Must be a new map to force react to rerender
+			result.set(startCursor, stopCursor);
+			return result;
+		});
 	}
+
+	const cursor = getNextCursor(cursors);
+
+	return (
+		<CursorContext value={{ cursors, insertNextCursor, insertStopCursor }}>
+			<div className="relative grow overflow-scroll isolate">
+				{Array.from(cursors).map(([startCursor]) => {
+					return (
+						<EventsContainer
+							key={startCursor} //
+							address={props.address}
+							startCursor={startCursor}
+						/>
+					);
+				})}
+
+				{cursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(cursor)} />}
+			</div>
+		</CursorContext>
+	);
+}
+
+function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
+	const query = useQuery({
+		queryKey: ["AddressEvents", props.address, props.startCursor],
+		queryFn: () => createFromFetch(fetch(`/rsc/AddressEvents?address=${props.address}&cursor=${props.startCursor}`)),
+	});
 
 	if (query.status === "error") {
 		return undefined;
 	}
 
-	return (
-		<div className="relative grow overflow-scroll isolate">
-			{query.data.pages.map((page, index) => {
-				return <Suspense key={index}>{page}</Suspense>;
-			})}
+	if (query.status === "pending") {
+		return undefined;
+	}
 
-			{query.hasNextPage && <LoadingIndicator onVisible={() => fetchNextPage()} />}
-		</div>
+	return (
+		<Suspense>
+			<VirtualisationContainer>{query.data}</VirtualisationContainer>
+		</Suspense>
 	);
 }
 
-export function EventsContainer(props: { cursor: string | null; children?: ReactNode }) {
-	const cursor = useCursor();
+// The purpose of this client component is to allow the server component to provide cursor related information
+
+export function StopCursorContainer(props: { startCursor: string; stopCursor: string | null; children?: ReactNode }) {
+	const context = useContext(CursorContext) ?? raise("Missing CursorContext provider");
 
 	useEffect(() => {
-		cursor.update((previous) => getNextCursor(previous, props.cursor));
+		if (getNextCursor(context.cursors) === props.startCursor) {
+			context.insertStopCursor(props.startCursor, props.stopCursor);
+		}
 	});
 
+	return props.children;
+}
+
+function VirtualisationContainer(props: { children: ReactNode }) {
 	const [height, setHeight] = useState(0);
 
 	const { ref } = useInView({
@@ -163,14 +176,6 @@ export function EventsContainer(props: { cursor: string | null; children?: React
 		onChange: (inView, entry) => setHeight(inView ? 0 : entry.boundingClientRect.height),
 	});
 
-	if (props.cursor === null) {
-		return (
-			<div className="flex items-center justify-center h-16">
-				<p className="text-gray-500 text-sm">No more events</p>
-			</div>
-		);
-	}
-
 	return (
 		<div
 			ref={ref}
@@ -182,11 +187,21 @@ export function EventsContainer(props: { cursor: string | null; children?: React
 	);
 }
 
-function LoadingIndicator(props: { onVisible: () => void }) {
+function NoMoreEvents() {
+	return (
+		<div className="flex items-center justify-center h-16">
+			<p className="text-gray-500 text-sm">No more events</p>
+		</div>
+	);
+}
+
+function LoadingIndicator(props: { onVisible?: () => void }) {
 	const { ref } = useInView({
 		onChange(inView) {
 			if (inView) {
-				props.onVisible();
+				if (props.onVisible) {
+					props.onVisible();
+				}
 			}
 		},
 	});
@@ -197,5 +212,3 @@ function LoadingIndicator(props: { onVisible: () => void }) {
 		</div>
 	);
 }
-
-// TODO: Add header timestamps
