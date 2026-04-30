@@ -1,12 +1,13 @@
 import * as v from "valibot";
+import { Fragment } from "react";
 import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { formatTime } from "@/utils";
 import type { Account } from "@/state/account";
 import { AddressSchema } from "@/components/views";
 import { getOrderedEvents, parseId } from "@/helpers";
+import { formatRelativeDate, formatTime } from "@/utils";
 import { getEventsForIds, type Event } from "@/db/events";
 import { StopCursorContainer } from "@/views/address-view";
 import { EventTableRow } from "@/components/event-table-row";
@@ -48,20 +49,96 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 
 	return (
 		<StopCursorContainer startCursor={props.startCursor} stopCursor={stopCursor}>
-			{ordered.map((event) => {
+			{ordered.map((event, i) => {
 				return (
-					<EventTableRow key={event.id} id={event.id}>
-						<div className="px-3 py-1.5 overflow-hidden grow">
-							<AccountEventDescription account={account} event={event} />
-						</div>
-
-						<div className="px-3 py-1.5 overflow-hidden shrink-0">
-							<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
-						</div>
-					</EventTableRow>
+					<Fragment key={event.id}>
+						<EventHeader event={event} previous={ordered[i - 1]} />
+						<EventRow event={event} account={account} />
+					</Fragment>
 				);
 			})}
 		</StopCursorContainer>
+	);
+}
+
+function EventHeader(props: { event: Event; previous: Event | undefined }) {
+	if (props.previous === undefined) {
+		return undefined; // We leave it to the client to determine if an event header is required
+	}
+
+	const event = new Date(parseId(props.event.id).block_timestamp * 1000);
+
+	const eventString = event.toLocaleDateString("en", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		timeZone: "UTC",
+	});
+
+	const previous = new Date(parseId(props.previous.id).block_timestamp * 1000);
+
+	const previousString = previous.toLocaleDateString("en", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		timeZone: "UTC",
+	});
+
+	// If the previous event falls on a different day we add the header
+	if (eventString === previousString) {
+		return undefined;
+	}
+
+	return (
+		<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+			<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{eventString}</p>
+			<HeaderTimestamp timestamp={event} />
+		</div>
+	);
+}
+
+const ONE_DAY = 24 * 60 * 60 * 1000;
+
+function HeaderTimestamp(props: { timestamp: Date }) {
+	const delta = Date.now() - props.timestamp.getTime();
+
+	if (delta > ONE_DAY) {
+		return (
+			<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">
+				{formatRelativeDate(props.timestamp)}
+			</p>
+		);
+	}
+}
+
+function EventRow(props: { event: Event; account: Account }) {
+	return (
+		<EventTableRow id={props.event.id}>
+			<div className="px-3 py-1.5 overflow-hidden grow">
+				<AccountEventDescription account={props.account} event={props.event} />
+			</div>
+
+			<div className="px-3 py-1.5 overflow-hidden shrink-0">
+				<EventTimestamp timestamp={new Date(parseId(props.event.id).block_timestamp * 1000)} />
+			</div>
+		</EventTableRow>
+	);
+}
+
+// TODO: This should be a fixed width to prevent content layout shift. This fixed width would vary on desktop/mobile
+
+function EventTimestamp(props: { timestamp: Date }) {
+	const delta = Date.now() - props.timestamp.getTime();
+
+	if (delta > ONE_DAY) {
+		// TODO: This is currently in UTC and should be localised
+		return <p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatTime(props.timestamp)}</p>;
+	}
+
+	return (
+		<p className="text-sm text-gray-500 text-right text-nowrap select-all">
+			<RelativeTimestamp timestamp={props.timestamp} />
+		</p>
 	);
 }
 
@@ -101,39 +178,6 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 	if (props.event.tag === "erc721_approval_v1") {
 		return <Erc721ApprovalV1AccountDescription event={props.event} account={props.account} />;
 	}
-}
-
-const ONE_DAY = 24 * 60 * 60 * 1000;
-
-// TODO: Add header timestamp
-
-// function HeaderTimestamp(props: { timestamp: Date }) {
-// 	const delta = Date.now() - props.timestamp.getTime();
-
-// 	if (delta > ONE_DAY) {
-// 		return (
-// 			<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">
-// 				{formatRelativeDate(props.timestamp)}
-// 			</p>
-// 		);
-// 	}
-// }
-
-// TODO: This should be a fixed width to prevent content layout shift. This fixed width would vary on desktop/mobile
-
-function EventTimestamp(props: { timestamp: Date }) {
-	const delta = Date.now() - props.timestamp.getTime();
-
-	if (delta > ONE_DAY) {
-		// TODO: This is currently in UTC and should be localised
-		return <p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatTime(props.timestamp)}</p>;
-	}
-
-	return (
-		<p className="text-sm text-gray-500 text-right text-nowrap select-all">
-			<RelativeTimestamp timestamp={props.timestamp} />
-		</p>
-	);
 }
 
 const getFlightStream = createServerFn({ method: "GET" })

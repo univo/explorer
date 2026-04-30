@@ -58,22 +58,6 @@ type CursorContextValue = {
 
 const CursorContext = createContext<CursorContextValue | null>(null);
 
-function getNextCursor(cursors: Map<string, string | null | undefined>): string | null {
-	let final_cursor: string | undefined;
-
-	for (const [key, value] of cursors) {
-		if (value === null) return null;
-		if (value === undefined) return key;
-		final_cursor = value;
-	}
-
-	if (final_cursor === undefined) {
-		throw new Error("Expected atleast the initial cursor");
-	}
-
-	return final_cursor;
-}
-
 function Events(props: { address: `0x${string}` }) {
 	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
 		// TODO: Add cache alignment to the initial cursor
@@ -106,7 +90,7 @@ function Events(props: { address: `0x${string}` }) {
 		});
 	}
 
-	const cursor = getNextCursor(cursors);
+	const nextCursor = getNextCursor(cursors);
 
 	return (
 		<CursorContext value={{ cursors, insertNextCursor, insertStopCursor }}>
@@ -121,10 +105,26 @@ function Events(props: { address: `0x${string}` }) {
 					);
 				})}
 
-				{cursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(cursor)} />}
+				{nextCursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(nextCursor)} />}
 			</div>
 		</CursorContext>
 	);
+}
+
+function getNextCursor(cursors: Map<string, string | null | undefined>): string | null {
+	let final_cursor: string | undefined;
+
+	for (const [key, value] of cursors) {
+		if (value === null) return null;
+		if (value === undefined) return key;
+		final_cursor = value;
+	}
+
+	if (final_cursor === undefined) {
+		throw new Error("Expected atleast the initial cursor");
+	}
+
+	return final_cursor;
 }
 
 function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
@@ -148,7 +148,7 @@ function EventsContainer(props: { address: `0x${string}`; startCursor: string })
 	);
 }
 
-// The purpose of this client component is to allow the server component to provide cursor related information
+// The component allows the server to provide cursor related information back to the client
 
 export function StopCursorContainer(props: { startCursor: string; stopCursor: string | null; children?: ReactNode }) {
 	const context = useContext(CursorContext) ?? raise("Missing CursorContext provider");
