@@ -15,7 +15,7 @@ export function Navigation() {
 				<div className="h-(--header-height) flex items-center">
 					<div className="grid grid-cols-12 gap-4 w-full">
 						<div className="flex items-center col-span-4">
-							<Link to="/$">
+							<Link to="/$" params={{ _splat: "" }}>
 								<Logo className="w-auto h-6" />
 							</Link>
 						</div>
