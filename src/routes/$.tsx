@@ -62,7 +62,9 @@ function IndexView() {
 						explorer.<span className="text-primary-500">univo</span>.app
 					</h1>
 
-					<h2 className="mt-2 text-xl text-gray-500">Explore billions of public blockchain events</h2>
+					<h2 className="mt-2 text-xl text-gray-500">
+						Explore billions of <span className="hidden md:inline-block">public</span> blockchain events
+					</h2>
 
 					<OpenSearchButton
 						type="button"
