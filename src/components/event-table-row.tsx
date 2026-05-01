@@ -23,19 +23,19 @@ export function EventTableRow(props: { id: string; children: ReactNode }) {
 	const hovered = useHoveredPrefix();
 	const prefix = props.id.slice(0, 23); // Includes block number and tx id
 
-	function handleClick(event: MouseEvent<HTMLTableRowElement>) {
+	function handleClick(event: MouseEvent) {
 		if (hasClickableParentElement(event.target as HTMLElement)) return;
 	}
 
 	return (
-		<tr
+		<div
 			data-hovered={String(hovered === prefix)}
 			onMouseDown={(event) => handleClick(event)}
 			onMouseLeave={() => setHoveredPrefix(null)}
 			onMouseEnter={() => setHoveredPrefix(prefix)}
-			className="cursor-pointer overflow-hidden data-[hovered=true]:bg-gray-50"
+			className="flex overflow-hidden data-[hovered=true]:bg-gray-50"
 		>
 			{props.children}
-		</tr>
+		</div>
 	);
 }

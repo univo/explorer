@@ -1,228 +1,214 @@
-import { Fragment, Suspense } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFromFetch } from "@tanstack/react-start/rsc";
+"use client";
 
+import { numberToHex } from "viem";
+import type { ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { createFromFetch } from "@tanstack/react-start/rsc";
+import { createContext, Suspense, useContext, useEffect, useState } from "react";
+
+import { raise } from "@/utils";
+import { createId } from "@/helpers";
+import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
-import { getEventsForIds, type Event } from "@/db/events";
-import { getAccount, type Account } from "@/state/account";
-import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForAccount } from "@/indexes/account-v1";
-import { formatRelativeDate, formatTime, raise } from "@/utils";
 import { CloseViewButton } from "@/components/close-view-button";
-import { getOrderedEvents, groupEventsByDay, parseId } from "@/helpers";
-import { Erc20ApprovalV1AccountDescription } from "@/events/erc20-approval-v1/component";
-import { Erc20TransferV1AccountDescription } from "@/events/erc20-transfer-v1/component";
-import { Table, TableBody, TableData, TableHead, TableHeading } from "@/components/table";
-import { NativeTransferV1AccountDescription } from "@/events/native-transfer-v1/component";
-import { Erc721TransferV1AccountDescription } from "@/events/erc721-transfer-v1/component";
-import { Erc721ApprovalV1AccountDescription } from "@/events/erc721-approval-v1/component";
-import { CancelPendingTxV1AccountDescription } from "@/events/cancel-pending-tx-v1/component";
-import { InputDataMessageV1AccountDescription } from "@/events/input-data-message-v1/component";
-import { EnsNameRegisteredV1AccountDescription } from "@/events/ens-name-registered-v1/component";
-import { ContractDeploymentV1AccountDescription } from "@/events/contract-deployment-v1/component";
 
-export function AddressViewSuspense(props: { address: `0x${string}` }) {
+export function AddressView(props: { address: `0x${string}` }) {
 	return (
-		<Suspense fallback={<EmptyState address={props.address} />}>
-			<CachedAddressView address={props.address}></CachedAddressView>
+		<div className="h-full flex flex-col bg-white">
+			<Header address={props.address} />
+			<Events address={props.address} />
+		</div>
+	);
+}
+
+function Header(props: { address: `0x${string}` }) {
+	const query = useQuery({
+		queryKey: ["AddressHeader", props.address],
+		queryFn: () => createFromFetch(fetch(`/rsc/AddressHeader?address=${props.address}`)),
+	});
+
+	if (query.status === "success") {
+		return <Suspense fallback={<HeaderFallback address={props.address} />}>{query.data}</Suspense>;
+	}
+
+	return <HeaderFallback address={props.address} />;
+}
+
+function HeaderFallback(props: { address: `0x${string}` }) {
+	return (
+		<div className="bg-white px-3 py-3 flex items-center justify-end border-b border-gray-200">
+			<div className="flex items-center gap-2">
+				<IconButton href={`https://etherscan.io/address/${props.address}`}>
+					<EtherscanIcon className="shrink-0 size-4" />
+				</IconButton>
+
+				<CloseViewButton view={props.address} />
+			</div>
+		</div>
+	);
+}
+
+type CursorContextValue = {
+	cursors: Map<string, string | null | undefined>;
+	insertNextCursor: (startCursor: string) => void;
+	insertStopCursor: (startCursor: string, stopCursor: string | null) => void;
+};
+
+const CursorContext = createContext<CursorContextValue | null>(null);
+
+function Events(props: { address: `0x${string}` }) {
+	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
+		// TODO: Add cache alignment to the initial cursor
+
+		const initialCursor = createId({
+			block_timestamp: numberToHex(Math.floor(Date.now() / 1000)),
+			table_id: 0, // Irrelevant
+			chain_id: "0x1", // Irrelvant but must specify a known chain id
+			tx_index: "0x0", // Irrelevant
+			log_index: "0x0", // Irrelevant
+			block_number: "0x0", // Irrelevant
+		});
+
+		return new Map().set(initialCursor, undefined);
+	});
+
+	function insertNextCursor(startCursor: string) {
+		setCursors((cursors) => {
+			const result = new Map(cursors); // Must be a new map to force react to rerender
+			result.set(startCursor, undefined);
+			return result;
+		});
+	}
+
+	function insertStopCursor(startCursor: string, stopCursor: string | null) {
+		setCursors((cursors) => {
+			const result = new Map(cursors); // Must be a new map to force react to rerender
+			result.set(startCursor, stopCursor);
+			return result;
+		});
+	}
+
+	const nextCursor = getNextCursor(cursors);
+
+	return (
+		<CursorContext value={{ cursors, insertNextCursor, insertStopCursor }}>
+			<div className="relative grow overflow-scroll isolate">
+				{Array.from(cursors).map(([startCursor]) => {
+					return (
+						<EventsContainer
+							key={startCursor} //
+							address={props.address}
+							startCursor={startCursor}
+						/>
+					);
+				})}
+
+				{nextCursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(nextCursor)} />}
+			</div>
+		</CursorContext>
+	);
+}
+
+function getNextCursor(cursors: Map<string, string | null | undefined>): string | null {
+	let final_cursor: string | undefined;
+
+	for (const [key, value] of cursors) {
+		if (value === null) return null;
+		if (value === undefined) return key;
+		final_cursor = value;
+	}
+
+	if (final_cursor === undefined) {
+		throw new Error("Expected atleast the initial cursor");
+	}
+
+	return final_cursor;
+}
+
+function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
+	const query = useQuery({
+		queryKey: ["AddressEvents", props.address, props.startCursor],
+		queryFn: () => createFromFetch(fetch(`/rsc/AddressEvents?address=${props.address}&cursor=${props.startCursor}`)),
+	});
+
+	if (query.status === "error") {
+		return undefined;
+	}
+
+	if (query.status === "pending") {
+		return undefined;
+	}
+
+	return (
+		<Suspense>
+			<VirtualisationContainer>{query.data}</VirtualisationContainer>
 		</Suspense>
 	);
 }
 
-function EmptyState(props: { address: `0x${string}` }) {
-	return (
-		<div className="h-full flex flex-col bg-white">
-			<div className="bg-white px-3 py-3 flex items-center justify-between">
-				<div className="flex items-center gap-2 overflow-hidden"></div>
+// The component allows the server to provide cursor related information back to the client
 
-				<div className="flex items-center gap-2">
-					<IconButton href={`https://etherscan.io/address/${props.address}`}>
-						<EtherscanIcon className="shrink-0 size-4" />
-					</IconButton>
+export function StopCursorContainer(props: { startCursor: string; stopCursor: string | null; children?: ReactNode }) {
+	const context = useContext(CursorContext) ?? raise("Missing CursorContext provider");
 
-					<CloseViewButton view={props.address} />
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function CachedAddressView(props: { address: `0x${string}` }) {
-	const query = useSuspenseQuery({
-		queryKey: ["address", props.address],
-		queryFn: () => createFromFetch(fetch(`/api/address/${props.address}`)),
+	useEffect(() => {
+		if (getNextCursor(context.cursors) === props.startCursor) {
+			context.insertStopCursor(props.startCursor, props.stopCursor);
+		}
 	});
 
-	return query.data;
+	return props.children;
 }
 
-export async function AddressView(props: { address: `0x${string}` }) {
-	// Load events by index
-	const [account, ids] = await Promise.all([
-		getAccount({ chain: 1, address: props.address }),
-		getEventIdsForAccount(props.address, { order: "latest", limit: 100 }),
-	]);
+function VirtualisationContainer(props: { children: ReactNode }) {
+	const [height, setHeight] = useState(0);
+
+	const { ref } = useInView({
+		// We could probably add margin here to prevent the flash as hidden blocks return. Also note that this
+		// virtualisation happens according to the document as the root, which means it applies to horizontal
+		// scrolling too when we have a large number of horizontal views
+		rootMargin: "0px 608px 0px 608px",
+
+		// This is pretty safe because our app never sees a lot of browser resizing. On desktop the width of each
+		// view is static. On mobile the only way to resize is to adjust the orientation.
+		onChange: (inView, entry) => setHeight(inView ? 0 : entry.boundingClientRect.height),
+	});
 
 	return (
-		<div className="h-full flex flex-col bg-white">
-			<Header account={account} />
-			<EventsTable account={account} ids={ids} />
+		<div
+			ref={ref}
+			style={{ height: height > 0 ? height : undefined }}
+			className="w-full relative border-b border-gray-200"
+		>
+			<div className="divide-y divide-gray-200 overflow-hidden">{height > 0 ? undefined : props.children}</div>
 		</div>
 	);
 }
 
-function Header(props: { account: Account }) {
+function NoMoreEvents() {
 	return (
-		<div className="bg-white px-3 py-3 flex items-center justify-between">
-			<div className="flex items-center gap-2 overflow-hidden">
-				{props.account.name_tag === null ? (
-					<Fragment>
-						<p className="text-gray-900 font-semibold text-base select-all">Account</p>
-						<p className="text-gray-500 text-base select-all truncate">{props.account.address}</p>
-					</Fragment>
-				) : (
-					<p className="text-gray-900 font-semibold text-base select-all truncate">{props.account.name_tag}</p>
-				)}
-			</div>
-
-			<div className="flex items-center gap-2">
-				<IconButton href={`https://etherscan.io/address/${props.account.address}`}>
-					<EtherscanIcon className="shrink-0 size-4" />
-				</IconButton>
-
-				<CloseViewButton view={props.account.address} />
-			</div>
+		<div className="flex items-center justify-center h-16">
+			<p className="text-gray-500 text-sm">No more events</p>
 		</div>
 	);
 }
 
-async function EventsTable(props: { account: Account; ids: string[] }) {
-	if (props.ids.length === 0) {
-		return (
-			<div className="flex items-center justify-center h-128">
-				<div className="flex flex-col gap-1 text-center max-w-xs">
-					<p className="text-gray-900 text-sm font-medium">No events found</p>
-
-					<p className="text-gray-500 text-sm">
-						If this is a mistake, contact the founder and describe the event you expected to see
-					</p>
-				</div>
-			</div>
-		);
-	}
-
-	const events = await getEventsForIds(props.ids);
-	const ordered = getOrderedEvents(events, "latest");
-	const grouped = groupEventsByDay(ordered);
+function LoadingIndicator(props: { onVisible?: () => void }) {
+	const { ref } = useInView({
+		onChange(inView) {
+			if (inView) {
+				if (props.onVisible) {
+					props.onVisible();
+				}
+			}
+		},
+	});
 
 	return (
-		<div className="relative grow overflow-scroll isolate">
-			{Object.entries(grouped).map(([date, events]) => {
-				if (events === undefined) throw new Error();
-
-				const event = events[0] || raise("Expected at least one event");
-				const { block_timestamp } = parseId(event.id);
-
-				return (
-					<Table key={date}>
-						<TableHead className="sticky top-0 z-10">
-							<TableHeading>
-								<div className="flex items-center justify-between">
-									<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{date}</p>
-								</div>
-							</TableHeading>
-
-							<TableHeading>
-								<HeaderTimestamp timestamp={new Date(block_timestamp * 1000)} />
-							</TableHeading>
-						</TableHead>
-
-						<TableBody>
-							{events.map((event) => {
-								const { block_timestamp } = parseId(event.id);
-
-								return (
-									<EventTableRow key={event.id} id={event.id}>
-										<TableData>
-											<AccountEventDescription account={props.account} event={event} />
-										</TableData>
-
-										<TableData>
-											<EventTimestamp timestamp={new Date(block_timestamp * 1000)} />
-										</TableData>
-									</EventTableRow>
-								);
-							})}
-						</TableBody>
-					</Table>
-				);
-			})}
+		<div ref={ref} className="flex justify-center items-center h-16">
+			<Spinner className="size-4" />
 		</div>
-	);
-}
-
-function AccountEventDescription(props: { account: Account; event: Event }) {
-	if (props.event.tag === "erc20_approval_v1") {
-		return <Erc20ApprovalV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "native_transfer_v1") {
-		return <NativeTransferV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "erc20_transfer_v1") {
-		return <Erc20TransferV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "input_data_message_v1") {
-		return <InputDataMessageV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "ens_name_registered_v1") {
-		return <EnsNameRegisteredV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "contract_deployment_v1") {
-		return <ContractDeploymentV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "cancel_pending_tx_v1") {
-		return <CancelPendingTxV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "erc721_transfer_v1") {
-		return <Erc721TransferV1AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "erc721_approval_v1") {
-		return <Erc721ApprovalV1AccountDescription event={props.event} account={props.account} />;
-	}
-}
-
-const ONE_DAY = 24 * 60 * 60 * 1000;
-
-function HeaderTimestamp(props: { timestamp: Date }) {
-	const delta = Date.now() - props.timestamp.getTime();
-
-	if (delta > ONE_DAY) {
-		return (
-			<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">
-				{formatRelativeDate(props.timestamp)}
-			</p>
-		);
-	}
-}
-
-function EventTimestamp(props: { timestamp: Date }) {
-	const delta = Date.now() - props.timestamp.getTime();
-
-	if (delta > ONE_DAY) {
-		// TODO: This is currently in UTC and should be localised
-		return <p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatTime(props.timestamp)}</p>;
-	}
-
-	return (
-		<p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatRelativeDate(props.timestamp)}</p>
 	);
 }

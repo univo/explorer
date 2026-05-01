@@ -40,3 +40,11 @@
 		scrollbar-color: gray transparent;
 	}
 }
+
+@theme {
+	@keyframes offset {
+		50% {
+			stroke-dashoffset: 96px;
+		}
+	}
+}

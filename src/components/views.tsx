@@ -5,8 +5,8 @@ import { useRef, type ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
 import { isMobile } from "./mobile-only";
+import { AddressView } from "@/views/address-view";
 import { TransactionViewSuspense } from "@/views/tx-view";
-import { AddressViewSuspense } from "@/views/address-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
 
 export type View =
@@ -132,7 +132,7 @@ export function View(props: { view: string }) {
 	const view = getView(props.view);
 
 	if (view === null) return <EmptyView />;
-	if (view.type === "address") return <AddressViewSuspense address={view.data} />;
+	if (view.type === "address") return <AddressView address={view.data} />;
 	if (view.type === "transaction") return <TransactionViewSuspense view={props.view} />;
 	if (view.type === "block-number") return <BlockNumberViewSuspense view={props.view} />;
 }
