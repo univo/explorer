@@ -177,13 +177,6 @@ const tokens = [
 	},
 	{
 		chain: 1,
-		symbol: "BBCH",
-		name: "Binance Wrapped BCH",
-		address: "0x85c4edc43724e954e5849caaab61a26a9cb65f1b",
-		image: "https://etherscan.io/token/images/binance-bch_32.png",
-	},
-	{
-		chain: 1,
 		symbol: "USDS",
 		name: "USDS Stablecoin",
 		address: "0xdc035d45d973e3ec169d2276ddab16f1e407384f",
