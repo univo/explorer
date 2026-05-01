@@ -72,6 +72,8 @@ export function NativeTransferV1AccountDescription(props: { event: NativeTransfe
 						<span className="text-gray-500 select-all">(ETH)</span>
 					</Description>
 				</Hoverable>
+				<span>from</span>
+				<Account chain={chain} address={props.event.from_address} />
 			</Description>
 		);
 	}
