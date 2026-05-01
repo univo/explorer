@@ -30,6 +30,8 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 		cursor: props.startCursor,
 	});
 
+	// This is pretty rare ands means the last batch fetched exactly the last 100 events
+
 	if (ids.length === 0) {
 		return <StopCursorContainer startCursor={props.startCursor} stopCursor={null} />;
 	}
