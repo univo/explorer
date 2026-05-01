@@ -150,8 +150,6 @@ function EventsContainer(props: { address: `0x${string}`; startCursor: string })
 
 // The component allows the server to provide cursor related information back to the client
 
-// TODO: This component should determine if we render a timestamp header for this batch of events
-
 export function StopCursorContainer(props: { startCursor: string; stopCursor: string | null; children?: ReactNode }) {
 	const context = useContext(CursorContext) ?? raise("Missing CursorContext provider");
 

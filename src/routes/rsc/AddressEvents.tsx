@@ -37,11 +37,6 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 	const events = await getEventsForIds(ids);
 	const ordered = getOrderedEvents(events, "latest");
 
-	// TODO
-	// The grouping header needs to be a part of the event payload itself. For each event we check
-	// if the previous event crosses a day boundary (or is undefined) and render a header. We need
-	// also to check the boundary of each event container to determine if there should be a header
-
 	// TODO: Remove this and pass only the address
 	const account = { chain: 1, address: props.address, name_tag: null, label: null };
 
@@ -50,9 +45,12 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 	return (
 		<StopCursorContainer startCursor={props.startCursor} stopCursor={stopCursor}>
 			{ordered.map((event, i) => {
+				const previous = ordered[i - 1];
+				const previousId = previous === undefined ? props.startCursor : previous.id;
+
 				return (
 					<Fragment key={event.id}>
-						<EventHeader event={event} previous={ordered[i - 1]} />
+						<EventHeader eventId={event.id} previousId={previousId} />
 						<EventRow event={event} account={account} />
 					</Fragment>
 				);
@@ -61,12 +59,8 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 	);
 }
 
-function EventHeader(props: { event: Event; previous: Event | undefined }) {
-	if (props.previous === undefined) {
-		return undefined; // We leave it to the client to determine if an event header is required
-	}
-
-	const event = new Date(parseId(props.event.id).block_timestamp * 1000);
+function EventHeader(props: { eventId: string; previousId: string }) {
+	const event = new Date(parseId(props.eventId).block_timestamp * 1000);
 
 	const eventString = event.toLocaleDateString("en", {
 		month: "short",
@@ -75,7 +69,7 @@ function EventHeader(props: { event: Event; previous: Event | undefined }) {
 		timeZone: "UTC",
 	});
 
-	const previous = new Date(parseId(props.previous.id).block_timestamp * 1000);
+	const previous = new Date(parseId(props.previousId).block_timestamp * 1000);
 
 	const previousString = previous.toLocaleDateString("en", {
 		month: "short",
