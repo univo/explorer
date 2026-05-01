@@ -85,7 +85,7 @@ function IndexView() {
 						<a
 							target="_blank"
 							rel="noopener noreferrer"
-							href="https://github.com/univo"
+							href="https://github.com/univo/explorer"
 							className="mt-8 h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-150 text-gray-900 text-sm"
 						>
 							GitHub
