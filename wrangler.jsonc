@@ -25,7 +25,7 @@
 		"ENVIRONMENT": "DEVELOPMENT"
 	},
 	"assets": {
-		"run_worker_first": ["/api/*"],
+		"run_worker_first": ["/api/*", "/rsc/*"],
 		"not_found_handling": "single-page-application"
 	},
 	"env": {
