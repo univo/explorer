@@ -121,8 +121,6 @@ function EventRow(props: { event: Event; account: Account }) {
 	);
 }
 
-// TODO: This should be a fixed width to prevent content layout shift. This fixed width would vary on desktop/mobile
-
 function EventTimestamp(props: { timestamp: Date }) {
 	const delta = Date.now() - props.timestamp.getTime();
 
@@ -131,8 +129,10 @@ function EventTimestamp(props: { timestamp: Date }) {
 		return <p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatTime(props.timestamp)}</p>;
 	}
 
+	// Relative timestamps update change width over time so we force a width here
+
 	return (
-		<p className="text-sm text-gray-500 text-right text-nowrap select-all">
+		<p className="text-sm text-gray-500 text-right text-nowrap select-all min-w-8">
 			<RelativeTimestamp timestamp={props.timestamp} />
 		</p>
 	);

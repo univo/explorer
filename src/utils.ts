@@ -7,8 +7,9 @@ export function hashstring() {
 /**
  * Capitalize the first character of a string
  */
-export function capitalize(str?: string): string | undefined {
-	return str ? `${str.charAt(0).toUpperCase()}${str.slice(1)}` : undefined;
+export function capitalize(str: string, opts: { mode: "first" | "all" } = { mode: "first" }): string | undefined {
+	if (opts.mode === "all") return str?.toUpperCase();
+	return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }
 
 /**
@@ -47,15 +48,14 @@ export function formatTime(date: Date) {
 	return tf.format(date);
 }
 
-const rtf = new Intl.RelativeTimeFormat("en-GB", { numeric: "auto", style: "narrow" });
-const unit_strings = ["second", "minute", "hour", "day", "week", "month", "year"] as const;
+const unit_strings = ["s", "m", "hr", "d", "w", "mo", "yr"] as const;
 const units_seconds = [60, 3600, 86400, 86400 * 7, 86400 * 30, 86400 * 365, Number.POSITIVE_INFINITY];
 
 export function formatRelativeDate(date: Date) {
 	const delta_seconds = Math.round((date.getTime() - Date.now()) / 1000);
 	const unit_index = units_seconds.findIndex((cutoff) => cutoff > Math.abs(delta_seconds));
 	const divisor = unit_index ? units_seconds[unit_index - 1]! : 1;
-	return rtf.format(Math.floor(delta_seconds / divisor), unit_strings[unit_index]!);
+	return `${Math.abs(Math.round(delta_seconds / divisor))}${unit_strings[unit_index]}`;
 }
 
 export function formatNumber(number: number, options: Parameters<typeof Intl.NumberFormat>[1] = {}) {
