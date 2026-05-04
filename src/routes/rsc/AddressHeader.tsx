@@ -3,35 +3,50 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { getAccount } from "@/state/account";
-import { Fragment } from "react/jsx-runtime";
 import { AddressSchema } from "@/components/views";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CloseViewButton } from "@/components/close-view-button";
+import { getAccount, getAccountName, type Account } from "@/state/account";
 
 async function AddressHeader(props: { address: `0x${string}` }) {
 	const account = await getAccount({ chain: 1, address: props.address });
 
+	if (account === null) {
+		return (
+			<div className="bg-white px-3 py-3 flex items-center justify-between border-b border-gray-200">
+				<div className="flex items-center gap-2 overflow-hidden">
+					<p className="text-gray-900 font-semibold text-base select-all">Account</p>
+					<p className="text-gray-500 text-base select-all truncate">{props.address}</p>
+				</div>
+
+				<div className="flex items-center gap-2">
+					<IconButton href={`https://etherscan.io/address/${props.address}`}>
+						<EtherscanIcon className="shrink-0 size-4" />
+					</IconButton>
+
+					<CloseViewButton view={props.address} />
+				</div>
+			</div>
+		);
+	}
+
+	return <AccountHeader account={account} />;
+}
+
+function AccountHeader(props: { account: Account }) {
 	return (
 		<div className="bg-white px-3 py-3 flex items-center justify-between border-b border-gray-200">
-			<div className="flex items-center gap-2 overflow-hidden">
-				{account.name_tag === null ? (
-					<Fragment>
-						<p className="text-gray-900 font-semibold text-base select-all">Account</p>
-						<p className="text-gray-500 text-base select-all truncate">{account.address}</p>
-					</Fragment>
-				) : (
-					<p className="text-gray-900 font-semibold text-base select-all truncate">{account.name_tag}</p>
-				)}
+			<div className="flex items-center gap-1 overflow-hidden">
+				<p className="text-gray-900 font-semibold text-base select-all truncate">{getAccountName(props.account)}</p>
 			</div>
 
 			<div className="flex items-center gap-2">
-				<IconButton href={`https://etherscan.io/address/${account.address}`}>
+				<IconButton href={`https://etherscan.io/address/${props.account.address}`}>
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={account.address} />
+				<CloseViewButton view={props.account.address} />
 			</div>
 		</div>
 	);
