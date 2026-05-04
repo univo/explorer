@@ -50,6 +50,7 @@ export function Erc20ApprovalV1AccountDescription(props: { event: Erc20ApprovalV
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isZeroQuantity || isSpenderNullAddress;
 	const type = revoked ? "revoked" : "approved";
+	const quantity = !revoked && !all ? props.event.quantity : undefined;
 
 	if (isAddressEqual(props.account.address, props.event.owner_address)) {
 		return (
@@ -60,7 +61,7 @@ export function Erc20ApprovalV1AccountDescription(props: { event: Erc20ApprovalV
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
 				{revoked === false && all === true && <span>all</span>}
-				<Token chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} />
+				<Token chain={chain} address={props.event.token_address} quantity={quantity} />
 			</Description>
 		);
 	}
@@ -74,7 +75,7 @@ export function Erc20ApprovalV1AccountDescription(props: { event: Erc20ApprovalV
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
 				{revoked === false && all === true && <span>all</span>}
-				<Token chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} />
+				<Token chain={chain} address={props.event.token_address} quantity={quantity} />
 			</Description>
 		);
 	}
