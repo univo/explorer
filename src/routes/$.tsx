@@ -1,17 +1,16 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
 import { SearchIcon } from "@/components/icons";
 import { OpenSearchButton } from "@/components/open-search-button";
-import { View, ViewContainer, ViewsContainer } from "@/components/views";
+import { useViews, View, ViewContainer, ViewsContainer } from "@/components/views";
 
 export const Route = createFileRoute("/$")({
 	component: Component,
 });
 
 function Component() {
-	const params = useParams({ from: "/$" });
-	const views = params._splat ? params._splat.split("/") : [];
+	const { views } = useViews();
 
 	if (views.length === 0) {
 		return (

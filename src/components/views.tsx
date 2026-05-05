@@ -1,36 +1,80 @@
 import * as v from "valibot";
 import { create } from "zustand";
-import { getAddress } from "viem";
-import { useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { createContext, useContext, useRef, useState } from "react";
 
+import { raise } from "@/utils";
 import { isMobile } from "./mobile-only";
 import { AddressView } from "@/views/address-view";
 import { TransactionViewSuspense } from "@/views/tx-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
+import { AddressSchema, BlockNumberSchema, TransactionSchema } from "@/schema";
 
-export type View =
+type ViewContextValue = {
+	views: string[];
+	status: "idle" | "pending";
+	push(view: string): Promise<void>;
+	remove(view: string): Promise<void>;
+};
+
+const ViewContext = createContext<ViewContextValue | null>(null);
+
+export function ViewContextProvider(props: { children?: ReactNode }) {
+	const navigate = useNavigate();
+	const params = useParams({ from: "/$" });
+
+	const [state, setState] = useState(() => {
+		return {
+			status: "idle" as const,
+			views: params._splat ? params._splat.split("/") : [],
+		};
+	});
+
+	const value = {
+		views: state.views,
+
+		status: state.status,
+
+		async remove(view: string) {
+			const updated = state.views.filter((s) => s !== view);
+			if (updated.length === state.views.length) return;
+			const index = state.views.findIndex((s) => s === view);
+			if (index === state.views.length - 1) scrollToView(index - 2);
+			setState((state) => ({ ...state, views: updated }));
+			await navigate({ to: `/${updated.join("/")}` });
+		},
+
+		async push(view: string) {
+			if (isMobile()) {
+				setState((state) => ({ ...state, views: [view] }));
+				await navigate({ to: "/$", params: { _splat: view } });
+				return;
+			}
+
+			if (state.views.includes(view)) {
+				const index = state.views.findIndex((s) => s === view);
+				scrollToView(index);
+				return;
+			}
+
+			scrollToView(state.views.length);
+			setState((state) => ({ ...state, views: [...state.views, view] }));
+			await navigate({ to: `/${[...state.views, view].join("/")}` });
+		},
+	};
+
+	return <ViewContext value={value}>{props.children}</ViewContext>;
+}
+
+export function useViews() {
+	return useContext(ViewContext) ?? raise("Missing ViewContextProvider");
+}
+
+type View =
 	| { type: "block-number"; data: number; view: string }
 	| { type: "address"; data: `0x${string}`; view: string }
 	| { type: "transaction"; data: `0x${string}`; view: string };
-
-export const AddressSchema = v.pipe(
-	v.custom<string>((val) => typeof val === "string" && val.startsWith("0x") && val.length === 42),
-	v.transform((address) => getAddress(address as `0x${string}`)),
-);
-
-export const TransactionSchema = v.pipe(
-	v.custom<string>((val) => typeof val === "string" && val.startsWith("0x") && val.length === 66),
-	v.transform((tx) => tx as `0x${string}`),
-);
-
-export const BlockNumberSchema = v.pipe(
-	v.string(),
-	v.toNumber(),
-	v.integer(),
-	v.minValue(0),
-	v.maxValue(1_000_000_000),
-);
 
 export function getView(view: string): View | null {
 	// Defaults to Ethereum mainnet. We will need some way to specify chain
@@ -49,45 +93,25 @@ export function getView(view: string): View | null {
 
 const VIEW_WIDTH = 608;
 
-export function useViews() {
-	const navigate = useNavigate();
-	const params = useParams({ from: "/$" });
+// We update the push function to accept a specific view type. It will handle searching the tx
+// hash based on the block number and tx id.
 
-	return {
-		async remove(view: string) {
-			const views = params._splat ? params._splat.split("/") : [];
-			const updated = views.filter((s) => s !== view);
-			if (updated.length === views.length) return;
-			const index = views.findIndex((s) => s === view);
-			if (index === views.length - 1) scrollToView(index - 2);
-			await navigate({ to: `/${updated.join("/")}` });
-		},
+// It will also return a loading state if a new view is being pushed. This loading state will be
+// used to render a loading view in the view container. We use regular state for this to issue updates.
 
-		async push(view: string) {
-			if (isMobile()) {
-				return await navigate({ to: "/$", params: { _splat: view } });
-			}
+// This function also becomes the source of the view state by reading the query params as the initial state.
+// Whenever we push, we need to push to both the state and the url. This allows us to remove the loading state
+// and push the new view in the same update to prevent a flash of content. We'll need this hook to be a
+// context provider to prevent multiple versions existing from different consumer components
 
-			const views = params._splat ? params._splat.split("/") : [];
-
-			if (views.includes(view)) {
-				const index = views.findIndex((s) => s === view);
-				scrollToView(index);
-				return;
-			}
-
-			const count = views.push(view);
-			scrollToView(count - 1);
-			await navigate({ to: `/${views.join("/")}` });
-		},
-	};
-}
+// Use a useRef to prevent duplicate in-flight calls for the same block number + tx index
 
 const useViewScroll = create<number | null>(() => null);
 const markViewScrolled = () => useViewScroll.setState(null);
 const scrollToView = (segment: number) => useViewScroll.setState(segment);
 
 export function ViewsContainer(props: { children: ReactNode }) {
+	const views = useViews();
 	const view = useViewScroll();
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -104,11 +128,14 @@ export function ViewsContainer(props: { children: ReactNode }) {
 		<div ref={ref} className="h-full flex overflow-x-auto scroll-smooth">
 			{props.children}
 
+			{views.status === "pending" && <EmptyView />}
+
 			<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
 
 			{typeof view === "number" && (
 				<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
 			)}
+
 			{typeof view === "number" && (
 				<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
 			)}
