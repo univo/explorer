@@ -4,17 +4,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { getTx, type Tx } from "@/state/tx";
 import { TransactionSchema } from "@/schema";
 import { getEventsForIds } from "@/db/events";
-import { getTx, type Tx } from "@/state/tx";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventIdsForTxHash } from "@/indexes/tx-hash-v1";
-import { AddViewButton } from "@/components/add-view-button";
 import { EventDescription } from "@/views/block-number-view";
 import { formatDateTime, formatNumber, raise } from "@/utils";
-import { CloseViewButton } from "@/components/close-view-button";
+import { AddViewButton, CloseViewButton } from "@/components/views";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 
 async function TransactionView(props: { tx: string }) {

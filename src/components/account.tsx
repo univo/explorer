@@ -1,5 +1,5 @@
 import { Hoverable } from "./hoverable";
-import { AddViewButton } from "./add-view-button";
+import { AddViewButton } from "./views";
 import { getAccount, getAccountName } from "@/state/account";
 
 export async function Account(props: { chain: number; address: `0x${string}` }) {

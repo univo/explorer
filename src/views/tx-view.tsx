@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { EtherscanIcon } from "@/components/icons";
+import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
-import { CloseViewButton } from "@/components/close-view-button";
 
 export function TransactionView(props: { tx: `0x${string}` }) {
 	const query = useQuery({

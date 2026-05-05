@@ -1,6 +1,8 @@
+"use client";
+
 import * as v from "valibot";
 import { create } from "zustand";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { createContext, useContext, useRef, useState } from "react";
@@ -13,6 +15,9 @@ import { AddressView } from "@/views/address-view";
 import { TransactionView } from "@/views/tx-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
 import { AddressSchema, BlockNumberSchema, EventSchema, TransactionSchema } from "@/schema";
+import { DesktopOnly } from "./desktop-only";
+import { IconButton } from "./icon-button";
+import { XIcon } from "./icons";
 
 type View =
 	| { type: "event"; data: string; raw: string }
@@ -223,6 +228,28 @@ export function ClearViewsButton(props: { children?: ReactNode }) {
 
 	return (
 		<button type="button" onMouseDown={() => views.clear()} className="cursor-pointer">
+			{props.children}
+		</button>
+	);
+}
+
+export function CloseViewButton(props: { view: string }) {
+	const views = useViews();
+
+	return (
+		<DesktopOnly>
+			<IconButton type="button" onMouseDown={() => views.remove(props.view)}>
+				<XIcon className="shrink-0 size-4" />
+			</IconButton>
+		</DesktopOnly>
+	);
+}
+
+export function AddViewButton(props: { view: string } & ComponentProps<"button">) {
+	const views = useViews();
+
+	return (
+		<button {...props} onMouseDown={() => views.push(props.view)}>
 			{props.children}
 		</button>
 	);
