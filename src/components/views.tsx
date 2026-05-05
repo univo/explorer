@@ -11,8 +11,14 @@ import { TransactionViewSuspense } from "@/views/tx-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
 import { AddressSchema, BlockNumberSchema, TransactionSchema } from "@/schema";
 
+type View =
+	| { type: "event"; data: string; raw: string }
+	| { type: "block-number"; data: number; raw: string }
+	| { type: "address"; data: `0x${string}`; raw: string }
+	| { type: "transaction"; data: `0x${string}`; raw: string };
+
 type ViewContextValue = {
-	views: string[];
+	value: string[];
 	status: "idle" | "pending";
 	push(view: string): Promise<void>;
 	remove(view: string): Promise<void>;
@@ -27,40 +33,40 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 	const [state, setState] = useState(() => {
 		return {
 			status: "idle" as const,
-			views: params._splat ? params._splat.split("/") : [],
+			value: params._splat ? params._splat.split("/") : [],
 		};
 	});
 
 	const value = {
-		views: state.views,
+		value: state.value,
 
 		status: state.status,
 
 		async remove(view: string) {
-			const updated = state.views.filter((s) => s !== view);
-			if (updated.length === state.views.length) return;
-			const index = state.views.findIndex((s) => s === view);
-			if (index === state.views.length - 1) scrollToView(index - 2);
-			setState((state) => ({ ...state, views: updated }));
+			const updated = state.value.filter((s) => s !== view);
+			if (updated.length === state.value.length) return;
+			const index = state.value.findIndex((s) => s === view);
+			if (index === state.value.length - 1) scrollToView(index - 2);
+			setState((state) => ({ ...state, value: updated }));
 			await navigate({ to: `/${updated.join("/")}` });
 		},
 
 		async push(view: string) {
 			if (isMobile()) {
-				setState((state) => ({ ...state, views: [view] }));
+				setState((state) => ({ ...state, value: [view] }));
 				await navigate({ to: "/$", params: { _splat: view } });
 				return;
 			}
 
-			if (state.views.includes(view)) {
-				const index = state.views.findIndex((s) => s === view);
+			if (state.value.includes(view)) {
+				const index = state.value.findIndex((s) => s === view);
 				scrollToView(index);
 				return;
 			}
 
-			scrollToView(state.views.length);
-			setState((state) => ({ ...state, views: [...state.views, view] }));
-			await navigate({ to: `/${[...state.views, view].join("/")}` });
+			scrollToView(state.value.length);
+			setState((state) => ({ ...state, value: [...state.value, view] }));
+			await navigate({ to: `/${[...state.value, view].join("/")}` });
 		},
 	};
 
@@ -71,22 +77,17 @@ export function useViews() {
 	return useContext(ViewContext) ?? raise("Missing ViewContextProvider");
 }
 
-type View =
-	| { type: "block-number"; data: number; view: string }
-	| { type: "address"; data: `0x${string}`; view: string }
-	| { type: "transaction"; data: `0x${string}`; view: string };
-
 export function getView(view: string): View | null {
 	// Defaults to Ethereum mainnet. We will need some way to specify chain
 
 	const address = v.safeParse(AddressSchema, view);
-	if (address.success) return { type: "address", data: address.output, view };
+	if (address.success) return { type: "address", data: address.output, raw: view };
 
 	const tx = v.safeParse(TransactionSchema, view);
-	if (tx.success) return { type: "transaction", data: tx.output, view };
+	if (tx.success) return { type: "transaction", data: tx.output, raw: view };
 
 	const block_number = v.safeParse(BlockNumberSchema, view);
-	if (block_number.success) return { type: "block-number", data: block_number.output, view };
+	if (block_number.success) return { type: "block-number", data: block_number.output, raw: view };
 
 	return null;
 }

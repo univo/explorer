@@ -10,9 +10,9 @@ export const Route = createFileRoute("/$")({
 });
 
 function Component() {
-	const { views } = useViews();
+	const views = useViews();
 
-	if (views.length === 0) {
+	if (views.value.length === 0) {
 		return (
 			<ViewsContainer>
 				<ViewContainer>
@@ -24,7 +24,7 @@ function Component() {
 
 	return (
 		<ViewsContainer>
-			{views.map((view) => {
+			{views.value.map((view) => {
 				return (
 					<ViewContainer key={view}>
 						<View view={view} />
