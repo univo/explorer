@@ -195,6 +195,6 @@ export function View(props: { view: string }) {
 
 	if (view === null) return <EmptyView />;
 	if (view.type === "address") return <AddressView address={view.data} />;
-	if (view.type === "transaction") return <TransactionView view={props.view} />;
+	if (view.type === "transaction") return <TransactionView tx={view.data} />;
 	if (view.type === "block-number") return <BlockNumberViewSuspense view={props.view} />;
 }

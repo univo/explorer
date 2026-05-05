@@ -10,15 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
+import { Route as RscTransactionViewRouteImport } from './routes/rsc/TransactionView'
 import { Route as RscAddressHeaderRouteImport } from './routes/rsc/AddressHeader'
 import { Route as RscAddressEventsRouteImport } from './routes/rsc/AddressEvents'
 import { Route as ApiUnivoRouteImport } from './routes/api/univo'
-import { Route as ApiTxTxRouteImport } from './routes/api/tx.$tx'
 import { Route as ApiBlockNumberNumberRouteImport } from './routes/api/block-number.$number'
 
 const SplatRoute = SplatRouteImport.update({
   id: '/$',
   path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RscTransactionViewRoute = RscTransactionViewRouteImport.update({
+  id: '/rsc/TransactionView',
+  path: '/rsc/TransactionView',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RscAddressHeaderRoute = RscAddressHeaderRouteImport.update({
@@ -36,11 +41,6 @@ const ApiUnivoRoute = ApiUnivoRouteImport.update({
   path: '/api/univo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTxTxRoute = ApiTxTxRouteImport.update({
-  id: '/api/tx/$tx',
-  path: '/api/tx/$tx',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiBlockNumberNumberRoute = ApiBlockNumberNumberRouteImport.update({
   id: '/api/block-number/$number',
   path: '/api/block-number/$number',
@@ -52,16 +52,16 @@ export interface FileRoutesByFullPath {
   '/api/univo': typeof ApiUnivoRoute
   '/rsc/AddressEvents': typeof RscAddressEventsRoute
   '/rsc/AddressHeader': typeof RscAddressHeaderRoute
+  '/rsc/TransactionView': typeof RscTransactionViewRoute
   '/api/block-number/$number': typeof ApiBlockNumberNumberRoute
-  '/api/tx/$tx': typeof ApiTxTxRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/api/univo': typeof ApiUnivoRoute
   '/rsc/AddressEvents': typeof RscAddressEventsRoute
   '/rsc/AddressHeader': typeof RscAddressHeaderRoute
+  '/rsc/TransactionView': typeof RscTransactionViewRoute
   '/api/block-number/$number': typeof ApiBlockNumberNumberRoute
-  '/api/tx/$tx': typeof ApiTxTxRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,8 +69,8 @@ export interface FileRoutesById {
   '/api/univo': typeof ApiUnivoRoute
   '/rsc/AddressEvents': typeof RscAddressEventsRoute
   '/rsc/AddressHeader': typeof RscAddressHeaderRoute
+  '/rsc/TransactionView': typeof RscTransactionViewRoute
   '/api/block-number/$number': typeof ApiBlockNumberNumberRoute
-  '/api/tx/$tx': typeof ApiTxTxRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -79,24 +79,24 @@ export interface FileRouteTypes {
     | '/api/univo'
     | '/rsc/AddressEvents'
     | '/rsc/AddressHeader'
+    | '/rsc/TransactionView'
     | '/api/block-number/$number'
-    | '/api/tx/$tx'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
     | '/api/univo'
     | '/rsc/AddressEvents'
     | '/rsc/AddressHeader'
+    | '/rsc/TransactionView'
     | '/api/block-number/$number'
-    | '/api/tx/$tx'
   id:
     | '__root__'
     | '/$'
     | '/api/univo'
     | '/rsc/AddressEvents'
     | '/rsc/AddressHeader'
+    | '/rsc/TransactionView'
     | '/api/block-number/$number'
-    | '/api/tx/$tx'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -104,8 +104,8 @@ export interface RootRouteChildren {
   ApiUnivoRoute: typeof ApiUnivoRoute
   RscAddressEventsRoute: typeof RscAddressEventsRoute
   RscAddressHeaderRoute: typeof RscAddressHeaderRoute
+  RscTransactionViewRoute: typeof RscTransactionViewRoute
   ApiBlockNumberNumberRoute: typeof ApiBlockNumberNumberRoute
-  ApiTxTxRoute: typeof ApiTxTxRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/$'
       fullPath: '/$'
       preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rsc/TransactionView': {
+      id: '/rsc/TransactionView'
+      path: '/rsc/TransactionView'
+      fullPath: '/rsc/TransactionView'
+      preLoaderRoute: typeof RscTransactionViewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rsc/AddressHeader': {
@@ -138,13 +145,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUnivoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/tx/$tx': {
-      id: '/api/tx/$tx'
-      path: '/api/tx/$tx'
-      fullPath: '/api/tx/$tx'
-      preLoaderRoute: typeof ApiTxTxRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/block-number/$number': {
       id: '/api/block-number/$number'
       path: '/api/block-number/$number'
@@ -160,8 +160,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUnivoRoute: ApiUnivoRoute,
   RscAddressEventsRoute: RscAddressEventsRoute,
   RscAddressHeaderRoute: RscAddressHeaderRoute,
+  RscTransactionViewRoute: RscTransactionViewRoute,
   ApiBlockNumberNumberRoute: ApiBlockNumberNumberRoute,
-  ApiTxTxRoute: ApiTxTxRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
