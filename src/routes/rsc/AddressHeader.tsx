@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { AddressSchema } from "@/components/views";
+import { AddressSchema } from "@/schema";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CloseViewButton } from "@/components/close-view-button";

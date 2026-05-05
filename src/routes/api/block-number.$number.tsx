@@ -3,8 +3,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { BlockNumberSchema } from "@/schema";
 import { BlockNumberView } from "@/views/block-number-view";
-import { BlockNumberSchema } from "@/components/views";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ number: BlockNumberSchema }))

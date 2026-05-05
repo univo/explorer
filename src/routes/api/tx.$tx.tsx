@@ -3,8 +3,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { TransactionSchema } from "@/schema";
 import { TransactionView } from "@/views/tx-view";
-import { TransactionSchema } from "@/components/views";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ tx: TransactionSchema }))
