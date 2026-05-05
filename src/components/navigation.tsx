@@ -1,9 +1,9 @@
 import clsx from "clsx";
-import { Link } from "@tanstack/react-router";
 
 import { Logo } from "./logo";
 import { SearchIcon } from "./icons";
 import { Container } from "./container";
+import { ClearViewsButton } from "./views";
 import { setSearchOpen, useSearchOpen } from "./search-dialog";
 
 export function Navigation() {
@@ -15,9 +15,9 @@ export function Navigation() {
 				<div className="h-(--header-height) flex items-center">
 					<div className="grid grid-cols-12 gap-4 w-full">
 						<div className="flex items-center col-span-4">
-							<Link to="/$" params={{ _splat: "" }}>
+							<ClearViewsButton>
 								<Logo className="w-auto h-6" />
-							</Link>
+							</ClearViewsButton>
 						</div>
 
 						<div className="col-span-8 flex items-center justify-end">

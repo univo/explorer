@@ -23,6 +23,7 @@ type View =
 type ViewContextValue = {
 	value: string[];
 	status: "idle" | "pending";
+	clear(): Promise<void>;
 	push(view: string): Promise<void>;
 	remove(view: string): Promise<void>;
 };
@@ -41,6 +42,11 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		};
 	});
 
+	async function clear() {
+		setState({ status: "idle", value: [] });
+		await navigate({ to: `/$`, params: { _splat: undefined } });
+	}
+
 	async function remove(view: string) {
 		const updated = state.value.filter((s) => s !== view);
 
@@ -55,7 +61,7 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		}
 
 		setState({ status: "idle", value: updated });
-		await navigate({ to: `/${updated.join("/")}` });
+		await navigate({ to: `/$`, params: { _splat: updated.join("/") } });
 	}
 
 	async function push(view: string): Promise<void> {
@@ -92,10 +98,10 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 
 		scrollToView(state.value.length);
 		setState((state) => ({ status: "idle", value: [...state.value, view] }));
-		await navigate({ to: `/${[...state.value, view].join("/")}` });
+		await navigate({ to: `/$`, params: { _splat: [...state.value, view].join("/") } });
 	}
 
-	const value = { ...state, push, remove };
+	const value = { ...state, push, remove, clear };
 
 	return <ViewContext value={value}>{props.children}</ViewContext>;
 }
@@ -210,4 +216,14 @@ export function View(props: { view: string }) {
 	if (view.type === "address") return <AddressView address={view.data} />;
 	if (view.type === "transaction") return <TransactionView tx={view.data} />;
 	if (view.type === "block-number") return <BlockNumberViewSuspense view={props.view} />;
+}
+
+export function ClearViewsButton(props: { children?: ReactNode }) {
+	const views = useViews();
+
+	return (
+		<button type="button" onMouseDown={() => views.clear()} className="cursor-pointer">
+			{props.children}
+		</button>
+	);
 }
