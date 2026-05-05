@@ -1,15 +1,18 @@
 import * as v from "valibot";
 import { create } from "zustand";
 import type { ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { createContext, useContext, useRef, useState } from "react";
 
 import { raise } from "@/utils";
+import { parseId } from "@/helpers";
 import { isMobile } from "./mobile-only";
+import { sf_getTxHash } from "@/functions";
 import { AddressView } from "@/views/address-view";
 import { TransactionViewSuspense } from "@/views/tx-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
-import { AddressSchema, BlockNumberSchema, TransactionSchema } from "@/schema";
+import { AddressSchema, BlockNumberSchema, EventSchema, TransactionSchema } from "@/schema";
 
 type View =
 	| { type: "event"; data: string; raw: string }
@@ -29,46 +32,66 @@ const ViewContext = createContext<ViewContextValue | null>(null);
 export function ViewContextProvider(props: { children?: ReactNode }) {
 	const navigate = useNavigate();
 	const params = useParams({ from: "/$" });
+	const getTxHash = useServerFn(sf_getTxHash);
 
 	const [state, setState] = useState(() => {
 		return {
-			status: "idle" as const,
+			status: "idle" as ViewContextValue["status"],
 			value: params._splat ? params._splat.split("/") : [],
 		};
 	});
 
-	const value = {
-		value: state.value,
+	async function remove(view: string) {
+		const updated = state.value.filter((s) => s !== view);
 
-		status: state.status,
+		if (updated.length === state.value.length) {
+			return; // View doesn't exist
+		}
 
-		async remove(view: string) {
-			const updated = state.value.filter((s) => s !== view);
-			if (updated.length === state.value.length) return;
+		const index = state.value.findIndex((s) => s === view);
+
+		if (index === state.value.length - 1) {
+			scrollToView(index - 2);
+		}
+
+		setState({ status: "idle", value: updated });
+		await navigate({ to: `/${updated.join("/")}` });
+	}
+
+	async function push(view: string): Promise<void> {
+		const parsed = getView(view);
+
+		if (parsed === null) {
+			return; // Ignore invalid views
+		}
+
+		if (parsed.type === "event") {
+			setState((state) => ({ ...state, status: "pending" })); // Force loading state
+
+			const { block_timestamp, block_number, tx_index } = parseId(parsed.data);
+			const tx = await getTxHash({ data: { block_timestamp, block_number, tx_index } });
+
+			return push(tx);
+		}
+
+		if (isMobile()) {
+			setState((state) => ({ ...state, value: [view] }));
+			await navigate({ to: "/$", params: { _splat: view } });
+			return;
+		}
+
+		if (state.value.includes(view)) {
 			const index = state.value.findIndex((s) => s === view);
-			if (index === state.value.length - 1) scrollToView(index - 2);
-			setState((state) => ({ ...state, value: updated }));
-			await navigate({ to: `/${updated.join("/")}` });
-		},
+			scrollToView(index);
+			return;
+		}
 
-		async push(view: string) {
-			if (isMobile()) {
-				setState((state) => ({ ...state, value: [view] }));
-				await navigate({ to: "/$", params: { _splat: view } });
-				return;
-			}
+		scrollToView(state.value.length);
+		setState((state) => ({ status: "idle", value: [...state.value, view] }));
+		await navigate({ to: `/${[...state.value, view].join("/")}` });
+	}
 
-			if (state.value.includes(view)) {
-				const index = state.value.findIndex((s) => s === view);
-				scrollToView(index);
-				return;
-			}
-
-			scrollToView(state.value.length);
-			setState((state) => ({ ...state, value: [...state.value, view] }));
-			await navigate({ to: `/${[...state.value, view].join("/")}` });
-		},
-	};
+	const value = { ...state, push, remove };
 
 	return <ViewContext value={value}>{props.children}</ViewContext>;
 }
@@ -88,6 +111,9 @@ export function getView(view: string): View | null {
 
 	const block_number = v.safeParse(BlockNumberSchema, view);
 	if (block_number.success) return { type: "block-number", data: block_number.output, raw: view };
+
+	const event = v.safeParse(EventSchema, view);
+	if (event.success) return { type: "event", data: event.output, raw: view };
 
 	return null;
 }
@@ -129,7 +155,11 @@ export function ViewsContainer(props: { children: ReactNode }) {
 		<div ref={ref} className="h-full flex overflow-x-auto scroll-smooth">
 			{props.children}
 
-			{views.status === "pending" && <EmptyView />}
+			{views.status === "pending" && (
+				<ViewContainer>
+					<EmptyView />
+				</ViewContainer>
+			)}
 
 			<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
 
