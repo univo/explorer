@@ -11,8 +11,8 @@ import { raise } from "@/utils";
 import { createId } from "@/helpers";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
+import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
-import { CloseViewButton } from "@/components/close-view-button";
 
 export function AddressView(props: { address: `0x${string}` }) {
 	return (

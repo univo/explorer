@@ -19,7 +19,7 @@ export function Search(props: SearchProps) {
 		const view = getView(search);
 		if (!view) return;
 		if (props.onClose) props.onClose();
-		views.push(view.view);
+		views.push(view.raw);
 	}
 
 	return (

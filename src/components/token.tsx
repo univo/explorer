@@ -2,10 +2,10 @@ import { Fragment } from "react";
 
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
+import { AddViewButton } from "./views";
 import { getToken } from "@/state/token";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
-import { AddViewButton } from "./add-view-button";
 
 export async function Token(props: { chain: number; address: `0x${string}`; quantity?: string }) {
 	const token = await getToken({ chain: props.chain, address: props.address });

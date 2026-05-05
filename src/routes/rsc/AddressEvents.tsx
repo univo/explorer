@@ -4,8 +4,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { AddressSchema } from "@/schema";
 import type { Account } from "@/state/account";
-import { AddressSchema } from "@/components/views";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { formatRelativeDate, formatTime } from "@/utils";
 import { getEventsForIds, type Event } from "@/db/events";
