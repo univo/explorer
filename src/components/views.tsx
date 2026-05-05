@@ -79,14 +79,14 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		}
 
 		if (isMobile()) {
-			setState((state) => ({ ...state, value: [view] }));
+			setState({ status: "idle", value: [view] });
 			await navigate({ to: "/$", params: { _splat: view } });
 			return;
 		}
 
 		if (state.value.includes(view)) {
-			const index = state.value.findIndex((s) => s === view);
-			scrollToView(index);
+			scrollToView(state.value.findIndex((s) => s === view)); // Scroll to existing view
+			setState((state) => ({ ...state, status: "idle" }));
 			return;
 		}
 
@@ -142,7 +142,6 @@ const markViewScrolled = () => useViewScroll.setState(null);
 const scrollToView = (segment: number) => useViewScroll.setState(segment);
 
 export function ViewsContainer(props: { children: ReactNode }) {
-	const views = useViews();
 	const view = useViewScroll();
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -159,11 +158,7 @@ export function ViewsContainer(props: { children: ReactNode }) {
 		<div ref={ref} className="h-full flex overflow-x-auto scroll-smooth">
 			{props.children}
 
-			{views.status === "pending" && (
-				<ViewContainer>
-					<EmptyView />
-				</ViewContainer>
-			)}
+			<PendingView />
 
 			<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
 
@@ -183,6 +178,24 @@ export function ViewContainer(props: { children: ReactNode }) {
 		<div className="border-r border-gray-200 w-screen md:min-w-(--view-width) md:w-(--view-width)">
 			{props.children}
 		</div>
+	);
+}
+
+function PendingView() {
+	const views = useViews();
+
+	if (isMobile()) {
+		return undefined;
+	}
+
+	if (views.status === "idle") {
+		return undefined;
+	}
+
+	return (
+		<ViewContainer>
+			<EmptyView />
+		</ViewContainer>
 	);
 }
 
