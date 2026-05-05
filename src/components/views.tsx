@@ -10,7 +10,7 @@ import { parseId } from "@/helpers";
 import { isMobile } from "./mobile-only";
 import { sf_getTxHash } from "@/functions";
 import { AddressView } from "@/views/address-view";
-import { TransactionViewSuspense } from "@/views/tx-view";
+import { TransactionView } from "@/views/tx-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
 import { AddressSchema, BlockNumberSchema, EventSchema, TransactionSchema } from "@/schema";
 
@@ -67,9 +67,13 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 
 		if (parsed.type === "event") {
 			setState((state) => ({ ...state, status: "pending" })); // Force loading state
+			scrollToView(state.value.length); // Scroll to the loading state view
 
 			const { block_timestamp, block_number, tx_index } = parseId(parsed.data);
 			const tx = await getTxHash({ data: { block_timestamp, block_number, tx_index } });
+
+			// We recursively push the tx view so that the next state update will remove the
+			// loading status and push the new view in the same update
 
 			return push(tx);
 		}
@@ -191,6 +195,6 @@ export function View(props: { view: string }) {
 
 	if (view === null) return <EmptyView />;
 	if (view.type === "address") return <AddressView address={view.data} />;
-	if (view.type === "transaction") return <TransactionViewSuspense view={props.view} />;
+	if (view.type === "transaction") return <TransactionView view={props.view} />;
 	if (view.type === "block-number") return <BlockNumberViewSuspense view={props.view} />;
 }
