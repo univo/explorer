@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import type { ReactNode, MouseEvent } from "react";
 
-import { useViews } from "./views";
+import { useViewIndex, useViews } from "./views";
 
 const useHoveredPrefix = create<string | null>(() => null);
 const setHoveredPrefix = (id: string | null) => useHoveredPrefix.setState(id);
@@ -23,12 +23,13 @@ function hasClickableParentElement(element: HTMLElement) {
 
 export function EventTableRow(props: { id: string; children: ReactNode }) {
 	const views = useViews();
+	const index = useViewIndex();
 	const hovered = useHoveredPrefix();
 	const prefix = props.id.slice(0, 23); // Includes block number and tx id
 
 	function handleClick(event: MouseEvent) {
 		if (hasClickableParentElement(event.target as HTMLElement)) return;
-		views.push(props.id);
+		views.push(props.id, index);
 	}
 
 	return (

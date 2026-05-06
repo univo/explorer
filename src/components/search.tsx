@@ -19,7 +19,7 @@ export function Search(props: SearchProps) {
 		const view = getView(search);
 		if (!view) return;
 		if (props.onClose) props.onClose();
-		views.push(view.raw);
+		views.push(view.raw, null);
 	}
 
 	return (
@@ -258,7 +258,7 @@ function Tokens(props: { onClose?: () => void }) {
 		>
 			{tokens.map((token) => {
 				async function onSelect() {
-					await views.push(getAddress(token.address));
+					await views.push(getAddress(token.address), null);
 					if (props.onClose) props.onClose();
 				}
 

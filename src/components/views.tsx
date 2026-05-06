@@ -7,17 +7,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { createContext, useContext, useRef, useState } from "react";
 
+import { XIcon } from "./icons";
 import { raise } from "@/utils";
 import { parseId } from "@/helpers";
-import { isMobile } from "./mobile-only";
+import { IconButton } from "./icon-button";
 import { sf_getTxHash } from "@/functions";
 import { AddressView } from "@/views/address-view";
 import { TransactionView } from "@/views/tx-view";
 import { BlockNumberViewSuspense } from "@/views/block-number-view";
 import { AddressSchema, BlockNumberSchema, EventSchema, TransactionSchema } from "@/schema";
-import { DesktopOnly } from "./desktop-only";
-import { IconButton } from "./icon-button";
-import { XIcon } from "./icons";
 
 type View =
 	| { type: "event"; data: string; raw: string }
@@ -27,10 +25,9 @@ type View =
 
 type ViewContextValue = {
 	value: string[];
-	status: "idle" | "pending";
 	clear(): Promise<void>;
-	push(view: string): Promise<void>;
 	remove(view: string): Promise<void>;
+	push(view: string, index: number | null): Promise<void>;
 };
 
 const ViewContext = createContext<ViewContextValue | null>(null);
@@ -42,13 +39,12 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 
 	const [state, setState] = useState(() => {
 		return {
-			status: "idle" as ViewContextValue["status"],
 			value: params._splat ? params._splat.split("/") : [],
 		};
 	});
 
 	async function clear() {
-		setState({ status: "idle", value: [] });
+		setState({ value: [] });
 		await navigate({ to: `/$`, params: { _splat: undefined } });
 	}
 
@@ -62,14 +58,14 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		const index = state.value.findIndex((s) => s === view);
 
 		if (index === state.value.length - 1) {
-			scrollToView(index - 2);
+			scrollToView(index - 1); // Scroll to previous view
 		}
 
-		setState({ status: "idle", value: updated });
+		setState({ value: updated });
 		await navigate({ to: `/$`, params: { _splat: updated.join("/") } });
 	}
 
-	async function push(view: string): Promise<void> {
+	async function push(view: string, index: number | null): Promise<void> {
 		const parsed = getView(view);
 
 		if (parsed === null) {
@@ -77,8 +73,7 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		}
 
 		if (parsed.type === "event") {
-			setState((state) => ({ ...state, status: "pending" })); // Force loading state
-			scrollToView(state.value.length); // Scroll to the loading state view
+			setState((state) => ({ ...state, status: "pending" }));
 
 			const { block_timestamp, block_number, tx_index } = parseId(parsed.data);
 			const tx = await getTxHash({ data: { block_timestamp, block_number, tx_index } });
@@ -86,24 +81,31 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 			// We recursively push the tx view so that the next state update will remove the
 			// loading status and push the new view in the same update
 
-			return push(tx);
-		}
-
-		if (isMobile()) {
-			setState({ status: "idle", value: [view] });
-			await navigate({ to: "/$", params: { _splat: view } });
-			return;
+			return push(tx, index);
 		}
 
 		if (state.value.includes(view)) {
-			scrollToView(state.value.findIndex((s) => s === view)); // Scroll to existing view
-			setState((state) => ({ ...state, status: "idle" }));
-			return;
+			return setState((state) => {
+				scrollToView(state.value.findIndex((s) => s === view)); // Scroll to existing view
+				return { ...state, status: "idle" };
+			});
 		}
 
-		scrollToView(state.value.length);
-		setState((state) => ({ status: "idle", value: [...state.value, view] }));
-		await navigate({ to: `/$`, params: { _splat: [...state.value, view].join("/") } });
+		if (index === null) {
+			return setState((state) => {
+				scrollToView(state.value.length);
+				const updated = [...state.value, view];
+				navigate({ to: `/$`, params: { _splat: updated.join("/") } });
+				return { status: "idle", value: updated };
+			});
+		}
+
+		return setState((state) => {
+			scrollToView(index + 1);
+			const updated = [...state.value.filter((_, i) => i <= index), view];
+			navigate({ to: "/$", params: { _splat: updated.join("/") } });
+			return { status: "idle", value: updated };
+		});
 	}
 
 	const value = { ...state, push, remove, clear };
@@ -133,21 +135,6 @@ export function getView(view: string): View | null {
 	return null;
 }
 
-const VIEW_WIDTH = 608;
-
-// We update the push function to accept a specific view type. It will handle searching the tx
-// hash based on the block number and tx id.
-
-// It will also return a loading state if a new view is being pushed. This loading state will be
-// used to render a loading view in the view container. We use regular state for this to issue updates.
-
-// This function also becomes the source of the view state by reading the query params as the initial state.
-// Whenever we push, we need to push to both the state and the url. This allows us to remove the loading state
-// and push the new view in the same update to prevent a flash of content. We'll need this hook to be a
-// context provider to prevent multiple versions existing from different consumer components
-
-// Use a useRef to prevent duplicate in-flight calls for the same block number + tx index
-
 const useViewScroll = create<number | null>(() => null);
 const markViewScrolled = () => useViewScroll.setState(null);
 const scrollToView = (segment: number) => useViewScroll.setState(segment);
@@ -156,57 +143,32 @@ export function ViewsContainer(props: { children: ReactNode }) {
 	const view = useViewScroll();
 	const ref = useRef<HTMLDivElement>(null);
 
+	const isScrolling = typeof view === "number";
+
 	if (ref.current && view !== null) {
-		const current = Math.floor(ref.current.scrollLeft / VIEW_WIDTH);
+		const width = ref.current.scrollWidth / ref.current.childElementCount;
+		const current = Math.floor(ref.current.scrollLeft / width);
 		const align = view > current ? "right" : "left";
-		const offset = align === "left" ? 0 : window.innerWidth - VIEW_WIDTH;
-		const left = view * VIEW_WIDTH - offset;
-		ref.current.scrollTo({ left, behavior: "smooth" });
+		const offset = align === "left" ? 0 : window.innerWidth - width;
+		const target = view * width - offset;
+		ref.current.scrollTo({ left: target, behavior: "smooth" });
 		setTimeout(() => markViewScrolled(), 1000); // We have no good way to determine when smooth scroll completes
 	}
 
 	return (
-		<div ref={ref} className="h-full flex overflow-x-auto scroll-smooth">
+		<div ref={ref} className="h-full flex overflow-x-auto scroll-smooth snap-x snap-mandatory">
 			{props.children}
 
-			<PendingView />
-
-			<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
-
-			{typeof view === "number" && (
-				<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
-			)}
-
-			{typeof view === "number" && (
-				<div className="hidden md:block h-full min-w-(--view-width) w-(--view-width) border-r border-gray-200 border-dashed" />
-			)}
+			{isScrolling && <div className="shrink-0 w-screen md:w-(--view-width)" />}
 		</div>
 	);
 }
 
 export function ViewContainer(props: { children: ReactNode }) {
 	return (
-		<div className="border-r border-gray-200 w-screen md:min-w-(--view-width) md:w-(--view-width)">
+		<div className="snap-start snap-always md:snap-align-none shrink-0 w-screen md:w-(--view-width) first:border-l border-r border-gray-200">
 			{props.children}
 		</div>
-	);
-}
-
-function PendingView() {
-	const views = useViews();
-
-	if (isMobile()) {
-		return undefined;
-	}
-
-	if (views.status === "idle") {
-		return undefined;
-	}
-
-	return (
-		<ViewContainer>
-			<EmptyView />
-		</ViewContainer>
 	);
 }
 
@@ -214,13 +176,21 @@ function EmptyView() {
 	return <div className="w-full h-full bg-white" />;
 }
 
-export function View(props: { view: string }) {
+const ViewIndexContext = createContext<number | null>(null);
+
+export const useViewIndex = () => useContext(ViewIndexContext);
+
+export function View(props: { view: string; index: number }) {
 	const view = getView(props.view);
 
-	if (view === null) return <EmptyView />;
-	if (view.type === "address") return <AddressView address={view.data} />;
-	if (view.type === "transaction") return <TransactionView tx={view.data} />;
-	if (view.type === "block-number") return <BlockNumberViewSuspense view={props.view} />;
+	return (
+		<ViewIndexContext value={props.index}>
+			{view === null && <EmptyView />}
+			{view !== null && view.type === "address" && <AddressView address={view.data} />}
+			{view !== null && view.type === "transaction" && <TransactionView tx={view.data} />}
+			{view !== null && view.type === "block-number" && <BlockNumberViewSuspense view={props.view} />}
+		</ViewIndexContext>
+	);
 }
 
 export function ClearViewsButton(props: { children?: ReactNode }) {
@@ -237,19 +207,18 @@ export function CloseViewButton(props: { view: string }) {
 	const views = useViews();
 
 	return (
-		<DesktopOnly>
-			<IconButton type="button" onMouseDown={() => views.remove(props.view)}>
-				<XIcon className="shrink-0 size-4" />
-			</IconButton>
-		</DesktopOnly>
+		<IconButton type="button" onMouseDown={() => views.remove(props.view)}>
+			<XIcon className="shrink-0 size-4" />
+		</IconButton>
 	);
 }
 
 export function AddViewButton(props: { view: string } & ComponentProps<"button">) {
 	const views = useViews();
+	const index = useViewIndex();
 
 	return (
-		<button {...props} onMouseDown={() => views.push(props.view)}>
+		<button {...props} onMouseDown={() => views.push(props.view, index)}>
 			{props.children}
 		</button>
 	);
