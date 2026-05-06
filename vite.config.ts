@@ -1,15 +1,13 @@
 import { defineConfig } from "vite";
 import rsc from "@vitejs/plugin-rsc";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import paths from "vite-tsconfig-paths";
-import { devtools } from "@tanstack/devtools-vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
 const config = defineConfig({
 	plugins: [
-		devtools(),
 		paths({
 			projects: ["./tsconfig.json"],
 		}),
