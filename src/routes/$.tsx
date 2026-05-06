@@ -24,10 +24,10 @@ function Component() {
 
 	return (
 		<ViewsContainer>
-			{views.value.map((view) => {
+			{views.value.map((view, index) => {
 				return (
 					<ViewContainer key={view}>
-						<View view={view} />
+						<View view={view} index={index} />
 					</ViewContainer>
 				);
 			})}
