@@ -1,22 +1,17 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { create } from "zustand";
+
 import { capitalize, formatRelativeDate } from "@/utils";
 
-// TODO: Use a single interval and update globally
-// TODO: If the delta is greater than a minute then only update every minute
+const useCount = create(() => 0);
 
-function useRerender(ms: number) {
-	const [, increment] = useReducer((state) => state + 1, 0);
-
-	useEffect(() => {
-		const id = setInterval(increment, ms);
-		return () => clearInterval(id);
-	}, [ms]);
+if (typeof window !== "undefined") {
+	setInterval(() => useCount.setState((count) => count + 1), 1000);
 }
 
 export function RelativeTimestamp(props: { timestamp: Date }) {
-	useRerender(1000);
+	useCount();
 
 	return capitalize(formatRelativeDate(props.timestamp));
 }
