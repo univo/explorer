@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { formatNumber } from "@/utils";
+import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
@@ -24,6 +25,7 @@ function BlockNumberViewFallback(props: { number: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header number={props.number} />
+			<Events />
 		</div>
 	);
 }
@@ -43,6 +45,22 @@ function Header(props: { number: number }) {
 
 				<CloseViewButton view={String(props.number)} />
 			</div>
+		</div>
+	);
+}
+
+function Events() {
+	return (
+		<div>
+			<LoadingIndicator />
+		</div>
+	);
+}
+
+function LoadingIndicator() {
+	return (
+		<div className="flex justify-center items-center h-16 not-first:border-t not-first:border-gray-200">
+			<Spinner className="size-4" />
 		</div>
 	);
 }
