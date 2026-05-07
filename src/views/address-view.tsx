@@ -141,11 +141,7 @@ function EventsContainer(props: { address: `0x${string}`; startCursor: string })
 		return undefined;
 	}
 
-	return (
-		<Suspense>
-			<VirtualisationContainer>{query.data}</VirtualisationContainer>
-		</Suspense>
-	);
+	return <Suspense>{query.data}</Suspense>;
 }
 
 // The component allows the server to provide cursor related information back to the client
@@ -162,8 +158,8 @@ export function StopCursorContainer(props: { startCursor: string; stopCursor: st
 	return props.children;
 }
 
-function VirtualisationContainer(props: { children: ReactNode }) {
-	const [height, setHeight] = useState(0);
+export function VirtualisationContainer(props: { children: ReactNode }) {
+	const [height, setHeight] = useState<number | null>(null);
 
 	const { ref } = useInView({
 		// We could probably add margin here to prevent the flash as hidden blocks return. Also note that this
@@ -173,23 +169,19 @@ function VirtualisationContainer(props: { children: ReactNode }) {
 
 		// This is pretty safe because our app never sees a lot of browser resizing. On desktop the width of each
 		// view is static. On mobile the only way to resize is to adjust the orientation.
-		onChange: (inView, entry) => setHeight(inView ? 0 : entry.boundingClientRect.height),
+		onChange: (inView, entry) => setHeight(inView ? null : entry.boundingClientRect.height),
 	});
 
 	return (
-		<div
-			ref={ref}
-			style={{ height: height > 0 ? height : undefined }}
-			className="w-full relative border-b border-gray-200"
-		>
-			<div className="divide-y divide-gray-200 overflow-hidden">{height > 0 ? undefined : props.children}</div>
+		<div ref={ref} style={{ height: height === null ? undefined : height }}>
+			{height === null ? props.children : undefined}
 		</div>
 	);
 }
 
 function NoMoreEvents() {
 	return (
-		<div className="flex items-center justify-center h-16">
+		<div className="flex items-center justify-center h-16 not-first:border-t not-first:border-gray-200">
 			<p className="text-gray-500 text-sm">No more events</p>
 		</div>
 	);
@@ -207,7 +199,7 @@ function LoadingIndicator(props: { onVisible?: () => void }) {
 	});
 
 	return (
-		<div ref={ref} className="flex justify-center items-center h-16">
+		<div ref={ref} className="flex justify-center items-center h-16 not-first:border-t not-first:border-gray-200">
 			<Spinner className="size-4" />
 		</div>
 	);
