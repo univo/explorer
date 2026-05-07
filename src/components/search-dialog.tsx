@@ -4,7 +4,7 @@ import { Dialog as Radix } from "radix-ui";
 import { ClientOnly } from "@tanstack/react-router";
 
 import { Search } from "./search";
-import { isMobile } from "./mobile-only";
+import { isMobile } from "@/helpers";
 
 export function SearchDialog() {
 	return (

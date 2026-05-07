@@ -14,10 +14,10 @@ import { IconButton } from "./icon-button";
 import { sf_getTxHash } from "@/functions";
 import { AddressView } from "@/views/address-view";
 import { TransactionView } from "@/views/tx-view";
-import { BlockNumberViewSuspense } from "@/views/block-number-view";
+import { BlockNumberView } from "@/views/block-number-view";
 import { AddressSchema, BlockNumberSchema, EventSchema, TransactionSchema } from "@/schema";
 
-type View =
+export type View =
 	| { type: "event"; data: string; raw: string }
 	| { type: "block-number"; data: number; raw: string }
 	| { type: "address"; data: `0x${string}`; raw: string }
@@ -188,7 +188,7 @@ export function View(props: { view: string; index: number }) {
 			{view === null && <EmptyView />}
 			{view !== null && view.type === "address" && <AddressView address={view.data} />}
 			{view !== null && view.type === "transaction" && <TransactionView tx={view.data} />}
-			{view !== null && view.type === "block-number" && <BlockNumberViewSuspense view={props.view} />}
+			{view !== null && view.type === "block-number" && <BlockNumberView number={view.data} />}
 		</ViewIndexContext>
 	);
 }

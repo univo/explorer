@@ -7,6 +7,7 @@ import { useViews, View, ViewContainer, ViewsContainer } from "@/components/view
 
 export const Route = createFileRoute("/$")({
 	component: Component,
+	errorComponent: ErrorComponent,
 });
 
 function Component() {
@@ -105,4 +106,8 @@ function IndexView() {
 			</div>
 		</div>
 	);
+}
+
+function ErrorComponent() {
+	return undefined;
 }
