@@ -20,6 +20,23 @@ export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	return true;
 }
 
+export function getTxReceiptForLog(receipts: RpcTransactionReceipt[], log: RpcTransactionReceipt["logs"][number]) {
+	// For each log we like to determine whether not it was emitted as part of a successful transaction.
+	// To check this we need to verify the success status of the receipt.
+
+	// To match a specific log to a specific receipt we can match on either the log `transactionHash` or
+	// `transactionIndex`. Both functionally mean the same thing. However, it is an optimisation to use
+	// the `transactionIndex` because the data size is much smaller than the `transactionHash`. This
+	// improvement hasn't a pretty dramatic impact because any data read on each log is multiplied by
+	// the number of logs.
+
+	const receipt = receipts.find((receipt) => receipt.transactionIndex === log.transactionIndex);
+
+	if (receipt === undefined) throw new Error("Expected receipt to be defined");
+
+	return receipt;
+}
+
 // Clickhouse accepts duplicate primary key values and uses an eventually consistent garbage collection process to
 // remove them. So to maintain correctness we also perform manual deduplication of each id here.
 

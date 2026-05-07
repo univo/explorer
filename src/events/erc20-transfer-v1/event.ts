@@ -7,7 +7,7 @@ import { nonNullable } from "@/utils";
 import { index_account_v1 } from "@/indexes/account-v1";
 import { index_tx_hash_v1 } from "@/indexes/tx-hash-v1";
 import { index_block_number_v2 } from "@/indexes/block-number-v2";
-import { createId, getDeduplicatedEvents, getEventSuccess, parseId } from "@/helpers";
+import { createId, getDeduplicatedEvents, getEventSuccess, getTxReceiptForLog, parseId } from "@/helpers";
 
 export interface Erc20TransferV1 {
 	tag: "erc20_transfer_v1";
@@ -57,7 +57,7 @@ const event = univo.event({
 						block_timestamp: block.eth_getBlockByHash.timestamp,
 					});
 
-					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === log.transactionHash);
+					const receipt = getTxReceiptForLog(block.eth_getBlockReceipts, log);
 
 					return {
 						id,
@@ -67,7 +67,7 @@ const event = univo.event({
 						token_address: getAddress(log.address),
 						quantity: String(args.value),
 						// Used for indexing
-						tx_hash: log.transactionHash,
+						tx_hash: receipt.transactionHash,
 						block_number: Number(block.eth_getBlockByHash.number),
 					};
 				} catch (error) {
