@@ -77,7 +77,7 @@ async function EventsTable(props: { ids: string[] }) {
 	const date = new Date(parseId(first.id).block_timestamp * 1000);
 
 	return (
-		<div className="relative grow overflow-scroll isolate divide-y divide-gray-200">
+		<div className="relative grow overflow-scroll isolate">
 			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
 				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{formatDay(date)}</p>
 
@@ -90,11 +90,13 @@ async function EventsTable(props: { ids: string[] }) {
 
 			{ordered.map((event) => {
 				return (
-					<EventTableRow key={event.id} id={event.id}>
-						<div className="px-3 py-1.5 overflow-hidden grow">
-							<EventDescription event={event} />
-						</div>
-					</EventTableRow>
+					<div key={event.id} className="border-b border-gray-200">
+						<EventTableRow id={event.id}>
+							<div className="px-3 py-1.5 overflow-hidden grow">
+								<EventDescription event={event} />
+							</div>
+						</EventTableRow>
+					</div>
 				);
 			})}
 
