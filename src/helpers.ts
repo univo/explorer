@@ -20,17 +20,6 @@ export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	return true;
 }
 
-export function groupEventsByDay<TEvent extends { id: string }>(events: TEvent[]) {
-	return Object.groupBy(events, (event) => {
-		return new Date(parseId(event.id).block_timestamp * 1000).toLocaleDateString("en", {
-			month: "short",
-			day: "numeric",
-			year: "numeric",
-			timeZone: "UTC",
-		});
-	});
-}
-
 // Clickhouse accepts duplicate primary key values and uses an eventually consistent garbage collection process to
 // remove them. So to maintain correctness we also perform manual deduplication of each id here.
 
