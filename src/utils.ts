@@ -67,6 +67,16 @@ export function formatDate(date: Date) {
 		month: "numeric",
 		day: "numeric",
 		year: "2-digit",
+		timeZone: "UTC",
+	});
+}
+
+export function formatDay(date: Date) {
+	return date.toLocaleDateString("en", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		timeZone: "UTC",
 	});
 }
 

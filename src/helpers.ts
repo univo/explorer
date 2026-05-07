@@ -160,3 +160,11 @@ export function getExternalChain(internal_chain: number) {
 		raise(`Unknown internal chain id ${internal_chain}`)
 	);
 }
+
+export function isMobile() {
+	return window.innerWidth < 768;
+}
+
+export function isDesktop() {
+	return window.innerWidth >= 768;
+}
