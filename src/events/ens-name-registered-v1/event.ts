@@ -94,8 +94,8 @@ const event = univo.event({
 							chain_id: block.eth_chainId,
 							tx_index: log.transactionIndex,
 							table_id: tables.ens_name_registered_v1,
-							block_number: block.eth_getBlockByHash.number,
-							block_timestamp: block.eth_getBlockByHash.timestamp,
+							block_number: block.eth_getBlockByNumber.number,
+							block_timestamp: block.eth_getBlockByNumber.timestamp,
 						});
 
 						return {
@@ -110,7 +110,7 @@ const event = univo.event({
 							log_address: log.address,
 							receipt_from: receipt.from,
 							tx_hash: receipt.transactionHash,
-							block_number: Number(block.eth_getBlockByHash.number),
+							block_number: Number(block.eth_getBlockByNumber.number),
 						};
 					}
 
@@ -122,8 +122,8 @@ const event = univo.event({
 							chain_id: block.eth_chainId,
 							tx_index: log.transactionIndex,
 							table_id: tables.ens_name_registered_v1,
-							block_number: block.eth_getBlockByHash.number,
-							block_timestamp: block.eth_getBlockByHash.timestamp,
+							block_number: block.eth_getBlockByNumber.number,
+							block_timestamp: block.eth_getBlockByNumber.timestamp,
 						});
 
 						return {
@@ -138,7 +138,7 @@ const event = univo.event({
 							log_address: log.address,
 							receipt_from: receipt.from,
 							tx_hash: receipt.transactionHash,
-							block_number: Number(block.eth_getBlockByHash.number),
+							block_number: Number(block.eth_getBlockByNumber.number),
 						};
 					}
 				} catch {

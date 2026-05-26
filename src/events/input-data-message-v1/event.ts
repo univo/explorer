@@ -34,7 +34,7 @@ const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler(block) {
-		return block.eth_getBlockByHash.transactions
+		return block.eth_getBlockByNumber.transactions
 			.map((tx) => {
 				try {
 					if (tx.input === "0x") return null;
@@ -56,8 +56,8 @@ const event = univo.event({
 						chain_id: block.eth_chainId,
 						tx_index: tx.transactionIndex,
 						table_id: tables.input_data_message_v1,
-						block_number: block.eth_getBlockByHash.number,
-						block_timestamp: block.eth_getBlockByHash.timestamp,
+						block_number: block.eth_getBlockByNumber.number,
+						block_timestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
 					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
@@ -70,7 +70,7 @@ const event = univo.event({
 						from_address: getAddress(tx.from),
 						// Used for indexing
 						tx_hash: tx.hash,
-						block_number: Number(block.eth_getBlockByHash.number),
+						block_number: Number(block.eth_getBlockByNumber.number),
 					};
 				} catch {
 					return null;

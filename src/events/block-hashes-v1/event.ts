@@ -17,9 +17,9 @@ univo.event({
 	handler: (block) => {
 		return [
 			{
-				block_hash: block.eth_getBlockByHash.hash,
-				block_number: Number(block.eth_getBlockByHash.number),
-				created_at: Number(block.eth_getBlockByHash.timestamp) * 1000,
+				block_hash: block.eth_getBlockByNumber.hash,
+				block_number: Number(block.eth_getBlockByNumber.number),
+				created_at: Number(block.eth_getBlockByNumber.timestamp) * 1000,
 			},
 		];
 	},
