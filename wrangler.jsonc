@@ -28,6 +28,12 @@
 		"not_found_handling": "single-page-application",
 		"run_worker_first": ["/api/*", "/rsc/*", "/_serverFn/*"]
 	},
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "ac571cf2f7d1406094a410e5049869cc"
+		}
+	],
 	"env": {
 		"staging": {
 			"vars": {
@@ -37,7 +43,13 @@
 			"route": {
 				"custom_domain": true,
 				"pattern": "staging.explorer.univo.app"
-			}
+			},
+			"kv_namespaces": [
+				{
+					"binding": "KV",
+					"id": "ac571cf2f7d1406094a410e5049869cc"
+				}
+			]
 		},
 		"production": {
 			"vars": {
@@ -47,7 +59,13 @@
 			"route": {
 				"custom_domain": true,
 				"pattern": "explorer.univo.app"
-			}
+			},
+			"kv_namespaces": [
+				{
+					"binding": "KV",
+					"id": "afc3318c48b14b9ba0cda4daa7901add"
+				}
+			]
 		}
 	}
 }
