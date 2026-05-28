@@ -31,6 +31,7 @@
 	"kv_namespaces": [
 		{
 			"binding": "KV",
+			"remote": false,
 			"id": "ac571cf2f7d1406094a410e5049869cc"
 		}
 	],
