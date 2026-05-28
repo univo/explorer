@@ -41,8 +41,8 @@ const event = univo.event({
 					chain_id: block.eth_chainId,
 					tx_index: receipt.transactionIndex,
 					table_id: tables.contract_deployment_v1,
-					block_number: block.eth_getBlockByHash.number,
-					block_timestamp: block.eth_getBlockByHash.timestamp,
+					block_number: block.eth_getBlockByNumber.number,
+					block_timestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
 				return {
@@ -52,7 +52,7 @@ const event = univo.event({
 					contract_address: getAddress(receipt.contractAddress),
 					// Used for indexing
 					tx_hash: receipt.transactionHash,
-					block_number: Number(block.eth_getBlockByHash.number),
+					block_number: Number(block.eth_getBlockByNumber.number),
 				};
 			})
 			.filter(nonNullable);

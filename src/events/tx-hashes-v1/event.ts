@@ -16,11 +16,11 @@ univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockByHash.transactions.map((tx) => ({
+		return block.eth_getBlockByNumber.transactions.map((tx) => ({
 			tx_hash: tx.hash,
 			tx_index: Number(tx.transactionIndex),
-			block_number: Number(block.eth_getBlockByHash.number),
-			created_at: Number(block.eth_getBlockByHash.timestamp) * 1000,
+			block_number: Number(block.eth_getBlockByNumber.number),
+			created_at: Number(block.eth_getBlockByNumber.timestamp) * 1000,
 		}));
 	},
 

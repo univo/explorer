@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { numberToHex } from "viem";
-import { http } from "univo/client";
+import { http } from "univo/transport";
 import { promises as fs } from "node:fs";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
@@ -12,8 +12,6 @@ const client = http("http://localhost:3000/univo", { signingKey: process.env.UNI
 
 export async function test_writeEvents(block: Block, event: string) {
 	return await client.request({
-		id: 0,
-		jsonrpc: "2.0",
 		method: "private_writeEvents",
 		params: [{ events: [event], blocks: [block] }],
 	});
@@ -34,7 +32,7 @@ async function test_rpc(opts: { id: number; method: string; params: any[] }) {
 
 type Block = {
 	eth_chainId: `0x${string}`;
-	eth_getBlockByHash: RpcBlock<"latest", true>;
+	eth_getBlockByNumber: RpcBlock<"latest", true>;
 	eth_getBlockReceipts: RpcTransactionReceipt[];
 };
 
@@ -51,15 +49,15 @@ export async function test_getBlock(block: { chain: number; block_number: number
 	}
 
 	// Fetch from network
-	const [eth_getBlockByHash, eth_getBlockReceipts] = await Promise.all([
+	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
 		retry(test_rpc, [{ id: 1, method: "eth_getBlockByNumber", params: [numberToHex(block.block_number), true] }], 4),
 		retry(test_rpc, [{ id: 2, method: "eth_getBlockReceipts", params: [numberToHex(block.block_number)] }], 4),
 	]);
 
-	if (!eth_getBlockByHash) throw new Error("eth_getBlockByHash is null");
+	if (!eth_getBlockByNumber) throw new Error("eth_getBlockByNumber is null");
 	if (!eth_getBlockReceipts) throw new Error("eth_getBlockReceipts is null");
 
-	const blockData = { eth_chainId: numberToHex(block.chain), eth_getBlockByHash, eth_getBlockReceipts } as Block;
+	const blockData = { eth_chainId: numberToHex(block.chain), eth_getBlockByNumber, eth_getBlockReceipts } as Block;
 
 	// Save to cache (non-blocking)
 	saveToCache(cacheDir, cacheFile, blockData);
@@ -78,8 +76,8 @@ async function saveToCache(cacheDir: string, cacheFile: string, blockData: Block
 }
 
 export async function test_deleteEvents(block: Block, table: string) {
-	const number = block.eth_getBlockByHash.number.slice(2).padStart(8, "0");
-	const timestamp = block.eth_getBlockByHash.timestamp.slice(2).padStart(8, "0");
+	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
+	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
 	const prefix = `${timestamp}-${number.slice(0, 4)}-${number.slice(4, 8)}`;
 
 	// A clickhouse quirk here is that we need to use the `command` method to delete rows. The regular
@@ -95,8 +93,8 @@ export async function test_deleteEvents(block: Block, table: string) {
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
 // up events using a prefix search based on the block information that makes up the id for each event
 export async function test_getEventIdsForBlock(block: Block, table: string) {
-	const number = block.eth_getBlockByHash.number.slice(2).padStart(8, "0");
-	const timestamp = block.eth_getBlockByHash.timestamp.slice(2).padStart(8, "0");
+	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
+	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
 	const prefix = `${timestamp}-${number.slice(0, 4)}-${number.slice(4, 8)}`;
 
 	// Clickhouse quirk is that we have to cast the id using toString. This is an issue with how

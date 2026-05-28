@@ -1,26 +1,36 @@
 import { indexer } from "univo";
+import { env } from "cloudflare:workers";
+import { createStorage } from "unstorage";
+import kv from "unstorage/drivers/cloudflare-kv-binding";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
 import { raise, retry } from "@/utils";
 
+const metadataStorage = createStorage({
+	driver: kv({
+		binding: env.KV,
+	}),
+});
+
 export const univo = indexer({
 	getBlock,
 	quiet: false,
+	metadataStorage,
 	signingKey: process.env.UNIVO_SIGNING_KEY,
 });
 
-async function getBlock(block: { chain: `0x${string}`; hash: `0x${string}`; number: `0x${string}` }) {
-	const [eth_getBlockByHash, eth_getBlockReceipts] = await Promise.all([
-		retry(rpc, [{ id: 1, method: "eth_getBlockByHash", params: [block.hash, true] }], 4),
-		retry(rpc, [{ id: 2, method: "eth_getBlockReceipts", params: [block.hash] }], 4),
+async function getBlock(block: { chain: `0x${string}`; number: string }) {
+	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
+		retry(rpc, [{ id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }], 4),
+		retry(rpc, [{ id: 2, method: "eth_getBlockReceipts", params: [block.number] }], 4),
 	]);
 
-	if (!eth_getBlockByHash) throw new Error("eth_getBlockByHash is null");
-	if (!eth_getBlockReceipts) throw new Error("eth_getBlockReceipts is null");
+	if (!eth_getBlockByNumber) return null;
+	if (!eth_getBlockReceipts) return null;
 
 	return {
 		eth_chainId: block.chain,
-		eth_getBlockByHash: eth_getBlockByHash as RpcBlock<"latest", true>,
+		eth_getBlockByNumber: eth_getBlockByNumber as RpcBlock<"latest", true>,
 		eth_getBlockReceipts: eth_getBlockReceipts as RpcTransactionReceipt[],
 	};
 }

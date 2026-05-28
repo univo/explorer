@@ -50,8 +50,8 @@ const event = univo.event({
 						chain_id: block.eth_chainId,
 						tx_index: log.transactionIndex,
 						table_id: tables.erc20_approval_v1,
-						block_number: block.eth_getBlockByHash.number,
-						block_timestamp: block.eth_getBlockByHash.timestamp,
+						block_number: block.eth_getBlockByNumber.number,
+						block_timestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
 					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === log.transactionHash);
@@ -65,7 +65,7 @@ const event = univo.event({
 						quantity: String(args.value),
 						// Used for indexing
 						tx_hash: log.transactionHash,
-						block_number: Number(block.eth_getBlockByHash.number),
+						block_number: Number(block.eth_getBlockByNumber.number),
 					};
 				} catch {
 					return null;
