@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { raise } from "@/utils";
 import { AddressSchema } from "@/schema";
 import type { Account } from "@/state/account";
 import { getOrderedEvents, parseId } from "@/helpers";
@@ -41,6 +42,17 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 	const events = await getEventsForIds(ids);
 	const ordered = getOrderedEvents(events, "latest");
 
+	// Determine if this batch starts with a header. We have to do this to implement the top
+	// border for the batch because we wrap each batch in a virtualisation container. So we
+	// need each viritualisation container to also manage it's top border (excluding the first)
+
+	const firstEvent = ordered[0] || raise("Expected at least one event");
+	const firstEventDate = new Date(parseId(firstEvent.id).block_timestamp * 1000);
+	const previousBatchLastEventDate = new Date(parseId(props.startCursor).block_timestamp * 1000);
+	const firstEventDay = formatDay(firstEventDate);
+	const previousBatchLastEventDay = formatDay(previousBatchLastEventDate);
+	const startsWithHeader = previousBatchLastEventDay !== firstEventDay;
+
 	// TODO: Remove this and pass only the address
 	const account = { chain: 1, address: props.address, name_tag: null, label: null };
 
@@ -48,43 +60,45 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 
 	return (
 		<StopCursorContainer startCursor={props.startCursor} stopCursor={stopCursor}>
-			<VirtualisationContainer>
-				{ordered.map((event, i) => {
-					const previous = ordered[i - 1];
-					const previousId = previous === undefined ? props.startCursor : previous.id;
+			<div className={clsx(startsWithHeader === false && "not-first:border-t not-first:border-gray-200")}>
+				<VirtualisationContainer>
+					{ordered.map((event, i) => {
+						const previous = ordered[i - 1];
+						const previousId = previous === undefined ? props.startCursor : previous.id;
 
-					const eventDate = new Date(parseId(event.id).block_timestamp * 1000);
-					const previousDate = new Date(parseId(previousId).block_timestamp * 1000);
+						const eventDate = new Date(parseId(event.id).block_timestamp * 1000);
+						const previousDate = new Date(parseId(previousId).block_timestamp * 1000);
 
-					const eventString = formatDay(eventDate);
-					const previousString = formatDay(previousDate);
+						const eventString = formatDay(eventDate);
+						const previousString = formatDay(previousDate);
 
-					const showHeader = eventString !== previousString;
+						const showHeader = eventString !== previousString;
 
-					return (
-						<Fragment key={event.id}>
-							{showHeader && (
-								<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
-									<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{eventString}</p>
-									<HeaderTimestamp timestamp={eventDate} />
+						return (
+							<Fragment key={event.id}>
+								{showHeader && (
+									<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+										<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{eventString}</p>
+										<HeaderTimestamp timestamp={eventDate} />
+									</div>
+								)}
+
+								<div className={clsx(showHeader === false && "not-first:border-t not-first:border-gray-200")}>
+									<EventTableRow id={event.id}>
+										<div className="px-3 py-1.5 overflow-hidden grow">
+											<AccountEventDescription account={account} event={event} />
+										</div>
+
+										<div className="px-3 py-1.5 overflow-hidden shrink-0">
+											<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
+										</div>
+									</EventTableRow>
 								</div>
-							)}
-
-							<div className={clsx(!showHeader && "not-first:border-t not-first:border-gray-200")}>
-								<EventTableRow id={event.id}>
-									<div className="px-3 py-1.5 overflow-hidden grow">
-										<AccountEventDescription account={account} event={event} />
-									</div>
-
-									<div className="px-3 py-1.5 overflow-hidden shrink-0">
-										<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
-									</div>
-								</EventTableRow>
-							</div>
-						</Fragment>
-					);
-				})}
-			</VirtualisationContainer>
+							</Fragment>
+						);
+					})}
+				</VirtualisationContainer>
+			</div>
 		</StopCursorContainer>
 	);
 }
