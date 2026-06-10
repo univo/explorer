@@ -27,7 +27,7 @@ export function getTxReceiptForLog(receipts: RpcTransactionReceipt[], log: RpcTr
 	// To match a specific log to a specific receipt we can match on either the log `transactionHash` or
 	// `transactionIndex`. Both functionally mean the same thing. However, it is an optimisation to use
 	// the `transactionIndex` because the data size is much smaller than the `transactionHash`. This
-	// improvement hasn't a pretty dramatic impact because any data read on each log is multiplied by
+	// improvement has a pretty significant impact because any data read on each log is multiplied by
 	// the number of logs.
 
 	const receipt = receipts.find((receipt) => receipt.transactionIndex === log.transactionIndex);
