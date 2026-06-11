@@ -6,4 +6,8 @@ import { env } from "cloudflare:workers";
 storageAdapterTestSuite({
 	name: "r2-binding",
 	adapter: () => r2({ binding: env.BUCKET }),
+	capabilities: {
+		presignedUploads: false,
+		fetchableSignedUrls: false,
+	},
 });
