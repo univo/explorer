@@ -32,10 +32,6 @@ const config = defineConfig({
 		}),
 		react(),
 	],
-	test: {
-		testTimeout: 2 * 60 * 1000,
-		setupFiles: ["./app/tests/setup.ts"],
-	},
 });
 
 export default config;
