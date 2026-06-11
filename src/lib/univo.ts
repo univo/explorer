@@ -1,14 +1,14 @@
 import { indexer } from "univo";
 import { env } from "cloudflare:workers";
-import { createStorage } from "unstorage";
-import kv from "unstorage/drivers/cloudflare-kv-binding";
+import { Storage } from "@storagesdk/core";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
+import { r2 } from "./storagesdk";
 import { raise, retry } from "@/utils";
 
-const metadataStorage = createStorage({
-	driver: kv({
-		binding: env.KV,
+const metadataStorage = new Storage({
+	adapter: r2({
+		binding: env.BUCKET,
 	}),
 });
 
