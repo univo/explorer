@@ -1,14 +1,14 @@
 import { indexer } from "univo";
 import { env } from "cloudflare:workers";
-import { createStorage } from "unstorage";
-import kv from "unstorage/drivers/cloudflare-kv-binding";
+import { Storage } from "@storagesdk/core";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
+import { r2 } from "./storagesdk";
 import { raise, retry } from "@/utils";
 
-const metadataStorage = createStorage({
-	driver: kv({
-		binding: env.KV,
+const metadataStorage = new Storage({
+	adapter: r2({
+		binding: env.BUCKET,
 	}),
 });
 
@@ -21,8 +21,8 @@ export const univo = indexer({
 
 async function getBlock(block: { chain: `0x${string}`; number: string }) {
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
-		retry(rpc, [{ id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }], 4),
-		retry(rpc, [{ id: 2, method: "eth_getBlockReceipts", params: [block.number] }], 4),
+		retry(() => rpc({ id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }), 4),
+		retry(() => rpc({ id: 2, method: "eth_getBlockReceipts", params: [block.number] }), 4),
 	]);
 
 	if (!eth_getBlockByNumber) return null;

@@ -28,11 +28,10 @@
 		"not_found_handling": "single-page-application",
 		"run_worker_first": ["/api/*", "/rsc/*", "/_serverFn/*"]
 	},
-	"kv_namespaces": [
+	"r2_buckets": [
 		{
-			"binding": "KV",
-			"remote": false,
-			"id": "ac571cf2f7d1406094a410e5049869cc"
+			"binding": "BUCKET",
+			"bucket_name": "explorer-staging"
 		}
 	],
 	"env": {
@@ -45,10 +44,11 @@
 				"custom_domain": true,
 				"pattern": "staging.explorer.univo.app"
 			},
-			"kv_namespaces": [
+			"r2_buckets": [
 				{
-					"binding": "KV",
-					"id": "ac571cf2f7d1406094a410e5049869cc"
+					"remote": true,
+					"binding": "BUCKET",
+					"bucket_name": "explorer-staging"
 				}
 			]
 		},
@@ -61,10 +61,11 @@
 				"custom_domain": true,
 				"pattern": "explorer.univo.app"
 			},
-			"kv_namespaces": [
+			"r2_buckets": [
 				{
-					"binding": "KV",
-					"id": "afc3318c48b14b9ba0cda4daa7901add"
+					"remote": true,
+					"binding": "BUCKET",
+					"bucket_name": "explorer-production"
 				}
 			]
 		}
