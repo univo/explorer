@@ -17,11 +17,11 @@ export async function test_writeEvents(block: Block, event: string) {
 	});
 }
 
-async function test_rpc(opts: { id: number; method: string; params: any[] }) {
+async function test_rpc(opts: { method: string; params: any[] }) {
 	const res = await fetch(process.env.ETHEREUM_URL, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ jsonrpc: "2.0", ...opts }),
+		body: JSON.stringify({ jsonrpc: "2.0", id: Math.floor(Math.random() * 1000), ...opts }),
 	});
 
 	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");
@@ -50,8 +50,8 @@ export async function test_getBlock(block: { chain: number; block_number: number
 
 	// Fetch from network
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
-		retry(test_rpc, [{ id: 1, method: "eth_getBlockByNumber", params: [numberToHex(block.block_number), true] }], 4),
-		retry(test_rpc, [{ id: 2, method: "eth_getBlockReceipts", params: [numberToHex(block.block_number)] }], 4),
+		retry(() => test_rpc({ method: "eth_getBlockByNumber", params: [numberToHex(block.block_number), true] }), 4),
+		retry(() => test_rpc({ method: "eth_getBlockReceipts", params: [numberToHex(block.block_number)] }), 4),
 	]);
 
 	if (!eth_getBlockByNumber) throw new Error("eth_getBlockByNumber is null");

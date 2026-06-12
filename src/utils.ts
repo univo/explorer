@@ -103,18 +103,13 @@ export function raise(err: string, options?: ErrorOptions): never {
 /**
  * Retries a function n number of times before giving up
  */
-export async function retry<T extends (...arg0: any[]) => any>(
-	fn: T,
-	args: Parameters<T>,
-	retries: number,
-	__count = 1,
-): Promise<Awaited<ReturnType<T>>> {
+export async function retry<T>(fn: () => Promise<T>, retries: number, __count = 1): Promise<T> {
 	try {
-		return await fn(...args);
+		return await fn();
 	} catch (error) {
 		if (__count > retries) throw error;
 		await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** __count));
-		return retry(fn, args, retries, __count + 1);
+		return retry(fn, retries, __count + 1);
 	}
 }
 
