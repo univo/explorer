@@ -24,4 +24,5 @@ export const tables = {
 	cancel_pending_tx_v1: 6,
 	erc721_transfer_v1: 7,
 	erc721_approval_v1: 8,
+	erc20_transfer_v2: 9,
 };
