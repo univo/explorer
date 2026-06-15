@@ -1,7 +1,7 @@
 import type { RpcTransactionReceipt } from "viem";
 
 import { chains, inverted_chains } from "./constants";
-import { formatNumber, hexToNumber, parseStringInt, raise } from "./utils";
+import { formatNumber, hexToNumber, numberToHex, parseStringInt, raise } from "./utils";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) throw new Error("No receipt");
@@ -69,6 +69,59 @@ export function createId(opts: IdOptions) {
 	return `${block_timestamp}-${block_number.slice(0, 4)}-${block_number.slice(4, 8)}-${tx_index}-${log_index}${chain_id}${table_id}`;
 }
 
+type v2_IdOptions = {
+	blockTimestamp: `0x${string}`;
+	blockNumber: `0x${string}`;
+	txIndex: `0x${string}`;
+	logIndex: `0x${string}`;
+	chainId: `0x${string}`;
+	tableId: number;
+};
+
+export function v2_createId(opts: v2_IdOptions) {
+	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
+	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
+	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
+	const logIndex = opts.logIndex.slice(2).padStart(4, "0");
+	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
+	const tableId = opts.tableId.toString(16).padStart(4, "0");
+	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
+}
+
+/**
+ * Accepts a block timestamp (UNIX seconds) and returns its corresponding partition
+ */
+export function v2_getPartition(blockTimestamp: `0x${string}`) {
+	const date = new Date(hexToNumber(blockTimestamp) * 1000);
+	const year = date.getFullYear().toString();
+	const month = date.getMonth().toString().padStart(2, "0");
+	const day = date.getDate().toString().padStart(2, "0");
+	return Number.parseInt(`${year}${month}${day}`);
+}
+
+/**
+ * Accepts a list of event ids and returns a list of SQL WHERE clauses for each unique partition
+ */
+export function v2_getPartitions(ids: string[]) {
+	const partitions = Object.groupBy(ids, (id) => {
+		return v2_getPartition(numberToHex(v2_parseId(id).blockTimestamp));
+	});
+
+	return Object.entries(partitions).flatMap(([partition, ids]) => {
+		if (ids === undefined) {
+			return [];
+		}
+
+		if (ids.length === 0) {
+			return [];
+		}
+
+		const mapped = ids.map((id) => `unhex('${id}')`);
+
+		return `(partition = ${partition} AND id IN (${mapped.join(",")}))`;
+	});
+}
+
 export function parseId(id: string) {
 	const block_timestamp = Number.parseInt(id.slice(0, 8), 16);
 	const block_number = Number.parseInt(id.slice(9, 18).split("-").join(""), 16);
@@ -77,6 +130,16 @@ export function parseId(id: string) {
 	const chain_id = getExternalChain(Number.parseInt(id.slice(28, 32), 16));
 	const table_id = Number.parseInt(id.slice(32, 36), 16);
 	return { block_timestamp, block_number, tx_index, log_index, chain_id, table_id };
+}
+
+export function v2_parseId(id: string) {
+	const blockTimestamp = Number.parseInt(id.slice(0, 8), 16);
+	const blockNumber = Number.parseInt(id.slice(8, 16), 16);
+	const txIndex = Number.parseInt(id.slice(16, 20), 16);
+	const logIndex = Number.parseInt(id.slice(20, 24), 16);
+	const chainId = getExternalChain(Number.parseInt(id.slice(24, 28), 16));
+	const tableId = Number.parseInt(id.slice(28, 32), 16);
+	return { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId };
 }
 
 export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[], order: "latest" | "reverse") {

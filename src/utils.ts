@@ -152,6 +152,10 @@ export function hexToNumber(hex: string) {
 	return Number.parseInt(hex, 16);
 }
 
+export function numberToHex(number: number) {
+	return `0x${number.toString(16)}` as const;
+}
+
 export function getInvertedDictionary<K extends string | number, V extends string | number>(dict: Record<K, V>) {
 	const result = {} as Record<V, K>;
 
