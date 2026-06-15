@@ -8,6 +8,7 @@ import "@/events/tx-hashes-v1/event";
 import "@/events/block-hashes-v1/event";
 import "@/events/erc20-approval-v1/event";
 import "@/events/erc20-transfer-v1/event";
+import "@/events/erc20-transfer-v2/event";
 import "@/events/erc721-approval-v1/event";
 import "@/events/erc721-transfer-v1/event";
 import "@/events/native-transfer-v1/event";

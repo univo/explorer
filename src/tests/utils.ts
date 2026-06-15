@@ -7,8 +7,7 @@ import type { RpcBlock, RpcTransactionReceipt } from "viem";
 import { db } from "../db/client";
 import { raise, retry } from "../utils";
 
-// When testing we use a single local univo client to issue requests to our univo server
-const client = http("http://localhost:3000/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
+const client = http("http://localhost:3000/api/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
 
 export async function test_writeEvents(block: Block, event: string) {
 	return await client.request({
@@ -105,4 +104,22 @@ export async function test_getEventIdsForBlock(block: Block, table: string) {
 	const rows: { id: string }[] = await res.json();
 
 	return rows.map((row) => row.id);
+}
+
+// Normally we use our index tables to determine ids based on search queries, but for testing
+// purposes we don't want to rely on those external tables. Instead we can actually directly look
+// up events using a prefix search based on the block information that makes up the id for each event
+export async function test_v2_getEventIdsForBlock(block: Block, table: string) {
+	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
+	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
+	const prefix = `${timestamp}${number.slice(0, 4)}${number.slice(4, 8)}`;
+
+	// Clickhouse quirk is that we have to cast the id using toString. This is an issue with how
+	// startsWith works with FixedString columns and internal padding.
+
+	const query = `SELECT lower(hex(id)), success FROM ${table} WHERE startsWith(toString(id), unhex('${prefix}'))`;
+	const res = await db.query({ query, format: "JSONEachRow" });
+	const rows: { "lower(hex(id))": string }[] = await res.json();
+
+	return rows.map((row) => row["lower(hex(id))"]);
 }
