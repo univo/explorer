@@ -4,6 +4,7 @@ import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
 import { nonNullable } from "@/utils";
+
 import {
 	getDeduplicatedEvents,
 	getEventSuccess,
@@ -117,7 +118,7 @@ univo.event({
 });
 
 export async function getErc20TransferV2(ids: string[]) {
-	const filtered = ids.filter((id) => v2_parseId(id).tableId === tables.erc20_transfer_v1);
+	const filtered = ids.filter((id) => v2_parseId(id).tableId === tables.erc20_transfer_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -128,7 +129,7 @@ export async function getErc20TransferV2(ids: string[]) {
 	const res = await db.query({
 		query: `
 			SELECT
-				lower(hex(id)) as id,
+				lower(hex(id)),
 				success,
 				toString(quantity) as quantity,
 				concat('0x', lower(hex(to_address))) as to_address,
@@ -145,7 +146,7 @@ export async function getErc20TransferV2(ids: string[]) {
 	const events = rows.map<Erc20TransferV2>((row) => {
 		return {
 			tag: "erc20_transfer_v2",
-			id: row.id as string,
+			id: row["lower(hex(id))"] as string,
 			success: row.success as boolean,
 			quantity: row.quantity as string,
 			to_address: row.to_address as `0x${string}`,
