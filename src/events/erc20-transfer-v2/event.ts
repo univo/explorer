@@ -11,6 +11,7 @@ import {
 	v2_parseId,
 	v2_createId,
 	v2_getPartition,
+	v2_getPartitions,
 } from "@/helpers";
 
 export interface Erc20TransferV2 {
@@ -90,15 +91,15 @@ univo.event({
 				return;
 			}
 
-			const values = batch.map((value) => {
+			const values = batch.map((event) => {
 				return `(
-					unhex('${value.id}'),
-					${value.partition},
-					${value.success},
-					toUInt256('${value.quantity}'),
-					unhex('${value.to_address.slice(2)}'),
-					unhex('${value.from_address.slice(2)}'),
-					unhex('${value.token_address.slice(2)}')
+					unhex('${event.id}'),
+					${event.partition},
+					${event.success},
+					toUInt256('${event.quantity}'),
+					unhex('${event.to_address.slice(2)}'),
+					unhex('${event.from_address.slice(2)}'),
+					unhex('${event.token_address.slice(2)}')
 				)`;
 			});
 
@@ -109,7 +110,7 @@ univo.event({
 
 		async delete(batch) {
 			await db.command({
-				query: `ALTER TABLE event_erc20_transfer_v2 UPDATE success = false WHERE id IN ${batch.map((event) => `'${event.id}'`).join(",")}`,
+				query: `ALTER TABLE event_erc20_transfer_v2 UPDATE success = false WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
 	},
@@ -122,7 +123,7 @@ export async function getErc20TransferV2(ids: string[]) {
 		return [];
 	}
 
-	const mapped = filtered.map((id) => `unhex('${id}')`);
+	const partitions = v2_getPartitions(filtered);
 
 	const res = await db.query({
 		query: `
@@ -134,7 +135,7 @@ export async function getErc20TransferV2(ids: string[]) {
 				concat('0x', lower(hex(from_address))) as from_address,
 				concat('0x', lower(hex(token_address))) as token_address
 			FROM event_erc20_transfer_v2
-			WHERE id IN (${mapped.join(",")});
+			WHERE ${partitions.join(" OR ")};
 		`,
 		format: "JSONEachRow",
 	});
