@@ -1,6 +1,14 @@
 import { numberToHex } from "viem";
 import { expect, test } from "vitest";
-import { createId, formatTokenAmount, parseId, v2_createId, v2_getPartition, v2_parseId } from "@/helpers";
+import {
+	createId,
+	formatTokenAmount,
+	parseId,
+	v2_createId,
+	v2_getPartition,
+	v2_getPartitions,
+	v2_parseId,
+} from "@/helpers";
 
 test.concurrent("creates and parses valid ids", () => {
 	const id = createId({
@@ -52,5 +60,18 @@ test.concurrent("formats token amounts", () => {
 });
 
 test.concurrent("derives the correct partition from an id", () => {
+	expect(v2_getPartition("0x5eb01705")).toEqual(20200404);
 	expect(v2_getPartition("0x6a153133")).toEqual(20260426);
+});
+
+test.concurrent("groups partitions in a SQL clause", () => {
+	const ids = [
+		"5eb0170500989680001b002b00010002", //
+		"6a15313301802d5b0011004b00010002",
+	];
+
+	expect(v2_getPartitions(ids)).toMatchObject([
+		"(partition = 20200404 AND id IN (unhex('5eb0170500989680001b002b00010002')))",
+		"(partition = 20260426 AND id IN (unhex('6a15313301802d5b0011004b00010002')))",
+	]);
 });

@@ -1,7 +1,7 @@
 import type { RpcTransactionReceipt } from "viem";
 
 import { chains, inverted_chains } from "./constants";
-import { formatNumber, hexToNumber, parseStringInt, raise } from "./utils";
+import { formatNumber, hexToNumber, numberToHex, parseStringInt, raise } from "./utils";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) throw new Error("No receipt");
@@ -88,12 +88,38 @@ export function v2_createId(opts: v2_IdOptions) {
 	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
 }
 
+/**
+ * Accepts a block timestamp (UNIX seconds) and returns its corresponding partition
+ */
 export function v2_getPartition(blockTimestamp: `0x${string}`) {
 	const date = new Date(hexToNumber(blockTimestamp) * 1000);
 	const year = date.getFullYear().toString();
 	const month = date.getMonth().toString().padStart(2, "0");
 	const day = date.getDate().toString().padStart(2, "0");
 	return Number.parseInt(`${year}${month}${day}`);
+}
+
+/**
+ * Accepts a list of event ids and returns a list of SQL WHERE clauses for each unique partition
+ */
+export function v2_getPartitions(ids: string[]) {
+	const partitions = Object.groupBy(ids, (id) => {
+		return v2_getPartition(numberToHex(v2_parseId(id).blockTimestamp));
+	});
+
+	return Object.entries(partitions).flatMap(([partition, ids]) => {
+		if (ids === undefined) {
+			return [];
+		}
+
+		if (ids.length === 0) {
+			return [];
+		}
+
+		const mapped = ids.map((id) => `unhex('${id}')`);
+
+		return `(partition = ${partition} AND id IN (${mapped.join(",")}))`;
+	});
 }
 
 export function parseId(id: string) {
