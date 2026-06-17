@@ -95,8 +95,7 @@ export function v2_getPartition(blockTimestamp: `0x${string}`) {
 	const date = new Date(hexToNumber(blockTimestamp) * 1000);
 	const year = date.getFullYear().toString();
 	const month = date.getMonth().toString().padStart(2, "0");
-	const day = date.getDate().toString().padStart(2, "0");
-	return Number.parseInt(`${year}${month}${day}`);
+	return Number.parseInt(`${year}${month}`);
 }
 
 /**
