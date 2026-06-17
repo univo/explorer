@@ -60,8 +60,8 @@ test.concurrent("formats token amounts", () => {
 });
 
 test.concurrent("derives the correct partition from an id", () => {
-	expect(v2_getPartition("0x5eb01705")).toEqual(20200404);
-	expect(v2_getPartition("0x6a153133")).toEqual(20260426);
+	expect(v2_getPartition("0x5eb01705")).toEqual(202004);
+	expect(v2_getPartition("0x6a153133")).toEqual(202604);
 });
 
 test.concurrent("groups partitions in a SQL clause", () => {
@@ -71,7 +71,7 @@ test.concurrent("groups partitions in a SQL clause", () => {
 	];
 
 	expect(v2_getPartitions(ids)).toMatchObject([
-		"(partition = 20200404 AND id IN (unhex('5eb0170500989680001b002b00010002')))",
-		"(partition = 20260426 AND id IN (unhex('6a15313301802d5b0011004b00010002')))",
+		"(partition = 202004 AND id IN (unhex('5eb0170500989680001b002b00010002')))",
+		"(partition = 202604 AND id IN (unhex('6a15313301802d5b0011004b00010002')))",
 	]);
 });
