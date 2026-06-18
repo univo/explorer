@@ -33,7 +33,7 @@ univo.event({
 				return `(
 					unhex('${event.tx_hash.slice(2)}'),
 					${event.block_number},
-					${event.tx_index},
+					${event.tx_index}
 				)`;
 			});
 

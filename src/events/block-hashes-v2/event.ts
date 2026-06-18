@@ -32,7 +32,7 @@ univo.event({
 			const values = batch.map((event) => {
 				return `(
 					unhex('${event.block_hash.slice(2)}'),
-					${event.block_number},
+					${event.block_number}
 				)`;
 			});
 
