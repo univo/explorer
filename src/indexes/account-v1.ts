@@ -3,9 +3,6 @@ import { getAddress } from "viem";
 import { db } from "@/db/client";
 import { logger } from "@/utils";
 
-// TODO
-// Delete once v2 index is in production
-
 // Account indexes do not include a chain id intentionally. For now, it is preferred that the latest list of events
 // returned for a given account should be multi-chain by default. This allows us to easily see the actions of specific
 // accounts across chains within a similar time-frame.
