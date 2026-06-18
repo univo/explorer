@@ -12,7 +12,7 @@ import { getInternalChain, v2_parseId } from "@/helpers";
 //
 // - Covered index. The same index can used to look up events from a given block number.
 
-// CREATE TABLE index_block_number_tx_index_v1 (
+// CREATE TABLE index_block_number_tx_index_v2 (
 //     `chain` UInt16,
 //     `block_number` UInt64,
 //     `tx_index` UInt64,
@@ -28,7 +28,7 @@ type Index = {
 	event_id: string;
 };
 
-export const index_block_number_tx_index_v1 = {
+export const index_block_number_tx_index_v2 = {
 	async upsert(indexes: Index[]) {
 		if (indexes.length === 0) {
 			return;
@@ -68,7 +68,7 @@ export const index_block_number_tx_index_v1 = {
 		});
 
 		await db.command({
-			query: `INSERT INTO index_block_number_tx_index_v1 (chain, block_number, tx_index, event_id) VALUES ${mapped.join(",")}`,
+			query: `INSERT INTO index_block_number_tx_index_v2 (chain, block_number, tx_index, event_id) VALUES ${mapped.join(",")}`,
 		});
 	},
 
@@ -99,7 +99,7 @@ export const index_block_number_tx_index_v1 = {
 		}
 
 		await db.command({
-			query: `ALTER TABLE index_block_number_tx_index_v1 DELETE WHERE chain = ${chain} AND block_number = ${block_number}`,
+			query: `ALTER TABLE index_block_number_tx_index_v2 DELETE WHERE chain = ${chain} AND block_number = ${block_number}`,
 		});
 	},
 };
@@ -108,7 +108,7 @@ export async function getEventIdsForBlock(chain: keyof typeof chains, block: num
 	const start = Date.now();
 
 	const res = await db.query({
-		query: `SELECT lower(hex(event_id)) FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block};`,
+		query: `SELECT lower(hex(event_id)) FROM index_block_number_tx_index_v2 WHERE chain = ${chain} AND block_number = ${block};`,
 		format: "JSONEachRow",
 	});
 
@@ -123,7 +123,7 @@ export async function getEventIdsForTx(chain: keyof typeof chains, block: number
 	const start = Date.now();
 
 	const res = await db.query({
-		query: `SELECT lower(hex(event_id)) FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block} AND tx_index = ${tx};`,
+		query: `SELECT lower(hex(event_id)) FROM index_block_number_tx_index_v2 WHERE chain = ${chain} AND block_number = ${block} AND tx_index = ${tx};`,
 		format: "JSONEachRow",
 	});
 
