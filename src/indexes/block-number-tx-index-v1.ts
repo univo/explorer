@@ -63,7 +63,7 @@ export const index_block_number_tx_index_v1 = {
                 ${value.chain},
                 ${value.block_number},
                 ${value.tx_index},
-                unhex('${value.event_id}'),
+                unhex('${value.event_id}')
             )`;
 		});
 
