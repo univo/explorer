@@ -57,7 +57,7 @@ export async function getTx(txHash: `0x${string}`) {
 	}
 
 	return {
-		block_number: row.block_number,
-		tx_index: row.tx_index,
+		block_number: row.block_number as number,
+		tx_index: row.tx_index as number,
 	};
 }
