@@ -108,7 +108,7 @@ export async function getEventIdsForBlock(chain: keyof typeof chains, block: num
 	const start = Date.now();
 
 	const res = await db.query({
-		query: `SELECT event_id FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block};`,
+		query: `SELECT lower(hex(event_id)) FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block};`,
 		format: "JSONEachRow",
 	});
 
@@ -116,14 +116,14 @@ export async function getEventIdsForBlock(chain: keyof typeof chains, block: num
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map((row) => row.event_id) as string[];
+	return rows.map((row) => row["lower(hex(event_id))"]) as string[];
 }
 
 export async function getEventIdsForTx(chain: keyof typeof chains, block: number, tx: number) {
 	const start = Date.now();
 
 	const res = await db.query({
-		query: `SELECT event_id FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block} AND tx_index = ${tx};`,
+		query: `SELECT lower(hex(event_id)) FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block} AND tx_index = ${tx};`,
 		format: "JSONEachRow",
 	});
 
@@ -131,5 +131,5 @@ export async function getEventIdsForTx(chain: keyof typeof chains, block: number
 
 	logger.debug(`Found ${rows.length} events for tx in ${Date.now() - start}ms`);
 
-	return rows.map((row) => row.event_id) as string[];
+	return rows.map((row) => row["lower(hex(event_id))"]) as string[];
 }
