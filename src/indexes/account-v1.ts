@@ -4,9 +4,7 @@ import { db } from "@/db/client";
 import { logger } from "@/utils";
 
 // TODO
-// When a chain reorganisation occurs we don't want to delete any account index information because we
-// always want those events to show up. They will just have been correctly marked as failed to indicate
-// to the user that they were reorganised
+// Delete once v2 index is in production
 
 // Account indexes do not include a chain id intentionally. For now, it is preferred that the latest list of events
 // returned for a given account should be multi-chain by default. This allows us to easily see the actions of specific
