@@ -1,4 +1,7 @@
+import { db } from "@/db/client";
+import { logger } from "@/utils";
 import type { chains } from "@/constants";
+import { getInternalChain, v2_parseId } from "@/helpers";
 
 // Transactions can be uniquely represented by in two ways: their transaction hash, or the combination of their block number
 // and transaction index. In general, the explorer uses the latter and there are a few reasons why:
@@ -7,11 +10,7 @@ import type { chains } from "@/constants";
 //   our event identifiers. This is what allows users to click an event id and for us to understand what transaction it
 //   originated from without having to consult any other source.
 //
-// - Covered index. The same index can used a look for events from a given block number.
-
-// TODO: Do we now need to include the chain id?
-// TODO: Does this index allow us to remove the block number index?
-// TODO: Do we still need an index to map [block number, transaction index] to transaction hash?
+// - Covered index. The same index can used to look up events from a given block number.
 
 // CREATE TABLE index_block_number_tx_index_v1 (
 //     `chain` UInt16,
@@ -22,14 +21,115 @@ import type { chains } from "@/constants";
 // ENGINE = ReplacingMergeTree
 // ORDER BY (chain, block_number, tx_index, event_id);
 
-export const index_block_number_tx_index_v1 = {
-	async upsert(indexes: any) {},
+type Index = {
+	chain: number;
+	block_number: number;
+	tx_index: number;
+	event_id: string;
+};
 
-	async delete(indexes: any) {
-		//
+export const index_block_number_tx_index_v1 = {
+	async upsert(indexes: Index[]) {
+		if (indexes.length === 0) {
+			return;
+		}
+
+		const unique: Record<string, true> = {};
+
+		const values: Index[] = [];
+
+		for (const index of indexes) {
+			const key = [index.chain, index.block_number, index.tx_index, index.event_id].join(":");
+
+			if (unique[key]) {
+				continue;
+			}
+
+			unique[key] = true;
+
+			const externalChain = v2_parseId(index.event_id).chainId;
+			const internalChain = getInternalChain(externalChain);
+
+			values.push({
+				chain: internalChain,
+				block_number: index.block_number,
+				tx_index: index.tx_index,
+				event_id: index.event_id,
+			});
+		}
+
+		const mapped = values.map((value) => {
+			return `(
+                ${value.chain},
+                ${value.block_number},
+                ${value.tx_index},
+                unhex('${value.event_id}'),
+            )`;
+		});
+
+		await db.command({
+			query: `INSERT INTO index_block_number_tx_index_v1 (chain, block_number, tx_index, event_id) VALUES ${mapped.join(",")}`,
+		});
+	},
+
+	async delete(indexes: Index[]) {
+		let chain = undefined;
+		let block_number = undefined;
+
+		for (const index of indexes) {
+			if (chain === undefined) {
+				chain = index.chain;
+			}
+
+			if (chain !== index.chain) {
+				throw new Error("Expected entire batch to be from the same chain");
+			}
+
+			if (block_number === undefined) {
+				block_number = index.block_number;
+			}
+
+			if (block_number !== index.block_number) {
+				throw new Error("Expected entire batch to be from the same block number");
+			}
+		}
+
+		if (chain === undefined || block_number === undefined) {
+			throw new Error("Expected at least oen index");
+		}
+
+		await db.command({
+			query: `ALTER TABLE index_block_number_tx_index_v1 DELETE WHERE chain = ${chain} AND block_number = ${block_number}`,
+		});
 	},
 };
 
-export async function getEventIds(chain: keyof typeof chains, blockNumber: number, txIndex?: number) {
-	//
+export async function getEventIdsForBlock(chain: keyof typeof chains, block: number) {
+	const start = Date.now();
+
+	const res = await db.query({
+		query: `SELECT event_id FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block};`,
+		format: "JSONEachRow",
+	});
+
+	const rows: Record<string, string>[] = await res.json();
+
+	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
+
+	return rows.map((row) => row.event_id) as string[];
+}
+
+export async function getEventIdsForTx(chain: keyof typeof chains, block: number, tx: number) {
+	const start = Date.now();
+
+	const res = await db.query({
+		query: `SELECT event_id FROM index_block_number_tx_index_v1 WHERE chain = ${chain} AND block_number = ${block} AND tx_index = ${tx};`,
+		format: "JSONEachRow",
+	});
+
+	const rows: Record<string, string>[] = await res.json();
+
+	logger.debug(`Found ${rows.length} events for tx in ${Date.now() - start}ms`);
+
+	return rows.map((row) => row.event_id) as string[];
 }
