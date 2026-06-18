@@ -7,6 +7,10 @@ import type { RpcBlock, RpcTransactionReceipt } from "viem";
 import { db } from "../db/client";
 import { raise, retry } from "../utils";
 
+// Eventually we should just use a local transport here to test. That would mean we don't have to start
+// the frontend at all and can test events in isolation. We don't do this at the moment because of the
+// module side affects issue, we want to ensure that all events are actually picked up for now.
+
 const client = http("http://localhost:3000/api/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
 
 export async function test_writeEvents(block: Block, event: string) {
