@@ -1,9 +1,6 @@
 import { db } from "@/db/client";
 import { logger } from "@/utils";
 
-// TODO
-// Remove after new block-number-tx-index index is live
-
 // The transactions index does not include a chain id intentionally. For now, transactions are unique enough across chains
 // that we can combine this information in the same table. This also means that users do not have to specify the chain id
 // for their transaction in anyway.

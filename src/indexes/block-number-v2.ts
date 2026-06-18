@@ -3,9 +3,6 @@ import { logger } from "@/utils";
 import type { chains } from "@/constants";
 import { getInternalChain, parseId } from "@/helpers";
 
-// TODO
-// Remove after new block-number-tx-index index is live
-
 // Is it smarter to create a block number index table for each chain rather than adding a chain field?
 // Clickhouse benefits greatly from append only tables and using the chain for ordering would mean inserts
 // happen at places other than the end of the table. Claude said this won't really be a problem in practice
