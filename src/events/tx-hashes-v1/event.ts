@@ -1,6 +1,10 @@
 import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 
+// TODO
+// Remove created_at
+// Switch to map a tx_hash to block number and tx index to accomodate new index
+
 // CREATE TABLE kv_tx_hashes_v1 (
 //     `block_number` UInt64,
 //     `tx_index` UInt32,
