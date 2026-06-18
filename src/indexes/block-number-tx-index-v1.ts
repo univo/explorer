@@ -95,7 +95,7 @@ export const index_block_number_tx_index_v1 = {
 		}
 
 		if (chain === undefined || block_number === undefined) {
-			throw new Error("Expected at least oen index");
+			throw new Error("Expected at least one index");
 		}
 
 		await db.command({
