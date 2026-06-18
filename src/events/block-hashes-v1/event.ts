@@ -1,9 +1,6 @@
 import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 
-// TODO
-// Remove created at
-
 // CREATE TABLE kv_block_hashes_v1 (
 //     `block_number` UInt64,
 //     `block_hash` FixedString(66),
