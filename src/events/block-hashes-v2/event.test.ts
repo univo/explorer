@@ -10,7 +10,7 @@ test.concurrent("block_hashes_v2", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number });
 
 	await db.command({
-		query: `DELETE from kv_block_hashes_v2 where block_hash = unhex('${block.eth_getBlockByNumber.hash.slice(2)}')`,
+		query: `DELETE FROM kv_block_hashes_v2 WHERE block_hash = unhex('${block.eth_getBlockByNumber.hash.slice(2)}')`,
 	});
 
 	await test_writeEvents(block, "block_hashes_v2");
