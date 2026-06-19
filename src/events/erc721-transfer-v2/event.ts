@@ -143,9 +143,9 @@ export async function getErc721TransferV2(ids: string[]) {
 			id: row["lower(hex(id))"] as string,
 			success: row.success as boolean,
 			token_id: row.token_id as string,
-			to_address: row.to_address as `0x${string}`,
-			from_address: row.from_address as `0x${string}`,
-			token_address: row.token_address as `0x${string}`,
+			to_address: getAddress(row.to_address),
+			from_address: getAddress(row.from_address),
+			token_address: getAddress(row.token_address),
 		};
 	});
 
