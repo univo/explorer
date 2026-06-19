@@ -92,6 +92,8 @@ export async function test_deleteEvents(block: Block, table: string) {
 	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), '${prefix}')` });
 }
 
+// TODO: Might be better to use each storage adapters delete method?
+
 export async function test_v2_deleteEvents(block: Block, table: string) {
 	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
 	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
