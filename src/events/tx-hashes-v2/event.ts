@@ -10,7 +10,7 @@ import { hexToNumber } from "@/utils";
 // ENGINE = ReplacingMergeTree
 // ORDER BY tx_hash;
 
-univo.event({
+export const event = univo.event({
 	id: "tx_hashes_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
@@ -44,7 +44,7 @@ univo.event({
 
 		async delete(batch) {
 			await db.command({
-				query: `DELETE FROM kv_tx_hashes_v2 WHERE tx_hash IN (${batch.map((event) => `unhex('${event.tx_hash}')`).join(",")})`,
+				query: `DELETE FROM kv_tx_hashes_v2 WHERE tx_hash IN (${batch.map((event) => `unhex('${event.tx_hash.slice(2)}')`).join(",")})`,
 			});
 		},
 	},

@@ -1,22 +1,23 @@
 import { test } from "vitest";
-
-import { db } from "@/db/client";
-import { getTx } from "./event";
 import { hexToNumber } from "@/utils";
-import { test_getBlock, test_writeEvents } from "@/tests/utils";
+import { event, getTx } from "./event";
+import { test_client, test_getBlock } from "@/tests/utils";
 
 test.concurrent("tx_hashes_v2", async ({ expect }) => {
 	const block_number = 10000000;
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
-	const [tx] = block.eth_getBlockByNumber.transactions;
+	if (event.storage.delete) {
+		await event.storage.delete(event.handler(block));
+	}
 
-	await db.command({
-		query: `DELETE FROM kv_tx_hashes_v2 WHERE tx_hash = unhex('${tx.hash.slice(2)}')`,
+	await test_client.request({
+		method: "private_writeEvents",
+		params: [{ events: ["tx_hashes_v2"], blocks: [block] }],
 	});
 
-	await test_writeEvents(block, "tx_hashes_v2");
+	const [tx] = block.eth_getBlockByNumber.transactions;
 
 	const result = await getTx(tx.hash);
 
