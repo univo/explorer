@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { numberToHex } from "viem";
 import { http } from "univo/transport";
 import { promises as fs } from "node:fs";
+import type { IndexerRpc } from "univo/rpc";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
 import { db } from "../db/client";
@@ -11,7 +12,9 @@ import { raise, retry } from "../utils";
 // the frontend at all and can test events in isolation. We don't do this at the moment because of the
 // module side affects issue, we want to ensure that all events are actually picked up for now.
 
-export const test_client = http("http://localhost:3000/api/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
+export const test_client = http<IndexerRpc>("http://localhost:3000/api/univo", {
+	signingKey: process.env.UNIVO_SIGNING_KEY,
+});
 
 const client = http("http://localhost:3000/api/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
 
