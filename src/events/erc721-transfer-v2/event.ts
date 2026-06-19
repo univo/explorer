@@ -39,7 +39,7 @@ export interface Erc721TransferV2 {
 
 const abi = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)");
 
-univo.event({
+export const event = univo.event({
 	id: "erc721_transfer_v2",
 
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
