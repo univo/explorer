@@ -92,7 +92,10 @@ export async function test_deleteEvents(block: Block, table: string) {
 	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), '${prefix}')` });
 }
 
-// TODO: Might be better to use each storage adapters delete method?
+// TODO
+// Might be better to use each storage adapters delete method? We can access it by accessing the defined
+// event and we would be able to easily compute the resulting set of events to delete before we test
+// the upsert
 
 export async function test_v2_deleteEvents(block: Block, table: string) {
 	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
