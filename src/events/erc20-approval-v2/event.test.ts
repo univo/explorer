@@ -1,16 +1,22 @@
 import { test } from "vitest";
 
-import { getErc20ApprovalV2 } from "./event";
-import { test_v2_deleteEvents, test_getBlock, test_v2_getEventIdsForBlock, test_writeEvents } from "@/tests/utils";
+import { event, getErc20ApprovalV2 } from "./event";
+import { test_getBlock, test_v2_getEventIdsForBlock, test_client } from "@/tests/utils";
 
 test.concurrent("erc20_approval_v2", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 10000000 });
 
-	await test_v2_deleteEvents(block, "event_erc20_approval_v2");
+	if (event.storage.delete) {
+		await event.storage.delete(event.handler(block));
+	}
 
-	await test_writeEvents(block, "erc20_approval_v2");
+	await test_client.request({
+		method: "private_writeEvents",
+		params: [{ events: ["erc20_approval_v2"], blocks: [block] }],
+	});
 
 	const ids = await test_v2_getEventIdsForBlock(block, "event_erc20_approval_v2");
+
 	const events = await getErc20ApprovalV2(ids);
 
 	expect(events).toMatchInlineSnapshot(`
