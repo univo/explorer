@@ -83,7 +83,7 @@ export const event = univo.event({
 
 						// Used for indexes
 						chain: hexToNumber(block.eth_chainId),
-						tx_index: hexToNumber(receipt.transactionIndex),
+						tx_index: hexToNumber(log.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 					};
 				} catch (error) {
