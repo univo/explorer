@@ -32,7 +32,7 @@ export interface CancelPendingTxV2 {
 // ORDER BY id
 // PARTITION BY partition;
 
-univo.event({
+export const event = univo.event({
 	id: "cancel_pending_tx_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
