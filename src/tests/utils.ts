@@ -2,10 +2,19 @@ import { join } from "node:path";
 import { numberToHex } from "viem";
 import { http } from "univo/transport";
 import { promises as fs } from "node:fs";
+import type { IndexerRpc } from "univo/rpc";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
 import { db } from "../db/client";
 import { raise, retry } from "../utils";
+
+// Eventually we should just use a local transport here to test. That would mean we don't have to start
+// the frontend at all and can test events in isolation. We don't do this at the moment because of the
+// module side affects issue, we want to ensure that all events are actually picked up for now.
+
+export const test_client = http<IndexerRpc>("http://localhost:3000/api/univo", {
+	signingKey: process.env.UNIVO_SIGNING_KEY,
+});
 
 const client = http("http://localhost:3000/api/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
 
@@ -110,9 +119,9 @@ export async function test_getEventIdsForBlock(block: Block, table: string) {
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
 // up events using a prefix search based on the block information that makes up the id for each event
 export async function test_v2_getEventIdsForBlock(block: Block, table: string) {
-	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
 	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
-	const prefix = `${timestamp}${number.slice(0, 4)}${number.slice(4, 8)}`;
+	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
+	const prefix = `${timestamp}${number}`;
 
 	// Clickhouse quirk is that we have to cast the id using toString. This is an issue with how
 	// startsWith works with FixedString columns and internal padding.

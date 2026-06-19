@@ -25,4 +25,12 @@ export const tables = {
 	erc721_transfer_v1: 7,
 	erc721_approval_v1: 8,
 	erc20_transfer_v2: 9,
+	native_transfer_v2: 10,
+	erc20_approval_v2: 11,
+	input_data_message_v2: 12,
+	contract_deployment_v2: 13,
+	ens_name_registered_v2: 14,
+	cancel_pending_tx_v2: 15,
+	erc721_transfer_v2: 16,
+	erc721_approval_v2: 17,
 };

@@ -224,7 +224,7 @@ export function getInternalChain(external_chain: `0x${string}` | keyof typeof ch
  */
 export function getExternalChain(internal_chain: number) {
 	return (
-		inverted_chains[internal_chain as keyof typeof inverted_chains] ||
+		(inverted_chains[internal_chain as keyof typeof inverted_chains] as keyof typeof chains) ||
 		raise(`Unknown internal chain id ${internal_chain}`)
 	);
 }
