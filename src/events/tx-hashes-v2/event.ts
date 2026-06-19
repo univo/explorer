@@ -43,13 +43,9 @@ univo.event({
 		},
 
 		async delete(batch) {
-			await Promise.all(
-				batch.map(async (value) => {
-					await db.command({
-						query: `DELETE FROM kv_tx_hashes_v2 WHERE tx_hash = unhex('${value.tx_hash.slice(2)}')`,
-					});
-				}),
-			);
+			await db.command({
+				query: `DELETE FROM kv_tx_hashes_v2 WHERE tx_hash IN (${batch.map((event) => `unhex('${event.tx_hash}')`).join(",")})`,
+			});
 		},
 	},
 });

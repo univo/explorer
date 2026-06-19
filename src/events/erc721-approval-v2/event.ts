@@ -105,7 +105,7 @@ univo.event({
 
 		async delete(batch) {
 			await db.command({
-				query: `ALTER TABLE event_erc721_approval_v2 UPDATE success = false WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
+				query: `DELETE FROM event_erc721_approval_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
 	},
