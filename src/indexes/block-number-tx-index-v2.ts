@@ -11,6 +11,9 @@ import { getInternalChain, v2_parseId } from "@/helpers";
 //   originated from without having to consult any other source.
 //
 // - Covered index. The same index can used to look up events from a given block number.
+//
+// The tradeoff here is that this representation fails under chain reorganisations. A transaction in a reorganised block can
+// end up in a completely different position when it is included canonically.
 
 // CREATE TABLE index_block_number_tx_index_v2 (
 //     `chain` UInt16,
