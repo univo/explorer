@@ -107,7 +107,7 @@ univo.event({
 					unhex('${event.id}'),
 					${event.partition},
 					${event.success},
-					${escapeMessageChars(event.message)},
+					${escapeChars(event.message)},
 					unhex('${event.to_address.slice(2)}'),
 					unhex('${event.from_address.slice(2)}')
 				)`;
@@ -154,7 +154,7 @@ function count_valid_chars(string: string) {
 	return count;
 }
 
-function escapeMessageChars(value: string) {
+function escapeChars(value: string) {
 	return `'${value.replaceAll("\\", "\\\\").replaceAll("'", "\\'").replaceAll("\n", "\\n").replaceAll("\r", "\\r").replaceAll("\t", "\\t")}'`;
 }
 
