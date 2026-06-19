@@ -14,6 +14,8 @@ import {
 	v2_getPartition,
 	v2_getPartitions,
 } from "@/helpers";
+import { index_account_v2 } from "@/indexes/account-v2";
+import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
 
 export interface Erc20TransferV2 {
 	tag: "erc20_transfer_v2";
@@ -119,6 +121,34 @@ export const event = univo.event({
 				query: `DELETE FROM event_erc20_transfer_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v2,
+	id: "erc20_transfer_v2_index_block_number_tx_index_v2",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, chain: event.chain, block_number: event.block_number, tx_index: event.tx_index }, //
+			];
+		});
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_account_v2,
+	id: "erc20_transfer_v2_index_account_v2",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, account: event.to_address }, //
+				{ event_id: event.id, account: event.from_address },
+				{ event_id: event.id, account: event.token_address },
+			];
+		});
 	},
 });
 
