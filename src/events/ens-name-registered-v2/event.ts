@@ -3,7 +3,7 @@ import { decodeEventLog, getAddress, toEventSelector } from "viem";
 import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { nonNullable } from "@/utils";
+import { hexToNumber, nonNullable } from "@/utils";
 import {
 	getDeduplicatedEvents,
 	getEventSuccess,
@@ -12,6 +12,8 @@ import {
 	v2_getPartitions,
 	v2_parseId,
 } from "@/helpers";
+import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
+import { index_account_v2 } from "@/indexes/account-v2";
 
 export interface EnsNameRegisteredV2 {
 	tag: "ens_name_registered_v2";
@@ -107,6 +109,14 @@ export const event = univo.event({
 							owner_address: getAddress(args.owner),
 							cost_eth: String(args.cost),
 							expires_at: Number(args.expires) * 1000,
+
+							// Used for indexes
+							receipt_to: receipt.to,
+							log_address: log.address,
+							receipt_from: receipt.from,
+							chain: hexToNumber(block.eth_chainId),
+							tx_index: hexToNumber(receipt.transactionIndex),
+							block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						};
 					}
 
@@ -130,6 +140,14 @@ export const event = univo.event({
 							owner_address: getAddress(args.owner),
 							cost_eth: String(args.baseCost + args.premium),
 							expires_at: Number(args.expires) * 1000,
+
+							// Used for indexes
+							receipt_to: receipt.to,
+							log_address: log.address,
+							receipt_from: receipt.from,
+							chain: hexToNumber(block.eth_chainId),
+							tx_index: hexToNumber(receipt.transactionIndex),
+							block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						};
 					}
 				} catch {
@@ -169,6 +187,35 @@ export const event = univo.event({
 				query: `DELETE FROM event_ens_name_registered_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v2,
+	id: "ens_name_registered_v2_index_block_number_tx_index_v2",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, chain: event.chain, block_number: event.block_number, tx_index: event.tx_index }, //
+			];
+		});
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_account_v2,
+	id: "ens_name_registered_v2_index_account_v2",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, account: event.receipt_to }, //
+				{ event_id: event.id, account: event.log_address }, //
+				{ event_id: event.id, account: event.receipt_from }, //
+				{ event_id: event.id, account: event.owner_address }, //
+			];
+		});
 	},
 });
 
