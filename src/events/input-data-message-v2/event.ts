@@ -34,7 +34,7 @@ export interface InputDataMessageV2 {
 // ORDER BY id
 // PARTITION BY partition;
 
-univo.event({
+export const event = univo.event({
 	id: "input_data_message_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
