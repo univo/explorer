@@ -45,7 +45,7 @@ univo.event({
 
 export async function getBlockNumber(blockHash: `0x${string}`) {
 	const res = await db.query({
-		query: `SELECT block_number FROM kv_block_hashes_v2 WHERE block_hash = unhex('${blockHash.slice(2)}');`,
+		query: `SELECT block_number FROM kv_block_hashes_v2 WHERE block_hash = unhex('${blockHash.slice(2)}')`,
 		format: "JSONEachRow",
 	});
 
