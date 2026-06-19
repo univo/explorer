@@ -99,7 +99,7 @@ export const index_block_number_tx_index_v2 = {
 		}
 
 		await db.command({
-			query: `ALTER TABLE index_block_number_tx_index_v2 DELETE WHERE chain = ${chain} AND block_number = ${block_number}`,
+			query: `DELETE FROM index_block_number_tx_index_v2 WHERE chain = ${chain} AND block_number = ${block_number}`,
 		});
 	},
 };
