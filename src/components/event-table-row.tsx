@@ -25,6 +25,8 @@ export function EventTableRow(props: { id: string; children: ReactNode }) {
 	const views = useViews();
 	const index = useViewIndex();
 	const hovered = useHoveredPrefix();
+
+	// TODO: This will change with our v2 identifiers
 	const prefix = props.id.slice(0, 23); // Includes block number and tx id
 
 	function handleClick(event: MouseEvent) {
