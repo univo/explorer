@@ -3,7 +3,9 @@ import { getAddress } from "viem";
 import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { nonNullable } from "@/utils";
+import { hexToNumber, nonNullable } from "@/utils";
+import { index_account_v2 } from "@/indexes/account-v2";
+import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
 import {
 	getDeduplicatedEvents,
 	getEventSuccess,
@@ -71,6 +73,11 @@ export const event = univo.event({
 					to_address: getAddress(tx.to),
 					from_address: getAddress(tx.from),
 					quantity: String(BigInt(tx.value)),
+
+					// Used for indexes
+					chain: hexToNumber(block.eth_chainId),
+					tx_index: hexToNumber(tx.transactionIndex),
+					block_number: hexToNumber(block.eth_getBlockByNumber.number),
 				};
 			})
 			.filter(nonNullable);
@@ -103,6 +110,33 @@ export const event = univo.event({
 				query: `DELETE FROM event_native_transfer_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v2,
+	id: "native_transfer_v2_index_block_number_tx_index_v2",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, chain: event.chain, block_number: event.block_number, tx_index: event.tx_index }, //
+			];
+		});
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_account_v2,
+	id: "native_transfer_v2_index_account_v2",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, account: event.to_address }, //
+				{ event_id: event.id, account: event.from_address },
+			];
+		});
 	},
 });
 
