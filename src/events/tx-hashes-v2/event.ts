@@ -41,12 +41,22 @@ univo.event({
 				query: `INSERT INTO kv_tx_hashes_v2 (tx_hash, block_number, tx_index) VALUES ${values.join(",")}`,
 			});
 		},
+
+		async delete(batch) {
+			await Promise.all(
+				batch.map(async (value) => {
+					await db.command({
+						query: `DELETE FROM kv_tx_hashes_v2 WHERE tx_hash = unhex('${value.tx_hash.slice(2)}')`,
+					});
+				}),
+			);
+		},
 	},
 });
 
 export async function getTx(txHash: `0x${string}`) {
 	const res = await db.query({
-		query: `SELECT block_number, tx_index FROM kv_tx_hashes_v2 WHERE tx_hash = unhex('${txHash.slice(2)}');`,
+		query: `SELECT block_number, tx_index FROM kv_tx_hashes_v2 WHERE tx_hash = unhex('${txHash.slice(2)}')`,
 		format: "JSONEachRow",
 	});
 

@@ -40,6 +40,16 @@ univo.event({
 				query: `INSERT INTO kv_block_hashes_v2 (block_hash, block_number) VALUES ${values.join(",")}`,
 			});
 		},
+
+		async delete(batch) {
+			await Promise.all(
+				batch.map(async (value) => {
+					await db.command({
+						query: `DELETE FROM kv_block_hashes_v2 WHERE block_hash = unhex('${value.block_hash.slice(2)}')`,
+					});
+				}),
+			);
+		},
 	},
 });
 
