@@ -63,7 +63,7 @@ const v3 = {
 	],
 } as const;
 
-univo.event({
+export const event = univo.event({
 	id: "ens_name_registered_v2",
 
 	filters: [
