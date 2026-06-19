@@ -122,8 +122,8 @@ export async function getContractDeploymentV2(ids: string[]) {
 			tag: "contract_deployment_v2",
 			id: row["lower(hex(id))"] as string,
 			success: row.success as boolean,
-			deployer_address: row.deployer_address as `0x${string}`,
-			contract_address: row.contract_address as `0x${string}`,
+			deployer_address: getAddress(row.deployer_address),
+			contract_address: getAddress(row.contract_address),
 		};
 	});
 
