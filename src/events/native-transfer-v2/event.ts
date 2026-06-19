@@ -137,8 +137,8 @@ export async function getNativeTransferV2(ids: string[]) {
 			id: row["lower(hex(id))"] as string,
 			success: row.success as boolean,
 			quantity: row.quantity as string,
-			to_address: row.to_address as `0x${string}`,
-			from_address: row.from_address as `0x${string}`,
+			to_address: getAddress(row.to_address),
+			from_address: getAddress(row.from_address),
 		};
 	});
 
