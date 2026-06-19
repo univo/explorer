@@ -92,6 +92,20 @@ export async function test_deleteEvents(block: Block, table: string) {
 	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), '${prefix}')` });
 }
 
+export async function test_v2_deleteEvents(block: Block, table: string) {
+	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
+	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
+	const prefix = `${timestamp}${number}`;
+
+	// A clickhouse quirk here is that we need to use the `command` method to delete rows. The regular
+	// `query` method adds formatting information to the query which causes the delete to fail.
+
+	// Another clickhouse quirk is that we have to cast the id using toString. This is an issue with how
+	// startsWith works with FixedString columns and internal padding.
+
+	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), unhex('${prefix}'))` });
+}
+
 // Normally we use our index tables to determine ids based on search queries, but for testing
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
 // up events using a prefix search based on the block information that makes up the id for each event
@@ -114,9 +128,9 @@ export async function test_getEventIdsForBlock(block: Block, table: string) {
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
 // up events using a prefix search based on the block information that makes up the id for each event
 export async function test_v2_getEventIdsForBlock(block: Block, table: string) {
-	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
 	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
-	const prefix = `${timestamp}${number.slice(0, 4)}${number.slice(4, 8)}`;
+	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
+	const prefix = `${timestamp}${number}`;
 
 	// Clickhouse quirk is that we have to cast the id using toString. This is an issue with how
 	// startsWith works with FixedString columns and internal padding.

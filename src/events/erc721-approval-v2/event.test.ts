@@ -1,12 +1,12 @@
 import { test } from "vitest";
 
 import { getErc721ApprovalV2 } from "./event";
-import { test_deleteEvents, test_getBlock, test_v2_getEventIdsForBlock, test_writeEvents } from "@/tests/utils";
+import { test_v2_deleteEvents, test_getBlock, test_v2_getEventIdsForBlock, test_writeEvents } from "@/tests/utils";
 
 test.concurrent("erc721_approval_v2", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 13657776 });
 
-	await test_deleteEvents(block, "event_erc721_approval_v2");
+	await test_v2_deleteEvents(block, "event_erc721_approval_v2");
 
 	await test_writeEvents(block, "erc721_approval_v2");
 
