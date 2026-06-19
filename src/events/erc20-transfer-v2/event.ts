@@ -81,7 +81,7 @@ export const event = univo.event({
 						token_address: getAddress(log.address),
 						quantity: String(args.value),
 
-						// Used for indexing
+						// Used for indexes
 						chain: hexToNumber(block.eth_chainId),
 						tx_index: hexToNumber(receipt.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
