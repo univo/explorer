@@ -12,6 +12,10 @@ test.concurrent("block_hashes_v2", async ({ expect }) => {
 		await event.storage.delete(event.handler(block));
 	}
 
+	const initial = await getBlockNumber(block.eth_getBlockByNumber.hash);
+
+	expect(initial).toEqual(null);
+
 	await test_client.request({
 		method: "private_writeEvents",
 		params: [{ events: ["block_hashes_v2"], blocks: [block] }],

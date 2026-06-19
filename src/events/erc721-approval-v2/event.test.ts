@@ -10,6 +10,10 @@ test.concurrent("erc721_approval_v2", async ({ expect }) => {
 		await event.storage.delete(event.handler(block));
 	}
 
+	const initial = await test_v2_getEventIdsForBlock(block, "event_input_data_message_v2");
+
+	expect(initial).toStrictEqual([]);
+
 	await test_client.request({
 		method: "private_writeEvents",
 		params: [{ events: ["erc721_approval_v2"], blocks: [block] }],
