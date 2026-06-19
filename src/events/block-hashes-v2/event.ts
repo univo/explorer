@@ -9,7 +9,7 @@ import { hexToNumber } from "@/utils";
 // ENGINE = ReplacingMergeTree
 // ORDER BY block_hash;
 
-univo.event({
+export const event = univo.event({
 	id: "block_hashes_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
