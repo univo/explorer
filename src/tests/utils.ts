@@ -97,25 +97,6 @@ export async function test_deleteEvents(block: Block, table: string) {
 	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), '${prefix}')` });
 }
 
-// TODO
-// Might be better to use each storage adapters delete method? We can access it by accessing the defined
-// event and we would be able to easily compute the resulting set of events to delete before we test
-// the upsert
-
-export async function test_v2_deleteEvents(block: Block, table: string) {
-	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
-	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
-	const prefix = `${timestamp}${number}`;
-
-	// A clickhouse quirk here is that we need to use the `command` method to delete rows. The regular
-	// `query` method adds formatting information to the query which causes the delete to fail.
-
-	// Another clickhouse quirk is that we have to cast the id using toString. This is an issue with how
-	// startsWith works with FixedString columns and internal padding.
-
-	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), unhex('${prefix}'))` });
-}
-
 // Normally we use our index tables to determine ids based on search queries, but for testing
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
 // up events using a prefix search based on the block information that makes up the id for each event
