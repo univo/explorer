@@ -32,7 +32,7 @@ export interface ContractDeploymentV2 {
 // ORDER BY id
 // PARTITION BY partition;
 
-univo.event({
+export const event = univo.event({
 	id: "contract_deployment_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
@@ -87,7 +87,7 @@ univo.event({
 
 		async delete(batch) {
 			await db.command({
-				query: `DELETE event_contract_deployment_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
+				query: `DELETE FROM event_contract_deployment_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
 	},
