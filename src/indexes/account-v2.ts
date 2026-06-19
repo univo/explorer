@@ -3,6 +3,12 @@ import { getAddress } from "viem";
 import { db } from "@/db/client";
 import { logger } from "@/utils";
 
+// THINKING
+// At the moment we show reorged events, but you click on that event it will use it's position and take you to a completely
+// different event. I think it might just be a lot simpler to delete events if they are reorganised. A better strategy to handle
+// reorgs might just be to record the entire reorged block in object storage. We could derive all the events that were created
+// from that source block and users would be able to determine if they were impacted
+
 // Account indexes do not include a chain intentionally. For now, it is preferred that the list of events returned for
 // a given account should be multichain by default. This allows us to easily see the actions of specific accounts across
 // chains within a similar time-frame.
