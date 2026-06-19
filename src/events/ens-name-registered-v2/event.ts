@@ -209,7 +209,7 @@ export async function getEnsNameRegisteredV2(ids: string[]) {
 			success: row.success as boolean,
 			name: row.name as string,
 			cost_eth: row.cost_eth as string,
-			owner_address: row.owner_address as `0x${string}`,
+			owner_address: getAddress(row.owner_address),
 			expires_at: Number(row.expires_at),
 		};
 	});
