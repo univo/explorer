@@ -3,7 +3,7 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { nonNullable } from "@/utils";
+import { hexToNumber, nonNullable } from "@/utils";
 
 import {
 	getDeduplicatedEvents,
@@ -78,6 +78,11 @@ export const event = univo.event({
 						from_address: getAddress(args.from),
 						token_address: getAddress(log.address),
 						quantity: String(args.value),
+
+						// Used for indexing
+						chain: hexToNumber(block.eth_chainId),
+						tx_index: hexToNumber(receipt.transactionIndex),
+						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 					};
 				} catch (error) {
 					return null;
