@@ -39,7 +39,7 @@ export interface Erc721ApprovalV2 {
 
 const abi = parseAbiItem("event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)");
 
-univo.event({
+export const event = univo.event({
 	id: "erc721_approval_v2",
 
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
