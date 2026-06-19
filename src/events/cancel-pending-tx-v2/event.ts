@@ -4,6 +4,8 @@ import { db } from "@/db/client";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
 import { hexToNumber, nonNullable } from "@/utils";
+import { index_account_v2 } from "@/indexes/account-v2";
+import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
 import {
 	getDeduplicatedEvents,
 	getEventSuccess,
@@ -12,8 +14,6 @@ import {
 	v2_getPartitions,
 	v2_parseId,
 } from "@/helpers";
-import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
-import { index_account_v2 } from "@/indexes/account-v2";
 
 export interface CancelPendingTxV2 {
 	tag: "cancel_pending_tx_v2";
