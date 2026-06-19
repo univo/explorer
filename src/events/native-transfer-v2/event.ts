@@ -34,7 +34,7 @@ export interface NativeTransferV2 {
 // ORDER BY id
 // PARTITION BY partition;
 
-univo.event({
+export const event = univo.event({
 	id: "native_transfer_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
