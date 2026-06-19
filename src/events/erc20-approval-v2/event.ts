@@ -143,9 +143,9 @@ export async function getErc20ApprovalV2(ids: string[]) {
 			id: row["lower(hex(id))"] as string,
 			success: row.success as boolean,
 			quantity: row.quantity as string,
-			owner_address: row.owner_address as `0x${string}`,
-			spender_address: row.spender_address as `0x${string}`,
-			token_address: row.token_address as `0x${string}`,
+			owner_address: getAddress(row.owner_address),
+			spender_address: getAddress(row.spender_address),
+			token_address: getAddress(row.token_address),
 		};
 	});
 
