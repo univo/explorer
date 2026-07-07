@@ -31,7 +31,10 @@ export function EventTableRow(props: { id: string; children: ReactNode }) {
 	const prefix = `${parsed.blockTimestamp}:${parsed.blockNumber}:${parsed.txIndex}`;
 
 	function handleClick(event: MouseEvent) {
-		if (hasClickableParentElement(event.target as HTMLElement)) return;
+		if (hasClickableParentElement(event.target as HTMLElement)) {
+			return;
+		}
+
 		views.push(props.id, index);
 	}
 
