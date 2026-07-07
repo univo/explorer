@@ -50,7 +50,7 @@ export const event = univo.event({
 	},
 });
 
-export async function getTx(txHash: `0x${string}`) {
+export async function getTxPosition(txHash: `0x${string}`) {
 	const res = await db.query({
 		query: `SELECT block_number, tx_index FROM kv_tx_hashes_v2 WHERE tx_hash = unhex('${txHash.slice(2)}')`,
 		format: "JSONEachRow",

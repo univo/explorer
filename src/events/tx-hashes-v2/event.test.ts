@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { hexToNumber } from "@/utils";
-import { event, getTx } from "./event";
+import { event, getTxPosition } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
 
 test.concurrent("tx_hashes_v2", async ({ expect }) => {
@@ -14,7 +14,7 @@ test.concurrent("tx_hashes_v2", async ({ expect }) => {
 
 	const [tx] = block.eth_getBlockByNumber.transactions;
 
-	const initial = await getTx(tx.hash);
+	const initial = await getTxPosition(tx.hash);
 
 	expect(initial).toEqual(null);
 
@@ -23,7 +23,7 @@ test.concurrent("tx_hashes_v2", async ({ expect }) => {
 		params: [{ events: ["tx_hashes_v2"], blocks: [block] }],
 	});
 
-	const result = await getTx(tx.hash);
+	const result = await getTxPosition(tx.hash);
 
 	expect(result).toMatchObject({
 		block_number: hexToNumber(tx.blockNumber),
