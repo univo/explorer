@@ -9,7 +9,7 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function ContractDeploymentV2Description(props: { event: ContractDeploymentV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>
@@ -23,7 +23,7 @@ export function ContractDeploymentV2Description(props: { event: ContractDeployme
 }
 
 export function ContractDeploymentV2AccountDescription(props: { event: ContractDeploymentV2; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.account.address, props.event.deployer_address)) {
 		return (

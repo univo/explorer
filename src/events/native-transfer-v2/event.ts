@@ -6,14 +6,7 @@ import { tables } from "@/constants";
 import { hexToNumber, nonNullable } from "@/utils";
 import { index_account_v2 } from "@/indexes/account-v2";
 import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
-import {
-	getDeduplicatedEvents,
-	getEventSuccess,
-	v2_createId,
-	v2_getPartition,
-	v2_getPartitions,
-	v2_parseId,
-} from "@/helpers";
+import { getDeduplicatedEvents, getEventSuccess, createId, getPartition, getPartitions, parseId } from "@/helpers";
 
 export interface NativeTransferV2 {
 	tag: "native_transfer_v2";
@@ -54,7 +47,7 @@ export const event = univo.event({
 					return;
 				}
 
-				const id = v2_createId({
+				const id = createId({
 					logIndex: "0x0",
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
@@ -63,7 +56,7 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const partition = v2_getPartition(block.eth_getBlockByNumber.timestamp);
+				const partition = getPartition(block.eth_getBlockByNumber.timestamp);
 				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
 
 				return {
@@ -107,7 +100,7 @@ export const event = univo.event({
 
 		async delete(batch) {
 			await db.command({
-				query: `DELETE FROM event_native_transfer_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
+				query: `DELETE FROM event_native_transfer_v2 WHERE ${getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
 	},
@@ -141,13 +134,13 @@ univo.event({
 });
 
 export async function getNativeTransferV2(ids: string[]) {
-	const filtered = ids.filter((id) => v2_parseId(id).tableId === tables.native_transfer_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === tables.native_transfer_v2);
 
 	if (filtered.length === 0) {
 		return [];
 	}
 
-	const partitions = v2_getPartitions(filtered);
+	const partitions = getPartitions(filtered);
 
 	const res = await db.query({
 		query: `

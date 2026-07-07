@@ -8,7 +8,7 @@ import { formatTokenAmount, parseId } from "@/helpers";
 import type { Account as IAccount } from "@/state/account";
 
 export function EnsNameRegisteredV2Description(props: { event: EnsNameRegisteredV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	const expiring = new Date(props.event.expires_at).toLocaleDateString("en", {
 		month: "short",

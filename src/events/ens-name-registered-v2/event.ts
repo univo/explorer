@@ -6,14 +6,7 @@ import { tables } from "@/constants";
 import { hexToNumber, nonNullable } from "@/utils";
 import { index_account_v2 } from "@/indexes/account-v2";
 import { index_block_number_tx_index_v2 } from "@/indexes/block-number-tx-index-v2";
-import {
-	getDeduplicatedEvents,
-	getEventSuccess,
-	v2_createId,
-	v2_getPartition,
-	v2_getPartitions,
-	v2_parseId,
-} from "@/helpers";
+import { getDeduplicatedEvents, getEventSuccess, createId, getPartition, getPartitions, parseId } from "@/helpers";
 
 export interface EnsNameRegisteredV2 {
 	tag: "ens_name_registered_v2";
@@ -92,7 +85,7 @@ export const event = univo.event({
 					if (log.topics[0] === toEventSelector(v2)) {
 						const { args } = decodeEventLog({ data: log.data, topics: log.topics, strict: true, abi: [v2] });
 
-						const id = v2_createId({
+						const id = createId({
 							logIndex: log.logIndex,
 							chainId: block.eth_chainId,
 							txIndex: log.transactionIndex,
@@ -103,7 +96,7 @@ export const event = univo.event({
 
 						return {
 							id,
-							partition: v2_getPartition(block.eth_getBlockByNumber.timestamp),
+							partition: getPartition(block.eth_getBlockByNumber.timestamp),
 							success: getEventSuccess(receipt),
 							name: args.name,
 							owner_address: getAddress(args.owner),
@@ -123,7 +116,7 @@ export const event = univo.event({
 					if (log.topics[0] === toEventSelector(v3)) {
 						const { args } = decodeEventLog({ data: log.data, topics: log.topics, strict: true, abi: [v3] });
 
-						const id = v2_createId({
+						const id = createId({
 							logIndex: log.logIndex,
 							chainId: block.eth_chainId,
 							txIndex: log.transactionIndex,
@@ -134,7 +127,7 @@ export const event = univo.event({
 
 						return {
 							id,
-							partition: v2_getPartition(block.eth_getBlockByNumber.timestamp),
+							partition: getPartition(block.eth_getBlockByNumber.timestamp),
 							success: getEventSuccess(receipt),
 							name: args.name,
 							owner_address: getAddress(args.owner),
@@ -184,7 +177,7 @@ export const event = univo.event({
 
 		async delete(batch) {
 			await db.command({
-				query: `DELETE FROM event_ens_name_registered_v2 WHERE ${v2_getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
+				query: `DELETE FROM event_ens_name_registered_v2 WHERE ${getPartitions(batch.map((event) => event.id)).join(" OR ")}`,
 			});
 		},
 	},
@@ -224,13 +217,13 @@ function escapeChars(value: string) {
 }
 
 export async function getEnsNameRegisteredV2(ids: string[]) {
-	const filtered = ids.filter((id) => v2_parseId(id).tableId === tables.ens_name_registered_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === tables.ens_name_registered_v2);
 
 	if (filtered.length === 0) {
 		return [];
 	}
 
-	const partitions = v2_getPartitions(filtered);
+	const partitions = getPartitions(filtered);
 
 	const res = await db.query({
 		query: `

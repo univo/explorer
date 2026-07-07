@@ -78,10 +78,10 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 	if (pagination.cursor) {
 		const res = await db.query({
 			query: `
-				SELECT concat('0x', lower(hex(event_id)))
+				SELECT lower(hex(event_id))
 				FROM index_account_v2
 				WHERE account = unhex('${getAddress(account).slice(2)}')
-				AND event_id ${pagination.order === "latest" ? "<" : ">"} '${pagination.cursor}'
+				AND event_id ${pagination.order === "latest" ? "<" : ">"} unhex('${pagination.cursor}')
 				ORDER BY event_id ${pagination.order === "latest" ? "DESC" : "ASC"}
 				LIMIT ${pagination.limit}
 			`,
@@ -92,12 +92,12 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 
 		logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
-		return rows.map((row) => row["concat('0x', lower(hex(event_id)))"]) as string[];
+		return rows.map((row) => row["lower(hex(event_id))"]) as string[];
 	}
 
 	const res = await db.query({
 		query: `
-			SELECT concat('0x', lower(hex(event_id)))
+			SELECT lower(hex(event_id))
 			FROM index_account_v2 
 			WHERE account = unhex('${getAddress(account).slice(2)}')
 			ORDER BY event_id ${pagination.order === "latest" ? "DESC" : "ASC"} 
@@ -110,5 +110,5 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 
 	logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
-	return rows.map((row) => row["concat('0x', lower(hex(event_id)))"]) as string[];
+	return rows.map((row) => row["lower(hex(event_id))"]) as string[];
 }

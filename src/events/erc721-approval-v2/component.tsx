@@ -9,7 +9,7 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function Erc721ApprovalV2Description(props: { event: Erc721ApprovalV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isSpenderNullAddress;
 
@@ -41,7 +41,7 @@ export function Erc721ApprovalV2Description(props: { event: Erc721ApprovalV2 }) 
 }
 
 export function Erc721ApprovalV2AccountDescription(props: { event: Erc721ApprovalV2; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isSpenderNullAddress;
 

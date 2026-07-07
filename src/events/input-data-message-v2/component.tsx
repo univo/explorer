@@ -9,7 +9,7 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function InputDataMessageV2Description(props: { event: InputDataMessageV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>
@@ -24,7 +24,7 @@ export function InputDataMessageV2Description(props: { event: InputDataMessageV2
 }
 
 export function InputDataMessageV2AccountDescription(props: { event: InputDataMessageV2; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
 		return (
 			<Description>

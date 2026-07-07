@@ -74,7 +74,7 @@ async function EventsTable(props: { ids: string[] }) {
 	const events = await getEventsForIds(props.ids);
 	const ordered = getOrderedEvents(events, "latest");
 	const first = ordered[0] || raise("Expected at least one event");
-	const date = new Date(parseId(first.id).block_timestamp * 1000);
+	const date = new Date(parseId(first.id).blockTimestamp * 1000);
 
 	return (
 		<div className="relative grow overflow-scroll isolate">

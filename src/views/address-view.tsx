@@ -63,12 +63,12 @@ function Events(props: { address: `0x${string}` }) {
 		// TODO: Add cache alignment to the initial cursor
 
 		const initialCursor = createId({
-			block_timestamp: numberToHex(Math.floor(Date.now() / 1000)),
-			table_id: 0, // Irrelevant
-			chain_id: "0x1", // Irrelvant but must specify a known chain id
-			tx_index: "0x0", // Irrelevant
-			log_index: "0x0", // Irrelevant
-			block_number: "0x0", // Irrelevant
+			blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
+			tableId: 0, // Irrelevant
+			chainId: "0x1", // Irrelvant but must specify a known chain id
+			txIndex: "0x0", // Irrelevant
+			logIndex: "0x0", // Irrelevant
+			blockNumber: "0x0", // Irrelevant
 		});
 
 		return new Map().set(initialCursor, undefined);

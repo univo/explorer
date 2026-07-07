@@ -11,7 +11,7 @@ import type { Account as IAccount } from "@/state/account";
 
 export function Erc20ApprovalV2Description(props: { event: Erc20ApprovalV2 }) {
 	const all = props.event.quantity.length >= 36;
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 	const isZeroQuantity = props.event.quantity === "0";
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isZeroQuantity || isSpenderNullAddress;
@@ -45,7 +45,7 @@ export function Erc20ApprovalV2Description(props: { event: Erc20ApprovalV2 }) {
 
 export function Erc20ApprovalV2AccountDescription(props: { event: Erc20ApprovalV2; account: IAccount }) {
 	const all = props.event.quantity.length >= 36;
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 	const isZeroQuantity = props.event.quantity === "0";
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isZeroQuantity || isSpenderNullAddress;

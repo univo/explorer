@@ -24,7 +24,7 @@ export const index_block_number_v2 = {
 		for (const index of indexes) {
 			if (unique[index.block_number + index.id]) continue;
 
-			const external_chain = parseId(index.id).chain_id;
+			const external_chain = parseId(index.id).chainId;
 			const internal_chain = getInternalChain(external_chain);
 
 			values.push({

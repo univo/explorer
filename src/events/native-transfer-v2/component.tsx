@@ -10,7 +10,7 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function NativeTransferV2Description(props: { event: NativeTransferV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>
@@ -34,7 +34,7 @@ export function NativeTransferV2Description(props: { event: NativeTransferV2 }) 
 }
 
 export function NativeTransferV2AccountDescription(props: { event: NativeTransferV2; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
 		return (

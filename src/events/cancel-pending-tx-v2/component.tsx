@@ -10,7 +10,7 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function CancelPendingTxV2Description(props: { event: CancelPendingTxV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>

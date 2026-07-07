@@ -11,7 +11,7 @@ import type { Account } from "@/state/account";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForAccount } from "@/indexes/account-v1";
+import { getEventIdsForAccount } from "@/indexes/account-v2";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
@@ -47,8 +47,8 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 	// need each viritualisation container to also manage it's top border (excluding the first)
 
 	const firstEvent = ordered[0] || raise("Expected at least one event");
-	const firstEventDate = new Date(parseId(firstEvent.id).block_timestamp * 1000);
-	const previousBatchLastEventDate = new Date(parseId(props.startCursor).block_timestamp * 1000);
+	const firstEventDate = new Date(parseId(firstEvent.id).blockTimestamp * 1000);
+	const previousBatchLastEventDate = new Date(parseId(props.startCursor).blockTimestamp * 1000);
 	const firstEventDay = formatDay(firstEventDate);
 	const previousBatchLastEventDay = formatDay(previousBatchLastEventDate);
 	const startsWithHeader = previousBatchLastEventDay !== firstEventDay;
@@ -66,8 +66,8 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 						const previous = ordered[i - 1];
 						const previousId = previous === undefined ? props.startCursor : previous.id;
 
-						const eventDate = new Date(parseId(event.id).block_timestamp * 1000);
-						const previousDate = new Date(parseId(previousId).block_timestamp * 1000);
+						const eventDate = new Date(parseId(event.id).blockTimestamp * 1000);
+						const previousDate = new Date(parseId(previousId).blockTimestamp * 1000);
 
 						const eventString = formatDay(eventDate);
 						const previousString = formatDay(previousDate);
@@ -90,7 +90,7 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 										</div>
 
 										<div className="px-3 py-1.5 overflow-hidden shrink-0">
-											<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
+											<EventTimestamp timestamp={new Date(parseId(event.id).blockTimestamp * 1000)} />
 										</div>
 									</EventTableRow>
 								</div>

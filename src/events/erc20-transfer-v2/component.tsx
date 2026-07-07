@@ -10,7 +10,7 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function Erc20TransferV2Description(props: { event: Erc20TransferV2 }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
 		return (
@@ -47,7 +47,7 @@ export function Erc20TransferV2Description(props: { event: Erc20TransferV2 }) {
 }
 
 export function Erc20TransferV2AccountDescription(props: { event: Erc20TransferV2; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
 		if (isAddressEqual(props.event.to_address, "0x0000000000000000000000000000000000000000")) {
