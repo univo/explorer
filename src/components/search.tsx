@@ -16,9 +16,17 @@ export function Search(props: SearchProps) {
 
 	async function onPaste() {
 		const search = await navigator.clipboard.readText();
-		const view = getView(search);
-		if (!view) return;
-		if (props.onClose) props.onClose();
+
+		const view = getView(search); // Determine if search satisfies a known view
+
+		if (!view) {
+			return;
+		}
+
+		if (props.onClose) {
+			props.onClose();
+		}
+
 		views.push(view.raw, null);
 	}
 
@@ -65,10 +73,21 @@ export function Search(props: SearchProps) {
 function EmptyState() {
 	const search = useCommandState((state) => state.search);
 
-	if (search === "") return null;
-	if (isTxHash(search)) return null;
-	if (isAccount(search)) return null;
-	if (isBlockNumber(search)) return null;
+	if (search === "") {
+		return null;
+	}
+
+	if (isTxHash(search)) {
+		return null;
+	}
+
+	if (isAccount(search)) {
+		return null;
+	}
+
+	if (isBlockNumber(search)) {
+		return null;
+	}
 
 	return (
 		<Command.Empty className="p-8">
@@ -87,9 +106,14 @@ function isTxHash(search: string) {
 
 function isBlockNumber(search: string) {
 	try {
-		if (search.startsWith("0x")) return false;
+		if (search.startsWith("0x")) {
+			return false;
+		}
 		const number = Number.parseInt(search);
-		if (Number.isNaN(number)) return false;
+
+		if (Number.isNaN(number)) {
+			return false;
+		}
 		return true;
 	} catch {
 		return false;
@@ -259,7 +283,10 @@ function Tokens(props: { onClose?: () => void }) {
 			{tokens.map((token) => {
 				async function onSelect() {
 					await views.push(getAddress(token.address), null);
-					if (props.onClose) props.onClose();
+
+					if (props.onClose) {
+						props.onClose();
+					}
 				}
 
 				return (
