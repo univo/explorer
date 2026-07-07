@@ -18,7 +18,7 @@ import { Erc20TransferV1Description } from "@/events/erc20-transfer-v1/component
 import { Erc721ApprovalV1Description } from "@/events/erc721-approval-v1/component";
 import { Erc721TransferV1Description } from "@/events/erc721-transfer-v1/component";
 import { NativeTransferV1Description } from "@/events/native-transfer-v1/component";
-import { CancelPendingTxV1Description } from "@/events/cancel-pending-tx-v1/component";
+import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV1Description } from "@/events/input-data-message-v1/component";
 import { EnsNameRegisteredV1Description } from "@/events/ens-name-registered-v1/component";
 import { ContractDeploymentV1Description } from "@/events/contract-deployment-v1/component";
@@ -132,8 +132,8 @@ export function EventDescription(props: { event: Event }) {
 		return <ContractDeploymentV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v1") {
-		return <CancelPendingTxV1Description event={props.event} />;
+	if (props.event.tag === "cancel_pending_tx_v2") {
+		return <CancelPendingTxV2Description event={props.event} />;
 	}
 
 	if (props.event.tag === "erc721_transfer_v1") {

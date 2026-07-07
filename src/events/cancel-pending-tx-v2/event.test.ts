@@ -3,6 +3,8 @@ import { test } from "vitest";
 import { event, getCancelPendingTxV2 } from "./event";
 import { test_getBlock, test_v2_getEventIdsForBlock, test_client } from "@/tests/utils";
 
+// Example 0xfa14e402325f30b24add5d897cb801d31486669f6d48f14348b6844955946a03
+
 test.concurrent("cancel_pending_tx_v2", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 10782880 });
 
