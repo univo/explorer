@@ -3,8 +3,8 @@
 import { create } from "zustand";
 import type { ReactNode, MouseEvent } from "react";
 
-import { useViewIndex, useViews } from "./views";
 import { parseId } from "@/helpers";
+import { useViewIndex, useViews } from "./views";
 
 const useHoveredPrefix = create<string | null>(() => null);
 const setHoveredPrefix = (id: string | null) => useHoveredPrefix.setState(id);
@@ -13,9 +13,18 @@ function hasClickableParentElement(element: HTMLElement) {
 	let currentElement: HTMLElement = element;
 
 	while (currentElement) {
-		if (currentElement.nodeName === "A") return true;
-		if (currentElement.nodeName === "BUTTON") return true;
-		if (!currentElement.parentElement) return false;
+		if (currentElement.nodeName === "A") {
+			return true;
+		}
+
+		if (currentElement.nodeName === "BUTTON") {
+			return true;
+		}
+
+		if (!currentElement.parentElement) {
+			return false;
+		}
+
 		currentElement = currentElement.parentElement;
 	}
 
