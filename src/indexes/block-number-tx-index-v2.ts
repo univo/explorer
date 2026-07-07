@@ -107,7 +107,7 @@ export const index_block_number_tx_index_v2 = {
 	},
 };
 
-export async function getEventIdsForBlock(chain: keyof typeof chains, block: number) {
+export async function getEventIdsForBlockNumber(chain: keyof typeof chains, block: number) {
 	const start = Date.now();
 
 	const res = await db.query({
@@ -122,7 +122,7 @@ export async function getEventIdsForBlock(chain: keyof typeof chains, block: num
 	return rows.map((row) => row["lower(hex(event_id))"]) as string[];
 }
 
-export async function getEventIdsForTx(chain: keyof typeof chains, block: number, tx: number) {
+export async function getEventIdsForTxPosition(chain: keyof typeof chains, block: number, tx: number) {
 	const start = Date.now();
 
 	const res = await db.query({
