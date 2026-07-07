@@ -75,8 +75,15 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		if (parsed.type === "event") {
 			setState((state) => ({ ...state, status: "pending" }));
 
-			const { block_timestamp, block_number, tx_index } = parseId(parsed.data);
-			const tx = await getTxHash({ data: { block_timestamp, block_number, tx_index } });
+			const { blockTimestamp, blockNumber, txIndex } = parseId(parsed.data);
+
+			const tx = await getTxHash({
+				data: {
+					block_timestamp: blockTimestamp,
+					block_number: blockNumber,
+					tx_index: txIndex,
+				},
+			});
 
 			// We recursively push the tx view so that the next state update will remove the
 			// loading status and push the new view in the same update
