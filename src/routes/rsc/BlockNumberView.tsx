@@ -20,7 +20,7 @@ import { Erc721TransferV1Description } from "@/events/erc721-transfer-v1/compone
 import { NativeTransferV1Description } from "@/events/native-transfer-v1/component";
 import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV1Description } from "@/events/input-data-message-v1/component";
-import { EnsNameRegisteredV1Description } from "@/events/ens-name-registered-v1/component";
+import { EnsNameRegisteredV2Description } from "@/events/ens-name-registered-v2/component";
 import { ContractDeploymentV2Description } from "@/events/contract-deployment-v2/component";
 
 async function BlockNumberView(props: { number: number }) {
@@ -124,8 +124,8 @@ export function EventDescription(props: { event: Event }) {
 		return <InputDataMessageV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v1") {
-		return <EnsNameRegisteredV1Description event={props.event} />;
+	if (props.event.tag === "ens_name_registered_v2") {
+		return <EnsNameRegisteredV2Description event={props.event} />;
 	}
 
 	if (props.event.tag === "contract_deployment_v2") {
