@@ -19,7 +19,7 @@ import { Erc721ApprovalV2Description } from "@/events/erc721-approval-v2/compone
 import { Erc721TransferV2Description } from "@/events/erc721-transfer-v2/component";
 import { NativeTransferV1Description } from "@/events/native-transfer-v1/component";
 import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
-import { InputDataMessageV1Description } from "@/events/input-data-message-v1/component";
+import { InputDataMessageV2Description } from "@/events/input-data-message-v2/component";
 import { EnsNameRegisteredV2Description } from "@/events/ens-name-registered-v2/component";
 import { ContractDeploymentV2Description } from "@/events/contract-deployment-v2/component";
 
@@ -120,8 +120,8 @@ export function EventDescription(props: { event: Event }) {
 		return <Erc20TransferV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "input_data_message_v1") {
-		return <InputDataMessageV1Description event={props.event} />;
+	if (props.event.tag === "input_data_message_v2") {
+		return <InputDataMessageV2Description event={props.event} />;
 	}
 
 	if (props.event.tag === "ens_name_registered_v2") {

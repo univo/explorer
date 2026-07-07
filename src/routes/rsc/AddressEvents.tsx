@@ -21,7 +21,7 @@ import { NativeTransferV1AccountDescription } from "@/events/native-transfer-v1/
 import { Erc721TransferV2AccountDescription } from "@/events/erc721-transfer-v2/component";
 import { Erc721ApprovalV2AccountDescription } from "@/events/erc721-approval-v2/component";
 import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
-import { InputDataMessageV1AccountDescription } from "@/events/input-data-message-v1/component";
+import { InputDataMessageV2AccountDescription } from "@/events/input-data-message-v2/component";
 import { EnsNameRegisteredV2AccountDescription } from "@/events/ens-name-registered-v2/component";
 import { ContractDeploymentV2AccountDescription } from "@/events/contract-deployment-v2/component";
 
@@ -147,8 +147,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 		return <Erc20TransferV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "input_data_message_v1") {
-		return <InputDataMessageV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "input_data_message_v2") {
+		return <InputDataMessageV2AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "ens_name_registered_v2") {
