@@ -4,6 +4,7 @@ import { create } from "zustand";
 import type { ReactNode, MouseEvent } from "react";
 
 import { useViewIndex, useViews } from "./views";
+import { parseId } from "@/helpers";
 
 const useHoveredPrefix = create<string | null>(() => null);
 const setHoveredPrefix = (id: string | null) => useHoveredPrefix.setState(id);
@@ -26,8 +27,8 @@ export function EventTableRow(props: { id: string; children: ReactNode }) {
 	const index = useViewIndex();
 	const hovered = useHoveredPrefix();
 
-	// TODO: This will change with our v2 identifiers
-	const prefix = props.id.slice(0, 23); // Includes block number and tx id
+	const parsed = parseId(props.id);
+	const prefix = `${parsed.blockTimestamp}:${parsed.blockNumber}:${parsed.txIndex}`;
 
 	function handleClick(event: MouseEvent) {
 		if (hasClickableParentElement(event.target as HTMLElement)) return;
