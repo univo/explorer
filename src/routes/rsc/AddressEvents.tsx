@@ -15,7 +15,7 @@ import { getEventIdsForAccount } from "@/indexes/account-v1";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
-import { Erc20ApprovalV1AccountDescription } from "@/events/erc20-approval-v1/component";
+import { Erc20ApprovalV2AccountDescription } from "@/events/erc20-approval-v2/component";
 import { Erc20TransferV1AccountDescription } from "@/events/erc20-transfer-v1/component";
 import { NativeTransferV1AccountDescription } from "@/events/native-transfer-v1/component";
 import { Erc721TransferV1AccountDescription } from "@/events/erc721-transfer-v1/component";
@@ -135,8 +135,8 @@ function EventTimestamp(props: { timestamp: Date }) {
 }
 
 function AccountEventDescription(props: { account: Account; event: Event }) {
-	if (props.event.tag === "erc20_approval_v1") {
-		return <Erc20ApprovalV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc20_approval_v2") {
+		return <Erc20ApprovalV2AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "native_transfer_v1") {

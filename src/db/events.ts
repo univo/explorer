@@ -1,5 +1,5 @@
 import { logger } from "@/utils";
-import { getErc20ApprovalV1 } from "@/events/erc20-approval-v1/event";
+import { getErc20ApprovalV2 } from "@/events/erc20-approval-v2/event";
 import { getErc20TransferV1 } from "@/events/erc20-transfer-v1/event";
 import { getNativeTransferV1 } from "@/events/native-transfer-v1/event";
 import { getErc721TransferV1 } from "@/events/erc721-transfer-v1/event";
@@ -19,7 +19,7 @@ export async function getEventsForIds(ids: string[]) {
 	const events = await Promise.all([
 		getNativeTransferV1(ids),
 		getErc20TransferV1(ids),
-		getErc20ApprovalV1(ids),
+		getErc20ApprovalV2(ids),
 		getInputDataMessageV1(ids),
 		getContractDeploymentV2(ids),
 		getEnsNameRegisteredV2(ids),

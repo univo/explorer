@@ -7,7 +7,6 @@ import { univo } from "@/lib/univo";
 import "@/events/tx-hashes-v1/event";
 import "@/events/tx-hashes-v2/event";
 import "@/events/block-hashes-v2/event";
-import "@/events/erc20-approval-v1/event";
 import "@/events/erc20-transfer-v1/event";
 import "@/events/erc20-transfer-v2/event";
 import "@/events/erc20-approval-v2/event";

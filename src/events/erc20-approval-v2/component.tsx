@@ -4,12 +4,12 @@ import { parseId } from "@/helpers";
 import { Token } from "@/components/token";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { Erc20ApprovalV1 } from "./event";
+import type { Erc20ApprovalV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function Erc20ApprovalV1Description(props: { event: Erc20ApprovalV1 }) {
+export function Erc20ApprovalV2Description(props: { event: Erc20ApprovalV2 }) {
 	const all = props.event.quantity.length >= 36;
 	const chain = parseId(props.event.id).chain_id;
 	const isZeroQuantity = props.event.quantity === "0";
@@ -43,7 +43,7 @@ export function Erc20ApprovalV1Description(props: { event: Erc20ApprovalV1 }) {
 	);
 }
 
-export function Erc20ApprovalV1AccountDescription(props: { event: Erc20ApprovalV1; account: IAccount }) {
+export function Erc20ApprovalV2AccountDescription(props: { event: Erc20ApprovalV2; account: IAccount }) {
 	const all = props.event.quantity.length >= 36;
 	const chain = parseId(props.event.id).chain_id;
 	const isZeroQuantity = props.event.quantity === "0";
@@ -80,5 +80,5 @@ export function Erc20ApprovalV1AccountDescription(props: { event: Erc20ApprovalV
 		);
 	}
 
-	return <Erc20ApprovalV1Description event={props.event} />;
+	return <Erc20ApprovalV2Description event={props.event} />;
 }
