@@ -3,7 +3,7 @@ import { getErc20ApprovalV2 } from "@/events/erc20-approval-v2/event";
 import { getErc20TransferV2 } from "@/events/erc20-transfer-v2/event";
 import { getNativeTransferV1 } from "@/events/native-transfer-v1/event";
 import { getErc721TransferV1 } from "@/events/erc721-transfer-v1/event";
-import { getErc721ApprovalV1 } from "@/events/erc721-approval-v1/event";
+import { getErc721ApprovalV2 } from "@/events/erc721-approval-v2/event";
 import { getCancelPendingTxV2 } from "@/events/cancel-pending-tx-v2/event";
 import { getInputDataMessageV1 } from "@/events/input-data-message-v1/event";
 import { getEnsNameRegisteredV2 } from "@/events/ens-name-registered-v2/event";
@@ -25,7 +25,7 @@ export async function getEventsForIds(ids: string[]) {
 		getEnsNameRegisteredV2(ids),
 		getCancelPendingTxV2(ids),
 		getErc721TransferV1(ids),
-		getErc721ApprovalV1(ids),
+		getErc721ApprovalV2(ids),
 	]);
 
 	const flat = events.flat(1);
