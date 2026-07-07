@@ -3,13 +3,13 @@ import { isAddressEqual } from "viem";
 import { parseId } from "@/helpers";
 import { Token } from "@/components/token";
 import { Action } from "@/components/action";
-import type { Erc20TransferV1 } from "./event";
 import { Account } from "@/components/account";
+import type { Erc20TransferV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function Erc20TransferV1Description(props: { event: Erc20TransferV1 }) {
+export function Erc20TransferV2Description(props: { event: Erc20TransferV2 }) {
 	const chain = parseId(props.event.id).chain_id;
 
 	if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
@@ -46,7 +46,7 @@ export function Erc20TransferV1Description(props: { event: Erc20TransferV1 }) {
 	);
 }
 
-export function Erc20TransferV1AccountDescription(props: { event: Erc20TransferV1; account: IAccount }) {
+export function Erc20TransferV2AccountDescription(props: { event: Erc20TransferV2; account: IAccount }) {
 	const chain = parseId(props.event.id).chain_id;
 
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
@@ -93,5 +93,5 @@ export function Erc20TransferV1AccountDescription(props: { event: Erc20TransferV
 		);
 	}
 
-	return <Erc20TransferV1Description event={props.event} />;
+	return <Erc20TransferV2Description event={props.event} />;
 }

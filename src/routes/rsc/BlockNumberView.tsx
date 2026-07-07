@@ -14,7 +14,7 @@ import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-v2";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
 import { Erc20ApprovalV2Description } from "@/events/erc20-approval-v2/component";
-import { Erc20TransferV1Description } from "@/events/erc20-transfer-v1/component";
+import { Erc20TransferV2Description } from "@/events/erc20-transfer-v2/component";
 import { Erc721ApprovalV1Description } from "@/events/erc721-approval-v1/component";
 import { Erc721TransferV1Description } from "@/events/erc721-transfer-v1/component";
 import { NativeTransferV1Description } from "@/events/native-transfer-v1/component";
@@ -116,8 +116,8 @@ export function EventDescription(props: { event: Event }) {
 		return <NativeTransferV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc20_transfer_v1") {
-		return <Erc20TransferV1Description event={props.event} />;
+	if (props.event.tag === "erc20_transfer_v2") {
+		return <Erc20TransferV2Description event={props.event} />;
 	}
 
 	if (props.event.tag === "input_data_message_v1") {
