@@ -2,14 +2,14 @@ import { isAddressEqual } from "viem";
 
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { NativeTransferV1 } from "./event";
+import type { NativeTransferV2 } from "./event";
 import { Hoverable } from "@/components/hoverable";
 import { ExclamationIcon } from "@/components/icons";
 import { formatTokenAmount, parseId } from "@/helpers";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function NativeTransferV1Description(props: { event: NativeTransferV1 }) {
+export function NativeTransferV2Description(props: { event: NativeTransferV2 }) {
 	const chain = parseId(props.event.id).chain_id;
 
 	return (
@@ -33,7 +33,7 @@ export function NativeTransferV1Description(props: { event: NativeTransferV1 }) 
 	);
 }
 
-export function NativeTransferV1AccountDescription(props: { event: NativeTransferV1; account: IAccount }) {
+export function NativeTransferV2AccountDescription(props: { event: NativeTransferV2; account: IAccount }) {
 	const chain = parseId(props.event.id).chain_id;
 
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
@@ -78,5 +78,5 @@ export function NativeTransferV1AccountDescription(props: { event: NativeTransfe
 		);
 	}
 
-	return <NativeTransferV1Description event={props.event} />;
+	return <NativeTransferV2Description event={props.event} />;
 }

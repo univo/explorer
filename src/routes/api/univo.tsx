@@ -11,7 +11,6 @@ import "@/events/erc20-transfer-v2/event";
 import "@/events/erc20-approval-v2/event";
 import "@/events/erc721-approval-v2/event";
 import "@/events/erc721-transfer-v2/event";
-import "@/events/native-transfer-v1/event";
 import "@/events/native-transfer-v2/event";
 import "@/events/cancel-pending-tx-v2/event";
 import "@/events/input-data-message-v2/event";
