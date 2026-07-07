@@ -21,7 +21,7 @@ import { NativeTransferV1Description } from "@/events/native-transfer-v1/compone
 import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV1Description } from "@/events/input-data-message-v1/component";
 import { EnsNameRegisteredV1Description } from "@/events/ens-name-registered-v1/component";
-import { ContractDeploymentV1Description } from "@/events/contract-deployment-v1/component";
+import { ContractDeploymentV2Description } from "@/events/contract-deployment-v2/component";
 
 async function BlockNumberView(props: { number: number }) {
 	const [block, ids] = await Promise.all([
@@ -128,8 +128,8 @@ export function EventDescription(props: { event: Event }) {
 		return <EnsNameRegisteredV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "contract_deployment_v1") {
-		return <ContractDeploymentV1Description event={props.event} />;
+	if (props.event.tag === "contract_deployment_v2") {
+		return <ContractDeploymentV2Description event={props.event} />;
 	}
 
 	if (props.event.tag === "cancel_pending_tx_v2") {

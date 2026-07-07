@@ -7,7 +7,7 @@ import { getErc721ApprovalV1 } from "@/events/erc721-approval-v1/event";
 import { getCancelPendingTxV2 } from "@/events/cancel-pending-tx-v2/event";
 import { getInputDataMessageV1 } from "@/events/input-data-message-v1/event";
 import { getEnsNameRegisteredV1 } from "@/events/ens-name-registered-v1/event";
-import { getContractDeploymentV1 } from "@/events/contract-deployment-v1/event";
+import { getContractDeploymentV2 } from "@/events/contract-deployment-v2/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -21,7 +21,7 @@ export async function getEventsForIds(ids: string[]) {
 		getErc20TransferV1(ids),
 		getErc20ApprovalV1(ids),
 		getInputDataMessageV1(ids),
-		getContractDeploymentV1(ids),
+		getContractDeploymentV2(ids),
 		getEnsNameRegisteredV1(ids),
 		getCancelPendingTxV2(ids),
 		getErc721TransferV1(ids),

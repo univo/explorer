@@ -23,7 +23,7 @@ import { Erc721ApprovalV1AccountDescription } from "@/events/erc721-approval-v1/
 import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV1AccountDescription } from "@/events/input-data-message-v1/component";
 import { EnsNameRegisteredV1AccountDescription } from "@/events/ens-name-registered-v1/component";
-import { ContractDeploymentV1AccountDescription } from "@/events/contract-deployment-v1/component";
+import { ContractDeploymentV2AccountDescription } from "@/events/contract-deployment-v2/component";
 
 async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
@@ -155,8 +155,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 		return <EnsNameRegisteredV1AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "contract_deployment_v1") {
-		return <ContractDeploymentV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "contract_deployment_v2") {
+		return <ContractDeploymentV2AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "cancel_pending_tx_v2") {
