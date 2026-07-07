@@ -50,7 +50,7 @@ export function getDeduplicatedEvents<TEvent extends { id: string }>(events: TEv
 	});
 }
 
-type v2_IdOptions = {
+type IdOptions = {
 	blockTimestamp: `0x${string}`;
 	blockNumber: `0x${string}`;
 	txIndex: `0x${string}`;
@@ -59,7 +59,7 @@ type v2_IdOptions = {
 	tableId: number;
 };
 
-export function createId(opts: v2_IdOptions) {
+export function createId(opts: IdOptions) {
 	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
 	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
 	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
