@@ -26,7 +26,7 @@ test.concurrent("tx_hashes_v2", async ({ expect }) => {
 	const result = await getTxPosition(tx.hash);
 
 	expect(result).toMatchObject({
-		block_number: hexToNumber(tx.blockNumber),
-		tx_index: hexToNumber(tx.transactionIndex),
+		block: hexToNumber(tx.blockNumber),
+		tx: hexToNumber(tx.transactionIndex),
 	});
 });

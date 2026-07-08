@@ -63,7 +63,7 @@ export async function getTxPosition(txHash: `0x${string}`) {
 	}
 
 	return {
-		block_number: row.block_number as number,
-		tx_index: row.tx_index as number,
+		block: row.block_number as number,
+		tx: row.tx_index as number,
 	};
 }
