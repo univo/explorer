@@ -1,9 +1,9 @@
 import * as v from "valibot";
 import { createServerFn } from "@tanstack/react-start";
 
-import { TxHashSchema } from "./schema";
-import { getTxHash } from "./events/tx-hashes-v1/event";
-import { getTxPosition } from "./events/tx-hashes-v2/event";
+import { rpc } from "./helpers";
+import { hexToNumber, numberToHex } from "./utils";
+import { BlockHashSchema, TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
 // identifiers are stable according to these two things. So any time they are updated we will break old
@@ -15,23 +15,53 @@ import { getTxPosition } from "./events/tx-hashes-v2/event";
 export const sf_getTxHash = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ block_number: v.number(), tx_index: v.number() }))
 	.handler(async ({ data }) => {
-		const tx = await getTxHash({ block_number: data.block_number, tx_index: data.tx_index });
+		const tx = await rpc({
+			id: 1,
+			jsonrpc: "2.0",
+			method: "eth_getTransactionByBlockNumberAndIndex",
+			params: [numberToHex(data.block_number), numberToHex(data.tx_index)],
+		});
 
 		if (tx === null) {
 			throw new Error("Unknown transaction");
 		}
 
-		return tx;
+		return tx.hash;
 	});
 
 export const sf_getTxPosition = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ tx_hash: TxHashSchema }))
 	.handler(async ({ data }) => {
-		const position = await getTxPosition(data.tx_hash);
+		const tx = await rpc({
+			id: 1,
+			jsonrpc: "2.0",
+			params: [data.tx_hash],
+			method: "eth_getTransactionByHash",
+		});
 
-		if (position === null) {
+		if (tx === null) {
 			throw new Error("Unknown transaction");
 		}
 
-		return position;
+		return {
+			block: hexToNumber(tx.blockNumber),
+			tx: hexToNumber(tx.transactionIndex),
+		};
+	});
+
+export const sf_getBlockNumber = createServerFn({ method: "GET" })
+	.inputValidator(v.object({ block_hash: BlockHashSchema }))
+	.handler(async ({ data }) => {
+		const block = await rpc({
+			id: 1,
+			jsonrpc: "2.0",
+			params: [data.block_hash],
+			method: "eth_getBlockByHash",
+		});
+
+		if (block === null) {
+			throw new Error("Unknown block");
+		}
+
+		return hexToNumber(block.number);
 	});

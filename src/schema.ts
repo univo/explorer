@@ -8,6 +8,11 @@ export const AddressSchema = v.pipe(
 	v.transform((address) => getAddress(address as `0x${string}`)),
 );
 
+export const BlockHashSchema = v.pipe(
+	v.custom<string>((val) => typeof val === "string" && val.startsWith("0x") && val.length === 66),
+	v.transform((tx) => tx as `0x${string}`),
+);
+
 export const TxHashSchema = v.pipe(
 	v.custom<string>((val) => typeof val === "string" && val.startsWith("0x") && val.length === 66),
 	v.transform((tx) => tx as `0x${string}`),

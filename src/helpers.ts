@@ -207,3 +207,16 @@ export function isMobile() {
 export function isDesktop() {
 	return window.innerWidth >= 768;
 }
+
+export async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; params: any[] }) {
+	const res = await fetch(process.env.ETHEREUM_URL, {
+		method: "POST",
+		body: JSON.stringify(opts),
+		headers: { "Content-Type": "application/json" },
+	});
+
+	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");
+	const json: any = await res.json().catch((cause) => raise("Unable to parse json response", { cause }));
+
+	return json.result;
+}
