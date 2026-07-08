@@ -38,8 +38,8 @@ async function getBlock(block: { chain: `0x${string}`; number: string }) {
 async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; params: any[] }) {
 	const res = await fetch(process.env.ETHEREUM_URL, {
 		method: "POST",
+		body: JSON.stringify(opts),
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ ...opts }),
 	});
 
 	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");
