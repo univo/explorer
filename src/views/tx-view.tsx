@@ -32,14 +32,9 @@ function Header(props: { block: number; tx: number }) {
 			<div className="flex items-center justify-between gap-3">
 				<div className="flex items-center gap-2 overflow-hidden">
 					<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
-					{/* <p className="text-gray-500 text-base select-all truncate">{props.tx}</p> */}
 				</div>
 
 				<div className="flex items-center gap-2">
-					{/* <IconButton href={`https://etherscan.io/tx/${props.tx}`}>
-						<EtherscanIcon className="shrink-0 size-4" />
-					</IconButton> */}
-
 					<CloseViewButton view={`${props.block}-${props.tx}`} />
 				</div>
 			</div>

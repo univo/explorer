@@ -2,7 +2,8 @@ import * as v from "valibot";
 import { createServerFn } from "@tanstack/react-start";
 
 import { rpc } from "./helpers";
-import { hexToNumber, numberToHex } from "./utils";
+import { getTx } from "./state/tx";
+import { hexToNumber } from "./utils";
 import { BlockHashSchema, TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
@@ -15,16 +16,7 @@ import { BlockHashSchema, TxHashSchema } from "./schema";
 export const sf_getTxHash = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ block_number: v.number(), tx_index: v.number() }))
 	.handler(async ({ data }) => {
-		const tx = await rpc({
-			id: 1,
-			jsonrpc: "2.0",
-			method: "eth_getTransactionByBlockNumberAndIndex",
-			params: [numberToHex(data.block_number), numberToHex(data.tx_index)],
-		});
-
-		if (tx === null) {
-			throw new Error("Unknown transaction");
-		}
+		const tx = await getTx({ block: data.block_number, tx: data.tx_index });
 
 		return tx.hash;
 	});

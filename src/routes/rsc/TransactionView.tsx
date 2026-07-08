@@ -4,43 +4,46 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
+import { getTx, type Tx } from "@/state/tx";
 import { getEventsForIds } from "@/db/events";
-import { AddViewButton, CloseViewButton } from "@/components/views";
+import { EtherscanIcon } from "@/components/icons";
 import { EventDescription } from "./BlockNumberView";
 import { getOrderedEvents, parseId } from "@/helpers";
-import { formatDateTime, formatNumber, raise } from "@/utils";
-import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { IconButton } from "@/components/icon-button";
 import { BlockNumberSchema, TxIndexSchema } from "@/schema";
+import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { AddViewButton, CloseViewButton } from "@/components/views";
+import { formatDateTime, formatNumber, hexToNumber, raise } from "@/utils";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v2";
 
 async function TransactionView(props: { block: number; tx: number }) {
-	const [ids] = await Promise.all([
-		// getTx(props.tx as "0x"),
+	const [tx, ids] = await Promise.all([
+		getTx({ block: props.block, tx: props.tx }),
 		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header block={props.block} tx={props.tx} />
+			<Header tx={tx} />
 			<Events ids={ids} />
 		</div>
 	);
 }
 
-function Header(props: { block: number; tx: number }) {
+function Header(props: { tx: Tx }) {
 	return (
 		<div className="bg-white p-3 flex items-center justify-between gap-3">
 			<div className="flex items-center gap-2 overflow-hidden">
 				<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
-				{/* <p className="text-gray-500 text-base select-all truncate">{props.tx.hash}</p> */}
+				<p className="text-gray-500 text-base select-all truncate">{props.tx.hash}</p>
 			</div>
 
 			<div className="flex items-center gap-2">
-				{/* <IconButton href={`https://etherscan.io/tx/${props.tx.hash}`}>
+				<IconButton href={`https://etherscan.io/tx/${props.tx.hash}`}>
 					<EtherscanIcon className="shrink-0 size-4" />
-				</IconButton> */}
+				</IconButton>
 
-				<CloseViewButton view={`${props.block}-${props.tx}`} />
+				<CloseViewButton view={`${hexToNumber(props.tx.blockNumber)}-${hexToNumber(props.tx.transactionIndex)}`} />
 			</div>
 		</div>
 	);
