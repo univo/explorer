@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { getEventsForIds } from "@/db/events";
-import { AddViewButton } from "@/components/views";
+import { AddViewButton, CloseViewButton } from "@/components/views";
 import { EventDescription } from "./BlockNumberView";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { formatDateTime, formatNumber, raise } from "@/utils";
@@ -21,13 +21,13 @@ async function TransactionView(props: { block: number; tx: number }) {
 
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header />
+			<Header block={props.block} tx={props.tx} />
 			<Events ids={ids} />
 		</div>
 	);
 }
 
-function Header() {
+function Header(props: { block: number; tx: number }) {
 	return (
 		<div className="bg-white p-3 flex items-center justify-between gap-3">
 			<div className="flex items-center gap-2 overflow-hidden">
@@ -40,7 +40,7 @@ function Header() {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton> */}
 
-				{/* <CloseViewButton view={props.tx.hash} /> */}
+				<CloseViewButton view={`${props.block}-${props.tx}`} />
 			</div>
 		</div>
 	);

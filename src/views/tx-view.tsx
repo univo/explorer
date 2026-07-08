@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
+import { CloseViewButton } from "@/components/views";
+
 export function TransactionView(props: { block: number; tx: number }) {
 	const query = useQuery({
 		queryKey: ["tx", props.tx],
@@ -9,22 +11,22 @@ export function TransactionView(props: { block: number; tx: number }) {
 	});
 
 	if (query.status === "pending") {
-		return <TransactionViewFallback />;
+		return <TransactionViewFallback block={props.block} tx={props.tx} />;
 	}
 
-	return <Suspense fallback={<TransactionViewFallback />}>{query.data}</Suspense>;
+	return <Suspense fallback={<TransactionViewFallback block={props.block} tx={props.tx} />}>{query.data}</Suspense>;
 }
 
-function TransactionViewFallback() {
+function TransactionViewFallback(props: { block: number; tx: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header />
+			<Header block={props.block} tx={props.tx} />
 			<Events />
 		</div>
 	);
 }
 
-function Header() {
+function Header(props: { block: number; tx: number }) {
 	return (
 		<div className="border-b border-gray-200 bg-white p-3 flex flex-col gap-3">
 			<div className="flex items-center justify-between gap-3">
@@ -38,7 +40,7 @@ function Header() {
 						<EtherscanIcon className="shrink-0 size-4" />
 					</IconButton> */}
 
-					{/* <CloseViewButton view={props.tx} /> */}
+					<CloseViewButton view={`${props.block}-${props.tx}`} />
 				</div>
 			</div>
 
