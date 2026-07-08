@@ -4,46 +4,43 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { getTx, type Tx } from "@/state/tx";
-import { TransactionSchema } from "@/schema";
 import { getEventsForIds } from "@/db/events";
-import { EtherscanIcon } from "@/components/icons";
+import { AddViewButton } from "@/components/views";
 import { EventDescription } from "./BlockNumberView";
-import { IconButton } from "@/components/icon-button";
 import { getOrderedEvents, parseId } from "@/helpers";
-import { getEventIdsForTxHash } from "@/indexes/tx-hash-v1";
 import { formatDateTime, formatNumber, raise } from "@/utils";
-import { AddViewButton, CloseViewButton } from "@/components/views";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { BlockNumberSchema, TxIndexSchema } from "@/schema";
+import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v2";
 
-async function TransactionView(props: { tx: string }) {
-	const [tx, ids] = await Promise.all([
-		getTx(props.tx as "0x"), //
-		getEventIdsForTxHash(props.tx as "0x"),
+async function TransactionView(props: { block: number; tx: number }) {
+	const [ids] = await Promise.all([
+		// getTx(props.tx as "0x"),
+		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header tx={tx} />
+			<Header />
 			<Events ids={ids} />
 		</div>
 	);
 }
 
-function Header(props: { tx: Tx }) {
+function Header() {
 	return (
 		<div className="bg-white p-3 flex items-center justify-between gap-3">
 			<div className="flex items-center gap-2 overflow-hidden">
 				<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
-				<p className="text-gray-500 text-base select-all truncate">{props.tx.hash}</p>
+				{/* <p className="text-gray-500 text-base select-all truncate">{props.tx.hash}</p> */}
 			</div>
 
 			<div className="flex items-center gap-2">
-				<IconButton href={`https://etherscan.io/tx/${props.tx.hash}`}>
+				{/* <IconButton href={`https://etherscan.io/tx/${props.tx.hash}`}>
 					<EtherscanIcon className="shrink-0 size-4" />
-				</IconButton>
+				</IconButton> */}
 
-				<CloseViewButton view={props.tx.hash} />
+				{/* <CloseViewButton view={props.tx.hash} /> */}
 			</div>
 		</div>
 	);
@@ -126,8 +123,8 @@ async function Events(props: { ids: string[] }) {
 }
 
 const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ tx: TransactionSchema }))
-	.handler(({ data }) => renderToReadableStream(<TransactionView tx={data.tx} />));
+	.inputValidator(v.object({ block: BlockNumberSchema, tx: TxIndexSchema }))
+	.handler(({ data }) => renderToReadableStream(<TransactionView block={data.block} tx={data.tx} />));
 
 export const Route = createFileRoute("/rsc/TransactionView")({
 	server: {
@@ -135,10 +132,13 @@ export const Route = createFileRoute("/rsc/TransactionView")({
 			GET: async ({ request }) => {
 				const search = new URL(request.url).searchParams;
 
+				const block = search.get("block");
+				if (block === null) throw new Error("Expected block");
+
 				const tx = search.get("tx");
 				if (tx === null) throw new Error("Expected tx");
 
-				const stream = await getFlightStream({ data: { tx } });
+				const stream = await getFlightStream({ data: { block, tx } });
 
 				return new Response(stream, {
 					headers: {
