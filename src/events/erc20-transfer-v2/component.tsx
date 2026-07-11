@@ -50,7 +50,7 @@ export function Erc20TransferV2AccountDescription(props: { event: Erc20TransferV
 	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
-		if (isAddressEqual(props.event.to_address, "0x0000000000000000000000000000000000000000")) {
+		if (isBurnAddress(props.event.to_address)) {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -72,7 +72,7 @@ export function Erc20TransferV2AccountDescription(props: { event: Erc20TransferV
 	}
 
 	if (isAddressEqual(props.account.address, props.event.to_address)) {
-		if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
+		if (isBurnAddress(props.event.from_address)) {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -94,4 +94,13 @@ export function Erc20TransferV2AccountDescription(props: { event: Erc20TransferV
 	}
 
 	return <Erc20TransferV2Description event={props.event} />;
+}
+
+const BURN_ADDRESSES = [
+	"0x0000000000000000000000000000000000000000", //
+	"0x000000000000000000000000000000000000dEaD",
+];
+
+function isBurnAddress(address: `0x${string}`) {
+	return BURN_ADDRESSES.some((burn) => isAddressEqual(address, burn as `0x${string}`));
 }
