@@ -1,13 +1,13 @@
 import { logger } from "@/utils";
-import { getErc20ApprovalV1 } from "@/events/erc20-approval-v1/event";
-import { getErc20TransferV1 } from "@/events/erc20-transfer-v1/event";
-import { getNativeTransferV1 } from "@/events/native-transfer-v1/event";
-import { getErc721TransferV1 } from "@/events/erc721-transfer-v1/event";
-import { getErc721ApprovalV1 } from "@/events/erc721-approval-v1/event";
-import { getCancelPendingTxV1 } from "@/events/cancel-pending-tx-v1/event";
-import { getInputDataMessageV1 } from "@/events/input-data-message-v1/event";
-import { getEnsNameRegisteredV1 } from "@/events/ens-name-registered-v1/event";
-import { getContractDeploymentV1 } from "@/events/contract-deployment-v1/event";
+import { getErc20ApprovalV2 } from "@/events/erc20-approval-v2/event";
+import { getErc20TransferV2 } from "@/events/erc20-transfer-v2/event";
+import { getNativeTransferV2 } from "@/events/native-transfer-v2/event";
+import { getErc721TransferV2 } from "@/events/erc721-transfer-v2/event";
+import { getErc721ApprovalV2 } from "@/events/erc721-approval-v2/event";
+import { getCancelPendingTxV2 } from "@/events/cancel-pending-tx-v2/event";
+import { getInputDataMessageV2 } from "@/events/input-data-message-v2/event";
+import { getEnsNameRegisteredV2 } from "@/events/ens-name-registered-v2/event";
+import { getContractDeploymentV2 } from "@/events/contract-deployment-v2/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -17,15 +17,15 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
-		getNativeTransferV1(ids),
-		getErc20TransferV1(ids),
-		getErc20ApprovalV1(ids),
-		getInputDataMessageV1(ids),
-		getContractDeploymentV1(ids),
-		getEnsNameRegisteredV1(ids),
-		getCancelPendingTxV1(ids),
-		getErc721TransferV1(ids),
-		getErc721ApprovalV1(ids),
+		getNativeTransferV2(ids),
+		getErc20TransferV2(ids),
+		getErc20ApprovalV2(ids),
+		getInputDataMessageV2(ids),
+		getContractDeploymentV2(ids),
+		getEnsNameRegisteredV2(ids),
+		getCancelPendingTxV2(ids),
+		getErc721TransferV2(ids),
+		getErc721ApprovalV2(ids),
 	]);
 
 	const flat = events.flat(1);

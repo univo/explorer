@@ -13,6 +13,7 @@ import { createTransport } from "@/transports";
 //     `address` FixedString(42),
 //     `name` String,
 //     `symbol` String,
+//     `decimals` Nullable(UInt8),
 //     `image` Nullable(String),
 // )
 // ENGINE = ReplacingMergeTree

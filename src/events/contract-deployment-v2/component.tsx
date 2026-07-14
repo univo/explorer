@@ -3,13 +3,13 @@ import { isAddressEqual } from "viem";
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { ContractDeploymentV1 } from "./event";
+import type { ContractDeploymentV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function ContractDeploymentV1Description(props: { event: ContractDeploymentV1 }) {
-	const chain = parseId(props.event.id).chain_id;
+export function ContractDeploymentV2Description(props: { event: ContractDeploymentV2 }) {
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>
@@ -22,8 +22,8 @@ export function ContractDeploymentV1Description(props: { event: ContractDeployme
 	);
 }
 
-export function ContractDeploymentV1AccountDescription(props: { event: ContractDeploymentV1; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+export function ContractDeploymentV2AccountDescription(props: { event: ContractDeploymentV2; account: IAccount }) {
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.account.address, props.event.deployer_address)) {
 		return (
@@ -48,5 +48,5 @@ export function ContractDeploymentV1AccountDescription(props: { event: ContractD
 		);
 	}
 
-	return <ContractDeploymentV1Description event={props.event} />;
+	return <ContractDeploymentV2Description event={props.event} />;
 }

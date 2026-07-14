@@ -1,7 +1,10 @@
 import * as v from "valibot";
 import { createServerFn } from "@tanstack/react-start";
 
-import { getTxHash } from "./events/tx-hashes-v1/event";
+import { rpc } from "./helpers";
+import { getTx } from "./state/tx";
+import { hexToNumber } from "./utils";
+import { BlockHashSchema, TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
 // identifiers are stable according to these two things. So any time they are updated we will break old
@@ -11,13 +14,46 @@ import { getTxHash } from "./events/tx-hashes-v1/event";
 // https://tanstack.com/start/v0/docs/framework/react/guide/server-functions#function-id-generation-for-production-build
 
 export const sf_getTxHash = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ block_timestamp: v.number(), block_number: v.number(), tx_index: v.number() }))
+	.inputValidator(v.object({ block_number: v.number(), tx_index: v.number() }))
 	.handler(async ({ data }) => {
-		const tx = await getTxHash({ block_number: data.block_number, tx_index: data.tx_index });
+		const tx = await getTx({ block: data.block_number, tx: data.tx_index });
+
+		return tx.hash;
+	});
+
+export const sf_getTxPosition = createServerFn({ method: "GET" })
+	.inputValidator(v.object({ tx_hash: TxHashSchema }))
+	.handler(async ({ data }) => {
+		const tx = await rpc({
+			id: 1,
+			jsonrpc: "2.0",
+			params: [data.tx_hash],
+			method: "eth_getTransactionByHash",
+		});
 
 		if (tx === null) {
-			throw new Error("Unknown block number and transaction index");
+			throw new Error("Unknown transaction");
 		}
 
-		return tx;
+		return {
+			block: hexToNumber(tx.blockNumber),
+			tx: hexToNumber(tx.transactionIndex),
+		};
+	});
+
+export const sf_getBlockNumber = createServerFn({ method: "GET" })
+	.inputValidator(v.object({ block_hash: BlockHashSchema }))
+	.handler(async ({ data }) => {
+		const block = await rpc({
+			id: 1,
+			jsonrpc: "2.0",
+			params: [data.block_hash],
+			method: "eth_getBlockByHash",
+		});
+
+		if (block === null) {
+			throw new Error("Unknown block");
+		}
+
+		return hexToNumber(block.number);
 	});

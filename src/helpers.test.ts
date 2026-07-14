@@ -1,39 +1,9 @@
 import { numberToHex } from "viem";
 import { expect, test } from "vitest";
-import {
-	createId,
-	formatTokenAmount,
-	parseId,
-	v2_createId,
-	v2_getPartition,
-	v2_getPartitions,
-	v2_parseId,
-} from "@/helpers";
+import { formatTokenAmount, parseId, createId, getPartition, getPartitions } from "@/helpers";
 
-test.concurrent("creates and parses valid ids", () => {
+test.concurrent("creates and parses ids", () => {
 	const id = createId({
-		block_timestamp: numberToHex(1763680847),
-		block_number: numberToHex(23843479),
-		tx_index: numberToHex(210),
-		log_index: numberToHex(754),
-		chain_id: numberToHex(1),
-		table_id: 5,
-	});
-
-	expect(id).toBe("691fa24f-016b-d297-00d2-02f200010005");
-
-	expect(parseId(id)).toMatchObject({
-		block_timestamp: 1763680847,
-		block_number: 23843479,
-		tx_index: 210,
-		log_index: 754,
-		chain_id: 1,
-		table_id: 5,
-	});
-});
-
-test.concurrent("creates and parses version two ids", () => {
-	const id = v2_createId({
 		blockTimestamp: numberToHex(1763680847),
 		blockNumber: numberToHex(23843479),
 		txIndex: numberToHex(210),
@@ -44,7 +14,7 @@ test.concurrent("creates and parses version two ids", () => {
 
 	expect(id).toBe("691fa24f016bd29700d202f200010005");
 
-	expect(v2_parseId(id)).toMatchObject({
+	expect(parseId(id)).toMatchObject({
 		blockTimestamp: 1763680847,
 		blockNumber: 23843479,
 		txIndex: 210,
@@ -60,8 +30,8 @@ test.concurrent("formats token amounts", () => {
 });
 
 test.concurrent("derives the correct partition from an id", () => {
-	expect(v2_getPartition("0x5eb01705")).toEqual(202004);
-	expect(v2_getPartition("0x6a153133")).toEqual(202604);
+	expect(getPartition("0x5eb01705")).toEqual(202004);
+	expect(getPartition("0x6a153133")).toEqual(202604);
 });
 
 test.concurrent("groups partitions in a SQL clause", () => {
@@ -70,7 +40,7 @@ test.concurrent("groups partitions in a SQL clause", () => {
 		"6a15313301802d5b0011004b00010002",
 	];
 
-	expect(v2_getPartitions(ids)).toMatchObject([
+	expect(getPartitions(ids)).toMatchObject([
 		"(partition = 202004 AND id IN (unhex('5eb0170500989680001b002b00010002')))",
 		"(partition = 202604 AND id IN (unhex('6a15313301802d5b0011004b00010002')))",
 	]);

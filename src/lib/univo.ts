@@ -21,8 +21,8 @@ export const univo = indexer({
 
 async function getBlock(block: { chain: `0x${string}`; number: string }) {
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
-		retry(() => rpc({ id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }), 4),
-		retry(() => rpc({ id: 2, method: "eth_getBlockReceipts", params: [block.number] }), 4),
+		retry(() => rpc({ jsonrpc: "2.0", id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }), 4),
+		retry(() => rpc({ jsonrpc: "2.0", id: 2, method: "eth_getBlockReceipts", params: [block.number] }), 4),
 	]);
 
 	if (!eth_getBlockByNumber) return null;
@@ -35,11 +35,11 @@ async function getBlock(block: { chain: `0x${string}`; number: string }) {
 	};
 }
 
-async function rpc(opts: { id: number; method: string; params: any[] }) {
+async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; params: any[] }) {
 	const res = await fetch(process.env.ETHEREUM_URL, {
 		method: "POST",
+		body: JSON.stringify(opts),
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ jsonrpc: "2.0", ...opts }),
 	});
 
 	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");

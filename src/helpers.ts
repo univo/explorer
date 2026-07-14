@@ -50,26 +50,7 @@ export function getDeduplicatedEvents<TEvent extends { id: string }>(events: TEv
 	});
 }
 
-interface IdOptions {
-	block_timestamp: `0x${string}`;
-	block_number: `0x${string}`;
-	tx_index: `0x${string}`;
-	log_index: `0x${string}`;
-	chain_id: `0x${string}`;
-	table_id: number;
-}
-
-export function createId(opts: IdOptions) {
-	const block_timestamp = opts.block_timestamp.slice(2).padStart(8, "0");
-	const block_number = opts.block_number.slice(2).padStart(8, "0");
-	const tx_index = opts.tx_index.slice(2).padStart(4, "0");
-	const log_index = opts.log_index.slice(2).padStart(4, "0");
-	const chain_id = getInternalChain(opts.chain_id).toString(16).padStart(4, "0");
-	const table_id = opts.table_id.toString(16).padStart(4, "0");
-	return `${block_timestamp}-${block_number.slice(0, 4)}-${block_number.slice(4, 8)}-${tx_index}-${log_index}${chain_id}${table_id}`;
-}
-
-type v2_IdOptions = {
+type IdOptions = {
 	blockTimestamp: `0x${string}`;
 	blockNumber: `0x${string}`;
 	txIndex: `0x${string}`;
@@ -78,7 +59,7 @@ type v2_IdOptions = {
 	tableId: number;
 };
 
-export function v2_createId(opts: v2_IdOptions) {
+export function createId(opts: IdOptions) {
 	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
 	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
 	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
@@ -91,7 +72,7 @@ export function v2_createId(opts: v2_IdOptions) {
 /**
  * Accepts a block timestamp (UNIX seconds) and returns its corresponding partition
  */
-export function v2_getPartition(blockTimestamp: `0x${string}`) {
+export function getPartition(blockTimestamp: `0x${string}`) {
 	const date = new Date(hexToNumber(blockTimestamp) * 1000);
 	const year = date.getFullYear().toString();
 	const month = date.getMonth().toString().padStart(2, "0");
@@ -101,9 +82,9 @@ export function v2_getPartition(blockTimestamp: `0x${string}`) {
 /**
  * Accepts a list of event ids and returns a list of SQL WHERE clauses for each unique partition
  */
-export function v2_getPartitions(ids: string[]) {
+export function getPartitions(ids: string[]) {
 	const partitions = Object.groupBy(ids, (id) => {
-		return v2_getPartition(numberToHex(v2_parseId(id).blockTimestamp));
+		return getPartition(numberToHex(parseId(id).blockTimestamp));
 	});
 
 	return Object.entries(partitions).flatMap(([partition, ids]) => {
@@ -122,16 +103,6 @@ export function v2_getPartitions(ids: string[]) {
 }
 
 export function parseId(id: string) {
-	const block_timestamp = Number.parseInt(id.slice(0, 8), 16);
-	const block_number = Number.parseInt(id.slice(9, 18).split("-").join(""), 16);
-	const tx_index = Number.parseInt(id.slice(19, 23), 16);
-	const log_index = Number.parseInt(id.slice(24, 28), 16);
-	const chain_id = getExternalChain(Number.parseInt(id.slice(28, 32), 16));
-	const table_id = Number.parseInt(id.slice(32, 36), 16);
-	return { block_timestamp, block_number, tx_index, log_index, chain_id, table_id };
-}
-
-export function v2_parseId(id: string) {
 	const blockTimestamp = Number.parseInt(id.slice(0, 8), 16);
 	const blockNumber = Number.parseInt(id.slice(8, 16), 16);
 	const txIndex = Number.parseInt(id.slice(16, 20), 16);
@@ -148,19 +119,19 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
 			const _b = parseId(b.id);
 
 			// Compare timestamp first
-			const timestamp = _b.block_timestamp - _a.block_timestamp;
+			const timestamp = _b.blockTimestamp - _a.blockTimestamp;
 			if (timestamp !== 0) return timestamp;
 
 			// Compare block number
-			const block = _b.block_number - _a.block_number;
+			const block = _b.blockNumber - _a.blockNumber;
 			if (block !== 0) return block;
 
 			// Compare tx index if from same block
-			const tx = _b.tx_index - _a.tx_index;
+			const tx = _b.txIndex - _a.txIndex;
 			if (tx !== 0) return tx;
 
 			// Compare log index if from same transaction
-			const log = _b.log_index - _a.log_index;
+			const log = _b.logIndex - _a.logIndex;
 			if (log !== 0) return log;
 
 			return 0; // Can't order between these two events
@@ -172,19 +143,19 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
 		const _b = parseId(b.id);
 
 		// Compare timestamp first
-		const timestamp = _a.block_timestamp - _b.block_timestamp;
+		const timestamp = _a.blockTimestamp - _b.blockTimestamp;
 		if (timestamp !== 0) return timestamp;
 
 		// Compare block number
-		const block = _a.block_number - _b.block_number;
+		const block = _a.blockNumber - _b.blockNumber;
 		if (block !== 0) return block;
 
 		// Compare tx index if from same block
-		const tx = _a.tx_index - _b.tx_index;
+		const tx = _a.txIndex - _b.txIndex;
 		if (tx !== 0) return tx;
 
 		// Compare log index if from same transaction
-		const log = _a.log_index - _b.log_index;
+		const log = _a.logIndex - _b.logIndex;
 		if (log !== 0) return log;
 
 		return 0; // Can't order between these two events
@@ -235,4 +206,17 @@ export function isMobile() {
 
 export function isDesktop() {
 	return window.innerWidth >= 768;
+}
+
+export async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; params: any[] }) {
+	const res = await fetch(process.env.ETHEREUM_URL, {
+		method: "POST",
+		body: JSON.stringify(opts),
+		headers: { "Content-Type": "application/json" },
+	});
+
+	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");
+	const json: any = await res.json().catch((cause) => raise("Unable to parse json response", { cause }));
+
+	return json.result;
 }

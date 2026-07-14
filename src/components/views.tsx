@@ -11,17 +11,18 @@ import { XIcon } from "./icons";
 import { raise } from "@/utils";
 import { parseId } from "@/helpers";
 import { IconButton } from "./icon-button";
-import { sf_getTxHash } from "@/functions";
+import { sf_getTxPosition } from "@/functions";
 import { AddressView } from "@/views/address-view";
 import { TransactionView } from "@/views/tx-view";
 import { BlockNumberView } from "@/views/block-number-view";
-import { AddressSchema, BlockNumberSchema, EventSchema, TransactionSchema } from "@/schema";
+import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type View =
 	| { type: "event"; data: string; raw: string }
 	| { type: "block-number"; data: number; raw: string }
 	| { type: "address"; data: `0x${string}`; raw: string }
-	| { type: "transaction"; data: `0x${string}`; raw: string };
+	| { type: "transaction-hash"; data: `0x${string}`; raw: string }
+	| { type: "transaction-position"; data: { block: number; tx: number }; raw: string };
 
 type ViewContextValue = {
 	value: string[];
@@ -35,7 +36,7 @@ const ViewContext = createContext<ViewContextValue | null>(null);
 export function ViewContextProvider(props: { children?: ReactNode }) {
 	const navigate = useNavigate();
 	const params = useParams({ from: "/$" });
-	const getTxHash = useServerFn(sf_getTxHash);
+	const getTxPosition = useServerFn(sf_getTxPosition);
 
 	const [state, setState] = useState(() => {
 		return {
@@ -75,13 +76,20 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		if (parsed.type === "event") {
 			setState((state) => ({ ...state, status: "pending" }));
 
-			const { block_timestamp, block_number, tx_index } = parseId(parsed.data);
-			const tx = await getTxHash({ data: { block_timestamp, block_number, tx_index } });
+			const { blockNumber, txIndex } = parseId(parsed.data);
+
+			return push(`${blockNumber}-${txIndex}`, index);
+		}
+
+		if (parsed.type === "transaction-hash") {
+			setState((state) => ({ ...state, status: "pending" }));
+
+			const position = await getTxPosition({ data: { tx_hash: parsed.data } });
 
 			// We recursively push the tx view so that the next state update will remove the
 			// loading status and push the new view in the same update
 
-			return push(tx, index);
+			return push(`${position.block}-${position.tx}`, index);
 		}
 
 		if (state.value.includes(view)) {
@@ -123,8 +131,11 @@ export function getView(view: string): View | null {
 	const address = v.safeParse(AddressSchema, view);
 	if (address.success) return { type: "address", data: address.output, raw: view };
 
-	const tx = v.safeParse(TransactionSchema, view);
-	if (tx.success) return { type: "transaction", data: tx.output, raw: view };
+	const tx_hash = v.safeParse(TxHashSchema, view);
+	if (tx_hash.success) return { type: "transaction-hash", data: tx_hash.output, raw: view };
+
+	const tx_position = v.safeParse(TxPositionSchema, view);
+	if (tx_position.success) return { type: "transaction-position", data: tx_position.output, raw: view };
 
 	const block_number = v.safeParse(BlockNumberSchema, view);
 	if (block_number.success) return { type: "block-number", data: block_number.output, raw: view };
@@ -186,9 +197,14 @@ export function View(props: { view: string; index: number }) {
 	return (
 		<ViewIndexContext value={props.index}>
 			{view === null && <EmptyView />}
+
 			{view !== null && view.type === "address" && <AddressView address={view.data} />}
-			{view !== null && view.type === "transaction" && <TransactionView tx={view.data} />}
+
 			{view !== null && view.type === "block-number" && <BlockNumberView number={view.data} />}
+
+			{view !== null && view.type === "transaction-position" && (
+				<TransactionView block={view.data.block} tx={view.data.tx} />
+			)}
 		</ViewIndexContext>
 	);
 }

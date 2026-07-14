@@ -5,21 +5,21 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { getTx, type Tx } from "@/state/tx";
-import { TransactionSchema } from "@/schema";
 import { getEventsForIds } from "@/db/events";
 import { EtherscanIcon } from "@/components/icons";
 import { EventDescription } from "./BlockNumberView";
-import { IconButton } from "@/components/icon-button";
 import { getOrderedEvents, parseId } from "@/helpers";
-import { getEventIdsForTxHash } from "@/indexes/tx-hash-v1";
-import { formatDateTime, formatNumber, raise } from "@/utils";
-import { AddViewButton, CloseViewButton } from "@/components/views";
+import { IconButton } from "@/components/icon-button";
+import { BlockNumberSchema, TxIndexSchema } from "@/schema";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { AddViewButton, CloseViewButton } from "@/components/views";
+import { formatDateTime, formatNumber, hexToNumber, raise } from "@/utils";
+import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v2";
 
-async function TransactionView(props: { tx: string }) {
+async function TransactionView(props: { block: number; tx: number }) {
 	const [tx, ids] = await Promise.all([
-		getTx(props.tx as "0x"), //
-		getEventIdsForTxHash(props.tx as "0x"),
+		getTx({ block: props.block, tx: props.tx }),
+		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
 	return (
@@ -43,7 +43,7 @@ function Header(props: { tx: Tx }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={props.tx.hash} />
+				<CloseViewButton view={`${hexToNumber(props.tx.blockNumber)}-${hexToNumber(props.tx.transactionIndex)}`} />
 			</div>
 		</div>
 	);
@@ -68,8 +68,8 @@ async function Events(props: { ids: string[] }) {
 	const ordered = getOrderedEvents(events, "reverse");
 
 	const event = events[0] || raise("Expected at least one event");
-	const { block_number, tx_index, block_timestamp } = parseId(event.id);
-	const timestamp = new Date(block_timestamp * 1000);
+	const { blockNumber, txIndex, blockTimestamp } = parseId(event.id);
+	const timestamp = new Date(blockTimestamp * 1000);
 
 	return (
 		<div className="overflow-scroll flex flex-col gap-3">
@@ -97,13 +97,13 @@ async function Events(props: { ids: string[] }) {
 					</div>
 
 					<AddViewButton
-						view={String(block_number)}
+						view={String(blockNumber)}
 						className="cursor-pointer -mx-px px-px rounded hover:bg-gray-200 data-[hovered=true]:bg-gray-200 select-none"
 					>
-						{formatNumber(block_number)}
+						{formatNumber(blockNumber)}
 					</AddViewButton>
 
-					<p>{formatNumber(tx_index)}</p>
+					<p>{formatNumber(txIndex)}</p>
 				</div>
 			</div>
 
@@ -111,11 +111,11 @@ async function Events(props: { ids: string[] }) {
 
 			<div className="px-3 pb-3 rounded-md flex flex-col gap-1">
 				{ordered.map((event) => {
-					const { log_index } = parseId(event.id);
+					const { logIndex } = parseId(event.id);
 
 					return (
 						<div key={event.id} className="flex">
-							<span className="text-sm text-gray-700 min-w-10">({formatNumber(log_index)})</span>
+							<span className="text-sm text-gray-700 min-w-10">({formatNumber(logIndex)})</span>
 							<EventDescription event={event} />
 						</div>
 					);
@@ -126,8 +126,8 @@ async function Events(props: { ids: string[] }) {
 }
 
 const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ tx: TransactionSchema }))
-	.handler(({ data }) => renderToReadableStream(<TransactionView tx={data.tx} />));
+	.inputValidator(v.object({ block: BlockNumberSchema, tx: TxIndexSchema }))
+	.handler(({ data }) => renderToReadableStream(<TransactionView block={data.block} tx={data.tx} />));
 
 export const Route = createFileRoute("/rsc/TransactionView")({
 	server: {
@@ -135,10 +135,13 @@ export const Route = createFileRoute("/rsc/TransactionView")({
 			GET: async ({ request }) => {
 				const search = new URL(request.url).searchParams;
 
+				const block = search.get("block");
+				if (block === null) throw new Error("Expected block");
+
 				const tx = search.get("tx");
 				if (tx === null) throw new Error("Expected tx");
 
-				const stream = await getFlightStream({ data: { tx } });
+				const stream = await getFlightStream({ data: { block, tx } });
 
 				return new Response(stream, {
 					headers: {

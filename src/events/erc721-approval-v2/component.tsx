@@ -3,13 +3,13 @@ import { isAddressEqual } from "viem";
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { Erc721ApprovalV1 } from "./event";
+import type { Erc721ApprovalV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function Erc721ApprovalV1Description(props: { event: Erc721ApprovalV1 }) {
-	const chain = parseId(props.event.id).chain_id;
+export function Erc721ApprovalV2Description(props: { event: Erc721ApprovalV2 }) {
+	const chain = parseId(props.event.id).chainId;
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isSpenderNullAddress;
 
@@ -40,8 +40,8 @@ export function Erc721ApprovalV1Description(props: { event: Erc721ApprovalV1 }) 
 	);
 }
 
-export function Erc721ApprovalV1AccountDescription(props: { event: Erc721ApprovalV1; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+export function Erc721ApprovalV2AccountDescription(props: { event: Erc721ApprovalV2; account: IAccount }) {
+	const chain = parseId(props.event.id).chainId;
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isSpenderNullAddress;
 
@@ -85,5 +85,5 @@ export function Erc721ApprovalV1AccountDescription(props: { event: Erc721Approva
 		);
 	}
 
-	return <Erc721ApprovalV1Description event={props.event} />;
+	return <Erc721ApprovalV2Description event={props.event} />;
 }

@@ -11,19 +11,19 @@ import type { Account } from "@/state/account";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForAccount } from "@/indexes/account-v1";
+import { getEventIdsForAccount } from "@/indexes/account-v2";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
-import { Erc20ApprovalV1AccountDescription } from "@/events/erc20-approval-v1/component";
-import { Erc20TransferV1AccountDescription } from "@/events/erc20-transfer-v1/component";
-import { NativeTransferV1AccountDescription } from "@/events/native-transfer-v1/component";
-import { Erc721TransferV1AccountDescription } from "@/events/erc721-transfer-v1/component";
-import { Erc721ApprovalV1AccountDescription } from "@/events/erc721-approval-v1/component";
-import { CancelPendingTxV1AccountDescription } from "@/events/cancel-pending-tx-v1/component";
-import { InputDataMessageV1AccountDescription } from "@/events/input-data-message-v1/component";
-import { EnsNameRegisteredV1AccountDescription } from "@/events/ens-name-registered-v1/component";
-import { ContractDeploymentV1AccountDescription } from "@/events/contract-deployment-v1/component";
+import { Erc20ApprovalV2AccountDescription } from "@/events/erc20-approval-v2/component";
+import { Erc20TransferV2AccountDescription } from "@/events/erc20-transfer-v2/component";
+import { NativeTransferV2AccountDescription } from "@/events/native-transfer-v2/component";
+import { Erc721TransferV2AccountDescription } from "@/events/erc721-transfer-v2/component";
+import { Erc721ApprovalV2AccountDescription } from "@/events/erc721-approval-v2/component";
+import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
+import { InputDataMessageV2AccountDescription } from "@/events/input-data-message-v2/component";
+import { EnsNameRegisteredV2AccountDescription } from "@/events/ens-name-registered-v2/component";
+import { ContractDeploymentV2AccountDescription } from "@/events/contract-deployment-v2/component";
 
 async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
@@ -47,8 +47,8 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 	// need each viritualisation container to also manage it's top border (excluding the first)
 
 	const firstEvent = ordered[0] || raise("Expected at least one event");
-	const firstEventDate = new Date(parseId(firstEvent.id).block_timestamp * 1000);
-	const previousBatchLastEventDate = new Date(parseId(props.startCursor).block_timestamp * 1000);
+	const firstEventDate = new Date(parseId(firstEvent.id).blockTimestamp * 1000);
+	const previousBatchLastEventDate = new Date(parseId(props.startCursor).blockTimestamp * 1000);
 	const firstEventDay = formatDay(firstEventDate);
 	const previousBatchLastEventDay = formatDay(previousBatchLastEventDate);
 	const startsWithHeader = previousBatchLastEventDay !== firstEventDay;
@@ -66,8 +66,8 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 						const previous = ordered[i - 1];
 						const previousId = previous === undefined ? props.startCursor : previous.id;
 
-						const eventDate = new Date(parseId(event.id).block_timestamp * 1000);
-						const previousDate = new Date(parseId(previousId).block_timestamp * 1000);
+						const eventDate = new Date(parseId(event.id).blockTimestamp * 1000);
+						const previousDate = new Date(parseId(previousId).blockTimestamp * 1000);
 
 						const eventString = formatDay(eventDate);
 						const previousString = formatDay(previousDate);
@@ -90,7 +90,7 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 										</div>
 
 										<div className="px-3 py-1.5 overflow-hidden shrink-0">
-											<EventTimestamp timestamp={new Date(parseId(event.id).block_timestamp * 1000)} />
+											<EventTimestamp timestamp={new Date(parseId(event.id).blockTimestamp * 1000)} />
 										</div>
 									</EventTableRow>
 								</div>
@@ -135,40 +135,40 @@ function EventTimestamp(props: { timestamp: Date }) {
 }
 
 function AccountEventDescription(props: { account: Account; event: Event }) {
-	if (props.event.tag === "erc20_approval_v1") {
-		return <Erc20ApprovalV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc20_approval_v2") {
+		return <Erc20ApprovalV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "native_transfer_v1") {
-		return <NativeTransferV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "native_transfer_v2") {
+		return <NativeTransferV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc20_transfer_v1") {
-		return <Erc20TransferV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc20_transfer_v2") {
+		return <Erc20TransferV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "input_data_message_v1") {
-		return <InputDataMessageV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "input_data_message_v2") {
+		return <InputDataMessageV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v1") {
-		return <EnsNameRegisteredV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "ens_name_registered_v2") {
+		return <EnsNameRegisteredV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "contract_deployment_v1") {
-		return <ContractDeploymentV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "contract_deployment_v2") {
+		return <ContractDeploymentV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v1") {
-		return <CancelPendingTxV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "cancel_pending_tx_v2") {
+		return <CancelPendingTxV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v1") {
-		return <Erc721TransferV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc721_transfer_v2") {
+		return <Erc721TransferV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc721_approval_v1") {
-		return <Erc721ApprovalV1AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc721_approval_v2") {
+		return <Erc721ApprovalV2AccountDescription event={props.event} account={props.account} />;
 	}
 }
 

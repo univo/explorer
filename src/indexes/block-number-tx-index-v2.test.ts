@@ -2,7 +2,11 @@ import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
 import { event } from "@/events/erc20-transfer-v2/event";
-import { getEventIdsForBlock, getEventIdsForTx, index_block_number_tx_index_v2 } from "./block-number-tx-index-v2";
+import {
+	getEventIdsForBlockNumber,
+	getEventIdsForTxPosition,
+	index_block_number_tx_index_v2,
+} from "./block-number-tx-index-v2";
 
 test.concurrent("block-number-tx-index-v2", async ({ expect }) => {
 	const block_number = 10000000;
@@ -19,7 +23,7 @@ test.concurrent("block-number-tx-index-v2", async ({ expect }) => {
 
 	await index_block_number_tx_index_v2.upsert(indexes);
 
-	const idsForBlock = await getEventIdsForBlock(1, block_number);
+	const idsForBlock = await getEventIdsForBlockNumber(1, block_number);
 
 	expect(idsForBlock).toMatchInlineSnapshot(`
 		[
@@ -81,7 +85,7 @@ test.concurrent("block-number-tx-index-v2", async ({ expect }) => {
 		]
 	`);
 
-	const idsForTx = await getEventIdsForTx(1, block_number, 5);
+	const idsForTx = await getEventIdsForTxPosition(1, block_number, 5);
 
 	expect(idsForTx).toMatchInlineSnapshot(`
 		[

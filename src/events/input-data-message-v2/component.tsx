@@ -3,13 +3,13 @@ import { isAddressEqual } from "viem";
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { InputDataMessageV1 } from "./event";
+import type { InputDataMessageV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function InputDataMessageV1Description(props: { event: InputDataMessageV1 }) {
-	const chain = parseId(props.event.id).chain_id;
+export function InputDataMessageV2Description(props: { event: InputDataMessageV2 }) {
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>
@@ -23,8 +23,8 @@ export function InputDataMessageV1Description(props: { event: InputDataMessageV1
 	);
 }
 
-export function InputDataMessageV1AccountDescription(props: { event: InputDataMessageV1; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+export function InputDataMessageV2AccountDescription(props: { event: InputDataMessageV2; account: IAccount }) {
+	const chain = parseId(props.event.id).chainId;
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
 		return (
 			<Description>
@@ -47,5 +47,5 @@ export function InputDataMessageV1AccountDescription(props: { event: InputDataMe
 		);
 	}
 
-	return <InputDataMessageV1Description event={props.event} />;
+	return <InputDataMessageV2Description event={props.event} />;
 }

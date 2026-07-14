@@ -1,14 +1,14 @@
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { EnsNameRegisteredV1 } from "./event";
 import { Hoverable } from "@/components/hoverable";
+import type { EnsNameRegisteredV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { formatTokenAmount, parseId } from "@/helpers";
 import type { Account as IAccount } from "@/state/account";
 
-export function EnsNameRegisteredV1Description(props: { event: EnsNameRegisteredV1 }) {
-	const chain = parseId(props.event.id).chain_id;
+export function EnsNameRegisteredV2Description(props: { event: EnsNameRegisteredV2 }) {
+	const chain = parseId(props.event.id).chainId;
 
 	const expiring = new Date(props.event.expires_at).toLocaleDateString("en", {
 		month: "short",
@@ -36,7 +36,7 @@ export function EnsNameRegisteredV1Description(props: { event: EnsNameRegistered
 	);
 }
 
-export function EnsNameRegisteredV1AccountDescription(props: { event: EnsNameRegisteredV1; account: IAccount }) {
+export function EnsNameRegisteredV2AccountDescription(props: { event: EnsNameRegisteredV2; account: IAccount }) {
 	const expiring = new Date(props.event.expires_at).toLocaleDateString("en", {
 		month: "short",
 		day: "numeric",

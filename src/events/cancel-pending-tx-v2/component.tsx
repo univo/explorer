@@ -4,13 +4,13 @@ import { parseId } from "@/helpers";
 import { formatNumber } from "@/utils";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { CancelPendingTxV1 } from "./event";
+import type { CancelPendingTxV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function CancelPendingTxV1Description(props: { event: CancelPendingTxV1 }) {
-	const chain = parseId(props.event.id).chain_id;
+export function CancelPendingTxV2Description(props: { event: CancelPendingTxV2 }) {
+	const chain = parseId(props.event.id).chainId;
 
 	return (
 		<Description>
@@ -23,7 +23,7 @@ export function CancelPendingTxV1Description(props: { event: CancelPendingTxV1 }
 	);
 }
 
-export function CancelPendingTxV1AccountDescription(props: { event: CancelPendingTxV1; account: IAccount }) {
+export function CancelPendingTxV2AccountDescription(props: { event: CancelPendingTxV2; account: IAccount }) {
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
 		return (
 			<Description>
@@ -35,5 +35,5 @@ export function CancelPendingTxV1AccountDescription(props: { event: CancelPendin
 		);
 	}
 
-	return <CancelPendingTxV1Description event={props.event} />;
+	return <CancelPendingTxV2Description event={props.event} />;
 }

@@ -1,15 +1,16 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
+import { Token } from "@/components/token";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { Erc721TransferV1 } from "./event";
+import type { Erc20TransferV2 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
-export function Erc721TransferV1Description(props: { event: Erc721TransferV1 }) {
-	const chain = parseId(props.event.id).chain_id;
+export function Erc20TransferV2Description(props: { event: Erc20TransferV2 }) {
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
 		return (
@@ -17,8 +18,18 @@ export function Erc721TransferV1Description(props: { event: Erc721TransferV1 }) 
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.to_address} />
 				<Action type="minted">minted</Action>
-				<Account chain={chain} address={props.event.token_address} />
-				<span>#{props.event.token_id}</span>
+				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+			</Description>
+		);
+	}
+
+	if (isAddressEqual(props.event.to_address, "0x0000000000000000000000000000000000000000")) {
+		return (
+			<Description>
+				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Account chain={chain} address={props.event.from_address} />
+				<Action type="burnt">burnt</Action>
+				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 			</Description>
 		);
 	}
@@ -28,25 +39,23 @@ export function Erc721TransferV1Description(props: { event: Erc721TransferV1 }) 
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<Account chain={chain} address={props.event.token_address} />
-			<span>#{props.event.token_id}</span>
+			<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
 	);
 }
 
-export function Erc721TransferV1AccountDescription(props: { event: Erc721TransferV1; account: IAccount }) {
-	const chain = parseId(props.event.id).chain_id;
+export function Erc20TransferV2AccountDescription(props: { event: Erc20TransferV2; account: IAccount }) {
+	const chain = parseId(props.event.id).chainId;
 
 	if (isAddressEqual(props.account.address, props.event.from_address)) {
-		if (isAddressEqual(props.event.to_address, "0x0000000000000000000000000000000000000000")) {
+		if (isBurnAddress(props.event.to_address)) {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="burnt">Burnt</Action>
-					<Account chain={chain} address={props.event.token_address} />
-					<span>#{props.event.token_id}</span>
+					<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				</Description>
 			);
 		}
@@ -55,8 +64,7 @@ export function Erc721TransferV1AccountDescription(props: { event: Erc721Transfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<Account chain={chain} address={props.event.token_address} />
-				<span>#{props.event.token_id}</span>
+				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -64,14 +72,12 @@ export function Erc721TransferV1AccountDescription(props: { event: Erc721Transfe
 	}
 
 	if (isAddressEqual(props.account.address, props.event.to_address)) {
-		if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
+		if (isBurnAddress(props.event.from_address)) {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="received">Received</Action>
-					<span>freshly minted</span>
-					<span>#{props.event.token_id}</span>
-					<Account chain={chain} address={props.event.token_address} />
+					<Action type="minted">Minted</Action>
+					<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				</Description>
 			);
 		}
@@ -80,13 +86,21 @@ export function Erc721TransferV1AccountDescription(props: { event: Erc721Transfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Account chain={chain} address={props.event.token_address} />
-				<span>#{props.event.token_id}</span>
+				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>
 		);
 	}
 
-	return <Erc721TransferV1Description event={props.event} />;
+	return <Erc20TransferV2Description event={props.event} />;
+}
+
+const BURN_ADDRESSES = [
+	"0x0000000000000000000000000000000000000000", //
+	"0x000000000000000000000000000000000000dEaD",
+];
+
+function isBurnAddress(address: `0x${string}`) {
+	return BURN_ADDRESSES.some((burn) => isAddressEqual(address, burn as `0x${string}`));
 }

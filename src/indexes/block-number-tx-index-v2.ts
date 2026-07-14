@@ -1,7 +1,7 @@
 import { db } from "@/db/client";
 import { logger } from "@/utils";
 import type { chains } from "@/constants";
-import { getInternalChain, v2_parseId } from "@/helpers";
+import { getInternalChain, parseId } from "@/helpers";
 
 // Transactions can be uniquely represented by in two ways: their transaction hash, or the combination of their block number
 // and transaction index. In general, the explorer uses the latter and there are a few reasons why:
@@ -50,7 +50,7 @@ export const index_block_number_tx_index_v2 = {
 
 			unique[key] = true;
 
-			const externalChain = v2_parseId(index.event_id).chainId;
+			const externalChain = parseId(index.event_id).chainId;
 			const internalChain = getInternalChain(externalChain);
 
 			values.push({
@@ -107,7 +107,7 @@ export const index_block_number_tx_index_v2 = {
 	},
 };
 
-export async function getEventIdsForBlock(chain: keyof typeof chains, block: number) {
+export async function getEventIdsForBlockNumber(chain: keyof typeof chains, block: number) {
 	const start = Date.now();
 
 	const res = await db.query({
@@ -122,7 +122,7 @@ export async function getEventIdsForBlock(chain: keyof typeof chains, block: num
 	return rows.map((row) => row["lower(hex(event_id))"]) as string[];
 }
 
-export async function getEventIdsForTx(chain: keyof typeof chains, block: number, tx: number) {
+export async function getEventIdsForTxPosition(chain: keyof typeof chains, block: number, tx: number) {
 	const start = Date.now();
 
 	const res = await db.query({

@@ -11,17 +11,17 @@ import { IconButton } from "@/components/icon-button";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForBlockNumber } from "@/indexes/block-number-v2";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
-import { Erc20ApprovalV1Description } from "@/events/erc20-approval-v1/component";
-import { Erc20TransferV1Description } from "@/events/erc20-transfer-v1/component";
-import { Erc721ApprovalV1Description } from "@/events/erc721-approval-v1/component";
-import { Erc721TransferV1Description } from "@/events/erc721-transfer-v1/component";
-import { NativeTransferV1Description } from "@/events/native-transfer-v1/component";
-import { CancelPendingTxV1Description } from "@/events/cancel-pending-tx-v1/component";
-import { InputDataMessageV1Description } from "@/events/input-data-message-v1/component";
-import { EnsNameRegisteredV1Description } from "@/events/ens-name-registered-v1/component";
-import { ContractDeploymentV1Description } from "@/events/contract-deployment-v1/component";
+import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v2";
+import { Erc20ApprovalV2Description } from "@/events/erc20-approval-v2/component";
+import { Erc20TransferV2Description } from "@/events/erc20-transfer-v2/component";
+import { Erc721ApprovalV2Description } from "@/events/erc721-approval-v2/component";
+import { Erc721TransferV2Description } from "@/events/erc721-transfer-v2/component";
+import { NativeTransferV2Description } from "@/events/native-transfer-v2/component";
+import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
+import { InputDataMessageV2Description } from "@/events/input-data-message-v2/component";
+import { EnsNameRegisteredV2Description } from "@/events/ens-name-registered-v2/component";
+import { ContractDeploymentV2Description } from "@/events/contract-deployment-v2/component";
 
 async function BlockNumberView(props: { number: number }) {
 	const [block, ids] = await Promise.all([
@@ -74,7 +74,7 @@ async function EventsTable(props: { ids: string[] }) {
 	const events = await getEventsForIds(props.ids);
 	const ordered = getOrderedEvents(events, "latest");
 	const first = ordered[0] || raise("Expected at least one event");
-	const date = new Date(parseId(first.id).block_timestamp * 1000);
+	const date = new Date(parseId(first.id).blockTimestamp * 1000);
 
 	return (
 		<div className="relative grow overflow-scroll isolate">
@@ -108,40 +108,40 @@ async function EventsTable(props: { ids: string[] }) {
 }
 
 export function EventDescription(props: { event: Event }) {
-	if (props.event.tag === "erc20_approval_v1") {
-		return <Erc20ApprovalV1Description event={props.event} />;
+	if (props.event.tag === "erc20_approval_v2") {
+		return <Erc20ApprovalV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "native_transfer_v1") {
-		return <NativeTransferV1Description event={props.event} />;
+	if (props.event.tag === "native_transfer_v2") {
+		return <NativeTransferV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc20_transfer_v1") {
-		return <Erc20TransferV1Description event={props.event} />;
+	if (props.event.tag === "erc20_transfer_v2") {
+		return <Erc20TransferV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "input_data_message_v1") {
-		return <InputDataMessageV1Description event={props.event} />;
+	if (props.event.tag === "input_data_message_v2") {
+		return <InputDataMessageV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v1") {
-		return <EnsNameRegisteredV1Description event={props.event} />;
+	if (props.event.tag === "ens_name_registered_v2") {
+		return <EnsNameRegisteredV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "contract_deployment_v1") {
-		return <ContractDeploymentV1Description event={props.event} />;
+	if (props.event.tag === "contract_deployment_v2") {
+		return <ContractDeploymentV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v1") {
-		return <CancelPendingTxV1Description event={props.event} />;
+	if (props.event.tag === "cancel_pending_tx_v2") {
+		return <CancelPendingTxV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v1") {
-		return <Erc721TransferV1Description event={props.event} />;
+	if (props.event.tag === "erc721_transfer_v2") {
+		return <Erc721TransferV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc721_approval_v1") {
-		return <Erc721ApprovalV1Description event={props.event} />;
+	if (props.event.tag === "erc721_approval_v2") {
+		return <Erc721ApprovalV2Description event={props.event} />;
 	}
 }
 
