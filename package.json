@@ -19,7 +19,7 @@
 	},
 	"dependencies": {
 		"@clickhouse/client-web": "1.14.0",
-		"@cloudflare/vite-plugin": "1.32.2",
+		"@cloudflare/vite-plugin": "1.45.0",
 		"@ponder/utils": "0.2.16",
 		"@storagesdk/adapters": "0.6.0",
 		"@storagesdk/core": "0.4.2",
@@ -45,7 +45,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@cloudflare/vitest-pool-workers": "0.16.14",
+		"@cloudflare/vitest-pool-workers": "0.18.5",
 		"@tanstack/react-devtools": "0.10.2",
 		"@tanstack/react-router-devtools": "1.166.13",
 		"@types/node": "22.19.15",
@@ -58,7 +58,7 @@
 		"typescript": "^5.7.2",
 		"vite": "^7.1.7",
 		"vite-tsconfig-paths": "^5.1.4",
-		"vitest": "4.1.8",
-		"wrangler": "4.100.0"
+		"vitest": "4.1.10",
+		"wrangler": "4.111.0"
 	}
 }
