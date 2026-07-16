@@ -38,6 +38,12 @@
 			"bucket_name": "explorer-staging"
 		}
 	],
+	"hyperdrive": [
+		{
+			"binding": "PG",
+			"id": "2ee0a71e78274194901a2ff23ee5c1fc"
+		}
+	],
 	"env": {
 		"staging": {
 			"vars": {
@@ -53,6 +59,12 @@
 					"remote": true,
 					"binding": "BUCKET",
 					"bucket_name": "explorer-staging"
+				}
+			],
+			"hyperdrive": [
+				{
+					"binding": "PG",
+					"id": "2ee0a71e78274194901a2ff23ee5c1fc"
 				}
 			]
 		},
@@ -70,6 +82,12 @@
 					"remote": true,
 					"binding": "BUCKET",
 					"bucket_name": "explorer-production"
+				}
+			],
+			"hyperdrive": [
+				{
+					"binding": "PG",
+					"id": "de9c1c526cb347778a95aa4e2597cd2b"
 				}
 			]
 		}
