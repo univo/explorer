@@ -76,11 +76,11 @@ export const event = univo.event({
 				.onConflictDoUpdate({
 					target: schema.event_erc20_transfer_v3.id,
 					set: {
-						success: sql.raw(`excluded.${schema.event_erc20_transfer_v3.success}`),
-						quantity: sql.raw(`excluded.${schema.event_erc20_transfer_v3.quantity}`),
-						to_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.to_address}`),
-						from_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.from_address}`),
-						token_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.token_address}`),
+						success: sql.raw(`excluded.${schema.event_erc20_transfer_v3.success.name}`),
+						quantity: sql.raw(`excluded.${schema.event_erc20_transfer_v3.quantity.name}`),
+						to_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.to_address.name}`),
+						from_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.from_address.name}`),
+						token_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.token_address.name}`),
 					},
 				});
 		},
