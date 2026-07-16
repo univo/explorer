@@ -1,4 +1,4 @@
-import { inArray } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 
 import { univo } from "@/lib/univo";
@@ -70,7 +70,19 @@ export const event = univo.event({
 		async upsert(batch) {
 			const client = await createPostgresClient();
 
-			await client.insert(schema.event_erc20_transfer_v3).values(batch);
+			await client
+				.insert(schema.event_erc20_transfer_v3)
+				.values(batch)
+				.onConflictDoUpdate({
+					target: schema.event_erc20_transfer_v3.id,
+					set: {
+						success: sql.raw(`excluded.${schema.event_erc20_transfer_v3.success}`),
+						quantity: sql.raw(`excluded.${schema.event_erc20_transfer_v3.quantity}`),
+						to_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.to_address}`),
+						from_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.from_address}`),
+						token_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.token_address}`),
+					},
+				});
 		},
 
 		async delete(batch) {
