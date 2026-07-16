@@ -41,7 +41,8 @@
 	"hyperdrive": [
 		{
 			"binding": "PG",
-			"id": "2ee0a71e78274194901a2ff23ee5c1fc"
+			"id": "2ee0a71e78274194901a2ff23ee5c1fc",
+			"localConnectionString": "WILL_OVERRIDE"
 		}
 	],
 	"env": {
