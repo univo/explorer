@@ -1,4 +1,4 @@
-import { inArray, sql } from "drizzle-orm";
+import { asc, inArray, sql } from "drizzle-orm";
 import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 
 import { univo } from "@/lib/univo";
@@ -114,7 +114,8 @@ export async function getErc20TransferV3(ids: string[]) {
 	const results = await client
 		.select()
 		.from(schema.event_erc20_transfer_v3)
-		.where(inArray(schema.event_erc20_transfer_v3.id, ids));
+		.where(inArray(schema.event_erc20_transfer_v3.id, ids))
+		.orderBy(asc(schema.event_erc20_transfer_v3.id));
 
 	return results.map<Erc20TransferV3>((result) => {
 		return {
