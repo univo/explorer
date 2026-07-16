@@ -6,13 +6,13 @@ import { tables } from "@/constants";
 import { schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
-import { getEventSuccess, getTxReceiptForLog, createId, getPartition } from "@/helpers";
+import { getEventSuccess, getTxReceiptForLog, createId, getPartition, parseId } from "@/helpers";
 
-export interface Erc20TransferV2 {
-	tag: "erc20_transfer_v2";
+export interface Erc20TransferV3 {
+	tag: "erc20_transfer_v3";
 	id: string;
 	success: boolean;
-	quantity: `0x${string}`;
+	quantity: string;
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
 	token_address: `0x${string}`;
@@ -101,3 +101,30 @@ export const event = univo.event({
 		},
 	},
 });
+
+export async function getErc20TransferV3(ids: string[]) {
+	const filtered = ids.filter((id) => parseId(id).tableId === tables.erc20_transfer_v2);
+
+	if (filtered.length === 0) {
+		return [];
+	}
+
+	const client = await createPostgresClient();
+
+	const results = await client
+		.select()
+		.from(schema.event_erc20_transfer_v3)
+		.where(inArray(schema.event_erc20_transfer_v3.id, ids));
+
+	return results.map<Erc20TransferV3>((result) => {
+		return {
+			tag: "erc20_transfer_v3" as const,
+			id: result.id,
+			success: result.success,
+			quantity: result.quantity,
+			to_address: getAddress(result.to_address),
+			from_address: getAddress(result.from_address),
+			token_address: getAddress(result.token_address),
+		};
+	});
+}
