@@ -68,21 +68,25 @@ export const event = univo.event({
 
 	storage: {
 		async upsert(batch) {
+			const MAX_BATCH_SIZE = 1000;
+
 			const client = await createPostgresClient();
 
-			await client
-				.insert(schema.event_erc20_transfer_v3)
-				.values(batch)
-				.onConflictDoUpdate({
-					target: schema.event_erc20_transfer_v3.id,
-					set: {
-						success: sql.raw(`excluded.${schema.event_erc20_transfer_v3.success.name}`),
-						quantity: sql.raw(`excluded.${schema.event_erc20_transfer_v3.quantity.name}`),
-						to_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.to_address.name}`),
-						from_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.from_address.name}`),
-						token_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.token_address.name}`),
-					},
-				});
+			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
+				await client
+					.insert(schema.event_erc20_transfer_v3)
+					.values(batch.slice(i, i + MAX_BATCH_SIZE))
+					.onConflictDoUpdate({
+						target: schema.event_erc20_transfer_v3.id,
+						set: {
+							success: sql.raw(`excluded.${schema.event_erc20_transfer_v3.success.name}`),
+							quantity: sql.raw(`excluded.${schema.event_erc20_transfer_v3.quantity.name}`),
+							to_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.to_address.name}`),
+							from_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.from_address.name}`),
+							token_address: sql.raw(`excluded.${schema.event_erc20_transfer_v3.token_address.name}`),
+						},
+					});
+			}
 		},
 
 		async delete(batch) {
