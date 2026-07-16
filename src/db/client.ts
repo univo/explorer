@@ -1,4 +1,9 @@
+import { Client } from "pg";
+import { env } from "cloudflare:workers";
+import { drizzle } from "drizzle-orm/node-postgres";
 import { createClient } from "@clickhouse/client-web";
+
+import { schema } from "./schema";
 
 export const db = createClient({
 	url: process.env.CLICKHOUSE_URL,
@@ -19,3 +24,13 @@ export const db = createClient({
 		insert_deduplicate: import.meta.env.PROD ? 1 : 0,
 	},
 });
+
+export async function createPostgresClient() {
+	const client = new Client({
+		connectionString: env.PG.connectionString,
+	});
+
+	await client.connect();
+
+	return drizzle(client, { schema });
+}
