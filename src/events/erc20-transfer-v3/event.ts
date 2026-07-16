@@ -68,7 +68,7 @@ export const event = univo.event({
 
 	storage: {
 		async upsert(batch) {
-			const MAX_BATCH_SIZE = 1000;
+			const MAX_BATCH_SIZE = 2000;
 
 			const client = await createPostgresClient();
 
