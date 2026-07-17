@@ -37,6 +37,8 @@ export function getTxReceiptForLog(receipts: RpcTransactionReceipt[], log: RpcTr
 	return receipt;
 }
 
+// TODO: Remove
+
 // Clickhouse accepts duplicate primary key values and uses an eventually consistent garbage collection process to
 // remove them. So to maintain correctness we also perform manual deduplication of each id here.
 
@@ -63,11 +65,19 @@ export function createId(opts: IdOptions) {
 	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
 	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
 	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
+
+	// TODO
+	// This needs to be 6 chars (3 bytes). This doesn't require a schema change
+	// in Postgres but it will in Clickhouse so we'll have to change after migration.
+	// Can then truncate tables and re-index data.
+
 	const logIndex = opts.logIndex.slice(2).padStart(4, "0");
 	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
 	const tableId = opts.tableId.toString(16).padStart(4, "0");
 	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
 }
+
+// TODO: Remove
 
 /**
  * Accepts a block timestamp (UNIX seconds) and returns its corresponding partition
@@ -78,6 +88,8 @@ export function getPartition(blockTimestamp: `0x${string}`) {
 	const month = date.getMonth().toString().padStart(2, "0");
 	return Number.parseInt(`${year}${month}`);
 }
+
+// TODO: REmove
 
 /**
  * Accepts a list of event ids and returns a list of SQL WHERE clauses for each unique partition
@@ -111,6 +123,8 @@ export function parseId(id: string) {
 	const tableId = Number.parseInt(id.slice(28, 32), 16);
 	return { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId };
 }
+
+// TODO: Remove
 
 export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[], order: "latest" | "reverse") {
 	if (order === "latest") {

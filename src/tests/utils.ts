@@ -83,6 +83,8 @@ async function saveToCache(cacheDir: string, cacheFile: string, blockData: Block
 	}
 }
 
+// TODO: Remove
+
 export async function test_deleteEvents(block: Block, table: string) {
 	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
 	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
@@ -96,6 +98,8 @@ export async function test_deleteEvents(block: Block, table: string) {
 
 	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), '${prefix}')` });
 }
+
+// TODO: Remove
 
 // Normally we use our index tables to determine ids based on search queries, but for testing
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
@@ -114,6 +118,8 @@ export async function test_getEventIdsForBlock(block: Block, table: string) {
 
 	return rows.map((row) => row.id);
 }
+
+// TODO: Remove
 
 // Normally we use our index tables to determine ids based on search queries, but for testing
 // purposes we don't want to rely on those external tables. Instead we can actually directly look
