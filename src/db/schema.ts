@@ -1,4 +1,4 @@
-import { boolean, customType, pgTable } from "drizzle-orm/pg-core";
+import { boolean, customType, integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
 import { bytesToHex, hexToBytes } from "@/utils";
 
@@ -52,6 +52,24 @@ const event_erc20_transfer_v3 = pgTable("event_erc20_transfer_v3", {
 	token_address: hex().notNull(),
 });
 
+const index_block_number_tx_index_v3 = pgTable(
+	"index_block_number_tx_index_v3",
+	{
+		chain: smallint().notNull(),
+		block_number: integer().notNull(),
+		tx_index: smallint().notNull(),
+		log_index: integer().notNull(),
+		table_id: smallint().notNull(),
+		block_timestamp: integer().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.chain, table.block_number, table.tx_index, table.log_index],
+		}),
+	],
+);
+
 export const schema = {
 	event_erc20_transfer_v3,
+	index_block_number_tx_index_v3,
 };
