@@ -6,9 +6,9 @@ import { tables } from "@/constants";
 import { schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
+import { index_account_v3 } from "@/indexes/account-v3";
 import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
 import { getEventSuccess, getTxReceiptForLog, createId, getPartition, parseId } from "@/helpers";
-import { index_account_v3 } from "@/indexes/account-v3";
 
 export interface Erc20TransferV3 {
 	tag: "erc20_transfer_v3";
