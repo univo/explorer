@@ -7,6 +7,8 @@ import { getToken } from "@/state/token";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
 
+// TODO: Support quantity as hex value
+
 export async function Token(props: { chain: number; address: `0x${string}`; quantity?: string }) {
 	const token = await getToken({ chain: props.chain, address: props.address });
 
