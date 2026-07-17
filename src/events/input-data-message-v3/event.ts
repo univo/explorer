@@ -1,0 +1,193 @@
+import { asc, inArray, sql } from "drizzle-orm";
+import { getAddress } from "viem";
+
+import { univo } from "@/lib/univo";
+import { tables } from "@/constants";
+import { schema } from "@/db/schema";
+import { nonNullable } from "@/utils";
+import { createPostgresClient } from "@/db/client";
+import { index_account_v3 } from "@/indexes/account-v3";
+import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
+import { getEventSuccess, createId, getPartition, parseId } from "@/helpers";
+
+export interface InputDataMessageV3 {
+	tag: "input_data_message_v3";
+	id: string;
+	success: boolean;
+	message: string;
+	to_address: `0x${string}`;
+	from_address: `0x${string}`;
+}
+
+export const event = univo.event({
+	id: "input_data_message_v3",
+
+	filters: [{ chain: 1, fromBlock: 0 }],
+
+	handler(block) {
+		return block.eth_getBlockByNumber.transactions
+			.map((tx) => {
+				try {
+					if (tx.input === "0x") {
+						return null;
+					}
+
+					if (tx.input === "0x0") {
+						return null;
+					}
+
+					if (tx.input.length < 16) {
+						return null;
+					}
+
+					// When deploying a contract `to` field is null and we know input data is not a message
+					if (tx.to === null) {
+						return null;
+					}
+
+					const message = hex_to_string(tx.input);
+					const num_valid_chars = count_valid_chars(message);
+					const percent_valid_chars = num_valid_chars / message.length;
+
+					// Use some heuristic to decide if input data is not gibberish characters
+					if (percent_valid_chars < 0.6) {
+						return null;
+					}
+
+					const id = createId({
+						logIndex: "0x0",
+						chainId: block.eth_chainId,
+						txIndex: tx.transactionIndex,
+						tableId: tables.input_data_message_v2,
+						blockNumber: block.eth_getBlockByNumber.number,
+						blockTimestamp: block.eth_getBlockByNumber.timestamp,
+					});
+
+					const partition = getPartition(block.eth_getBlockByNumber.timestamp);
+					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+
+					return {
+						id,
+						partition,
+						success: getEventSuccess(receipt),
+						message,
+						to_address: getAddress(tx.to),
+						from_address: getAddress(tx.from),
+					};
+				} catch {
+					return null;
+				}
+			})
+			.filter(nonNullable);
+	},
+
+	storage: {
+		async upsert(batch) {
+			const MAX_BATCH_SIZE = 8000;
+
+			const client = await createPostgresClient();
+
+			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
+				await client
+					.insert(schema.event_input_data_message_v3)
+					.values(batch.slice(i, i + MAX_BATCH_SIZE))
+					.onConflictDoUpdate({
+						target: schema.event_input_data_message_v3.id,
+						set: {
+							success: sql.raw(`excluded.${schema.event_input_data_message_v3.success.name}`),
+							message: sql.raw(`excluded.${schema.event_input_data_message_v3.message.name}`),
+							to_address: sql.raw(`excluded.${schema.event_input_data_message_v3.to_address.name}`),
+							from_address: sql.raw(`excluded.${schema.event_input_data_message_v3.from_address.name}`),
+						},
+					});
+			}
+		},
+
+		async delete(batch) {
+			const client = await createPostgresClient();
+
+			await client.delete(schema.event_input_data_message_v3).where(
+				inArray(
+					schema.event_input_data_message_v3.id,
+					batch.map((event) => event.id),
+				),
+			);
+		},
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v3,
+	id: "input_data_message_v3_index_block_number_tx_index_v3",
+	handler: (block) => event.handler(block).map((event) => event.id),
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_account_v3,
+	id: "input_data_message_v3_index_account_v3",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, account: event.to_address }, //
+				{ event_id: event.id, account: event.from_address },
+			];
+		});
+	},
+});
+
+const decoder = new TextDecoder();
+
+function hex_to_string(hex: `0x${string}`) {
+	const str = hex.slice(2);
+	const bytes = new Uint8Array(str.length / 2);
+
+	for (let i = 0; i < str.length; i += 2) {
+		const byte = str.substring(i, i + 2);
+		bytes[i / 2] = Number.parseInt(byte, 16);
+	}
+
+	return decoder.decode(bytes);
+}
+
+const VALID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.? ";
+
+function count_valid_chars(string: string) {
+	let count = 0;
+
+	for (const char of string) {
+		if (VALID_CHARS.indexOf(char) >= 0) {
+			count++;
+		}
+	}
+
+	return count;
+}
+
+export async function getInputDataMessageV3(ids: string[]) {
+	const filtered = ids.filter((id) => parseId(id).tableId === tables.input_data_message_v2);
+
+	if (filtered.length === 0) {
+		return [];
+	}
+
+	const client = await createPostgresClient();
+
+	const results = await client
+		.select()
+		.from(schema.event_input_data_message_v3)
+		.where(inArray(schema.event_input_data_message_v3.id, filtered))
+		.orderBy(asc(schema.event_input_data_message_v3.id));
+
+	return results.map<InputDataMessageV3>((result) => {
+		return {
+			tag: "input_data_message_v3" as const,
+			id: result.id,
+			success: result.success,
+			message: result.message,
+			to_address: getAddress(result.to_address),
+			from_address: getAddress(result.from_address),
+		};
+	});
+}
