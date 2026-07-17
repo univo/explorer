@@ -1,6 +1,26 @@
+import { sql, type SQL, type Column } from "drizzle-orm";
 import { boolean, customType, integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
 import { bytesToHex, hexToBytes } from "@/utils";
+
+export function inTuple(columns: Column[], values: any[][]): SQL<unknown> {
+	// Prevent SQL errors if the array of values is completely empty
+	if (values.length === 0) {
+		return sql`FALSE`;
+	}
+
+	// Map out the columns chunk: (col1, col2, ...)
+	const columnsPart = sql`(${sql.join(columns, sql`, `)})`;
+
+	// Map out the values chunk: ((v1, v2), (v3, v4), ...)
+	const valuesPart = sql.join(
+		values.map((val) => sql`(${sql.join(val, sql`, `)})`),
+		sql`, `,
+	);
+
+	// Return the compiled raw SQL expression
+	return sql`${columnsPart} IN (${valuesPart})`;
+}
 
 const id = customType<{ data: string; driverData: Uint8Array | string }>({
 	dataType: () => "bytea",
@@ -52,6 +72,19 @@ const event_erc20_transfer_v3 = pgTable("event_erc20_transfer_v3", {
 	token_address: hex().notNull(),
 });
 
+const index_account_v3 = pgTable(
+	"index_account_v3",
+	{
+		account: hex().notNull(),
+		event_id: id().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.account, table.event_id],
+		}),
+	],
+);
+
 const index_block_number_tx_index_v3 = pgTable(
 	"index_block_number_tx_index_v3",
 	{
@@ -71,5 +104,6 @@ const index_block_number_tx_index_v3 = pgTable(
 
 export const schema = {
 	event_erc20_transfer_v3,
+	index_account_v3,
 	index_block_number_tx_index_v3,
 };
