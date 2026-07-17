@@ -21,8 +21,10 @@ export function inTuple(columns: Column[], values: any[][]): SQL<unknown> {
 }
 
 const id = customType<{ data: string; driverData: Uint8Array | string }>({
-	dataType: () => "bytea",
-	toDriver: (value) => {
+	dataType() {
+		return "bytea";
+	},
+	toDriver(value) {
 		let str = value as string;
 
 		if (str.startsWith("0x")) {
@@ -41,7 +43,7 @@ const id = customType<{ data: string; driverData: Uint8Array | string }>({
 
 		return new Uint8Array(pairs.map((byte) => Number.parseInt(byte, 16)));
 	},
-	fromDriver: (value) => {
+	fromDriver(value) {
 		let output = "";
 
 		for (const byte of value as unknown as Uint8Array) {
