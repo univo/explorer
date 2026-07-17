@@ -1,5 +1,5 @@
 import { sql, type SQL, type Column } from "drizzle-orm";
-import { bigint, boolean, customType, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
+import { boolean, customType, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
 import { bytesToHex, hexToBytes } from "@/utils";
 
@@ -65,24 +65,24 @@ const hex = customType<{ data: `0x${string}` }>({
 
 const event_erc20_transfer_v3 = pgTable("event_erc20_transfer_v3", {
 	id: id().primaryKey(),
-	success: boolean().notNull(),
 	quantity: hex().notNull(),
 	to_address: hex().notNull(),
+	success: boolean().notNull(),
 	from_address: hex().notNull(),
 	token_address: hex().notNull(),
 });
 
 const event_cancel_pending_tx_v3 = pgTable("event_cancel_pending_tx_v3", {
 	id: id().primaryKey(),
+	nonce: hex().notNull(),
 	success: boolean().notNull(),
 	from_address: hex().notNull(),
-	nonce: bigint({ mode: "number" }).notNull(),
 });
 
 const event_input_data_message_v3 = pgTable("event_input_data_message_v3", {
 	id: id().primaryKey(),
-	success: boolean().notNull(),
 	message: text().notNull(),
+	success: boolean().notNull(),
 	to_address: hex().notNull(),
 	from_address: hex().notNull(),
 });
@@ -96,11 +96,11 @@ const event_contract_deployment_v3 = pgTable("event_contract_deployment_v3", {
 
 const event_ens_name_registered_v3 = pgTable("event_ens_name_registered_v3", {
 	id: id().primaryKey(),
-	success: boolean().notNull(),
 	name: text().notNull(),
 	cost_eth: hex().notNull(),
-	owner_address: hex().notNull(),
 	expires_at: hex().notNull(),
+	success: boolean().notNull(),
+	owner_address: hex().notNull(),
 });
 
 const index_account_v3 = pgTable(
@@ -120,10 +120,10 @@ const index_block_number_tx_index_v3 = pgTable(
 	"index_block_number_tx_index_v3",
 	{
 		chain: smallint().notNull(),
-		block_number: integer().notNull(),
 		tx_index: smallint().notNull(),
 		log_index: integer().notNull(),
 		table_id: smallint().notNull(),
+		block_number: integer().notNull(),
 		block_timestamp: integer().notNull(),
 	},
 	(table) => [
