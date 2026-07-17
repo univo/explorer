@@ -44,14 +44,18 @@ const id = customType<{ data: string; driverData: Uint8Array | string }>({
 		return new Uint8Array(pairs.map((byte) => Number.parseInt(byte, 16)));
 	},
 	fromDriver(value) {
-		let output = "";
+		if (value instanceof Uint8Array) {
+			let output = "";
 
-		for (const byte of value as unknown as Uint8Array) {
-			const hex = byte.toString(16);
-			output += hex.length === 1 ? `0${hex}` : hex;
+			for (const byte of value as unknown as Uint8Array) {
+				const hex = byte.toString(16);
+				output += hex.length === 1 ? `0${hex}` : hex;
+			}
+
+			return output;
 		}
 
-		return output; // Don't prefix id with `0x`
+		throw new Error(`Failed to parse bytea value: ${value}`);
 	},
 });
 
@@ -79,14 +83,18 @@ const hex = customType<{ data: `0x${string}` }>({
 		return new Uint8Array(pairs.map((byte) => Number.parseInt(byte, 16)));
 	},
 	fromDriver(value) {
-		let output = "";
+		if (value instanceof Uint8Array) {
+			let output = "";
 
-		for (const byte of value as unknown as Uint8Array) {
-			const hex = byte.toString(16);
-			output += hex.length === 1 ? `0${hex}` : hex;
+			for (const byte of value as unknown as Uint8Array) {
+				const hex = byte.toString(16);
+				output += hex.length === 1 ? `0${hex}` : hex;
+			}
+
+			return `0x${output}`;
 		}
 
-		return `0x${output}`;
+		throw new Error(`Failed to parse bytea value: ${value}`);
 	},
 });
 
