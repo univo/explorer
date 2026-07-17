@@ -1,8 +1,6 @@
 import { sql, type SQL, type Column } from "drizzle-orm";
 import { boolean, customType, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
-import { bytesToHex, hexToBytes } from "@/utils";
-
 export function inTuple(columns: Column[], values: any[][]): SQL<unknown> {
 	// Prevent SQL errors if the array of values is completely empty
 	if (values.length === 0) {
@@ -24,8 +22,35 @@ export function inTuple(columns: Column[], values: any[][]): SQL<unknown> {
 
 const id = customType<{ data: string; driverData: Uint8Array | string }>({
 	dataType: () => "bytea",
-	toDriver: (value) => hexToBytes(value),
-	fromDriver: (value) => bytesToHex(value),
+	toDriver: (value) => {
+		let str = value as string;
+
+		if (str.startsWith("0x")) {
+			str = str.slice(2);
+		}
+
+		if (str.length % 2 !== 0) {
+			str = `0${str}`;
+		}
+
+		const pairs = str.match(/[\da-f]{2}/gi);
+
+		if (pairs === null) {
+			throw new Error(`Expected pairs to be defined for value: ${str}`);
+		}
+
+		return new Uint8Array(pairs.map((byte) => Number.parseInt(byte, 16)));
+	},
+	fromDriver: (value) => {
+		let output = "";
+
+		for (const byte of value as unknown as Uint8Array) {
+			const hex = byte.toString(16);
+			output += hex.length === 1 ? `0${hex}` : hex;
+		}
+
+		return output; // Don't prefix id with `0x`
+	},
 });
 
 const hex = customType<{ data: `0x${string}` }>({

@@ -155,34 +155,3 @@ export function hexToNumber(hex: string) {
 export function numberToHex(number: number | bigint) {
 	return `0x${number.toString(16)}` as const;
 }
-
-export function bytesToHex(value: Uint8Array | string) {
-	if (typeof value === "string") {
-		return (value.startsWith("\\x") ? value.slice(2) : value).toLowerCase();
-	}
-
-	let output = "";
-
-	for (const byte of value) {
-		const hex = byte.toString(16);
-		output += hex.length === 1 ? `0${hex}` : hex;
-	}
-
-	return output;
-}
-
-export function hexToBytes(value: string) {
-	const normalized = value.startsWith("0x") ? value.slice(2) : value;
-
-	if (normalized.length % 2 !== 0 || /[^\da-f]/i.test(normalized)) {
-		throw new Error("Expected an even-length hex string");
-	}
-
-	const bytes = new Uint8Array(normalized.length / 2);
-
-	for (let index = 0; index < bytes.length; index++) {
-		bytes[index] = Number.parseInt(normalized.slice(index * 2, index * 2 + 2), 16);
-	}
-
-	return bytes;
-}
