@@ -5,7 +5,7 @@ import { event } from "@/events/erc20-transfer-v2/event";
 import {
 	getEventIdsForBlockNumber,
 	getEventIdsForTxPosition,
-	index_block_number_tx_index_v2,
+	index_block_number_tx_index_v3,
 } from "./block-number-tx-index-v3";
 
 test.concurrent("block-number-tx-index-v3", async ({ expect }) => {
@@ -15,9 +15,9 @@ test.concurrent("block-number-tx-index-v3", async ({ expect }) => {
 
 	const ids = event.handler(block).map((event) => event.id);
 
-	await index_block_number_tx_index_v2.delete(ids);
+	await index_block_number_tx_index_v3.delete(ids);
 
-	await index_block_number_tx_index_v2.upsert(ids);
+	await index_block_number_tx_index_v3.upsert(ids);
 
 	const idsForBlock = await getEventIdsForBlockNumber(1, block_number);
 

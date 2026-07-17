@@ -6,6 +6,7 @@ import { tables } from "@/constants";
 import { schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
+import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
 import { getEventSuccess, getTxReceiptForLog, createId, getPartition, parseId } from "@/helpers";
 
 export interface Erc20TransferV3 {
@@ -100,6 +101,13 @@ export const event = univo.event({
 			);
 		},
 	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v3,
+	id: "erc20_transfer_v2_index_block_number_tx_index_v3",
+	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 export async function getErc20TransferV3(ids: string[]) {

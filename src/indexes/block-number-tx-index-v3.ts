@@ -18,7 +18,7 @@ import { createPostgresClient } from "@/db/client";
 // The tradeoff here is that this representation fails under chain reorganisations. A transaction in a reorganised block can
 // end up in a completely different position when it is included canonically.
 
-export const index_block_number_tx_index_v2 = {
+export const index_block_number_tx_index_v3 = {
 	async upsert(ids: string[]) {
 		const unique: Record<string, true> = {};
 
