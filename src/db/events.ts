@@ -5,7 +5,7 @@ import { getNativeTransferV2 } from "@/events/native-transfer-v2/event";
 import { getErc721TransferV2 } from "@/events/erc721-transfer-v2/event";
 import { getErc721ApprovalV2 } from "@/events/erc721-approval-v2/event";
 import { getCancelPendingTxV2 } from "@/events/cancel-pending-tx-v2/event";
-import { getInputDataMessageV2 } from "@/events/input-data-message-v2/event";
+import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
 import { getContractDeploymentV3 } from "@/events/contract-deployment-v3/event";
 
@@ -20,7 +20,7 @@ export async function getEventsForIds(ids: string[]) {
 		getNativeTransferV2(ids),
 		getErc20TransferV2(ids),
 		getErc20ApprovalV2(ids),
-		getInputDataMessageV2(ids),
+		getInputDataMessageV3(ids),
 		getContractDeploymentV3(ids),
 		getEnsNameRegisteredV3(ids),
 		getCancelPendingTxV2(ids),
