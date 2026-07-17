@@ -13,7 +13,7 @@ export interface Erc20TransferV3 {
 	tag: "erc20_transfer_v3";
 	id: string;
 	success: boolean;
-	quantity: string;
+	quantity: `0x${string}`;
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
 	token_address: `0x${string}`;
