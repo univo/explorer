@@ -14,7 +14,6 @@ import "@/events/cancel-pending-tx-v2/event";
 import "@/events/input-data-message-v2/event";
 import "@/events/input-data-message-v3/event";
 import "@/events/contract-deployment-v3/event";
-import "@/events/ens-name-registered-v2/event";
 import "@/events/ens-name-registered-v3/event";
 
 export const Route = createFileRoute("/api/univo")({

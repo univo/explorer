@@ -22,7 +22,7 @@ import { Erc721TransferV2AccountDescription } from "@/events/erc721-transfer-v2/
 import { Erc721ApprovalV2AccountDescription } from "@/events/erc721-approval-v2/component";
 import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV2AccountDescription } from "@/events/input-data-message-v2/component";
-import { EnsNameRegisteredV2AccountDescription } from "@/events/ens-name-registered-v2/component";
+import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
 
 async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
@@ -151,8 +151,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 		return <InputDataMessageV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v2") {
-		return <EnsNameRegisteredV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "ens_name_registered_v3") {
+		return <EnsNameRegisteredV3AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "contract_deployment_v3") {
