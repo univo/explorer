@@ -94,6 +94,15 @@ const event_contract_deployment_v3 = pgTable("event_contract_deployment_v3", {
 	deployer_address: hex().notNull(),
 });
 
+const event_ens_name_registered_v3 = pgTable("event_ens_name_registered_v3", {
+	id: id().primaryKey(),
+	success: boolean().notNull(),
+	name: text().notNull(),
+	cost_eth: hex().notNull(),
+	owner_address: hex().notNull(),
+	expires_at: hex().notNull(),
+});
+
 const index_account_v3 = pgTable(
 	"index_account_v3",
 	{
@@ -129,6 +138,7 @@ export const schema = {
 	event_cancel_pending_tx_v3,
 	event_input_data_message_v3,
 	event_contract_deployment_v3,
+	event_ens_name_registered_v3,
 	index_account_v3,
 	index_block_number_tx_index_v3,
 };
