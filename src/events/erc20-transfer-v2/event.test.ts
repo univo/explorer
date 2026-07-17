@@ -6,9 +6,7 @@ import { test_getBlock, test_v2_getEventIdsForBlock, test_client } from "@/tests
 test.concurrent("erc20_transfer_v2", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 10000000 });
 
-	if (event.storage.delete) {
-		await event.storage.delete(event.handler(block));
-	}
+	await event.storage.delete(event.handler(block));
 
 	const initial = await test_v2_getEventIdsForBlock(block, "event_input_data_message_v2");
 

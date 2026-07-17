@@ -6,9 +6,7 @@ import { test_getBlock, test_client } from "@/tests/utils";
 test.concurrent("contract_deployment_v3", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 3978343 });
 
-	if (event.storage.delete) {
-		await event.storage.delete(event.handler(block));
-	}
+	await event.storage.delete(event.handler(block));
 
 	const ids = event.handler(block).map((event) => event.id);
 
