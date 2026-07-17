@@ -1,5 +1,5 @@
 import { sql, type SQL, type Column } from "drizzle-orm";
-import { boolean, customType, integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
+import { bigint, boolean, customType, integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
 import { bytesToHex, hexToBytes } from "@/utils";
 
@@ -72,6 +72,13 @@ const event_erc20_transfer_v3 = pgTable("event_erc20_transfer_v3", {
 	token_address: hex().notNull(),
 });
 
+const event_cancel_pending_tx_v3 = pgTable("event_cancel_pending_tx_v3", {
+	id: id().primaryKey(),
+	success: boolean().notNull(),
+	from_address: hex().notNull(),
+	nonce: bigint({ mode: "number" }).notNull(),
+});
+
 const index_account_v3 = pgTable(
 	"index_account_v3",
 	{
@@ -104,6 +111,7 @@ const index_block_number_tx_index_v3 = pgTable(
 
 export const schema = {
 	event_erc20_transfer_v3,
+	event_cancel_pending_tx_v3,
 	index_account_v3,
 	index_block_number_tx_index_v3,
 };
