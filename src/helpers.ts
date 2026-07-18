@@ -51,12 +51,7 @@ export function createId(opts: IdOptions) {
 	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
 	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
 
-	// TODO
-	// This needs to be 6 chars (3 bytes). This doesn't require a schema change
-	// in Postgres but it will in Clickhouse so we'll have to change after migration.
-	// Can then truncate tables and re-index data.
-
-	const logIndex = opts.logIndex.slice(2).padStart(4, "0");
+	const logIndex = opts.logIndex.slice(2).padStart(6, "0");
 	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
 	const tableId = opts.tableId.toString(16).padStart(4, "0");
 	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
@@ -66,9 +61,9 @@ export function parseId(id: string) {
 	const blockTimestamp = Number.parseInt(id.slice(0, 8), 16);
 	const blockNumber = Number.parseInt(id.slice(8, 16), 16);
 	const txIndex = Number.parseInt(id.slice(16, 20), 16);
-	const logIndex = Number.parseInt(id.slice(20, 24), 16);
-	const chainId = getExternalChain(Number.parseInt(id.slice(24, 28), 16));
-	const tableId = Number.parseInt(id.slice(28, 32), 16);
+	const logIndex = Number.parseInt(id.slice(20, 26), 16);
+	const chainId = getExternalChain(Number.parseInt(id.slice(26, 30), 16));
+	const tableId = Number.parseInt(id.slice(30, 34), 16);
 	return { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId };
 }
 

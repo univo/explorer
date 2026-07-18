@@ -12,7 +12,7 @@ test.concurrent("creates and parses ids", () => {
 		tableId: 5,
 	});
 
-	expect(id).toBe("691fa24f016bd29700d202f200010005");
+	expect(id).toBe("691fa24f016bd29700d20002f200010005");
 
 	expect(parseId(id)).toMatchObject({
 		blockTimestamp: 1763680847,
@@ -25,6 +25,6 @@ test.concurrent("creates and parses ids", () => {
 });
 
 test.concurrent("formats token amounts", () => {
-	expect(formatTokenAmount("12", 18)).toBe("0.000000000000000012");
-	expect(formatTokenAmount("125", 18)).toBe("0.00000000000000013");
+	expect(formatTokenAmount("0xC", 18)).toBe("0.000000000000000012");
+	expect(formatTokenAmount("0x7D", 18)).toBe("0.00000000000000013");
 });
