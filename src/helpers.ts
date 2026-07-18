@@ -72,8 +72,6 @@ export function parseId(id: string) {
 	return { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId };
 }
 
-// TODO: Remove
-
 export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[], order: "latest" | "reverse") {
 	if (order === "latest") {
 		return events.sort((a, b) => {
