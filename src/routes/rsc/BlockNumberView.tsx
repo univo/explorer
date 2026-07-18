@@ -13,7 +13,7 @@ import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v2";
-import { Erc20ApprovalV2Description } from "@/events/erc20-approval-v2/component";
+import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV2Description } from "@/events/erc20-transfer-v2/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
@@ -108,8 +108,8 @@ async function EventsTable(props: { ids: string[] }) {
 }
 
 export function EventDescription(props: { event: Event }) {
-	if (props.event.tag === "erc20_approval_v2") {
-		return <Erc20ApprovalV2Description event={props.event} />;
+	if (props.event.tag === "erc20_approval_v3") {
+		return <Erc20ApprovalV3Description event={props.event} />;
 	}
 
 	if (props.event.tag === "native_transfer_v3") {
