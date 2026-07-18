@@ -14,7 +14,7 @@ import { BlockNumberSchema, TxIndexSchema } from "@/schema";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
 import { formatDateTime, formatNumber, hexToNumber, raise } from "@/utils";
-import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v2";
+import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v3";
 
 async function TransactionView(props: { block: number; tx: number }) {
 	const [tx, ids] = await Promise.all([
