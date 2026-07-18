@@ -115,6 +115,15 @@ const event_native_transfer_v3 = pgTable("event_native_transfer_v3", {
 	from_address: hex().notNull(),
 });
 
+const event_erc721_transfer_v3 = pgTable("event_erc721_transfer_v3", {
+	id: id().primaryKey(),
+	token_id: hex().notNull(),
+	to_address: hex().notNull(),
+	success: boolean().notNull(),
+	from_address: hex().notNull(),
+	token_address: hex().notNull(),
+});
+
 const event_cancel_pending_tx_v3 = pgTable("event_cancel_pending_tx_v3", {
 	id: id().primaryKey(),
 	nonce: hex().notNull(),
@@ -179,6 +188,7 @@ const index_block_number_tx_index_v3 = pgTable(
 export const schema = {
 	event_erc20_transfer_v3,
 	event_native_transfer_v3,
+	event_erc721_transfer_v3,
 	event_cancel_pending_tx_v3,
 	event_input_data_message_v3,
 	event_contract_deployment_v3,

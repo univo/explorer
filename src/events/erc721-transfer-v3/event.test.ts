@@ -1,25 +1,25 @@
 import { test } from "vitest";
 
-import { event, getErc721TransferV2 } from "./event";
-import { test_getBlock, test_v2_getEventIdsForBlock, test_client } from "@/tests/utils";
+import { event, getErc721TransferV3 } from "./event";
+import { test_getBlock, test_client } from "@/tests/utils";
 
-test.concurrent("erc721_transfer_v2", async ({ expect }) => {
+test.concurrent("erc721_transfer_v3", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 10000000 });
 
 	await event.storage.delete(event.handler(block));
 
-	const initial = await test_v2_getEventIdsForBlock(block, "event_input_data_message_v2");
+	const ids = event.handler(block).map((event) => event.id);
+
+	const initial = await getErc721TransferV3(ids);
 
 	expect(initial).toStrictEqual([]);
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ events: ["erc721_transfer_v2"], blocks: [block] }],
+		params: [{ events: ["erc721_transfer_v3"], blocks: [block] }],
 	});
 
-	const ids = await test_v2_getEventIdsForBlock(block, "event_erc721_transfer_v2");
-
-	const events = await getErc721TransferV2(ids);
+	const events = await getErc721TransferV3(ids);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -27,109 +27,109 @@ test.concurrent("erc721_transfer_v2", async ({ expect }) => {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004100010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8092",
+		    "token_id": "0x1f9c",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004200010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8093",
+		    "token_id": "0x1f9d",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004300010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8114",
+		    "token_id": "0x1fb2",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004400010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8115",
+		    "token_id": "0x1fb3",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004500010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8151",
+		    "token_id": "0x1fd7",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004600010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8156",
+		    "token_id": "0x1fdc",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004700010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8169",
+		    "token_id": "0x1fe9",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004800010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8176",
+		    "token_id": "0x1ff0",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004900010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8188",
+		    "token_id": "0x1ffc",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004a00010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8199",
+		    "token_id": "0x2007",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004b00010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8200",
+		    "token_id": "0x2008",
 		  },
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb01705009896800026004c00010010",
 		    "success": true,
-		    "tag": "erc721_transfer_v2",
+		    "tag": "erc721_transfer_v3",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
-		    "token_id": "8217",
+		    "token_id": "0x2019",
 		  },
 		]
 	`);

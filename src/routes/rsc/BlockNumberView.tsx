@@ -16,7 +16,7 @@ import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v2";
 import { Erc20ApprovalV2Description } from "@/events/erc20-approval-v2/component";
 import { Erc20TransferV2Description } from "@/events/erc20-transfer-v2/component";
 import { Erc721ApprovalV2Description } from "@/events/erc721-approval-v2/component";
-import { Erc721TransferV2Description } from "@/events/erc721-transfer-v2/component";
+import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
 import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV3Description } from "@/events/input-data-message-v3/component";
@@ -136,8 +136,8 @@ export function EventDescription(props: { event: Event }) {
 		return <CancelPendingTxV2Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v2") {
-		return <Erc721TransferV2Description event={props.event} />;
+	if (props.event.tag === "erc721_transfer_v3") {
+		return <Erc721TransferV3Description event={props.event} />;
 	}
 
 	if (props.event.tag === "erc721_approval_v2") {

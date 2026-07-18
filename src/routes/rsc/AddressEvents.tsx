@@ -18,7 +18,7 @@ import { StopCursorContainer, VirtualisationContainer } from "@/views/address-vi
 import { Erc20ApprovalV2AccountDescription } from "@/events/erc20-approval-v2/component";
 import { Erc20TransferV2AccountDescription } from "@/events/erc20-transfer-v2/component";
 import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
-import { Erc721TransferV2AccountDescription } from "@/events/erc721-transfer-v2/component";
+import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { Erc721ApprovalV2AccountDescription } from "@/events/erc721-approval-v2/component";
 import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
@@ -163,8 +163,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 		return <CancelPendingTxV2AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v2") {
-		return <Erc721TransferV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc721_transfer_v3") {
+		return <Erc721TransferV3AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "erc721_approval_v2") {
