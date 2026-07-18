@@ -7,7 +7,7 @@ import { univo } from "@/lib/univo";
 import "@/events/erc20-transfer-v2/event";
 import "@/events/erc20-transfer-v3/event";
 import "@/events/erc20-approval-v2/event";
-import "@/events/erc721-approval-v2/event";
+import "@/events/erc721-approval-v3/event";
 import "@/events/erc721-transfer-v3/event";
 import "@/events/native-transfer-v3/event";
 import "@/events/cancel-pending-tx-v2/event";

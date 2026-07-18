@@ -15,7 +15,7 @@ import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v2";
 import { Erc20ApprovalV2Description } from "@/events/erc20-approval-v2/component";
 import { Erc20TransferV2Description } from "@/events/erc20-transfer-v2/component";
-import { Erc721ApprovalV2Description } from "@/events/erc721-approval-v2/component";
+import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
 import { CancelPendingTxV2Description } from "@/events/cancel-pending-tx-v2/component";
@@ -140,8 +140,8 @@ export function EventDescription(props: { event: Event }) {
 		return <Erc721TransferV3Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc721_approval_v2") {
-		return <Erc721ApprovalV2Description event={props.event} />;
+	if (props.event.tag === "erc721_approval_v3") {
+		return <Erc721ApprovalV3Description event={props.event} />;
 	}
 }
 
