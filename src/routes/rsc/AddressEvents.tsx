@@ -20,7 +20,7 @@ import { Erc20TransferV2AccountDescription } from "@/events/erc20-transfer-v2/co
 import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
 import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/component";
-import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
+import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-v3/component";
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
@@ -159,8 +159,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 		return <ContractDeploymentV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v2") {
-		return <CancelPendingTxV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "cancel_pending_tx_v3") {
+		return <CancelPendingTxV3AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "erc721_transfer_v3") {

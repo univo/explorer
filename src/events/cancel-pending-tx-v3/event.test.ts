@@ -1,64 +1,64 @@
 import { test } from "vitest";
 
-import { event, getCancelPendingTxV2 } from "./event";
-import { test_getBlock, test_v2_getEventIdsForBlock, test_client } from "@/tests/utils";
+import { event, getCancelPendingTxV3 } from "./event";
+import { test_getBlock, test_client } from "@/tests/utils";
 
 // Example 0xfa14e402325f30b24add5d897cb801d31486669f6d48f14348b6844955946a03
 
-test.concurrent("cancel_pending_tx_v2", async ({ expect }) => {
+test.concurrent("cancel_pending_tx_v3", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 10782880 });
 
 	await event.storage.delete(event.handler(block));
 
-	const initial = await test_v2_getEventIdsForBlock(block, "event_input_data_message_v2");
+	const ids = event.handler(block).map((event) => event.id);
+
+	const initial = await getCancelPendingTxV3(ids);
 
 	expect(initial).toStrictEqual([]);
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ events: ["cancel_pending_tx_v2"], blocks: [block] }],
+		params: [{ events: ["cancel_pending_tx_v3"], blocks: [block] }],
 	});
 
-	const ids = await test_v2_getEventIdsForBlock(block, "event_cancel_pending_tx_v2");
-
-	const events = await getCancelPendingTxV2(ids);
+	const events = await getCancelPendingTxV3(ids);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
 		  {
 		    "from_address": "0xa574469c959803481f25f825b41f1137BAfcF095",
 		    "id": "5f4fc6ee00a488a0001400000001000f",
-		    "nonce": 280,
+		    "nonce": "0x0118",
 		    "success": true,
-		    "tag": "cancel_pending_tx_v2",
+		    "tag": "cancel_pending_tx_v3",
 		  },
 		  {
 		    "from_address": "0xD95e3878e7ADd9e87d7CA9866012D69BF391B34E",
 		    "id": "5f4fc6ee00a488a0001700000001000f",
-		    "nonce": 178,
+		    "nonce": "0xb2",
 		    "success": true,
-		    "tag": "cancel_pending_tx_v2",
+		    "tag": "cancel_pending_tx_v3",
 		  },
 		  {
 		    "from_address": "0x56b217cc582e19B3ca933Fd411E85ca7DeF68445",
 		    "id": "5f4fc6ee00a488a0002600000001000f",
-		    "nonce": 8407,
+		    "nonce": "0x20d7",
 		    "success": true,
-		    "tag": "cancel_pending_tx_v2",
+		    "tag": "cancel_pending_tx_v3",
 		  },
 		  {
 		    "from_address": "0x1848F4BCeF9eeb9aa4CBC3F773Ce4E8150112519",
 		    "id": "5f4fc6ee00a488a0004b00000001000f",
-		    "nonce": 2888,
+		    "nonce": "0x0b48",
 		    "success": true,
-		    "tag": "cancel_pending_tx_v2",
+		    "tag": "cancel_pending_tx_v3",
 		  },
 		  {
 		    "from_address": "0xD5c58B0D819be34b7b8Ff69E76e6A4b5fB912263",
 		    "id": "5f4fc6ee00a488a0007300000001000f",
-		    "nonce": 66,
+		    "nonce": "0x42",
 		    "success": true,
-		    "tag": "cancel_pending_tx_v2",
+		    "tag": "cancel_pending_tx_v3",
 		  },
 		]
 	`);
