@@ -1,7 +1,7 @@
 import { logger } from "@/utils";
 import { getErc20ApprovalV2 } from "@/events/erc20-approval-v2/event";
 import { getErc20TransferV2 } from "@/events/erc20-transfer-v2/event";
-import { getNativeTransferV2 } from "@/events/native-transfer-v2/event";
+import { getNativeTransferV3 } from "@/events/native-transfer-v3/event";
 import { getErc721TransferV2 } from "@/events/erc721-transfer-v2/event";
 import { getErc721ApprovalV2 } from "@/events/erc721-approval-v2/event";
 import { getCancelPendingTxV2 } from "@/events/cancel-pending-tx-v2/event";
@@ -17,7 +17,7 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
-		getNativeTransferV2(ids),
+		getNativeTransferV3(ids),
 		getErc20TransferV2(ids),
 		getErc20ApprovalV2(ids),
 		getInputDataMessageV3(ids),

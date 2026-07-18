@@ -9,7 +9,7 @@ import "@/events/erc20-transfer-v3/event";
 import "@/events/erc20-approval-v2/event";
 import "@/events/erc721-approval-v2/event";
 import "@/events/erc721-transfer-v2/event";
-import "@/events/native-transfer-v2/event";
+import "@/events/native-transfer-v3/event";
 import "@/events/cancel-pending-tx-v2/event";
 import "@/events/input-data-message-v3/event";
 import "@/events/contract-deployment-v3/event";
