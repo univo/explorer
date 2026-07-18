@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
-import { event } from "@/events/erc20-transfer-v2/event";
+import { event } from "@/events/erc20-transfer-v3/event";
 import {
 	getEventIdsForBlockNumber,
 	getEventIdsForTxPosition,

@@ -11,12 +11,12 @@ import type { Account } from "@/state/account";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForAccount } from "@/indexes/account-v2";
+import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
 import { Erc20ApprovalV3AccountDescription } from "@/events/erc20-approval-v3/component";
-import { Erc20TransferV2AccountDescription } from "@/events/erc20-transfer-v2/component";
+import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/component";
 import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
 import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/component";
@@ -143,8 +143,8 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 		return <NativeTransferV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc20_transfer_v2") {
-		return <Erc20TransferV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc20_transfer_v3") {
+		return <Erc20TransferV3AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "input_data_message_v3") {

@@ -12,9 +12,9 @@ import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
-import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v2";
+import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v3";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
-import { Erc20TransferV2Description } from "@/events/erc20-transfer-v2/component";
+import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
@@ -116,8 +116,8 @@ export function EventDescription(props: { event: Event }) {
 		return <NativeTransferV3Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc20_transfer_v2") {
-		return <Erc20TransferV2Description event={props.event} />;
+	if (props.event.tag === "erc20_transfer_v3") {
+		return <Erc20TransferV3Description event={props.event} />;
 	}
 
 	if (props.event.tag === "input_data_message_v3") {
