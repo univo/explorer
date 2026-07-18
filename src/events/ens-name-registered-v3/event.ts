@@ -7,7 +7,7 @@ import { schema } from "@/db/schema";
 import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
-import { getEventSuccess, createId, getPartition, parseId } from "@/helpers";
+import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
 
 export interface EnsNameRegisteredV3 {
@@ -85,7 +85,6 @@ export const event = univo.event({
 
 						return {
 							id,
-							partition: getPartition(block.eth_getBlockByNumber.timestamp),
 							success: getEventSuccess(receipt),
 							name: args.name,
 							owner_address: getAddress(args.owner),
@@ -113,7 +112,6 @@ export const event = univo.event({
 
 						return {
 							id,
-							partition: getPartition(block.eth_getBlockByNumber.timestamp),
 							success: getEventSuccess(receipt),
 							name: args.name,
 							owner_address: getAddress(args.owner),

@@ -7,8 +7,8 @@ import { schema } from "@/db/schema";
 import { nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
-import { getEventSuccess, createId, getPartition, parseId } from "@/helpers";
 
 export interface ContractDeploymentV3 {
 	tag: "contract_deployment_v3";
@@ -37,11 +37,8 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const partition = getPartition(block.eth_getBlockByNumber.timestamp);
-
 				return {
 					id,
-					partition,
 					success: getEventSuccess(receipt),
 					deployer_address: getAddress(receipt.from),
 					contract_address: getAddress(receipt.contractAddress),

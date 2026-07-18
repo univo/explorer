@@ -5,7 +5,6 @@ import { promises as fs } from "node:fs";
 import type { IndexerRpc } from "univo/rpc";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
-import { db } from "../db/client";
 import { raise, retry } from "../utils";
 
 // Eventually we should just use a local transport here to test. That would mean we don't have to start
@@ -81,60 +80,4 @@ async function saveToCache(cacheDir: string, cacheFile: string, blockData: Block
 		// Log cache write error but don't fail the function
 		console.warn("Failed to write block to cache:", error);
 	}
-}
-
-// TODO: Remove
-
-export async function test_deleteEvents(block: Block, table: string) {
-	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
-	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
-	const prefix = `${timestamp}-${number.slice(0, 4)}-${number.slice(4, 8)}`;
-
-	// A clickhouse quirk here is that we need to use the `command` method to delete rows. The regular
-	// `query` method adds formatting information to the query which causes the delete to fail.
-
-	// Another clickhouse quirk is that we have to cast the id using toString. This is an issue with how
-	// startsWith works with FixedString columns and internal padding.
-
-	await db.command({ query: `DELETE FROM ${table} WHERE startsWith(toString(id), '${prefix}')` });
-}
-
-// TODO: Remove
-
-// Normally we use our index tables to determine ids based on search queries, but for testing
-// purposes we don't want to rely on those external tables. Instead we can actually directly look
-// up events using a prefix search based on the block information that makes up the id for each event
-export async function test_getEventIdsForBlock(block: Block, table: string) {
-	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
-	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
-	const prefix = `${timestamp}-${number.slice(0, 4)}-${number.slice(4, 8)}`;
-
-	// Clickhouse quirk is that we have to cast the id using toString. This is an issue with how
-	// startsWith works with FixedString columns and internal padding.
-
-	const query = `SELECT * FROM ${table} WHERE startsWith(toString(id), '${prefix}')`;
-	const res = await db.query({ query, format: "JSONEachRow" });
-	const rows: { id: string }[] = await res.json();
-
-	return rows.map((row) => row.id);
-}
-
-// TODO: Remove
-
-// Normally we use our index tables to determine ids based on search queries, but for testing
-// purposes we don't want to rely on those external tables. Instead we can actually directly look
-// up events using a prefix search based on the block information that makes up the id for each event
-export async function test_v2_getEventIdsForBlock(block: Block, table: string) {
-	const timestamp = block.eth_getBlockByNumber.timestamp.slice(2).padStart(8, "0");
-	const number = block.eth_getBlockByNumber.number.slice(2).padStart(8, "0");
-	const prefix = `${timestamp}${number}`;
-
-	// Clickhouse quirk is that we have to cast the id using toString. This is an issue with how
-	// startsWith works with FixedString columns and internal padding.
-
-	const query = `SELECT lower(hex(id)), success FROM ${table} WHERE startsWith(toString(id), unhex('${prefix}'))`;
-	const res = await db.query({ query, format: "JSONEachRow" });
-	const rows: { "lower(hex(id))": string }[] = await res.json();
-
-	return rows.map((row) => row["lower(hex(id))"]);
 }

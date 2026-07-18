@@ -1,7 +1,7 @@
 import type { RpcTransactionReceipt } from "viem";
 
 import { chains, inverted_chains } from "./constants";
-import { formatNumber, hexToNumber, numberToHex, parseStringInt, raise } from "./utils";
+import { formatNumber, hexToNumber, parseStringInt, raise } from "./utils";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) throw new Error("No receipt");
@@ -37,21 +37,6 @@ export function getTxReceiptForLog(receipts: RpcTransactionReceipt[], log: RpcTr
 	return receipt;
 }
 
-// TODO: Remove
-
-// Clickhouse accepts duplicate primary key values and uses an eventually consistent garbage collection process to
-// remove them. So to maintain correctness we also perform manual deduplication of each id here.
-
-export function getDeduplicatedEvents<TEvent extends { id: string }>(events: TEvent[]) {
-	const unique: Record<string, boolean> = {};
-
-	return events.filter((event) => {
-		if (unique[event.id]) return false;
-		unique[event.id] = true;
-		return true;
-	});
-}
-
 type IdOptions = {
 	blockTimestamp: `0x${string}`;
 	blockNumber: `0x${string}`;
@@ -75,43 +60,6 @@ export function createId(opts: IdOptions) {
 	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
 	const tableId = opts.tableId.toString(16).padStart(4, "0");
 	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
-}
-
-// TODO: Remove
-
-/**
- * Accepts a block timestamp (UNIX seconds) and returns its corresponding partition
- */
-export function getPartition(blockTimestamp: `0x${string}`) {
-	const date = new Date(hexToNumber(blockTimestamp) * 1000);
-	const year = date.getFullYear().toString();
-	const month = date.getMonth().toString().padStart(2, "0");
-	return Number.parseInt(`${year}${month}`);
-}
-
-// TODO: REmove
-
-/**
- * Accepts a list of event ids and returns a list of SQL WHERE clauses for each unique partition
- */
-export function getPartitions(ids: string[]) {
-	const partitions = Object.groupBy(ids, (id) => {
-		return getPartition(numberToHex(parseId(id).blockTimestamp));
-	});
-
-	return Object.entries(partitions).flatMap(([partition, ids]) => {
-		if (ids === undefined) {
-			return [];
-		}
-
-		if (ids.length === 0) {
-			return [];
-		}
-
-		const mapped = ids.map((id) => `unhex('${id}')`);
-
-		return `(partition = ${partition} AND id IN (${mapped.join(",")}))`;
-	});
 }
 
 export function parseId(id: string) {

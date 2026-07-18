@@ -7,8 +7,8 @@ import { schema } from "@/db/schema";
 import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
-import { getEventSuccess, createId, getPartition, parseId } from "@/helpers";
 
 export interface NativeTransferV3 {
 	tag: "native_transfer_v3";
@@ -45,12 +45,10 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const partition = getPartition(block.eth_getBlockByNumber.timestamp);
 				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
 
 				return {
 					id,
-					partition,
 					success: getEventSuccess(receipt),
 					quantity: numberToHex(BigInt(tx.value)),
 					to_address: getAddress(tx.to),

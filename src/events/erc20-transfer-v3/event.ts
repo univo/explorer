@@ -7,8 +7,8 @@ import { schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
-import { getEventSuccess, getTxReceiptForLog, createId, getPartition, parseId } from "@/helpers";
 
 export interface Erc20TransferV3 {
 	tag: "erc20_transfer_v3";
@@ -48,13 +48,10 @@ export const event = univo.event({
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
-					const partition = getPartition(block.eth_getBlockByNumber.timestamp);
-
 					const receipt = getTxReceiptForLog(block.eth_getBlockReceipts, log);
 
 					return {
 						id,
-						partition,
 						quantity: numberToHex(args.value),
 						success: getEventSuccess(receipt),
 						to_address: getAddress(args.to),
