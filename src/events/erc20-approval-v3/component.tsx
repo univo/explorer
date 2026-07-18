@@ -10,10 +10,11 @@ import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
 export function Erc20ApprovalV3Description(props: { event: Erc20ApprovalV3 }) {
+	const all = props.event.quantity.length >= 30;
 	const chain = parseId(props.event.id).chainId;
-	const quantity = getQuantity(props.event.quantity);
+	const isZeroQuantity = props.event.quantity === "0x0";
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
-	const revoked = quantity.decimal === "0" || isSpenderNullAddress;
+	const revoked = isZeroQuantity || isSpenderNullAddress;
 
 	if (revoked) {
 		return (
@@ -36,19 +37,20 @@ export function Erc20ApprovalV3Description(props: { event: Erc20ApprovalV3 }) {
 			<Action type="approved">approved</Action>
 			<Account chain={chain} address={props.event.spender_address} />
 			<span>to spend</span>
-			{quantity.all === true && <span>all</span>}
-			<Token chain={chain} address={props.event.token_address} quantity={quantity.all ? undefined : quantity.decimal} />
+			{all === true && <span>all</span>}
+			<Token chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} />
 		</Description>
 	);
 }
 
 export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV3; account: IAccount }) {
+	const all = props.event.quantity.length >= 30;
 	const chain = parseId(props.event.id).chainId;
-	const quantity = getQuantity(props.event.quantity);
+	const isZeroQuantity = props.event.quantity === "0x0";
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
-	const revoked = quantity.decimal === "0" || isSpenderNullAddress;
+	const revoked = isZeroQuantity || isSpenderNullAddress;
 	const type = revoked ? "revoked" : "approved";
-	const tokenQuantity = !revoked && !quantity.all ? quantity.decimal : undefined;
+	const quantity = !revoked && !all ? props.event.quantity : undefined;
 
 	if (isAddressEqual(props.account.address, props.event.owner_address)) {
 		return (
@@ -58,8 +60,8 @@ export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV
 				{revoked === true && <span>for</span>}
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
-				{revoked === false && quantity.all === true && <span>all</span>}
-				<Token chain={chain} address={props.event.token_address} quantity={tokenQuantity} />
+				{revoked === false && all === true && <span>all</span>}
+				<Token chain={chain} address={props.event.token_address} quantity={quantity} />
 			</Description>
 		);
 	}
@@ -72,20 +74,11 @@ export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV
 				<span>{revoked ? "by" : "from"}</span>
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
-				{revoked === false && quantity.all === true && <span>all</span>}
-				<Token chain={chain} address={props.event.token_address} quantity={tokenQuantity} />
+				{revoked === false && all === true && <span>all</span>}
+				<Token chain={chain} address={props.event.token_address} quantity={quantity} />
 			</Description>
 		);
 	}
 
 	return <Erc20ApprovalV3Description event={props.event} />;
-}
-
-function getQuantity(quantity: `0x${string}`) {
-	const decimal = BigInt(quantity).toString();
-
-	return {
-		decimal,
-		all: decimal.length >= 36,
-	};
 }

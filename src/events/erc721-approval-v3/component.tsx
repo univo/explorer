@@ -20,7 +20,7 @@ export function Erc721ApprovalV3Description(props: { event: Erc721ApprovalV3 }) 
 				<Action type="revoked">revoked approval</Action>
 				<span>for</span>
 				<Account chain={chain} address={props.event.token_address} />
-				<TokenId token_id={props.event.token_id} />
+				<span>#{BigInt(props.event.token_id)}</span>
 				<span>to be transferred</span>
 			</Description>
 		);
@@ -34,7 +34,7 @@ export function Erc721ApprovalV3Description(props: { event: Erc721ApprovalV3 }) 
 			<Account chain={chain} address={props.event.spender_address} />
 			<span>to transfer</span>
 			<Account chain={chain} address={props.event.token_address} />
-			<TokenId token_id={props.event.token_id} />
+			<span>#{BigInt(props.event.token_id)}</span>
 		</Description>
 	);
 }
@@ -51,7 +51,7 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 					<Action type="revoked">Revoked approval</Action>
 					<span>for</span>
 					<Account chain={chain} address={props.event.token_address} />
-					<TokenId token_id={props.event.token_id} />
+					<span>#{BigInt(props.event.token_id)}</span>
 					<span>to be transferred</span>
 				</Description>
 			);
@@ -64,7 +64,7 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to transfer</span>
 				<Account chain={chain} address={props.event.token_address} />
-				<TokenId token_id={props.event.token_id} />
+				<span>#{BigInt(props.event.token_id)}</span>
 			</Description>
 		);
 	}
@@ -78,14 +78,10 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>to transfer</span>
 				<Account chain={chain} address={props.event.token_address} />
-				<TokenId token_id={props.event.token_id} />
+				<span>#{BigInt(props.event.token_id)}</span>
 			</Description>
 		);
 	}
 
 	return <Erc721ApprovalV3Description event={props.event} />;
-}
-
-function TokenId(props: { token_id: `0x${string}` }) {
-	return <span>#{BigInt(props.token_id).toString()}</span>;
 }

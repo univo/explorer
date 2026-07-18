@@ -17,7 +17,7 @@ export function NativeTransferV3Description(props: { event: NativeTransferV3 }) 
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<NativeQuantity quantity={props.event.quantity} />
+			<span>{formatTokenAmount(props.event.quantity, 18)}</span>
 			<Ether />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
@@ -33,7 +33,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<NativeQuantity quantity={props.event.quantity} />
+				<span>{formatTokenAmount(props.event.quantity, 18)}</span>
 				<Ether />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
@@ -46,7 +46,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<NativeQuantity quantity={props.event.quantity} />
+				<span>{formatTokenAmount(props.event.quantity, 18)}</span>
 				<Ether />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
@@ -55,10 +55,6 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 	}
 
 	return <NativeTransferV3Description event={props.event} />;
-}
-
-function NativeQuantity(props: { quantity: `0x${string}` }) {
-	return <span>{formatTokenAmount(BigInt(props.quantity).toString(), 18)}</span>;
 }
 
 function Ether() {

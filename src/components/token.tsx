@@ -7,9 +7,7 @@ import { getToken } from "@/state/token";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
 
-// TODO: Support quantity as hex value
-
-export async function Token(props: { chain: number; address: `0x${string}`; quantity?: string }) {
+export async function Token(props: { chain: number; address: `0x${string}`; quantity?: `0x${string}` }) {
 	const token = await getToken({ chain: props.chain, address: props.address });
 
 	if (token.name && token.symbol) {
@@ -35,15 +33,22 @@ export async function Token(props: { chain: number; address: `0x${string}`; quan
 	return <Account chain={props.chain} address={props.address} />;
 }
 
-function TokenQuantity(props: { decimals: number | null; quantity: string | undefined }) {
-	if (!props.quantity) return null;
-	if (!props.decimals) return null;
+function TokenQuantity(props: { decimals: number | null; quantity: `0x${string}` | undefined }) {
+	if (!props.quantity) {
+		return null;
+	}
+
+	if (!props.decimals) {
+		return null;
+	}
 
 	return <span>{formatTokenAmount(props.quantity, props.decimals)}</span>;
 }
 
 function TokenImage(props: { image: string | null }) {
-	if (props.image === null) return null;
+	if (props.image === null) {
+		return null;
+	}
 
 	return (
 		<div className="rounded-full overflow-hidden size-4">

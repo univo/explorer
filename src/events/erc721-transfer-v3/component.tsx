@@ -18,7 +18,7 @@ export function Erc721TransferV3Description(props: { event: Erc721TransferV3 }) 
 				<Account chain={chain} address={props.event.to_address} />
 				<Action type="minted">minted</Action>
 				<Account chain={chain} address={props.event.token_address} />
-				<TokenId token_id={props.event.token_id} />
+				<span>#{BigInt(props.event.token_id)}</span>
 			</Description>
 		);
 	}
@@ -29,7 +29,7 @@ export function Erc721TransferV3Description(props: { event: Erc721TransferV3 }) 
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
 			<Account chain={chain} address={props.event.token_address} />
-			<TokenId token_id={props.event.token_id} />
+			<span>#{BigInt(props.event.token_id)}</span>
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
@@ -46,7 +46,7 @@ export function Erc721TransferV3AccountDescription(props: { event: Erc721Transfe
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="burnt">Burnt</Action>
 					<Account chain={chain} address={props.event.token_address} />
-					<TokenId token_id={props.event.token_id} />
+					<span>#{BigInt(props.event.token_id)}</span>
 				</Description>
 			);
 		}
@@ -56,7 +56,7 @@ export function Erc721TransferV3AccountDescription(props: { event: Erc721Transfe
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
 				<Account chain={chain} address={props.event.token_address} />
-				<TokenId token_id={props.event.token_id} />
+				<span>#{BigInt(props.event.token_id)}</span>
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -70,7 +70,7 @@ export function Erc721TransferV3AccountDescription(props: { event: Erc721Transfe
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="received">Received</Action>
 					<span>freshly minted</span>
-					<TokenId token_id={props.event.token_id} />
+					<span>#{BigInt(props.event.token_id)}</span>
 					<Account chain={chain} address={props.event.token_address} />
 				</Description>
 			);
@@ -81,7 +81,7 @@ export function Erc721TransferV3AccountDescription(props: { event: Erc721Transfe
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
 				<Account chain={chain} address={props.event.token_address} />
-				<TokenId token_id={props.event.token_id} />
+				<span>#{BigInt(props.event.token_id)}</span>
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>
@@ -89,8 +89,4 @@ export function Erc721TransferV3AccountDescription(props: { event: Erc721Transfe
 	}
 
 	return <Erc721TransferV3Description event={props.event} />;
-}
-
-function TokenId(props: { token_id: `0x${string}` }) {
-	return <span>#{BigInt(props.token_id).toString()}</span>;
 }

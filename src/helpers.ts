@@ -1,7 +1,7 @@
 import type { RpcTransactionReceipt } from "viem";
 
 import { chains, inverted_chains } from "./constants";
-import { formatNumber, hexToNumber, parseStringInt, raise } from "./utils";
+import { formatNumber, hexToNumber, raise } from "./utils";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) throw new Error("No receipt");
@@ -122,10 +122,16 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
 	});
 }
 
-export function formatTokenAmount(quantity: string, decimals: number) {
-	const number = parseStringInt(quantity, decimals);
-	if (decimals > quantity.length) return formatNumber(number, { maximumSignificantDigits: 2 });
-	return formatNumber(number, { maximumFractionDigits: 2 });
+export function formatTokenAmount(quantity: `0x${string}`, decimals: number) {
+	const quantityAsInteger = Number(quantity);
+	const quantityAsString = String(quantityAsInteger);
+	const quantityAsNumber = quantityAsInteger / 10 ** decimals;
+
+	if (decimals > quantityAsString.length) {
+		return formatNumber(quantityAsNumber, { maximumSignificantDigits: 2 });
+	}
+
+	return formatNumber(quantityAsNumber, { maximumFractionDigits: 2 });
 }
 
 /**

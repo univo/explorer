@@ -23,7 +23,7 @@ export function EnsNameRegisteredV3Description(props: { event: EnsNameRegistered
 			<Action type="registered">registered</Action>
 			<span>{props.event.name}.eth</span>
 			<span>for</span>
-			<span>{formatTokenAmount(BigInt(props.event.cost_eth).toString(), 18)}</span>
+			<span>{formatTokenAmount(props.event.cost_eth, 18)}</span>
 			<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
 				<Description>
 					<span>Ether</span>
@@ -49,7 +49,7 @@ export function EnsNameRegisteredV3AccountDescription(props: { event: EnsNameReg
 			<Action type="registered">Registered</Action>
 			<span>{props.event.name}.eth</span>
 			<span>for</span>
-			<span>{formatTokenAmount(BigInt(props.event.cost_eth).toString(), 18)}</span>
+			<span>{formatTokenAmount(props.event.cost_eth, 18)}</span>
 			<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
 				<Description>
 					<span>Ether</span>

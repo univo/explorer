@@ -18,7 +18,7 @@ export function CancelPendingTxV3Description(props: { event: CancelPendingTxV3 }
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="cancelled">cancelled</Action>
 			<span>pending transaction with nonce</span>
-			<Nonce nonce={props.event.nonce} />
+			<span>{formatNumber(BigInt(props.event.nonce))}</span>
 		</Description>
 	);
 }
@@ -30,14 +30,10 @@ export function CancelPendingTxV3AccountDescription(props: { event: CancelPendin
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="cancelled">Cancelled</Action>
 				<span>pending transaction with nonce</span>
-				<Nonce nonce={props.event.nonce} />
+				<span>{formatNumber(BigInt(props.event.nonce))}</span>
 			</Description>
 		);
 	}
 
 	return <CancelPendingTxV3Description event={props.event} />;
-}
-
-function Nonce(props: { nonce: `0x${string}` }) {
-	return <span>{formatNumber(Number(BigInt(props.nonce)))}</span>;
 }
