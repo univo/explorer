@@ -1,5 +1,5 @@
-import { asc, inArray, sql } from "drizzle-orm";
 import { getAddress } from "viem";
+import { asc, inArray, sql } from "drizzle-orm";
 
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
@@ -45,8 +45,8 @@ export const event = univo.event({
 						return null;
 					}
 
-					const message = hex_to_string(tx.input);
-					const num_valid_chars = count_valid_chars(message);
+					const message = hexToString(tx.input);
+					const num_valid_chars = countValidChars(message);
 					const percent_valid_chars = num_valid_chars / message.length;
 
 					// Use some heuristic to decide if input data is not gibberish characters
@@ -137,7 +137,7 @@ univo.event({
 
 const decoder = new TextDecoder();
 
-function hex_to_string(hex: `0x${string}`) {
+function hexToString(hex: `0x${string}`) {
 	const str = hex.slice(2);
 	const bytes = new Uint8Array(str.length / 2);
 
@@ -146,12 +146,20 @@ function hex_to_string(hex: `0x${string}`) {
 		bytes[i / 2] = Number.parseInt(byte, 16);
 	}
 
-	return decoder.decode(bytes);
+	const raw = decoder.decode(bytes);
+
+	return sanitizeText(raw);
+}
+
+function sanitizeText(text: string) {
+	// Postgres prohibits null characters inside text columns because it uses null bytes
+	// internally to denote the end of strings.
+	return text.replaceAll(/\0/g, "");
 }
 
 const VALID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.? ";
 
-function count_valid_chars(string: string) {
+function countValidChars(string: string) {
 	let count = 0;
 
 	for (const char of string) {
