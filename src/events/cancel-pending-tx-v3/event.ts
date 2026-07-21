@@ -130,13 +130,13 @@ export async function getCancelPendingTxV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const results = await client
+	const rows = await client
 		.select()
 		.from(schema.event_cancel_pending_tx_v3)
 		.where(inArray(schema.event_cancel_pending_tx_v3.id, filtered))
 		.orderBy(asc(schema.event_cancel_pending_tx_v3.id));
 
-	return results.map<CancelPendingTxV3>((result) => {
+	return rows.map<CancelPendingTxV3>((result) => {
 		return {
 			tag: "cancel_pending_tx_v3" as const,
 			id: result.id,

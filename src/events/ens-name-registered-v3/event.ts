@@ -201,13 +201,13 @@ export async function getEnsNameRegisteredV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const results = await client
+	const rows = await client
 		.select()
 		.from(schema.event_ens_name_registered_v3)
 		.where(inArray(schema.event_ens_name_registered_v3.id, filtered))
 		.orderBy(asc(schema.event_ens_name_registered_v3.id));
 
-	return results.map<EnsNameRegisteredV3>((result) => {
+	return rows.map<EnsNameRegisteredV3>((result) => {
 		return {
 			tag: "ens_name_registered_v3" as const,
 			id: result.id,

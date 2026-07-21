@@ -71,7 +71,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 	const client = await createPostgresClient();
 
 	if (pagination.cursor) {
-		const results = await client
+		const rows = await client
 			.select({ event_id: schema.index_account_v3.event_id })
 			.from(schema.index_account_v3)
 			.where(
@@ -83,19 +83,19 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 			.orderBy((pagination.order === "latest" ? desc : asc)(schema.index_account_v3.event_id))
 			.limit(pagination.limit);
 
-		logger.debug(`Found ${results.length} events for account in ${Date.now() - start}ms`);
+		logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
-		return results.map((result) => result.event_id);
+		return rows.map((result) => result.event_id);
 	}
 
-	const results = await client
+	const rows = await client
 		.select({ event_id: schema.index_account_v3.event_id })
 		.from(schema.index_account_v3)
 		.where(eq(schema.index_account_v3.account, account))
 		.orderBy((pagination.order === "latest" ? desc : asc)(schema.index_account_v3.event_id))
 		.limit(pagination.limit);
 
-	logger.debug(`Found ${results.length} events for account in ${Date.now() - start}ms`);
+	logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
-	return results.map((result) => result.event_id);
+	return rows.map((result) => result.event_id);
 }

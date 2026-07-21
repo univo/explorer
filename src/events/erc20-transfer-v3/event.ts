@@ -132,13 +132,13 @@ export async function getErc20TransferV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const results = await client
+	const rows = await client
 		.select()
 		.from(schema.event_erc20_transfer_v3)
 		.where(inArray(schema.event_erc20_transfer_v3.id, ids))
 		.orderBy(asc(schema.event_erc20_transfer_v3.id));
 
-	return results.map<Erc20TransferV3>((result) => {
+	return rows.map<Erc20TransferV3>((result) => {
 		return {
 			tag: "erc20_transfer_v3" as const,
 			id: result.id,

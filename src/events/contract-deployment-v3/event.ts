@@ -111,13 +111,13 @@ export async function getContractDeploymentV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const results = await client
+	const rows = await client
 		.select()
 		.from(schema.event_contract_deployment_v3)
 		.where(inArray(schema.event_contract_deployment_v3.id, filtered))
 		.orderBy(asc(schema.event_contract_deployment_v3.id));
 
-	return results.map<ContractDeploymentV3>((result) => {
+	return rows.map<ContractDeploymentV3>((result) => {
 		return {
 			tag: "contract_deployment_v3" as const,
 			id: result.id,

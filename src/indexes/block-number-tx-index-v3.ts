@@ -114,7 +114,7 @@ export async function getEventIdsForBlockNumber(chain: keyof typeof chains, bloc
 
 	const client = await createPostgresClient();
 
-	const results = await client
+	const rows = await client
 		.select()
 		.from(schema.index_block_number_tx_index_v3)
 		.where(
@@ -124,9 +124,9 @@ export async function getEventIdsForBlockNumber(chain: keyof typeof chains, bloc
 			),
 		);
 
-	logger.debug(`Found ${results.length} events for block in ${Date.now() - start}ms`);
+	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return results.map((result) => {
+	return rows.map((result) => {
 		return createId({
 			tableId: result.table_id,
 			chainId: numberToHex(result.chain),
@@ -143,7 +143,7 @@ export async function getEventIdsForTxPosition(chain: keyof typeof chains, block
 
 	const client = await createPostgresClient();
 
-	const results = await client
+	const rows = await client
 		.select()
 		.from(schema.index_block_number_tx_index_v3)
 		.where(
@@ -154,9 +154,9 @@ export async function getEventIdsForTxPosition(chain: keyof typeof chains, block
 			),
 		);
 
-	logger.debug(`Found ${results.length} events for block in ${Date.now() - start}ms`);
+	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return results.map((result) => {
+	return rows.map((result) => {
 		return createId({
 			tableId: result.table_id,
 			chainId: numberToHex(result.chain),
