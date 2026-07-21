@@ -3,6 +3,7 @@ import DataLoader from "dataloader";
 import { capitalize } from "@/utils";
 import { inTuple, schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
+import { getAddress } from "viem";
 
 export interface Account {
 	chain: number;
@@ -36,10 +37,14 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 		const unique: Record<string, true> = {};
 
 		const filtered = accounts.filter((account) => {
-			const key = account.chain + account.address.toLowerCase();
+			const key = [account.chain, getAddress(account.address)].join(":");
 
-			if (unique[key]) return false;
+			if (unique[key]) {
+				return false;
+			}
+
 			unique[key] = true;
+
 			return true;
 		});
 
@@ -52,7 +57,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 			.where(
 				inTuple(
 					[schema.state_accounts_v3.chain, schema.state_accounts_v3.address],
-					filtered.map((account) => [account.chain, account.address.toLowerCase() as `0x${string}`]),
+					filtered.map((account) => [account.chain, getAddress(account.address)]),
 				),
 			);
 
