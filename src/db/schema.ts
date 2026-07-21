@@ -203,6 +203,23 @@ const index_block_number_tx_index_v3 = pgTable(
 	],
 );
 
+const state_tokens_v1 = pgTable(
+	"state_tokens_v1",
+	{
+		name: text(),
+		image: text(),
+		symbol: text(),
+		decimals: smallint(),
+		address: hex().notNull(),
+		chain: integer().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.chain, table.address],
+		}),
+	],
+);
+
 export const schema = {
 	event_erc20_transfer_v3,
 	event_erc20_approval_v3,
@@ -215,4 +232,5 @@ export const schema = {
 	event_ens_name_registered_v3,
 	index_account_v3,
 	index_block_number_tx_index_v3,
+	state_tokens_v1,
 };

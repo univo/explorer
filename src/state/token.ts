@@ -2,22 +2,12 @@
 
 import DataLoader from "dataloader";
 import { mainnet } from "viem/chains";
-import { createPublicClient } from "viem";
+import { createPublicClient, getAddress } from "viem";
 
-import { logger } from "@/utils";
-import { db } from "@/db/client";
+import { isHexEqual, logger } from "@/utils";
+import { inTuple, schema } from "@/db/schema";
 import { createTransport } from "@/transports";
-
-// CREATE TABLE state_tokens_v1 (
-// 	   `chain` UInt32,
-//     `address` FixedString(42),
-//     `name` String,
-//     `symbol` String,
-//     `decimals` Nullable(UInt8),
-//     `image` Nullable(String),
-// )
-// ENGINE = ReplacingMergeTree
-// ORDER BY (chain, address);
+import { createPostgresClient } from "@/db/client";
 
 export interface Token {
 	chain: number;
@@ -49,28 +39,37 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 		const unique: Record<string, true> = {};
 
 		const filtered = tokens.filter((token) => {
-			if (unique[token.chain + token.address]) return false;
-			unique[token.chain + token.address] = true;
+			const key = [token.chain, getAddress(token.address)].join(":");
+
+			if (unique[key]) {
+				return false;
+			}
+
+			unique[key] = true;
+
 			return true;
 		});
 
-		const mapped = filtered.map((token) => `(${token.chain}, '${token.address.toLowerCase()}')`);
-
 		// 3. Fetch tokens from cache
-		const res = await db.query({
-			query: `SELECT * FROM state_tokens_v1 WHERE (chain, address) IN (${mapped.join(",")});`,
-			format: "JSONEachRow",
-		});
+		const client = await createPostgresClient();
 
-		const rows: any[] = await res.json();
+		const rows = await client
+			.select()
+			.from(schema.state_tokens_v1)
+			.where(
+				inTuple(
+					[schema.state_tokens_v1.chain, schema.state_tokens_v1.address],
+					filtered.map((token) => [token.chain, getAddress(token.address)]),
+				),
+			);
 
-		logger.debug(`Loaded ${rows.length} state_tokens_v1 after requesting ${mapped.length}`);
+		logger.debug(`Loaded ${rows.length} state_tokens_v1 after requesting ${filtered.length}`);
 
 		const writes: Token[] = [];
 
 		const reads = tokens.map<Promise<Token>>(async ({ chain, address }) => {
 			try {
-				const row = rows.find((r) => r.chain === chain && r.address === address.toLowerCase());
+				const row = rows.find((r) => r.chain === chain && isHexEqual(r.address, address));
 
 				if (row) {
 					return {
@@ -95,7 +94,7 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 					symbol,
 					decimals,
 					image: null,
-					address: address.toLowerCase() as `0x${string}`,
+					address: getAddress(address),
 				};
 
 				writes.push(token);
@@ -120,7 +119,7 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 		// 4. Write new tokens to cache
 		try {
 			if (writes.length > 0) {
-				await db.insert({ table: "state_tokens_v1", format: "JSONEachRow", values: writes });
+				await client.insert(schema.state_tokens_v1).values(writes).onConflictDoNothing();
 				logger.debug(`Wrote ${writes.length} new tokens to state_tokens_v1`);
 			}
 		} catch {
