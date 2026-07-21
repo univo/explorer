@@ -1,9 +1,8 @@
 import DataLoader from "dataloader";
 
-import { capitalize, isHexEqual } from "@/utils";
 import { inTuple, schema } from "@/db/schema";
+import { capitalize, isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { getAddress } from "viem";
 
 export interface Account {
 	chain: number;
@@ -37,7 +36,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 		const unique: Record<string, true> = {};
 
 		const filtered = accounts.filter((account) => {
-			const key = [account.chain, getAddress(account.address)].join(":");
+			const key = [account.chain, account.address.toLowerCase()].join(":");
 
 			if (unique[key]) {
 				return false;
@@ -57,7 +56,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 			.where(
 				inTuple(
 					[schema.state_accounts_v3.chain, schema.state_accounts_v3.address],
-					filtered.map((account) => [account.chain, getAddress(account.address)]),
+					filtered.map((account) => [account.chain, account.address.toLowerCase()]),
 				),
 			);
 

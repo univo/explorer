@@ -39,7 +39,7 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 		const unique: Record<string, true> = {};
 
 		const filtered = tokens.filter((token) => {
-			const key = [token.chain, getAddress(token.address)].join(":");
+			const key = [token.chain, token.address.toLowerCase()].join(":");
 
 			if (unique[key]) {
 				return false;
@@ -59,7 +59,7 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 			.where(
 				inTuple(
 					[schema.state_tokens_v1.chain, schema.state_tokens_v1.address],
-					filtered.map((token) => [token.chain, getAddress(token.address)]),
+					filtered.map((token) => [token.chain, token.address.toLowerCase()]),
 				),
 			);
 
