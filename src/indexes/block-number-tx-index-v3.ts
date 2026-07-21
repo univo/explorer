@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
+import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
-import { schema } from "@/db/schema";
 import type { chains } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { logger, numberToHex } from "@/utils";
@@ -18,11 +18,28 @@ import { createPostgresClient } from "@/db/client";
 // The tradeoff here is that this representation fails under chain reorganisations. A transaction in a reorganised block can
 // end up in a completely different position when it is included canonically.
 
+const table = pgTable(
+	"index_block_number_tx_index_v3",
+	{
+		chain: smallint().notNull(),
+		tx_index: smallint().notNull(),
+		log_index: integer().notNull(),
+		table_id: smallint().notNull(),
+		block_number: integer().notNull(),
+		block_timestamp: integer().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.chain, table.block_number, table.tx_index, table.log_index],
+		}),
+	],
+);
+
 export const index_block_number_tx_index_v3 = {
 	async upsert(ids: string[]) {
 		const unique: Record<string, true> = {};
 
-		const batch: (typeof schema.index_block_number_tx_index_v3.$inferInsert)[] = [];
+		const batch: (typeof table.$inferInsert)[] = [];
 
 		for (const id of ids) {
 			const parsed = parseId(id);
@@ -51,18 +68,13 @@ export const index_block_number_tx_index_v3 = {
 
 		for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
 			await client
-				.insert(schema.index_block_number_tx_index_v3)
+				.insert(table)
 				.values(batch.slice(i, i + MAX_BATCH_SIZE))
 				.onConflictDoUpdate({
-					target: [
-						schema.index_block_number_tx_index_v3.chain,
-						schema.index_block_number_tx_index_v3.block_number,
-						schema.index_block_number_tx_index_v3.tx_index,
-						schema.index_block_number_tx_index_v3.log_index,
-					],
+					target: [table.chain, table.block_number, table.tx_index, table.log_index],
 					set: {
-						table_id: sql.raw(`excluded.${schema.index_block_number_tx_index_v3.table_id.name}`),
-						block_timestamp: sql.raw(`excluded.${schema.index_block_number_tx_index_v3.block_timestamp.name}`),
+						table_id: sql.raw(`excluded.${table.table_id.name}`),
+						block_timestamp: sql.raw(`excluded.${table.block_timestamp.name}`),
 					},
 				});
 		}
@@ -98,14 +110,7 @@ export const index_block_number_tx_index_v3 = {
 
 		const client = await createPostgresClient();
 
-		await client
-			.delete(schema.index_block_number_tx_index_v3)
-			.where(
-				and(
-					eq(schema.index_block_number_tx_index_v3.chain, chain),
-					eq(schema.index_block_number_tx_index_v3.block_number, block_number),
-				),
-			);
+		await client.delete(table).where(and(eq(table.chain, chain), eq(table.block_number, block_number)));
 	},
 };
 
@@ -116,13 +121,8 @@ export async function getEventIdsForBlockNumber(chain: keyof typeof chains, bloc
 
 	const rows = await client
 		.select()
-		.from(schema.index_block_number_tx_index_v3)
-		.where(
-			and(
-				eq(schema.index_block_number_tx_index_v3.chain, chain),
-				eq(schema.index_block_number_tx_index_v3.block_number, block),
-			),
-		);
+		.from(table)
+		.where(and(eq(table.chain, chain), eq(table.block_number, block)));
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
@@ -145,14 +145,8 @@ export async function getEventIdsForTxPosition(chain: keyof typeof chains, block
 
 	const rows = await client
 		.select()
-		.from(schema.index_block_number_tx_index_v3)
-		.where(
-			and(
-				eq(schema.index_block_number_tx_index_v3.chain, chain),
-				eq(schema.index_block_number_tx_index_v3.block_number, block),
-				eq(schema.index_block_number_tx_index_v3.tx_index, tx),
-			),
-		);
+		.from(table)
+		.where(and(eq(table.chain, chain), eq(table.block_number, block), eq(table.tx_index, tx)));
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 

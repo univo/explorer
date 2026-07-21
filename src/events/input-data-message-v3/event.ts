@@ -1,9 +1,10 @@
 import { getAddress } from "viem";
 import { asc, inArray, sql } from "drizzle-orm";
+import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { schema } from "@/db/schema";
+import { hex, id } from "@/db/schema";
 import { nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -18,6 +19,14 @@ export interface InputDataMessageV3 {
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
 }
+
+const table = pgTable("event_input_data_message_v3", {
+	id: id().primaryKey(),
+	message: text().notNull(),
+	success: boolean().notNull(),
+	to_address: hex().notNull(),
+	from_address: hex().notNull(),
+});
 
 export const event = univo.event({
 	id: "input_data_message_v3",
@@ -87,15 +96,15 @@ export const event = univo.event({
 
 			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
 				await client
-					.insert(schema.event_input_data_message_v3)
+					.insert(table)
 					.values(batch.slice(i, i + MAX_BATCH_SIZE))
 					.onConflictDoUpdate({
-						target: schema.event_input_data_message_v3.id,
+						target: table.id,
 						set: {
-							success: sql.raw(`excluded.${schema.event_input_data_message_v3.success.name}`),
-							message: sql.raw(`excluded.${schema.event_input_data_message_v3.message.name}`),
-							to_address: sql.raw(`excluded.${schema.event_input_data_message_v3.to_address.name}`),
-							from_address: sql.raw(`excluded.${schema.event_input_data_message_v3.from_address.name}`),
+							success: sql.raw(`excluded.${table.success.name}`),
+							message: sql.raw(`excluded.${table.message.name}`),
+							to_address: sql.raw(`excluded.${table.to_address.name}`),
+							from_address: sql.raw(`excluded.${table.from_address.name}`),
 						},
 					});
 			}
@@ -104,9 +113,9 @@ export const event = univo.event({
 		async delete(batch) {
 			const client = await createPostgresClient();
 
-			await client.delete(schema.event_input_data_message_v3).where(
+			await client.delete(table).where(
 				inArray(
-					schema.event_input_data_message_v3.id,
+					table.id,
 					batch.map((event) => event.id),
 				),
 			);
@@ -180,11 +189,7 @@ export async function getInputDataMessageV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client
-		.select()
-		.from(schema.event_input_data_message_v3)
-		.where(inArray(schema.event_input_data_message_v3.id, filtered))
-		.orderBy(asc(schema.event_input_data_message_v3.id));
+	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
 
 	return rows.map<InputDataMessageV3>((result) => {
 		return {

@@ -1,7 +1,8 @@
 import { getAddress } from "viem";
 import DataLoader from "dataloader";
+import { boolean, integer, pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 
-import { inTuple, schema } from "@/db/schema";
+import { inTuple } from "@/db/schema";
 import { capitalize, isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 
@@ -25,6 +26,33 @@ export interface Account {
 	"erc20.symbol"?: string;
 	"erc20.decimals"?: string;
 }
+
+const table = pgTable(
+	"state_accounts_v3",
+	{
+		chain: integer().notNull(),
+		address: text().notNull(),
+		is_contract: boolean(),
+		owner_project: text(),
+		contract_name: text(),
+		code_compiler: text(),
+		code_language: text(),
+		deployment_tx: text(),
+		deployer_block: text(),
+		usage_category: text(),
+		deployer_address: text(),
+		source_code_verified: text(),
+		erc_type: text(),
+		"erc20.name": text("erc20.name"),
+		"erc20.symbol": text("erc20.symbol"),
+		"erc20.decimals": text("erc20.decimals"),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.chain, table.address],
+		}),
+	],
+);
 
 const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account | null>(
 	async (accounts) => {
@@ -53,10 +81,10 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 
 		const rows = await client
 			.select()
-			.from(schema.state_accounts_v3)
+			.from(table)
 			.where(
 				inTuple(
-					[schema.state_accounts_v3.chain, schema.state_accounts_v3.address],
+					[table.chain, table.address],
 					filtered.map((account) => [account.chain, account.address.toLowerCase()]),
 				),
 			);

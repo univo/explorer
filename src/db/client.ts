@@ -2,8 +2,6 @@ import { Client } from "pg";
 import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-import { schema } from "./schema";
-
 export async function createPostgresClient() {
 	const client = new Client({
 		connectionString: env.PG.connectionString,
@@ -11,5 +9,5 @@ export async function createPostgresClient() {
 
 	await client.connect();
 
-	return drizzle(client, { schema });
+	return drizzle(client);
 }

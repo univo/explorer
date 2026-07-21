@@ -1,10 +1,11 @@
-import { asc, inArray, sql } from "drizzle-orm";
 import { getAddress } from "viem";
+import { asc, inArray, sql } from "drizzle-orm";
+import { boolean, pgTable } from "drizzle-orm/pg-core";
 
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { schema } from "@/db/schema";
 import { nonNullable } from "@/utils";
+import { hex, id } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
@@ -17,6 +18,13 @@ export interface ContractDeploymentV3 {
 	contract_address: `0x${string}`;
 	deployer_address: `0x${string}`;
 }
+
+const table = pgTable("event_contract_deployment_v3", {
+	id: id().primaryKey(),
+	success: boolean().notNull(),
+	contract_address: hex().notNull(),
+	deployer_address: hex().notNull(),
+});
 
 export const event = univo.event({
 	id: "contract_deployment_v3",
@@ -55,14 +63,14 @@ export const event = univo.event({
 
 			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
 				await client
-					.insert(schema.event_contract_deployment_v3)
+					.insert(table)
 					.values(batch.slice(i, i + MAX_BATCH_SIZE))
 					.onConflictDoUpdate({
-						target: schema.event_contract_deployment_v3.id,
+						target: table.id,
 						set: {
-							success: sql.raw(`excluded.${schema.event_contract_deployment_v3.success.name}`),
-							contract_address: sql.raw(`excluded.${schema.event_contract_deployment_v3.contract_address.name}`),
-							deployer_address: sql.raw(`excluded.${schema.event_contract_deployment_v3.deployer_address.name}`),
+							success: sql.raw(`excluded.${table.success.name}`),
+							contract_address: sql.raw(`excluded.${table.contract_address.name}`),
+							deployer_address: sql.raw(`excluded.${table.deployer_address.name}`),
 						},
 					});
 			}
@@ -71,9 +79,9 @@ export const event = univo.event({
 		async delete(batch) {
 			const client = await createPostgresClient();
 
-			await client.delete(schema.event_contract_deployment_v3).where(
+			await client.delete(table).where(
 				inArray(
-					schema.event_contract_deployment_v3.id,
+					table.id,
 					batch.map((event) => event.id),
 				),
 			);
@@ -111,11 +119,7 @@ export async function getContractDeploymentV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client
-		.select()
-		.from(schema.event_contract_deployment_v3)
-		.where(inArray(schema.event_contract_deployment_v3.id, filtered))
-		.orderBy(asc(schema.event_contract_deployment_v3.id));
+	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
 
 	return rows.map<ContractDeploymentV3>((result) => {
 		return {

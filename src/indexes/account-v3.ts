@@ -1,8 +1,9 @@
 import { getAddress } from "viem";
 import { and, asc, desc, eq, gt, lt } from "drizzle-orm";
+import { pgTable, primaryKey } from "drizzle-orm/pg-core";
 
 import { logger } from "@/utils";
-import { inTuple, schema } from "@/db/schema";
+import { hex, id, inTuple } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 
 // Account indexes do not include a chain intentionally. For now, it is preferred that the list of events returned for
@@ -13,6 +14,19 @@ type Index = {
 	account: `0x${string}`;
 	event_id: string;
 };
+
+const table = pgTable(
+	"index_account_v3",
+	{
+		account: hex().notNull(),
+		event_id: id().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.account, table.event_id],
+		}),
+	],
+);
 
 export const index_account_v3 = {
 	async upsert(indexes: Index[]) {
@@ -41,7 +55,7 @@ export const index_account_v3 = {
 
 		for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
 			await client
-				.insert(schema.index_account_v3)
+				.insert(table)
 				.values(batch.slice(i, i + MAX_BATCH_SIZE))
 				.onConflictDoNothing();
 		}
@@ -50,9 +64,9 @@ export const index_account_v3 = {
 	async delete(indexes: Index[]) {
 		const client = await createPostgresClient();
 
-		await client.delete(schema.index_account_v3).where(
+		await client.delete(table).where(
 			inTuple(
-				[schema.index_account_v3.account, schema.index_account_v3.event_id],
+				[table.account, table.event_id],
 				indexes.map((index) => [index.account, index.event_id]),
 			),
 		);
@@ -72,15 +86,12 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 
 	if (pagination.cursor) {
 		const rows = await client
-			.select({ event_id: schema.index_account_v3.event_id })
-			.from(schema.index_account_v3)
+			.select({ event_id: table.event_id })
+			.from(table)
 			.where(
-				and(
-					eq(schema.index_account_v3.account, account),
-					(pagination.order === "latest" ? lt : gt)(schema.index_account_v3.event_id, pagination.cursor),
-				),
+				and(eq(table.account, account), (pagination.order === "latest" ? lt : gt)(table.event_id, pagination.cursor)),
 			)
-			.orderBy((pagination.order === "latest" ? desc : asc)(schema.index_account_v3.event_id))
+			.orderBy((pagination.order === "latest" ? desc : asc)(table.event_id))
 			.limit(pagination.limit);
 
 		logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
@@ -89,10 +100,10 @@ export async function getEventIdsForAccount(account: `0x${string}`, pagination: 
 	}
 
 	const rows = await client
-		.select({ event_id: schema.index_account_v3.event_id })
-		.from(schema.index_account_v3)
-		.where(eq(schema.index_account_v3.account, account))
-		.orderBy((pagination.order === "latest" ? desc : asc)(schema.index_account_v3.event_id))
+		.select({ event_id: table.event_id })
+		.from(table)
+		.where(eq(table.account, account))
+		.orderBy((pagination.order === "latest" ? desc : asc)(table.event_id))
 		.limit(pagination.limit);
 
 	logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
