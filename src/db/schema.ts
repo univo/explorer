@@ -210,7 +210,7 @@ const state_tokens_v1 = pgTable(
 		image: text(),
 		symbol: text(),
 		decimals: smallint(),
-		address: hex().notNull(),
+		address: text().notNull(),
 		chain: integer().notNull(),
 	},
 	(table) => [
@@ -224,7 +224,7 @@ const state_accounts_v3 = pgTable(
 	"state_accounts_v3",
 	{
 		chain: integer().notNull(),
-		address: hex().notNull(),
+		address: text().notNull(),
 		is_contract: boolean(),
 		owner_project: text(),
 		contract_name: text(),
