@@ -220,6 +220,33 @@ const state_tokens_v1 = pgTable(
 	],
 );
 
+const state_accounts_v3 = pgTable(
+	"state_accounts_v3",
+	{
+		chain: integer().notNull(),
+		address: hex().notNull(),
+		is_contract: boolean(),
+		owner_project: text(),
+		contract_name: text(),
+		code_compiler: text(),
+		code_language: text(),
+		deployment_tx: text(),
+		deployer_block: text(),
+		usage_category: text(),
+		deployer_address: text(),
+		source_code_verified: text(),
+		erc_type: text(),
+		"erc20.name": text("erc20.name"),
+		"erc20.symbol": text("erc20.symbol"),
+		"erc20.decimals": text("erc20.decimals"),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.chain, table.address],
+		}),
+	],
+);
+
 export const schema = {
 	event_erc20_transfer_v3,
 	event_erc20_approval_v3,
@@ -233,4 +260,5 @@ export const schema = {
 	index_account_v3,
 	index_block_number_tx_index_v3,
 	state_tokens_v1,
+	state_accounts_v3,
 };
