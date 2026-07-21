@@ -69,16 +69,16 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 
 		const reads = tokens.map<Promise<Token>>(async ({ chain, address }) => {
 			try {
-				const row = rows.find((r) => r.chain === chain && isHexEqual(r.address, address));
+				const row = rows.find((r) => r.chain === chain && isHexEqual(r.address as `0x`, address));
 
 				if (row) {
 					return {
 						chain,
-						address,
 						name: row.name,
 						image: row.image,
 						symbol: row.symbol,
 						decimals: row.decimals,
+						address: getAddress(address),
 					};
 				}
 

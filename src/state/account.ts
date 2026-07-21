@@ -1,3 +1,4 @@
+import { getAddress } from "viem";
 import DataLoader from "dataloader";
 
 import { inTuple, schema } from "@/db/schema";
@@ -61,7 +62,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 			);
 
 		return accounts.map(({ chain, address }) => {
-			const row = rows.find((row) => row.chain === chain && isHexEqual(row.address, address));
+			const row = rows.find((row) => row.chain === chain && isHexEqual(row.address as `0x`, address));
 
 			if (!row) {
 				return null;
@@ -69,7 +70,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 
 			const account: Account = {
 				chain,
-				address,
+				address: getAddress(address),
 				is_contract: row.is_contract ?? undefined,
 				owner_project: row.owner_project ?? undefined,
 				contract_name: row.contract_name ?? undefined,
