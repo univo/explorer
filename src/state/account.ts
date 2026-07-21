@@ -1,6 +1,6 @@
 import DataLoader from "dataloader";
 
-import { capitalize } from "@/utils";
+import { capitalize, isHexEqual } from "@/utils";
 import { inTuple, schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { getAddress } from "viem";
@@ -62,7 +62,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 			);
 
 		return accounts.map(({ chain, address }) => {
-			const row = rows.find((row) => row.chain === chain && row.address === address.toLowerCase());
+			const row = rows.find((row) => row.chain === chain && isHexEqual(row.address, address));
 
 			if (!row) {
 				return null;
