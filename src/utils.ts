@@ -147,3 +147,7 @@ export function hexToNumber(hex: string) {
 export function numberToHex(number: number | bigint) {
 	return `0x${number.toString(16)}` as const;
 }
+
+export function isHexEqual(a: `0x${string}`, b: `0x${string}`) {
+	return a.toLowerCase() === b.toLowerCase();
+}
