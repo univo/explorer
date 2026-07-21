@@ -58,7 +58,7 @@ export function formatRelativeDate(date: Date) {
 	return `${Math.abs(Math.round(delta_seconds / divisor))}${unit_strings[unit_index]}`;
 }
 
-export function formatNumber(number: number, options: Parameters<typeof Intl.NumberFormat>[1] = {}) {
+export function formatNumber(number: number | bigint, options: Parameters<typeof Intl.NumberFormat>[1] = {}) {
 	return new Intl.NumberFormat("en-GB", options).format(number);
 }
 
@@ -86,14 +86,6 @@ export function iife<T>(fn: () => T): T {
 
 export function nonNullable<Type>(value: Type): value is NonNullable<Type> {
 	return value !== null && value !== undefined;
-}
-
-/**
- * Takes an integer as a string like `18446744073709551615` and returns a number like `18446744073.709551615`.
- */
-export function parseStringInt(string: string, decimals: number) {
-	const number = Number(string);
-	return number / 10 ** decimals;
 }
 
 export function raise(err: string, options?: ErrorOptions): never {
@@ -152,16 +144,10 @@ export function hexToNumber(hex: string) {
 	return Number.parseInt(hex, 16);
 }
 
-export function numberToHex(number: number) {
+export function numberToHex(number: number | bigint) {
 	return `0x${number.toString(16)}` as const;
 }
 
-export function getInvertedDictionary<K extends string | number, V extends string | number>(dict: Record<K, V>) {
-	const result = {} as Record<V, K>;
-
-	for (const key in dict) {
-		result[dict[key]] = key;
-	}
-
-	return result;
+export function isHexEqual(a: `0x${string}`, b: `0x${string}`) {
+	return a.toLowerCase() === b.toLowerCase();
 }

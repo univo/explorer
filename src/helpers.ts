@@ -1,7 +1,7 @@
 import type { RpcTransactionReceipt } from "viem";
 
 import { chains, inverted_chains } from "./constants";
-import { formatNumber, hexToNumber, numberToHex, parseStringInt, raise } from "./utils";
+import { formatNumber, hexToNumber, raise } from "./utils";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) throw new Error("No receipt");
@@ -37,19 +37,6 @@ export function getTxReceiptForLog(receipts: RpcTransactionReceipt[], log: RpcTr
 	return receipt;
 }
 
-// Clickhouse accepts duplicate primary key values and uses an eventually consistent garbage collection process to
-// remove them. So to maintain correctness we also perform manual deduplication of each id here.
-
-export function getDeduplicatedEvents<TEvent extends { id: string }>(events: TEvent[]) {
-	const unique: Record<string, boolean> = {};
-
-	return events.filter((event) => {
-		if (unique[event.id]) return false;
-		unique[event.id] = true;
-		return true;
-	});
-}
-
 type IdOptions = {
 	blockTimestamp: `0x${string}`;
 	blockNumber: `0x${string}`;
@@ -63,52 +50,20 @@ export function createId(opts: IdOptions) {
 	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
 	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
 	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
-	const logIndex = opts.logIndex.slice(2).padStart(4, "0");
+
+	const logIndex = opts.logIndex.slice(2).padStart(6, "0");
 	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
 	const tableId = opts.tableId.toString(16).padStart(4, "0");
 	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
-}
-
-/**
- * Accepts a block timestamp (UNIX seconds) and returns its corresponding partition
- */
-export function getPartition(blockTimestamp: `0x${string}`) {
-	const date = new Date(hexToNumber(blockTimestamp) * 1000);
-	const year = date.getFullYear().toString();
-	const month = date.getMonth().toString().padStart(2, "0");
-	return Number.parseInt(`${year}${month}`);
-}
-
-/**
- * Accepts a list of event ids and returns a list of SQL WHERE clauses for each unique partition
- */
-export function getPartitions(ids: string[]) {
-	const partitions = Object.groupBy(ids, (id) => {
-		return getPartition(numberToHex(parseId(id).blockTimestamp));
-	});
-
-	return Object.entries(partitions).flatMap(([partition, ids]) => {
-		if (ids === undefined) {
-			return [];
-		}
-
-		if (ids.length === 0) {
-			return [];
-		}
-
-		const mapped = ids.map((id) => `unhex('${id}')`);
-
-		return `(partition = ${partition} AND id IN (${mapped.join(",")}))`;
-	});
 }
 
 export function parseId(id: string) {
 	const blockTimestamp = Number.parseInt(id.slice(0, 8), 16);
 	const blockNumber = Number.parseInt(id.slice(8, 16), 16);
 	const txIndex = Number.parseInt(id.slice(16, 20), 16);
-	const logIndex = Number.parseInt(id.slice(20, 24), 16);
-	const chainId = getExternalChain(Number.parseInt(id.slice(24, 28), 16));
-	const tableId = Number.parseInt(id.slice(28, 32), 16);
+	const logIndex = Number.parseInt(id.slice(20, 26), 16);
+	const chainId = getExternalChain(Number.parseInt(id.slice(26, 30), 16));
+	const tableId = Number.parseInt(id.slice(30, 34), 16);
 	return { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId };
 }
 
@@ -162,10 +117,16 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
 	});
 }
 
-export function formatTokenAmount(quantity: string, decimals: number) {
-	const number = parseStringInt(quantity, decimals);
-	if (decimals > quantity.length) return formatNumber(number, { maximumSignificantDigits: 2 });
-	return formatNumber(number, { maximumFractionDigits: 2 });
+export function formatTokenAmount(quantity: `0x${string}`, decimals: number) {
+	const quantityAsInteger = Number(quantity);
+	const quantityAsString = String(quantityAsInteger);
+	const quantityAsNumber = quantityAsInteger / 10 ** decimals;
+
+	if (decimals > quantityAsString.length) {
+		return formatNumber(quantityAsNumber, { maximumSignificantDigits: 2 });
+	}
+
+	return formatNumber(quantityAsNumber, { maximumFractionDigits: 2 });
 }
 
 /**

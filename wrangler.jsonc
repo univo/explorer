@@ -17,7 +17,7 @@
 	},
 	"observability": {
 		"logs": {
-			"enabled": false,
+			"enabled": true,
 			"invocation_logs": true
 		},
 		"traces": {
@@ -38,6 +38,13 @@
 			"bucket_name": "explorer-staging"
 		}
 	],
+	"hyperdrive": [
+		{
+			"binding": "PG",
+			"id": "2ee0a71e78274194901a2ff23ee5c1fc",
+			"localConnectionString": "WILL_OVERRIDE"
+		}
+	],
 	"env": {
 		"staging": {
 			"vars": {
@@ -54,11 +61,17 @@
 					"binding": "BUCKET",
 					"bucket_name": "explorer-staging"
 				}
+			],
+			"hyperdrive": [
+				{
+					"binding": "PG",
+					"id": "2ee0a71e78274194901a2ff23ee5c1fc"
+				}
 			]
 		},
 		"production": {
 			"vars": {
-				"LOG_LEVEL": "DEBUG",
+				"LOG_LEVEL": "WARN",
 				"ENVIRONMENT": "PRODUCTION"
 			},
 			"route": {
@@ -70,6 +83,12 @@
 					"remote": true,
 					"binding": "BUCKET",
 					"bucket_name": "explorer-production"
+				}
+			],
+			"hyperdrive": [
+				{
+					"binding": "PG",
+					"id": "de9c1c526cb347778a95aa4e2597cd2b"
 				}
 			]
 		}

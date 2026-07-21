@@ -11,19 +11,19 @@ import type { Account } from "@/state/account";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForAccount } from "@/indexes/account-v2";
+import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
-import { Erc20ApprovalV2AccountDescription } from "@/events/erc20-approval-v2/component";
-import { Erc20TransferV2AccountDescription } from "@/events/erc20-transfer-v2/component";
-import { NativeTransferV2AccountDescription } from "@/events/native-transfer-v2/component";
-import { Erc721TransferV2AccountDescription } from "@/events/erc721-transfer-v2/component";
-import { Erc721ApprovalV2AccountDescription } from "@/events/erc721-approval-v2/component";
-import { CancelPendingTxV2AccountDescription } from "@/events/cancel-pending-tx-v2/component";
-import { InputDataMessageV2AccountDescription } from "@/events/input-data-message-v2/component";
-import { EnsNameRegisteredV2AccountDescription } from "@/events/ens-name-registered-v2/component";
-import { ContractDeploymentV2AccountDescription } from "@/events/contract-deployment-v2/component";
+import { Erc20ApprovalV3AccountDescription } from "@/events/erc20-approval-v3/component";
+import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/component";
+import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
+import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
+import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/component";
+import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-v3/component";
+import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
+import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
+import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
 
 async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
@@ -135,40 +135,40 @@ function EventTimestamp(props: { timestamp: Date }) {
 }
 
 function AccountEventDescription(props: { account: Account; event: Event }) {
-	if (props.event.tag === "erc20_approval_v2") {
-		return <Erc20ApprovalV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc20_approval_v3") {
+		return <Erc20ApprovalV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "native_transfer_v2") {
-		return <NativeTransferV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "native_transfer_v3") {
+		return <NativeTransferV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc20_transfer_v2") {
-		return <Erc20TransferV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc20_transfer_v3") {
+		return <Erc20TransferV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "input_data_message_v2") {
-		return <InputDataMessageV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "input_data_message_v3") {
+		return <InputDataMessageV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v2") {
-		return <EnsNameRegisteredV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "ens_name_registered_v3") {
+		return <EnsNameRegisteredV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "contract_deployment_v2") {
-		return <ContractDeploymentV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "contract_deployment_v3") {
+		return <ContractDeploymentV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v2") {
-		return <CancelPendingTxV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "cancel_pending_tx_v3") {
+		return <CancelPendingTxV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v2") {
-		return <Erc721TransferV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc721_transfer_v3") {
+		return <Erc721TransferV3AccountDescription event={props.event} account={props.account} />;
 	}
 
-	if (props.event.tag === "erc721_approval_v2") {
-		return <Erc721ApprovalV2AccountDescription event={props.event} account={props.account} />;
+	if (props.event.tag === "erc721_approval_v3") {
+		return <Erc721ApprovalV3AccountDescription event={props.event} account={props.account} />;
 	}
 }
 

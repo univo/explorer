@@ -1,16 +1,9 @@
+import { getAddress } from "viem";
 import DataLoader from "dataloader";
 
-import { db } from "@/db/client";
-import { capitalize } from "@/utils";
-
-// CREATE TABLE state_accounts_v1 (
-// 	   `chain` UInt32,
-//     `address` FixedString(42),
-//     `label` String,
-//     `name_tag` String
-// )
-// ENGINE = ReplacingMergeTree
-// ORDER BY (chain, address);
+import { inTuple, schema } from "@/db/schema";
+import { capitalize, isHexEqual } from "@/utils";
+import { createPostgresClient } from "@/db/client";
 
 export interface Account {
 	chain: number;
@@ -44,39 +37,57 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 		const unique: Record<string, true> = {};
 
 		const filtered = accounts.filter((account) => {
-			if (unique[account.chain + account.address]) return false;
-			unique[account.chain + account.address] = true;
+			const key = [account.chain, account.address.toLowerCase()].join(":");
+
+			if (unique[key]) {
+				return false;
+			}
+
+			unique[key] = true;
+
 			return true;
 		});
 
-		// Open labels initiative uses lowercased addresses instead of checksummed
-		const mapped = filtered.map((account) => `(${account.chain}, '${account.address.toLowerCase()}')`);
-
 		// 3. Fetch accounts
-		const res = await db.query({
-			query: `SELECT chain, address, tag_id, tag_value FROM state_accounts_v3 WHERE (chain, address) IN (${mapped.join(",")});`,
-			format: "JSONEachRow",
-		});
+		const client = await createPostgresClient();
 
-		const rows: any[] = await res.json();
+		const rows = await client
+			.select()
+			.from(schema.state_accounts_v3)
+			.where(
+				inTuple(
+					[schema.state_accounts_v3.chain, schema.state_accounts_v3.address],
+					filtered.map((account) => [account.chain, account.address.toLowerCase()]),
+				),
+			);
 
 		return accounts.map(({ chain, address }) => {
-			const relevant = rows.filter((row) => row.chain === chain && row.address === address.toLowerCase());
+			const row = rows.find((row) => row.chain === chain && isHexEqual(row.address as `0x`, address));
 
-			if (relevant.length === 0) {
+			if (!row) {
 				return null;
 			}
 
-			const account: any = {
+			const account: Account = {
 				chain,
-				address,
+				address: getAddress(address),
+				is_contract: row.is_contract ?? undefined,
+				owner_project: row.owner_project ?? undefined,
+				contract_name: row.contract_name ?? undefined,
+				code_compiler: row.code_compiler ?? undefined,
+				code_language: row.code_language ?? undefined,
+				deployment_tx: row.deployment_tx ?? undefined,
+				deployer_block: row.deployer_block ?? undefined,
+				usage_category: row.usage_category ?? undefined,
+				deployer_address: row.deployer_address ?? undefined,
+				source_code_verified: row.source_code_verified ?? undefined,
+				erc_type: row.erc_type ?? undefined,
+				"erc20.name": row["erc20.name"] ?? undefined,
+				"erc20.symbol": row["erc20.symbol"] ?? undefined,
+				"erc20.decimals": row["erc20.decimals"] ?? undefined,
 			};
 
-			for (const tag of relevant) {
-				account[tag.tag_id] = tag.tag_value;
-			}
-
-			return account as Account;
+			return account;
 		});
 	},
 	{
