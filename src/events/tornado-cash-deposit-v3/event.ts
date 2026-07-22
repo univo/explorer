@@ -31,7 +31,6 @@ type Pool = {
 };
 
 const TORNADO_CASH_DEPLOYED_BLOCK = 9116966;
-const TORNADO_CASH_DEPOSIT_LOG_INDEX = "0xffffff";
 
 const directDepositAbi = parseAbiItem("function deposit(bytes32 _commitment)");
 const proxyDepositAbi = parseAbiItem("function deposit(address _tornado, bytes32 _commitment, bytes _encryptedNote)");
@@ -82,9 +81,9 @@ export const event = univo.event({
 					if (deposit === null) return null;
 
 					const id = createId({
+						logIndex: "0x0",
 						chainId: block.eth_chainId,
 						txIndex: tx.transactionIndex,
-						logIndex: TORNADO_CASH_DEPOSIT_LOG_INDEX,
 						tableId: tables.tornado_cash_deposit_v1,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
