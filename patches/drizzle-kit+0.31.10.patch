@@ -1,0 +1,60 @@
+diff --git a/node_modules/drizzle-kit/bin.cjs b/node_modules/drizzle-kit/bin.cjs
+index 07274ea..f374d82 100755
+--- a/node_modules/drizzle-kit/bin.cjs
++++ b/node_modules/drizzle-kit/bin.cjs
+@@ -15187,7 +15187,7 @@ var require_api = __commonJS({
+ });
+ 
+ // src/cli/commands/utils.ts
+-var import_fs3, import_hanji2, import_path3, assertES5, InMemoryMutex, registerMutex, tsxRegistered, ensureTsxRegistered, safeRegister, prepareCheckParams, prepareDropParams, prepareGenerateConfig, prepareExportConfig, flattenDatabaseCredentials, flattenPull, preparePushConfig, preparePullConfig, prepareStudioConfig, migrateConfig, prepareMigrateConfig, drizzleConfigFromFile;
++var import_fs3, import_hanji2, import_path3, assertES5, InMemoryMutex, registerMutex, tsxRegistered, ensureTsxRegistered, cfModulesRegistered, ensureCFModulesAvailable, safeRegister, prepareCheckParams, prepareDropParams, prepareGenerateConfig, prepareExportConfig, flattenDatabaseCredentials, flattenPull, preparePushConfig, preparePullConfig, prepareStudioConfig, migrateConfig, prepareMigrateConfig, drizzleConfigFromFile;
+ var init_utils3 = __esm({
+   "src/cli/commands/utils.ts"() {
+     "use strict";
+@@ -15267,8 +15267,46 @@ var init_utils3 = __esm({
+       tsx.register();
+       tsxRegistered = true;
+     };
++    cfModulesRegistered = false;
++    ensureCFModulesAvailable = () => {
++      if (cfModulesRegistered) return;
++      const Module = require("module");
++      const fs = require("fs");
++      const os = require("os");
++      const path = require("path");
++      const stubDir = path.join(os.tmpdir(), "drizzle-kit-cf-stubs");
++      if (!fs.existsSync(stubDir)) {
++        fs.mkdirSync(stubDir, { recursive: true });
++      }
++      const stubContent = `
++class WorkerEntrypoint { constructor(ctx, env) { this.ctx = ctx; this.env = env; } }
++class DurableObject { constructor(state, env) { this.state = state; this.env = env; } }
++class RpcTarget { constructor(value) { this.value = value; } }
++class RpcStub extends RpcTarget {}
++const env = {};
++const caches = { default: {} };
++const scheduler = {};
++const executionCtx = {};
++module.exports = { WorkerEntrypoint, DurableObject, RpcTarget, RpcStub, env, caches, scheduler, executionCtx };
++`;
++      const stubPath = path.join(stubDir, "cloudflare-workers.cjs");
++      fs.writeFileSync(stubPath, stubContent);
++      const originalResolveFilename = Module._resolveFilename;
++      const resolveMap = {
++        "cloudflare:workers": stubPath,
++        "cloudflare:test": stubPath
++      };
++      Module._resolveFilename = function(request, parent, ...args) {
++        if (resolveMap[request]) {
++          return resolveMap[request];
++        }
++        return originalResolveFilename.apply(this, [request, parent, ...args]);
++      };
++      cfModulesRegistered = true;
++    };
+     safeRegister = async (fn) => {
+       return registerMutex.withLock(async () => {
++        ensureCFModulesAvailable();
+         ensureTsxRegistered();
+         await assertES5();
+         return fn();

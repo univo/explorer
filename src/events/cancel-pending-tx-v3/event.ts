@@ -1,9 +1,9 @@
-import { asc, inArray, sql } from "drizzle-orm";
 import { getAddress } from "viem";
+import { asc, inArray, sql } from "drizzle-orm";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { schema } from "@/db/schema";
 import { numberToHex, nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -75,14 +75,14 @@ export const event = univo.event({
 
 			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
 				await client
-					.insert(schema.event_cancel_pending_tx_v3)
+					.insert(table)
 					.values(batch.slice(i, i + MAX_BATCH_SIZE))
 					.onConflictDoUpdate({
-						target: schema.event_cancel_pending_tx_v3.id,
+						target: table.id,
 						set: {
-							success: sql.raw(`excluded.${schema.event_cancel_pending_tx_v3.success.name}`),
-							from_address: sql.raw(`excluded.${schema.event_cancel_pending_tx_v3.from_address.name}`),
-							nonce: sql.raw(`excluded.${schema.event_cancel_pending_tx_v3.nonce.name}`),
+							success: sql.raw(`excluded.${table.success.name}`),
+							from_address: sql.raw(`excluded.${table.from_address.name}`),
+							nonce: sql.raw(`excluded.${table.nonce.name}`),
 						},
 					});
 			}
@@ -91,9 +91,9 @@ export const event = univo.event({
 		async delete(batch) {
 			const client = await createPostgresClient();
 
-			await client.delete(schema.event_cancel_pending_tx_v3).where(
+			await client.delete(table).where(
 				inArray(
-					schema.event_cancel_pending_tx_v3.id,
+					table.id,
 					batch.map((event) => event.id),
 				),
 			);
@@ -130,11 +130,7 @@ export async function getCancelPendingTxV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client
-		.select()
-		.from(schema.event_cancel_pending_tx_v3)
-		.where(inArray(schema.event_cancel_pending_tx_v3.id, filtered))
-		.orderBy(asc(schema.event_cancel_pending_tx_v3.id));
+	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
 
 	return rows.map<CancelPendingTxV3>((result) => {
 		return {

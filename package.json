@@ -2,9 +2,6 @@
 	"private": true,
 	"type": "module",
 	"name": "explorer",
-	"imports": {
-		"#/*": "./src/*"
-	},
 	"scripts": {
 		"test": "vitest run",
 		"dev": "vite dev --port 3000",
@@ -15,10 +12,10 @@
 		"deploy:staging": "npm run build:staging && wrangler deploy",
 		"deploy:production": "npm run build:production && wrangler deploy",
 		"tail:staging": "wrangler tail --env staging",
-		"tail:production": "wrangler tail --env production"
+		"tail:production": "wrangler tail --env production",
+		"postinstall": "patch-package"
 	},
 	"dependencies": {
-		"@cloudflare/vite-plugin": "1.45.0",
 		"@ponder/utils": "0.2.16",
 		"@storagesdk/adapters": "0.6.0",
 		"@storagesdk/core": "0.4.2",
@@ -44,6 +41,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@cloudflare/vite-plugin": "1.45.0",
 		"@cloudflare/vitest-pool-workers": "0.18.5",
 		"@tanstack/react-devtools": "0.10.2",
 		"@tanstack/react-router-devtools": "1.166.13",
@@ -53,6 +51,9 @@
 		"@types/react-dom": "^19.2.0",
 		"@vitejs/plugin-react": "^5.0.4",
 		"@vitejs/plugin-rsc": "0.5.24",
+		"dotenv": "17.4.2",
+		"drizzle-kit": "0.31.10",
+		"patch-package": "8.0.1",
 		"typescript": "^5.7.2",
 		"vite": "^7.1.7",
 		"vite-tsconfig-paths": "^5.1.4",

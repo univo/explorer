@@ -1,9 +1,9 @@
 import { asc, inArray, sql } from "drizzle-orm";
 import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { schema } from "@/db/schema";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -69,16 +69,16 @@ export const event = univo.event({
 
 			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
 				await client
-					.insert(schema.event_erc721_transfer_v3)
+					.insert(table)
 					.values(batch.slice(i, i + MAX_BATCH_SIZE))
 					.onConflictDoUpdate({
-						target: schema.event_erc721_transfer_v3.id,
+						target: table.id,
 						set: {
-							success: sql.raw(`excluded.${schema.event_erc721_transfer_v3.success.name}`),
-							token_id: sql.raw(`excluded.${schema.event_erc721_transfer_v3.token_id.name}`),
-							to_address: sql.raw(`excluded.${schema.event_erc721_transfer_v3.to_address.name}`),
-							from_address: sql.raw(`excluded.${schema.event_erc721_transfer_v3.from_address.name}`),
-							token_address: sql.raw(`excluded.${schema.event_erc721_transfer_v3.token_address.name}`),
+							success: sql.raw(`excluded.${table.success.name}`),
+							token_id: sql.raw(`excluded.${table.token_id.name}`),
+							to_address: sql.raw(`excluded.${table.to_address.name}`),
+							from_address: sql.raw(`excluded.${table.from_address.name}`),
+							token_address: sql.raw(`excluded.${table.token_address.name}`),
 						},
 					});
 			}
@@ -87,9 +87,9 @@ export const event = univo.event({
 		async delete(batch) {
 			const client = await createPostgresClient();
 
-			await client.delete(schema.event_erc721_transfer_v3).where(
+			await client.delete(table).where(
 				inArray(
-					schema.event_erc721_transfer_v3.id,
+					table.id,
 					batch.map((event) => event.id),
 				),
 			);
@@ -128,11 +128,7 @@ export async function getErc721TransferV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client
-		.select()
-		.from(schema.event_erc721_transfer_v3)
-		.where(inArray(schema.event_erc721_transfer_v3.id, filtered))
-		.orderBy(asc(schema.event_erc721_transfer_v3.id));
+	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
 
 	return rows.map<Erc721TransferV3>((result) => {
 		return {

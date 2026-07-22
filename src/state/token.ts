@@ -1,11 +1,10 @@
-"use server";
-
 import DataLoader from "dataloader";
 import { mainnet } from "viem/chains";
 import { createPublicClient, getAddress } from "viem";
+import { integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
+import { inTuple } from "@/db/types";
 import { isHexEqual, logger } from "@/utils";
-import { inTuple, schema } from "@/db/schema";
 import { createTransport } from "@/transports";
 import { createPostgresClient } from "@/db/client";
 
@@ -17,6 +16,23 @@ export interface Token {
 	address: `0x${string}`;
 	decimals: number | null;
 }
+
+export const table = pgTable(
+	"state_tokens_v1",
+	{
+		name: text(),
+		image: text(),
+		symbol: text(),
+		decimals: smallint(),
+		address: text().notNull(),
+		chain: integer().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.chain, table.address],
+		}),
+	],
+);
 
 const clients = {
 	1: createPublicClient({ chain: mainnet, transport: createTransport(process.env.ETHEREUM_URL) }),
@@ -55,10 +71,10 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 
 		const rows = await client
 			.select()
-			.from(schema.state_tokens_v1)
+			.from(table)
 			.where(
 				inTuple(
-					[schema.state_tokens_v1.chain, schema.state_tokens_v1.address],
+					[table.chain, table.address],
 					filtered.map((token) => [token.chain, token.address.toLowerCase()]),
 				),
 			);
@@ -119,7 +135,7 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 		// 4. Write new tokens to cache
 		try {
 			if (writes.length > 0) {
-				await client.insert(schema.state_tokens_v1).values(writes).onConflictDoNothing();
+				await client.insert(table).values(writes).onConflictDoNothing();
 				logger.debug(`Wrote ${writes.length} new tokens to state_tokens_v1`);
 			}
 		} catch {
