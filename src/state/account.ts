@@ -2,7 +2,7 @@ import { getAddress } from "viem";
 import DataLoader from "dataloader";
 import { boolean, integer, pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 
-import { inTuple } from "@/db/schema";
+import { inTuple } from "@/db/types";
 import { capitalize, isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 

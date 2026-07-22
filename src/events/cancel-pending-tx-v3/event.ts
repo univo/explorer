@@ -4,7 +4,7 @@ import { boolean, pgTable } from "drizzle-orm/pg-core";
 
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { hex, id } from "@/db/schema";
+import { hex, id } from "@/db/types";
 import { numberToHex, nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";

@@ -3,7 +3,7 @@ import { and, asc, desc, eq, gt, lt } from "drizzle-orm";
 import { pgTable, primaryKey } from "drizzle-orm/pg-core";
 
 import { logger } from "@/utils";
-import { hex, id, inTuple } from "@/db/schema";
+import { inTuple, hex, id } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
 
 // Account indexes do not include a chain intentionally. For now, it is preferred that the list of events returned for

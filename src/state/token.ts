@@ -3,7 +3,7 @@ import { mainnet } from "viem/chains";
 import { createPublicClient, getAddress } from "viem";
 import { integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
-import { inTuple } from "@/db/schema";
+import { inTuple } from "@/db/types";
 import { isHexEqual, logger } from "@/utils";
 import { createTransport } from "@/transports";
 import { createPostgresClient } from "@/db/client";
