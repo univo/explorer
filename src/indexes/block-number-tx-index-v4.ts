@@ -71,11 +71,8 @@ export const index_block_number_tx_index_v4 = {
 				.insert(table)
 				.values(batch.slice(i, i + MAX_BATCH_SIZE))
 				.onConflictDoUpdate({
-					target: [table.chain, table.block_number, table.tx_index, table.log_index],
-					set: {
-						table_id: sql.raw(`excluded.${table.table_id.name}`),
-						block_timestamp: sql.raw(`excluded.${table.block_timestamp.name}`),
-					},
+					target: [table.chain, table.block_number, table.tx_index, table.log_index, table.table_id],
+					set: { block_timestamp: sql.raw(`excluded.${table.block_timestamp.name}`) },
 				});
 		}
 	},
