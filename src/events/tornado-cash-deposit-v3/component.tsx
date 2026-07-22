@@ -16,7 +16,8 @@ export function TornadoCashDepositV3Description(props: { event: TornadoCashDepos
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">deposited</Action>
-			<Amount event={props.event} />
+			<span>{formatTokenAmount(props.event.quantity, props.event.asset_decimals)}</span>
+			<span>{props.event.asset_symbol}</span>
 			<span>to Tornado Cash</span>
 			<Account chain={chain} address={props.event.pool_address} />
 		</Description>
@@ -31,7 +32,8 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Deposited</Action>
-				<Amount event={props.event} />
+				<span>{formatTokenAmount(props.event.quantity, props.event.asset_decimals)}</span>
+				<span>{props.event.asset_symbol}</span>
 				<span>to Tornado Cash</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
@@ -44,7 +46,8 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Tornado Cash deposit</Action>
 				<span>of</span>
-				<Amount event={props.event} />
+				<span>{formatTokenAmount(props.event.quantity, props.event.asset_decimals)}</span>
+				<span>{props.event.asset_symbol}</span>
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>
@@ -57,7 +60,8 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="called">Processed deposit</Action>
 				<span>of</span>
-				<Amount event={props.event} />
+				<span>{formatTokenAmount(props.event.quantity, props.event.asset_decimals)}</span>
+				<span>{props.event.asset_symbol}</span>
 				<span>to Tornado Cash</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
@@ -65,13 +69,4 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 	}
 
 	return <TornadoCashDepositV3Description event={props.event} />;
-}
-
-function Amount(props: { event: TornadoCashDepositV3 }) {
-	return (
-		<>
-			<span>{formatTokenAmount(props.event.quantity, props.event.asset_decimals)}</span>
-			<span>{props.event.asset_symbol}</span>
-		</>
-	);
 }

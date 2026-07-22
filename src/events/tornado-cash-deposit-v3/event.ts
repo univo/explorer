@@ -103,14 +103,14 @@ export const event = univo.event({
 
 					return {
 						id,
-						success: getEventSuccess(receipt),
-						commitment: deposit.commitment,
-						quantity: numberToHex(parseUnits(deposit.pool.denomination, deposit.pool.decimals)),
-						asset_symbol: deposit.pool.symbol,
-						asset_decimals: deposit.pool.decimals,
 						to_address: getAddress(tx.to),
+						commitment: deposit.commitment,
+						success: getEventSuccess(receipt),
+						asset_symbol: deposit.pool.symbol,
 						from_address: getAddress(tx.from),
 						pool_address: deposit.pool.address,
+						asset_decimals: deposit.pool.decimals,
+						quantity: numberToHex(parseUnits(deposit.pool.denomination, deposit.pool.decimals)),
 					};
 				} catch {
 					return null;
