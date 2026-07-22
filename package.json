@@ -2,9 +2,6 @@
 	"private": true,
 	"type": "module",
 	"name": "explorer",
-	"imports": {
-		"#/*": "./src/*"
-	},
 	"scripts": {
 		"test": "vitest run",
 		"dev": "vite dev --port 3000",
