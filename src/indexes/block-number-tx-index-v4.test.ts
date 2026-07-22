@@ -5,19 +5,19 @@ import { event } from "@/events/erc20-transfer-v3/event";
 import {
 	getEventIdsForBlockNumber,
 	getEventIdsForTxPosition,
-	index_block_number_tx_index_v3,
-} from "./block-number-tx-index-v3";
+	index_block_number_tx_index_v4,
+} from "./block-number-tx-index-v4";
 
-test.concurrent("block-number-tx-index-v3", async ({ expect }) => {
+test.concurrent("block-number-tx-index-v4", async ({ expect }) => {
 	const block_number = 10000000;
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
 	const ids = event.handler(block).map((event) => event.id);
 
-	await index_block_number_tx_index_v3.delete(ids);
+	await index_block_number_tx_index_v4.delete(ids);
 
-	await index_block_number_tx_index_v3.upsert(ids);
+	await index_block_number_tx_index_v4.upsert(ids);
 
 	const idsForBlock = await getEventIdsForBlockNumber(1, block_number);
 

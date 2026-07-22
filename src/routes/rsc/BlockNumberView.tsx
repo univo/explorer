@@ -12,7 +12,7 @@ import { getOrderedEvents, parseId } from "@/helpers";
 import { getEventsForIds, type Event } from "@/db/events";
 import { EventTableRow } from "@/components/event-table-row";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
-import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v3";
+import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";

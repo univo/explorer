@@ -19,7 +19,7 @@ import { createPostgresClient } from "@/db/client";
 // end up in a completely different position when it is included canonically.
 
 export const table = pgTable(
-	"index_block_number_tx_index_v3",
+	"index_block_number_tx_index_v4",
 	{
 		chain: smallint().notNull(),
 		tx_index: smallint().notNull(),
@@ -30,12 +30,12 @@ export const table = pgTable(
 	},
 	(table) => [
 		primaryKey({
-			columns: [table.chain, table.block_number, table.tx_index, table.log_index],
+			columns: [table.chain, table.block_number, table.tx_index, table.log_index, table.table_id],
 		}),
 	],
 );
 
-export const index_block_number_tx_index_v3 = {
+export const index_block_number_tx_index_v4 = {
 	async upsert(ids: string[]) {
 		const unique: Record<string, true> = {};
 
@@ -44,7 +44,7 @@ export const index_block_number_tx_index_v3 = {
 		for (const id of ids) {
 			const parsed = parseId(id);
 
-			const key = [parsed.chainId, parsed.blockNumber, parsed.txIndex, parsed.logIndex].join(":");
+			const key = [parsed.chainId, parsed.blockNumber, parsed.txIndex, parsed.logIndex, parsed.tableId].join(":");
 
 			if (unique[key]) {
 				continue;
