@@ -11,8 +11,6 @@ test.concurrent("tornado_cash_deposit_v3 direct pool deposit", async ({ expect }
 	const ids = event.handler(block).map((event) => event.id);
 	const initial = await getTornadoCashDepositV3(ids);
 
-	console.log(event.handler(block));
-
 	expect(initial).toStrictEqual([]);
 
 	await test_client.request({
