@@ -19,10 +19,10 @@ export interface TornadoCashDepositV3 {
 	tag: "tornado_cash_deposit_v3";
 	id: string;
 	success: boolean;
-	commitment: `0x${string}`;
-	quantity: `0x${string}`;
 	asset_symbol: string;
 	asset_decimals: number;
+	quantity: `0x${string}`;
+	commitment: `0x${string}`;
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
 	pool_address: `0x${string}`;
