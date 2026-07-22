@@ -13,3 +13,4 @@ export { table as event_cancel_pending_tx_v3 } from "@/events/cancel-pending-tx-
 export { table as event_input_data_message_v3 } from "@/events/input-data-message-v3/table";
 export { table as event_contract_deployment_v3 } from "@/events/contract-deployment-v3/table";
 export { table as event_ens_name_registered_v3 } from "@/events/ens-name-registered-v3/table";
+export { table as event_tornado_cash_deposit_v3 } from "@/events/tornado-cash-deposit-v3/table";
