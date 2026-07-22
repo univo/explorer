@@ -8,7 +8,7 @@ import { numberToHex, nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
-import { index_block_number_tx_index_v3 } from "@/indexes/block-number-tx-index-v3";
+import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface CancelPendingTxV3 {
 	tag: "cancel_pending_tx_v3";
@@ -103,8 +103,8 @@ export const event = univo.event({
 
 univo.event({
 	filters: event.filters,
-	storage: index_block_number_tx_index_v3,
-	id: "cancel_pending_tx_v3_index_block_number_tx_index_v3",
+	storage: index_block_number_tx_index_v4,
+	id: "cancel_pending_tx_v3_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 

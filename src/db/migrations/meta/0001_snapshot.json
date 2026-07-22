@@ -1,5 +1,5 @@
 {
-  "id": "9b4559f2-a8fb-43d5-b9ca-48953b35c8ac",
+  "id": "b292d0bc-fb27-45cb-bbdd-2fd376a3a8cd",
   "prevId": "62dacad6-871f-4726-a96c-b38d4f6212ec",
   "version": "7",
   "dialect": "postgresql",
@@ -409,73 +409,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.event_tornado_cash_deposit_v3": {
-      "name": "event_tornado_cash_deposit_v3",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bytea",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "success": {
-          "name": "success",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "commitment": {
-          "name": "commitment",
-          "type": "bytea",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "quantity": {
-          "name": "quantity",
-          "type": "bytea",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "asset_symbol": {
-          "name": "asset_symbol",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "asset_decimals": {
-          "name": "asset_decimals",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "to_address": {
-          "name": "to_address",
-          "type": "bytea",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "from_address": {
-          "name": "from_address",
-          "type": "bytea",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "pool_address": {
-          "name": "pool_address",
-          "type": "bytea",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.index_account_v3": {
       "name": "index_account_v3",
       "schema": "",
@@ -509,8 +442,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.index_block_number_tx_index_v3": {
-      "name": "index_block_number_tx_index_v3",
+    "public.index_block_number_tx_index_v4": {
+      "name": "index_block_number_tx_index_v4",
       "schema": "",
       "columns": {
         "chain": {
@@ -553,13 +486,14 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "index_block_number_tx_index_v3_chain_block_number_tx_index_log_index_pk": {
-          "name": "index_block_number_tx_index_v3_chain_block_number_tx_index_log_index_pk",
+        "index_block_number_tx_index_v4_chain_block_number_tx_index_log_index_table_id_pk": {
+          "name": "index_block_number_tx_index_v4_chain_block_number_tx_index_log_index_table_id_pk",
           "columns": [
             "chain",
             "block_number",
             "tx_index",
-            "log_index"
+            "log_index",
+            "table_id"
           ]
         }
       },
