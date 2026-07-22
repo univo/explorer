@@ -192,9 +192,18 @@ function getTornadoCashDeposit(to: `0x${string}`, input: `0x${string}`) {
 }
 
 type TornadoCashPool = {
-	quantity: bigint;
 	pool: `0x${string}`;
+
+	/**
+	 * The asset deposited by the user. Assets are listed below for the first version of tornado.cash
+	 */
 	asset: `0x${string}`;
+
+	/**
+	 * In the first version of tornado.cash each pool accepts a fixed quantity a given asset.
+	 * Therefore we can derive the quantity of asset each user deposited from the pool address only.
+	 */
+	quantity: `0x${string}`;
 };
 
 const DEPOSIT_ASSETS = {
@@ -209,97 +218,97 @@ const DEPOSIT_ASSETS = {
 const DEPOSIT_POOLS: TornadoCashPool[] = [
 	{
 		asset: DEPOSIT_ASSETS.ETH,
-		quantity: 100_000_000_000_000_000n,
+		quantity: "0x16345785d8a0000",
 		pool: "0x12D66f87A04A9E220743712cE6d9bB1B5616B8Fc",
 	},
 	{
 		asset: DEPOSIT_ASSETS.ETH,
-		quantity: 1_000_000_000_000_000_000n,
+		quantity: "0xde0b6b3a7640000",
 		pool: "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936",
 	},
 	{
 		asset: DEPOSIT_ASSETS.ETH,
-		quantity: 10_000_000_000_000_000_000n,
+		quantity: "0x8ac7230489e80000",
 		pool: "0x910Cbd523D972eb0a6f4cAe4618aD62622b39DbF",
 	},
 	{
 		asset: DEPOSIT_ASSETS.ETH,
-		quantity: 100_000_000_000_000_000_000n,
+		quantity: "0x56bc75e2d63100000",
 		pool: "0xA160cdAB225685dA1d56aa342Ad8841c3b53f291",
 	},
 	{
 		asset: DEPOSIT_ASSETS.DAI,
-		quantity: 100_000_000_000_000_000_000n,
+		quantity: "0x56bc75e2d63100000",
 		pool: "0xD4B88Df4D29F5CedD6857912842cff3b20C8Cfa3",
 	},
 	{
 		asset: DEPOSIT_ASSETS.DAI,
-		quantity: 1_000_000_000_000_000_000_000n,
+		quantity: "0x3635c9adc5dea00000",
 		pool: "0xFD8610d20aA15b7B2E3Be39B396a1bC3516c7144",
 	},
 	{
 		asset: DEPOSIT_ASSETS.DAI,
-		quantity: 10_000_000_000_000_000_000_000n,
+		quantity: "0x21e19e0c9bab2400000",
 		pool: "0x07687e702b410Fa43f4cB4Af7FA097918ffD2730",
 	},
 	{
 		asset: DEPOSIT_ASSETS.DAI,
-		quantity: 100_000_000_000_000_000_000_000n,
+		quantity: "0x152d02c7e14af6800000",
 		pool: "0x23773E65ed146A459791799d01336DB287f25334",
 	},
 	{
 		asset: DEPOSIT_ASSETS.cDAI,
-		quantity: 500_000_000_000n,
+		quantity: "0x746a528800",
 		pool: "0x22aaA7720ddd5388A3c0A3333430953C68f1849b",
 	},
 	{
 		asset: DEPOSIT_ASSETS.cDAI,
-		quantity: 5_000_000_000_000n,
+		quantity: "0x48c27395000",
 		pool: "0x03893a7c7463AE47D46bc7f091665f1893656003",
 	},
 	{
 		asset: DEPOSIT_ASSETS.cDAI,
-		quantity: 50_000_000_000_000n,
+		quantity: "0x2d79883d2000",
 		pool: "0x2717c5e28cf931547B621a5dddb772Ab6A35B701",
 	},
 	{
 		asset: DEPOSIT_ASSETS.cDAI,
-		quantity: 500_000_000_000_000n,
+		quantity: "0x1c6bf52634000",
 		pool: "0xD21be7248e0197Ee08E0c20D4a96DEBdaC3D20Af",
 	},
 	{
 		asset: DEPOSIT_ASSETS.USDC,
-		quantity: 100_000_000n,
+		quantity: "0x5f5e100",
 		pool: "0xd96f2B1c14Db8458374d9Aca76E26c3D18364307",
 	},
 	{
 		asset: DEPOSIT_ASSETS.USDC,
-		quantity: 1_000_000_000n,
+		quantity: "0x3b9aca00",
 		pool: "0x4736dCf1b7A3d580672CcE6E7c65cd5cc9cFBa9D",
 	},
 	{
 		asset: DEPOSIT_ASSETS.USDT,
-		quantity: 100_000_000n,
+		quantity: "0x5f5e100",
 		pool: "0x169AD27A470D064DEDE56a2D3ff727986b15D52B",
 	},
 	{
 		asset: DEPOSIT_ASSETS.USDT,
-		quantity: 1_000_000_000n,
+		quantity: "0x3b9aca00",
 		pool: "0x0836222F2B2B24A3F36f98668Ed8F0B38D1a872f",
 	},
 	{
 		asset: DEPOSIT_ASSETS.WBTC,
-		quantity: 10_000_000n,
+		quantity: "0x989680",
 		pool: "0x178169B423a011fff22B9e3F3abeA13414dDD0F1",
 	},
 	{
 		asset: DEPOSIT_ASSETS.WBTC,
-		quantity: 100_000_000n,
+		quantity: "0x5f5e100",
 		pool: "0x610B717796ad172B316836AC95a2ffad065CeaB4",
 	},
 	{
 		asset: DEPOSIT_ASSETS.WBTC,
-		quantity: 1_000_000_000n,
+		quantity: "0x3b9aca00",
 		pool: "0xbB93e510BbCD0B7beb5A853875f9eC60275CF498",
 	},
 ];

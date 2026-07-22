@@ -1,7 +1,6 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
-import { numberToHex } from "@/utils";
 import { Token } from "@/components/token";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
@@ -23,7 +22,7 @@ export function TornadoCashDepositV3Description(props: { event: TornadoCashDepos
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">deposited</Action>
-			<Token chain={chain} address={pool.asset} quantity={numberToHex(pool.quantity)} />
+			<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
 			<span>to Tornado Cash</span>
 			<Account chain={chain} address={props.event.pool_address} />
 		</Description>
@@ -43,7 +42,7 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Deposited</Action>
-				<Token chain={chain} address={pool.asset} quantity={numberToHex(pool.quantity)} />
+				<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
 				<span>to Tornado Cash</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
@@ -56,7 +55,7 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Tornado Cash deposit</Action>
 				<span>of</span>
-				<Token chain={chain} address={pool.asset} quantity={numberToHex(pool.quantity)} />
+				<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>
@@ -69,7 +68,7 @@ export function TornadoCashDepositV3AccountDescription(props: { event: TornadoCa
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="called">Processed deposit</Action>
 				<span>of</span>
-				<Token chain={chain} address={pool.asset} quantity={numberToHex(pool.quantity)} />
+				<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
 				<span>to Tornado Cash</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
