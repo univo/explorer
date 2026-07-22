@@ -10,6 +10,11 @@ import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
+// TODO
+// Events based on a interpretting a single transaction should have a unique logIndex that indicates this.
+// This allow us to identify it and not show its "logIndex" on the transactions view page. It also indicates
+// the event has less specificity than the other and should be ordered first
+
 export interface TornadoCashDepositV3 {
 	tag: "tornado_cash_deposit_v3";
 	id: string;
