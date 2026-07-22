@@ -183,7 +183,10 @@ univo.event({
 function getTornadoCashDeposit(to: `0x${string}`, input: `0x${string}`) {
 	if (input.startsWith(directDepositSelector)) {
 		const pool = getPool(to);
-		if (pool === undefined) return null;
+
+		if (pool === undefined) {
+			return null;
+		}
 
 		const decoded = decodeFunctionData({ abi: [directDepositAbi], data: input });
 
@@ -191,12 +194,16 @@ function getTornadoCashDeposit(to: `0x${string}`, input: `0x${string}`) {
 	}
 
 	if (input.startsWith(proxyDepositSelector)) {
-		if (isDepositProxy(to) === false) return null;
+		if (isDepositProxy(to) === false) {
+			return null;
+		}
 
 		const decoded = decodeFunctionData({ abi: [proxyDepositAbi], data: input });
 		const pool = getPool(decoded.args[0]);
 
-		if (pool === undefined) return null;
+		if (pool === undefined) {
+			return null;
+		}
 
 		return { pool, commitment: decoded.args[1] };
 	}
