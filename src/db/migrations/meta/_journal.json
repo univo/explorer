@@ -8,6 +8,13 @@
       "when": 1784682948638,
       "tag": "0000_special_triathlon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784702440701,
+      "tag": "0001_moaning_human_fly",
+      "breakpoints": true
     }
   ]
 }
