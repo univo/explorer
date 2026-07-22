@@ -19,7 +19,7 @@ export interface ContractDeploymentV3 {
 	deployer_address: `0x${string}`;
 }
 
-const table = pgTable("event_contract_deployment_v3", {
+export const table = pgTable("event_contract_deployment_v3", {
 	id: id().primaryKey(),
 	success: boolean().notNull(),
 	contract_address: hex().notNull(),

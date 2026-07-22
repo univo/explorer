@@ -20,7 +20,7 @@ export interface NativeTransferV3 {
 	from_address: `0x${string}`;
 }
 
-const table = pgTable("event_native_transfer_v3", {
+export const table = pgTable("event_native_transfer_v3", {
 	id: id().primaryKey(),
 	quantity: hex().notNull(),
 	to_address: hex().notNull(),

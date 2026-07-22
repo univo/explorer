@@ -20,7 +20,7 @@ export interface InputDataMessageV3 {
 	from_address: `0x${string}`;
 }
 
-const table = pgTable("event_input_data_message_v3", {
+export const table = pgTable("event_input_data_message_v3", {
 	id: id().primaryKey(),
 	message: text().notNull(),
 	success: boolean().notNull(),

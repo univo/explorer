@@ -21,7 +21,7 @@ export interface EnsNameRegisteredV3 {
 	expires_at: `0x${string}`;
 }
 
-const table = pgTable("event_ens_name_registered_v3", {
+export const table = pgTable("event_ens_name_registered_v3", {
 	id: id().primaryKey(),
 	name: text().notNull(),
 	cost_eth: hex().notNull(),

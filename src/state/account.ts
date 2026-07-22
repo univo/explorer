@@ -27,7 +27,7 @@ export interface Account {
 	"erc20.decimals"?: string;
 }
 
-const table = pgTable(
+export const table = pgTable(
 	"state_accounts_v3",
 	{
 		chain: integer().notNull(),

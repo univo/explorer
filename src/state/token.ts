@@ -17,7 +17,7 @@ export interface Token {
 	decimals: number | null;
 }
 
-const table = pgTable(
+export const table = pgTable(
 	"state_tokens_v1",
 	{
 		name: text(),

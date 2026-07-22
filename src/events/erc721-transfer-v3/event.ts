@@ -21,7 +21,7 @@ export interface Erc721TransferV3 {
 	token_address: `0x${string}`;
 }
 
-const table = pgTable("event_erc721_transfer_v3", {
+export const table = pgTable("event_erc721_transfer_v3", {
 	id: id().primaryKey(),
 	token_id: hex().notNull(),
 	to_address: hex().notNull(),

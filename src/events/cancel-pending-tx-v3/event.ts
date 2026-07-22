@@ -19,7 +19,7 @@ export interface CancelPendingTxV3 {
 	nonce: `0x${string}`;
 }
 
-const table = pgTable("event_cancel_pending_tx_v3", {
+export const table = pgTable("event_cancel_pending_tx_v3", {
 	id: id().primaryKey(),
 	nonce: hex().notNull(),
 	success: boolean().notNull(),

@@ -15,7 +15,7 @@ type Index = {
 	event_id: string;
 };
 
-const table = pgTable(
+export const table = pgTable(
 	"index_account_v3",
 	{
 		account: hex().notNull(),

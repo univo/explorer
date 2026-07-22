@@ -21,7 +21,7 @@ export interface Erc721ApprovalV3 {
 	token_address: `0x${string}`;
 }
 
-const table = pgTable("event_erc721_approval_v3", {
+export const table = pgTable("event_erc721_approval_v3", {
 	id: id().primaryKey(),
 	token_id: hex().notNull(),
 	success: boolean().notNull(),

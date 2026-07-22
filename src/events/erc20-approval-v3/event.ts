@@ -21,7 +21,7 @@ export interface Erc20ApprovalV3 {
 	token_address: `0x${string}`;
 }
 
-const table = pgTable("event_erc20_approval_v3", {
+export const table = pgTable("event_erc20_approval_v3", {
 	id: id().primaryKey(),
 	quantity: hex().notNull(),
 	success: boolean().notNull(),
