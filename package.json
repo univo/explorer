@@ -15,7 +15,8 @@
 		"deploy:staging": "npm run build:staging && wrangler deploy",
 		"deploy:production": "npm run build:production && wrangler deploy",
 		"tail:staging": "wrangler tail --env staging",
-		"tail:production": "wrangler tail --env production"
+		"tail:production": "wrangler tail --env production",
+		"postinstall": "patch-package"
 	},
 	"dependencies": {
 		"@ponder/utils": "0.2.16",
@@ -55,6 +56,7 @@
 		"@vitejs/plugin-rsc": "0.5.24",
 		"dotenv": "17.4.2",
 		"drizzle-kit": "0.31.10",
+		"patch-package": "8.0.1",
 		"typescript": "^5.7.2",
 		"vite": "^7.1.7",
 		"vite-tsconfig-paths": "^5.1.4",
