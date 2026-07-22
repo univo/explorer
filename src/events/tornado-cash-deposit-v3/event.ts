@@ -133,13 +133,13 @@ export const event = univo.event({
 						target: table.id,
 						set: {
 							success: sql.raw(`excluded.${table.success.name}`),
-							commitment: sql.raw(`excluded.${table.commitment.name}`),
 							quantity: sql.raw(`excluded.${table.quantity.name}`),
-							asset_symbol: sql.raw(`excluded.${table.asset_symbol.name}`),
-							asset_decimals: sql.raw(`excluded.${table.asset_decimals.name}`),
+							commitment: sql.raw(`excluded.${table.commitment.name}`),
 							to_address: sql.raw(`excluded.${table.to_address.name}`),
+							asset_symbol: sql.raw(`excluded.${table.asset_symbol.name}`),
 							from_address: sql.raw(`excluded.${table.from_address.name}`),
 							pool_address: sql.raw(`excluded.${table.pool_address.name}`),
+							asset_decimals: sql.raw(`excluded.${table.asset_decimals.name}`),
 						},
 					});
 			}
