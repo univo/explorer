@@ -1,11 +1,10 @@
 import { getAddress } from "viem";
 import { asc, inArray, sql } from "drizzle-orm";
-import { boolean, pgTable } from "drizzle-orm/pg-core";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
 import { nonNullable } from "@/utils";
-import { hex, id } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
@@ -18,13 +17,6 @@ export interface ContractDeploymentV3 {
 	contract_address: `0x${string}`;
 	deployer_address: `0x${string}`;
 }
-
-export const table = pgTable("event_contract_deployment_v3", {
-	id: id().primaryKey(),
-	success: boolean().notNull(),
-	contract_address: hex().notNull(),
-	deployer_address: hex().notNull(),
-});
 
 export const event = univo.event({
 	id: "contract_deployment_v3",

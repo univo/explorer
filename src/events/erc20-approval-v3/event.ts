@@ -1,10 +1,9 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { boolean, pgTable } from "drizzle-orm/pg-core";
 import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { hex, id } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -20,15 +19,6 @@ export interface Erc20ApprovalV3 {
 	spender_address: `0x${string}`;
 	token_address: `0x${string}`;
 }
-
-export const table = pgTable("event_erc20_approval_v3", {
-	id: id().primaryKey(),
-	quantity: hex().notNull(),
-	success: boolean().notNull(),
-	owner_address: hex().notNull(),
-	spender_address: hex().notNull(),
-	token_address: hex().notNull(),
-});
 
 const abi = parseAbiItem("event Approval(address indexed owner, address indexed spender, uint256 value)");
 

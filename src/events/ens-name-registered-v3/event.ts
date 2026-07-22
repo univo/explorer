@@ -1,10 +1,9 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 import { decodeEventLog, getAddress, toEventSelector } from "viem";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { hex, id } from "@/db/types";
 import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -20,15 +19,6 @@ export interface EnsNameRegisteredV3 {
 	owner_address: `0x${string}`;
 	expires_at: `0x${string}`;
 }
-
-export const table = pgTable("event_ens_name_registered_v3", {
-	id: id().primaryKey(),
-	name: text().notNull(),
-	cost_eth: hex().notNull(),
-	expires_at: hex().notNull(),
-	success: boolean().notNull(),
-	owner_address: hex().notNull(),
-});
 
 const v2 = {
 	type: "event",

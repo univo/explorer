@@ -1,10 +1,9 @@
 import { getAddress } from "viem";
 import { asc, inArray, sql } from "drizzle-orm";
-import { boolean, pgTable } from "drizzle-orm/pg-core";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { hex, id } from "@/db/types";
 import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -19,14 +18,6 @@ export interface NativeTransferV3 {
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
 }
-
-export const table = pgTable("event_native_transfer_v3", {
-	id: id().primaryKey(),
-	quantity: hex().notNull(),
-	to_address: hex().notNull(),
-	success: boolean().notNull(),
-	from_address: hex().notNull(),
-});
 
 export const event = univo.event({
 	id: "native_transfer_v3",

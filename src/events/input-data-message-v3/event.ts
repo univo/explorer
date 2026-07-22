@@ -1,10 +1,9 @@
 import { getAddress } from "viem";
 import { asc, inArray, sql } from "drizzle-orm";
-import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { hex, id } from "@/db/types";
 import { nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -19,14 +18,6 @@ export interface InputDataMessageV3 {
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
 }
-
-export const table = pgTable("event_input_data_message_v3", {
-	id: id().primaryKey(),
-	message: text().notNull(),
-	success: boolean().notNull(),
-	to_address: hex().notNull(),
-	from_address: hex().notNull(),
-});
 
 export const event = univo.event({
 	id: "input_data_message_v3",

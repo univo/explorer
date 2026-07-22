@@ -1,10 +1,9 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { boolean, pgTable } from "drizzle-orm/pg-core";
 import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 
+import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { tables } from "@/constants";
-import { hex, id } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -20,15 +19,6 @@ export interface Erc721TransferV3 {
 	from_address: `0x${string}`;
 	token_address: `0x${string}`;
 }
-
-export const table = pgTable("event_erc721_transfer_v3", {
-	id: id().primaryKey(),
-	token_id: hex().notNull(),
-	to_address: hex().notNull(),
-	success: boolean().notNull(),
-	from_address: hex().notNull(),
-	token_address: hex().notNull(),
-});
 
 const abi = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)");
 
