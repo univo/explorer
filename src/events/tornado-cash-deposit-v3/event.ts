@@ -75,10 +75,15 @@ export const event = univo.event({
 		return block.eth_getBlockByNumber.transactions
 			.map((tx) => {
 				try {
-					if (tx.to === null) return null;
+					if (tx.to === null) {
+						return null;
+					}
 
 					const deposit = getTornadoCashDeposit(tx.to, tx.input);
-					if (deposit === null) return null;
+
+					if (deposit === null) {
+						return null;
+					}
 
 					const id = createId({
 						logIndex: "0x0",
