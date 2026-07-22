@@ -1,7 +1,5 @@
-import { join } from "node:path";
 import { numberToHex } from "viem";
 import { http } from "univo/transport";
-import { promises as fs } from "node:fs";
 import type { IndexerRpc } from "univo/rpc";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
@@ -14,15 +12,6 @@ import { raise, retry } from "../utils";
 export const test_client = http<IndexerRpc>("http://localhost:3000/api/univo", {
 	signingKey: process.env.UNIVO_SIGNING_KEY,
 });
-
-const client = http("http://localhost:3000/api/univo", { signingKey: process.env.UNIVO_SIGNING_KEY });
-
-export async function test_writeEvents(block: Block, event: string) {
-	return await client.request({
-		method: "private_writeEvents",
-		params: [{ events: [event], blocks: [block] }],
-	});
-}
 
 async function test_rpc(opts: { method: string; params: any[] }) {
 	const res = await fetch(process.env.ETHEREUM_URL, {
@@ -44,18 +33,6 @@ type Block = {
 };
 
 export async function test_getBlock(block: { chain: number; block_number: number }) {
-	const cacheDir = ".blocks";
-	const cacheFile = join(cacheDir, `${block.chain}-${block.block_number}.json`);
-
-	// Try to read from cache first
-	try {
-		const cachedData = await fs.readFile(cacheFile, "utf-8");
-		return JSON.parse(cachedData) as Block;
-	} catch {
-		// Cache miss or invalid cache, continue to fetch from network
-	}
-
-	// Fetch from network
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
 		retry(() => test_rpc({ method: "eth_getBlockByNumber", params: [numberToHex(block.block_number), true] }), 4),
 		retry(() => test_rpc({ method: "eth_getBlockReceipts", params: [numberToHex(block.block_number)] }), 4),
@@ -66,18 +43,5 @@ export async function test_getBlock(block: { chain: number; block_number: number
 
 	const blockData = { eth_chainId: numberToHex(block.chain), eth_getBlockByNumber, eth_getBlockReceipts } as Block;
 
-	// Save to cache (non-blocking)
-	saveToCache(cacheDir, cacheFile, blockData);
-
 	return blockData;
-}
-
-async function saveToCache(cacheDir: string, cacheFile: string, blockData: Block) {
-	try {
-		await fs.mkdir(cacheDir, { recursive: true });
-		await fs.writeFile(cacheFile, JSON.stringify(blockData, null, 2), "utf-8");
-	} catch (error) {
-		// Log cache write error but don't fail the function
-		console.warn("Failed to write block to cache:", error);
-	}
 }
