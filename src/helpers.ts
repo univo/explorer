@@ -117,7 +117,7 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
 	});
 }
 
-export function formatTokenAmount(quantity: `0x${string}`, decimals: number) {
+export function formatTokenAmount(quantity: `0x${string}` | bigint, decimals: number) {
 	const quantityAsInteger = Number(quantity);
 	const quantityAsString = String(quantityAsInteger);
 	const quantityAsNumber = quantityAsInteger / 10 ** decimals;

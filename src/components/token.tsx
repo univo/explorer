@@ -8,7 +8,7 @@ import { getToken } from "@/state/token";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
 
-export async function Token(props: { chain: number; address: `0x${string}`; quantity?: `0x${string}` }) {
+export async function Token(props: { chain: number; address: `0x${string}`; quantity?: `0x${string}` | bigint }) {
 	if (props.chain === 1 && isAddressEqual(props.address, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")) {
 		return (
 			<Fragment>
@@ -50,7 +50,7 @@ export async function Token(props: { chain: number; address: `0x${string}`; quan
 	return <Account chain={props.chain} address={props.address} />;
 }
 
-function TokenQuantity(props: { decimals: number | null; quantity: `0x${string}` | undefined }) {
+function TokenQuantity(props: { decimals: number | null; quantity: `0x${string}` | bigint | undefined }) {
 	if (!props.quantity) {
 		return null;
 	}
