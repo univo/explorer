@@ -42,7 +42,7 @@ test.concurrent("tornado_cash_withdrawal_v3 direct pool withdrawal", async ({ ex
 		  {
 		    "fee": "0x00",
 		    "from_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
-		    "id": "5df7e34a008b1df8003300000000010013",
+		    "id": "5df7e34a008b1df8003300000000010012",
 		    "pool_address": "0x12D66f87A04A9E220743712cE6d9bB1B5616B8Fc",
 		    "recipient_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
 		    "relayer_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
@@ -93,7 +93,7 @@ test.concurrent("tornado_cash_withdrawal_v3 proxy withdrawal", async ({ expect }
 		  {
 		    "fee": "0x016ed5e01c487000",
 		    "from_address": "0x03EbD2ea2B9F23669C9Eb05C2a1a39f99CBDf372",
-		    "id": "6026c1c700b4b6f1010c00000000010013",
+		    "id": "6026c1c700b4b6f1010c00000000010012",
 		    "pool_address": "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936",
 		    "recipient_address": "0x3f20e968a304Bc825Aa1a45228FdfD2D3D90c6Af",
 		    "relayer_address": "0xDdbfCEd30862c0105673B38dFf5e941cf48830e4",
