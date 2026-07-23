@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { isAddressEqual } from "viem";
 
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
@@ -8,19 +9,35 @@ import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
 
 export async function Token(props: { chain: number; address: `0x${string}`; quantity?: `0x${string}` }) {
+	if (props.chain === 1 && isAddressEqual(props.address, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")) {
+		return (
+			<Fragment>
+				<TokenQuantity quantity={props.quantity} decimals={18} />
+
+				<Hoverable id={`${props.chain}:${props.address}`}>
+					<Description>
+						<TokenImage image="https://etherscan.io/token/images/ether.png" />
+						<span>Ether</span>
+						<span className="text-gray-500 select-all">(ETH)</span>
+					</Description>
+				</Hoverable>
+			</Fragment>
+		);
+	}
+
 	const token = await getToken({ chain: props.chain, address: props.address });
 
 	if (token.name && token.symbol) {
 		return (
 			<Fragment>
-				<TokenQuantity decimals={token.decimals} quantity={props.quantity} />
+				<TokenQuantity quantity={props.quantity} decimals={token.decimals} />
 
 				<AddViewButton view={props.address} className="select-none cursor-pointer touch-none">
-					<Hoverable id={props.chain + props.address}>
+					<Hoverable id={`${props.chain}:${props.address}`}>
 						<Description>
 							<TokenImage image={token.image} />
 							<span>{token.name}</span>
-							<span className="text-gray-500">({token.symbol})</span>
+							<span className="text-gray-500 select-all">({token.symbol})</span>
 						</Description>
 					</Hoverable>
 				</AddViewButton>
