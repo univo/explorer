@@ -9,8 +9,6 @@ import { test_getBlock, test_client } from "@/tests/utils";
 test.concurrent("tornado_cash_withdrawal_v3 direct pool withdrawal", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 9117176 });
 
-	console.log(event.handler(block));
-
 	await event.storage.delete(event.handler(block));
 
 	const ids = event.handler(block).map((event) => event.id);
@@ -56,8 +54,6 @@ test.concurrent("tornado_cash_withdrawal_v3 direct pool withdrawal", async ({ ex
 
 test.concurrent("tornado_cash_withdrawal_v3 proxy withdrawal", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 11843313 });
-
-	console.log(event.handler(block));
 
 	await event.storage.delete(event.handler(block));
 
