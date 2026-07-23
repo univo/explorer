@@ -8,6 +8,7 @@ import { getCancelPendingTxV3 } from "@/events/cancel-pending-tx-v3/event";
 import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
 import { getContractDeploymentV3 } from "@/events/contract-deployment-v3/event";
+import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -26,6 +27,7 @@ export async function getEventsForIds(ids: string[]) {
 		getCancelPendingTxV3(ids),
 		getErc721TransferV3(ids),
 		getErc721ApprovalV3(ids),
+		getTornadoCashWithdrawalV3(ids),
 	]);
 
 	const flat = events.flat(1);

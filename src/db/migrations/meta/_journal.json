@@ -15,6 +15,13 @@
       "when": 1784702440701,
       "tag": "0001_moaning_human_fly",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784783843944,
+      "tag": "0002_stiff_cammi",
+      "breakpoints": true
     }
   ]
 }

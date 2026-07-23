@@ -1,11 +1,11 @@
 import { isAddressEqual } from "viem";
 
+import { parseId } from "@/helpers";
+import { Token } from "@/components/token";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import type { NativeTransferV3 } from "./event";
-import { Hoverable } from "@/components/hoverable";
 import { ExclamationIcon } from "@/components/icons";
-import { formatTokenAmount, parseId } from "@/helpers";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
 
@@ -17,16 +17,7 @@ export function NativeTransferV3Description(props: { event: NativeTransferV3 }) 
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<span>{formatTokenAmount(props.event.quantity, 18)}</span>
-			<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
-				<Description>
-					<div className="rounded-full overflow-hidden size-4">
-						<img alt="" src="https://etherscan.io/token/images/ether.png" />
-					</div>
-					<span>Ether</span>
-					<span className="text-gray-500 select-all">(ETH)</span>
-				</Description>
-			</Hoverable>
+			<Token chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.quantity} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
@@ -41,16 +32,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<span>{formatTokenAmount(props.event.quantity, 18)}</span>
-				<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
-					<Description>
-						<div className="rounded-full overflow-hidden size-4">
-							<img alt="" src="https://etherscan.io/token/images/ether.png" />
-						</div>
-						<span>Ether</span>
-						<span className="text-gray-500 select-all">(ETH)</span>
-					</Description>
-				</Hoverable>
+				<Token chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.quantity} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -62,16 +44,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<span>{formatTokenAmount(props.event.quantity, 18)}</span>
-				<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
-					<Description>
-						<div className="rounded-full overflow-hidden size-4">
-							<img alt="" src="https://etherscan.io/token/images/ether.png" />
-						</div>
-						<span>Ether</span>
-						<span className="text-gray-500 select-all">(ETH)</span>
-					</Description>
-				</Hoverable>
+				<Token chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>
