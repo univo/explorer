@@ -34,4 +34,5 @@ export const tables = {
 	erc721_transfer_v2: 16,
 	erc721_approval_v2: 17,
 	tornado_cash_deposit_v1: 18,
+	tornado_cash_withdrawal_v1: 19,
 };

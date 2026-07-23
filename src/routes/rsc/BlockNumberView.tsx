@@ -23,6 +23,7 @@ import { InputDataMessageV3Description } from "@/events/input-data-message-v3/co
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3Description } from "@/events/contract-deployment-v3/component";
 import { TornadoCashDepositV3Description } from "@/events/tornado-cash-deposit-v3/component";
+import { TornadoCashWithdrawalV3Description } from "@/events/tornado-cash-withdrawal-v3/component";
 
 async function BlockNumberView(props: { number: number }) {
 	const [block, ids] = await Promise.all([
@@ -147,6 +148,10 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "tornado_cash_deposit_v3") {
 		return <TornadoCashDepositV3Description event={props.event} />;
+	}
+
+	if (props.event.tag === "tornado_cash_withdrawal_v3") {
+		return <TornadoCashWithdrawalV3Description event={props.event} />;
 	}
 }
 
