@@ -13,7 +13,8 @@ import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-
 // TODO
 // Events based on a interpretting a single transaction should have a unique logIndex that indicates this.
 // This allow us to identify it and not show its "logIndex" on the transactions view page. It also indicates
-// the event has less specificity than the other and should be ordered first
+// the event has less specificity than the other and should be ordered first. We could use this to disregard
+// events of more specificity. If there is a tx event we don't care about the log events.
 
 export interface TornadoCashDepositV3 {
 	tag: "tornado_cash_deposit_v3";
