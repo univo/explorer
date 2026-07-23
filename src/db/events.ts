@@ -1,6 +1,7 @@
 import { logger } from "@/utils";
 import { getErc20ApprovalV3 } from "@/events/erc20-approval-v3/event";
 import { getErc20TransferV3 } from "@/events/erc20-transfer-v3/event";
+import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
 import { getNativeTransferV3 } from "@/events/native-transfer-v3/event";
 import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
 import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
@@ -18,15 +19,16 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
-		getNativeTransferV3(ids),
+		getUsdcBlacklistV3(ids),
 		getErc20TransferV3(ids),
 		getErc20ApprovalV3(ids),
-		getInputDataMessageV3(ids),
-		getContractDeploymentV3(ids),
-		getEnsNameRegisteredV3(ids),
-		getCancelPendingTxV3(ids),
+		getNativeTransferV3(ids),
 		getErc721TransferV3(ids),
 		getErc721ApprovalV3(ids),
+		getCancelPendingTxV3(ids),
+		getInputDataMessageV3(ids),
+		getEnsNameRegisteredV3(ids),
+		getContractDeploymentV3(ids),
 		getTornadoCashWithdrawalV3(ids),
 	]);
 

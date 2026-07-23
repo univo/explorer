@@ -14,7 +14,8 @@ type Action =
 	| "registered"
 	| "bridged"
 	| "deployed"
-	| "cancelled";
+	| "cancelled"
+	| "blacklisted";
 
 type Color =
 	| "yellow" //
@@ -37,6 +38,7 @@ const colors: Record<Action, Color> = {
 	bridged: "red",
 	cancelled: "red",
 	revoked: "red",
+	blacklisted: "red",
 
 	called: "pink",
 
