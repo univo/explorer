@@ -2,13 +2,13 @@ import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
 import { Token } from "@/components/token";
+import { getTornadoCashPool } from "./event";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { TornadoCashWithdrawalV3 } from "./event";
 import type { Account as IAccount } from "@/state/account";
-import { getTornadoCashPool } from "@/events/tornado-cash-deposit-v3/event";
 
 export function TornadoCashWithdrawalV3Description(props: { event: TornadoCashWithdrawalV3 }) {
 	const chain = parseId(props.event.id).chainId;

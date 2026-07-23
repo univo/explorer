@@ -22,7 +22,6 @@ import { CancelPendingTxV3Description } from "@/events/cancel-pending-tx-v3/comp
 import { InputDataMessageV3Description } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3Description } from "@/events/contract-deployment-v3/component";
-import { TornadoCashDepositV3Description } from "@/events/tornado-cash-deposit-v3/component";
 import { TornadoCashWithdrawalV3Description } from "@/events/tornado-cash-withdrawal-v3/component";
 
 async function BlockNumberView(props: { number: number }) {
@@ -144,10 +143,6 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "erc721_approval_v3") {
 		return <Erc721ApprovalV3Description event={props.event} />;
-	}
-
-	if (props.event.tag === "tornado_cash_deposit_v3") {
-		return <TornadoCashDepositV3Description event={props.event} />;
 	}
 
 	if (props.event.tag === "tornado_cash_withdrawal_v3") {

@@ -24,7 +24,6 @@ import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
-import { TornadoCashDepositV3AccountDescription } from "@/events/tornado-cash-deposit-v3/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
 
 async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
@@ -171,10 +170,6 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 
 	if (props.event.tag === "erc721_approval_v3") {
 		return <Erc721ApprovalV3AccountDescription event={props.event} account={props.account} />;
-	}
-
-	if (props.event.tag === "tornado_cash_deposit_v3") {
-		return <TornadoCashDepositV3AccountDescription event={props.event} account={props.account} />;
 	}
 
 	if (props.event.tag === "tornado_cash_withdrawal_v3") {
