@@ -15,6 +15,7 @@ import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
+import { UsdcBlacklistV3AccountDescription } from "@/events/usdc-blacklist-v3/component";
 import { Erc20ApprovalV3AccountDescription } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/component";
 import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
@@ -174,6 +175,10 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 
 	if (props.event.tag === "tornado_cash_withdrawal_v3") {
 		return <TornadoCashWithdrawalV3AccountDescription event={props.event} account={props.account} />;
+	}
+
+	if (props.event.tag === "usdc_blacklist_v3") {
+		return <UsdcBlacklistV3AccountDescription event={props.event} account={props.account} />;
 	}
 }
 

@@ -14,6 +14,8 @@ export const inverted_chains = {
 
 // Similarly we use a 2 byte unsigned integer to store table identifiers
 
+// TODO: Move and update to actual table names
+
 export const tables = {
 	native_transfer_v1: 0,
 	erc20_transfer_v1: 1,
@@ -34,4 +36,5 @@ export const tables = {
 	erc721_transfer_v2: 16,
 	erc721_approval_v2: 17,
 	tornado_cash_withdrawal_v1: 18,
+	usdc_blacklist_v1: 19,
 };
