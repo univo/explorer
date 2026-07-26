@@ -4,6 +4,7 @@ import { univo } from "@/lib/univo";
 
 // We import every event here so that we guarantee all the events will be picked up by the indexer.
 
+import "@/events/usdc-blacklist-v3/event";
 import "@/events/erc20-transfer-v3/event";
 import "@/events/erc20-approval-v3/event";
 import "@/events/erc721-approval-v3/event";
