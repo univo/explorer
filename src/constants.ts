@@ -1,14 +1,16 @@
+export type Chain = 1;
+
 // Responsible for mapping the full set of supported chain ids with our internal chain id representation.
 // We use an internal representation so that we can use the minimum number of bytes to represent a chain id.
 // E.g. in our id creation we use a 2 byte unsigned integer allowing 65,535 chains
 
-export const chains = {
+export const chains: Record<Chain, number> = {
 	1: 1,
 };
 
 // Reverse look up table for chains to convert back
 
-export const inverted_chains = {
+export const chainsReversed: Record<number, Chain> = {
 	1: 1,
 };
 

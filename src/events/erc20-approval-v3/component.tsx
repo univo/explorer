@@ -1,7 +1,7 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
-import { Token } from "@/components/token";
+import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import type { Erc20ApprovalV3 } from "./event";
@@ -25,7 +25,7 @@ export function Erc20ApprovalV3Description(props: { event: Erc20ApprovalV3 }) {
 				<span>for</span>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to spend any</span>
-				<Token chain={chain} address={props.event.token_address} />
+				<Erc20 chain={chain} address={props.event.token_address} />
 			</Description>
 		);
 	}
@@ -38,7 +38,7 @@ export function Erc20ApprovalV3Description(props: { event: Erc20ApprovalV3 }) {
 			<Account chain={chain} address={props.event.spender_address} />
 			<span>to spend</span>
 			{all === true && <span>all</span>}
-			<Token chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} />
+			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} />
 		</Description>
 	);
 }
@@ -61,7 +61,7 @@ export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
 				{revoked === false && all === true && <span>all</span>}
-				<Token chain={chain} address={props.event.token_address} quantity={quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
 			</Description>
 		);
 	}
@@ -75,7 +75,7 @@ export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
 				{revoked === false && all === true && <span>all</span>}
-				<Token chain={chain} address={props.event.token_address} quantity={quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
 			</Description>
 		);
 	}

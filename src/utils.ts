@@ -151,3 +151,7 @@ export function numberToHex(number: number | bigint) {
 export function isHexEqual(a: `0x${string}`, b: `0x${string}`) {
 	return a.toLowerCase() === b.toLowerCase();
 }
+
+export type MakeNonNullable<T, K extends keyof T> = Omit<T, K> & {
+	[P in K]: NonNullable<T[P]>;
+};

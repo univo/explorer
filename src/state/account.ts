@@ -1,30 +1,38 @@
 import { getAddress } from "viem";
+import { sql } from "drizzle-orm";
 import DataLoader from "dataloader";
+import { waitUntil } from "cloudflare:workers";
 import { boolean, integer, pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 
 import { inTuple } from "@/db/types";
-import { capitalize, isHexEqual } from "@/utils";
+import { getClient } from "@/clients";
+import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
+import { capitalize, defined, iife, isHexEqual, type MakeNonNullable } from "@/utils";
 
 export interface Account {
 	chain: number;
 	address: `0x${string}`;
 
-	is_contract?: boolean;
-	owner_project?: string;
-	contract_name?: string;
-	code_compiler?: string;
-	code_language?: string;
-	deployment_tx?: string;
-	deployer_block?: string;
-	usage_category?: string;
-	deployer_address?: string;
-	source_code_verified?: string;
+	is_contract: boolean | undefined;
+	owner_project: string | undefined;
+	contract_name: string | undefined;
+	code_compiler: string | undefined;
+	code_language: string | undefined;
+	deployment_tx: string | undefined;
+	deployer_block: string | undefined;
+	usage_category: string | undefined;
+	deployer_address: string | undefined;
+	source_code_verified: string | undefined;
 
-	erc_type?: string;
-	"erc20.name"?: string;
-	"erc20.symbol"?: string;
-	"erc20.decimals"?: string;
+	erc_type: string | undefined;
+
+	"erc20.name": string | undefined;
+	"erc20.symbol": string | undefined;
+	"erc20.decimals": string | undefined;
+
+	"erc721.name": string | undefined;
+	"erc721.symbol": string | undefined;
 }
 
 export const table = pgTable(
@@ -46,6 +54,8 @@ export const table = pgTable(
 		"erc20.name": text("erc20.name"),
 		"erc20.symbol": text("erc20.symbol"),
 		"erc20.decimals": text("erc20.decimals"),
+		"erc721.name": text("erc721.name"),
+		"erc721.symbol": text("erc721.symbol"),
 	},
 	(table) => [
 		primaryKey({
@@ -54,18 +64,18 @@ export const table = pgTable(
 	],
 );
 
-const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account | null>(
+const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Account | null>(
 	async (accounts) => {
-		if (accounts.length === 0) return [];
+		if (accounts.length === 0) {
+			return [];
+		}
 
-		// 1. Clear the loader cache to ensure fresh data
-		loader.clearAll();
+		// Determine unique accounts
 
-		// 2. Determine unique accounts
 		const unique: Record<string, true> = {};
 
 		const filtered = accounts.filter((account) => {
-			const key = [account.chain, account.address.toLowerCase()].join(":");
+			const key = [account.chain, getAddress(account.address)].join(":");
 
 			if (unique[key]) {
 				return false;
@@ -76,7 +86,8 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 			return true;
 		});
 
-		// 3. Fetch accounts
+		// Fetch accounts
+
 		const client = await createPostgresClient();
 
 		const rows = await client
@@ -85,7 +96,7 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 			.where(
 				inTuple(
 					[table.chain, table.address],
-					filtered.map((account) => [account.chain, account.address.toLowerCase()]),
+					filtered.map((account) => [account.chain, getAddress(account.address)]),
 				),
 			);
 
@@ -113,6 +124,8 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 				"erc20.name": row["erc20.name"] ?? undefined,
 				"erc20.symbol": row["erc20.symbol"] ?? undefined,
 				"erc20.decimals": row["erc20.decimals"] ?? undefined,
+				"erc721.name": row["erc721.name"] ?? undefined,
+				"erc721.symbol": row["erc721.symbol"] ?? undefined,
 			};
 
 			return account;
@@ -125,13 +138,133 @@ const loader = new DataLoader<{ chain: number; address: `0x${string}` }, Account
 	},
 );
 
-export async function getAccount(opts: { chain: number; address: `0x${string}` }) {
+export async function getAccount(opts: { chain: Chain; address: `0x${string}` }) {
 	return await loader.load(opts);
+}
+
+// We can call this function when we are expecting an erc721 compatible account. We first attempt to load
+// the erc721 related information from storage, only if that information does not exist do we load it from
+// onchain and write it to storage
+
+type Erc721Account = MakeNonNullable<
+	Account,
+	"is_contract" | "contract_name" | "erc_type" | "erc721.name" | "erc721.symbol"
+>;
+
+export async function getErc721(opts: { chain: Chain; address: `0x${string}` }): Promise<Erc721Account> {
+	const account = await getAccount({ chain: opts.chain, address: opts.address });
+
+	if (
+		defined(account) &&
+		defined(account.erc_type) &&
+		defined(account.is_contract) &&
+		defined(account.contract_name) &&
+		defined(account["erc721.name"]) &&
+		defined(account["erc721.symbol"])
+	) {
+		return {
+			...account,
+			erc_type: account.erc_type,
+			is_contract: account.is_contract,
+			contract_name: account.contract_name,
+			"erc721.name": account["erc721.name"],
+			"erc721.symbol": account["erc721.symbol"],
+		};
+	}
+
+	// Load name and symbol
+
+	const [name, symbol] = await Promise.all([
+		getClient(opts.chain).readContract({
+			functionName: "name",
+			address: opts.address,
+			abi: [
+				{
+					inputs: [],
+					name: "name",
+					type: "function",
+					stateMutability: "view",
+					outputs: [{ type: "string" }],
+				},
+			],
+		}),
+		getClient(opts.chain).readContract({
+			address: opts.address,
+			functionName: "symbol",
+			abi: [
+				{
+					inputs: [],
+					name: "symbol",
+					type: "function",
+					stateMutability: "view",
+					outputs: [{ type: "string" }],
+				},
+			],
+		}),
+	]);
+
+	// Upsert new contract information to accounts table
+
+	waitUntil(
+		iife(async () => {
+			const client = await createPostgresClient();
+
+			await client
+				.insert(table)
+				.values({
+					chain: opts.chain,
+					address: opts.address,
+
+					is_contract: true,
+					contract_name: name,
+					"erc721.name": name,
+					erc_type: '["erc721"]',
+					"erc721.symbol": symbol,
+				})
+				.onConflictDoUpdate({
+					target: [table.chain, table.address],
+					set: {
+						erc_type: sql.raw(`excluded.${table.erc_type.name}`),
+						is_contract: sql.raw(`excluded.${table.is_contract.name}`),
+						contract_name: sql.raw(`excluded.${table.contract_name.name}`),
+						"erc721.name": sql`excluded.${sql.identifier(table["erc721.name"].name)}`,
+						"erc721.symbol": sql`excluded.${sql.identifier(table["erc721.symbol"].name)}`,
+					},
+				});
+		}),
+	);
+
+	return {
+		chain: opts.chain,
+		address: getAddress(opts.address),
+
+		is_contract: true,
+		contract_name: name,
+		"erc721.name": name,
+		erc_type: '["erc721"]',
+		"erc721.symbol": symbol,
+
+		"erc20.name": undefined,
+		code_compiler: undefined,
+		code_language: undefined,
+		deployment_tx: undefined,
+		owner_project: undefined,
+		deployer_block: undefined,
+		"erc20.symbol": undefined,
+		usage_category: undefined,
+		"erc20.decimals": undefined,
+		deployer_address: undefined,
+		source_code_verified: undefined,
+	};
 }
 
 export function getAccountName(account: Account) {
 	if (account["erc20.name"] && account["erc20.symbol"]) {
 		return `${account["erc20.name"]} (${capitalize(account["erc20.symbol"], { mode: "all" })})`;
+	}
+
+	if (account["erc721.name"] && account["erc721.symbol"]) {
+		return `${account["erc721.name"]} (${capitalize(account["erc721.symbol"], { mode: "all" })})`;
 	}
 
 	if (account.owner_project && account["erc20.symbol"]) {

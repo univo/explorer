@@ -2,6 +2,7 @@ import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
+import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import type { Erc721ApprovalV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
@@ -19,8 +20,7 @@ export function Erc721ApprovalV3Description(props: { event: Erc721ApprovalV3 }) 
 				<Account chain={chain} address={props.event.owner_address} />
 				<Action type="revoked">revoked approval</Action>
 				<span>for</span>
-				<Account chain={chain} address={props.event.token_address} />
-				<span>#{BigInt(props.event.token_id)}</span>
+				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>to be transferred</span>
 			</Description>
 		);
@@ -33,8 +33,7 @@ export function Erc721ApprovalV3Description(props: { event: Erc721ApprovalV3 }) 
 			<Action type="approved">approved</Action>
 			<Account chain={chain} address={props.event.spender_address} />
 			<span>to transfer</span>
-			<Account chain={chain} address={props.event.token_address} />
-			<span>#{BigInt(props.event.token_id)}</span>
+			<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 		</Description>
 	);
 }
@@ -50,8 +49,7 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="revoked">Revoked approval</Action>
 					<span>for</span>
-					<Account chain={chain} address={props.event.token_address} />
-					<span>#{BigInt(props.event.token_id)}</span>
+					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>to be transferred</span>
 				</Description>
 			);
@@ -63,8 +61,7 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 				<Action type="approved">Approved</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to transfer</span>
-				<Account chain={chain} address={props.event.token_address} />
-				<span>#{BigInt(props.event.token_id)}</span>
+				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 			</Description>
 		);
 	}
@@ -77,8 +74,7 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 				<span>from</span>
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>to transfer</span>
-				<Account chain={chain} address={props.event.token_address} />
-				<span>#{BigInt(props.event.token_id)}</span>
+				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 			</Description>
 		);
 	}

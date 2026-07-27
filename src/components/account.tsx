@@ -1,13 +1,14 @@
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
+import type { Chain } from "@/constants";
 import { getAccount, getAccountName } from "@/state/account";
 
-export async function Account(props: { chain: number; address: `0x${string}` }) {
+export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 	const account = await getAccount({ chain: props.chain, address: props.address });
 
 	if (account) {
 		return (
-			<Hoverable id={props.chain + props.address}>
+			<Hoverable id={`${props.chain}:${props.address}`}>
 				<AddViewButton view={props.address} className="select-none cursor-pointer capitalize">
 					{getAccountName(account)}
 				</AddViewButton>
@@ -16,7 +17,7 @@ export async function Account(props: { chain: number; address: `0x${string}` }) 
 	}
 
 	return (
-		<Hoverable id={props.chain + props.address}>
+		<Hoverable id={`${props.chain}:${props.address}`}>
 			<AddViewButton
 				view={props.address}
 				className="select-none cursor-pointer truncate inline-block align-top w-18 lg:w-24"

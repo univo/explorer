@@ -16,7 +16,16 @@ test.concurrent("erc721_approval_v3", async ({ expect }) => {
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ events: ["erc721_approval_v3"], blocks: [block] }],
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"erc721_approval_v3",
+					"erc721_approval_v3_index_account_v3",
+					"erc721_approval_v3_index_block_number_tx_index_v4",
+				],
+			},
+		],
 	});
 
 	const events = await getErc721ApprovalV3(ids);

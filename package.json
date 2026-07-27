@@ -16,7 +16,6 @@
 		"postinstall": "patch-package"
 	},
 	"dependencies": {
-		"@ponder/utils": "0.2.16",
 		"@storagesdk/adapters": "0.6.0",
 		"@storagesdk/core": "0.4.2",
 		"@tanstack/react-query": "5.99.0",

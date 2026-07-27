@@ -1,7 +1,7 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
-import { Token } from "@/components/token";
+import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import type { Erc20TransferV3 } from "./event";
@@ -18,7 +18,7 @@ export function Erc20TransferV3Description(props: { event: Erc20TransferV3 }) {
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.to_address} />
 				<Action type="minted">minted</Action>
-				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 			</Description>
 		);
 	}
@@ -29,7 +29,7 @@ export function Erc20TransferV3Description(props: { event: Erc20TransferV3 }) {
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.from_address} />
 				<Action type="burnt">burnt</Action>
-				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 			</Description>
 		);
 	}
@@ -39,7 +39,7 @@ export function Erc20TransferV3Description(props: { event: Erc20TransferV3 }) {
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+			<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
@@ -55,7 +55,7 @@ export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="burnt">Burnt</Action>
-					<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				</Description>
 			);
 		}
@@ -64,7 +64,7 @@ export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -77,7 +77,7 @@ export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="minted">Minted</Action>
-					<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				</Description>
 			);
 		}
@@ -86,7 +86,7 @@ export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Token chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>

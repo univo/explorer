@@ -16,7 +16,16 @@ test.concurrent("ens_name_registered_v3", async ({ expect }) => {
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ events: ["ens_name_registered_v3"], blocks: [block] }],
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"ens_name_registered_v3",
+					"ens_name_registered_v3_index_account_v3",
+					"ens_name_registered_v3_index_block_number_tx_index_v4",
+				],
+			},
+		],
 	});
 
 	const events = await getEnsNameRegisteredV3(ids);

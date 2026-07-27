@@ -16,7 +16,16 @@ test.concurrent("contract_deployment_v3", async ({ expect }) => {
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ events: ["contract_deployment_v3"], blocks: [block] }],
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"contract_deployment_v3",
+					"contract_deployment_v3_index_account_v3",
+					"contract_deployment_v3_index_block_number_tx_index_v4",
+				],
+			},
+		],
 	});
 
 	const events = await getContractDeploymentV3(ids);

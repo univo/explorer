@@ -30,6 +30,9 @@
         "noExplicitAny": "off",
         "noCommentText": "off",
         "noArrayIndexKey": "off"
+      },
+      "complexity": {
+        "useOptionalChain": "off"
       }
     }
   },
