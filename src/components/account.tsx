@@ -8,7 +8,7 @@ export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 
 	if (account) {
 		return (
-			<Hoverable id={props.chain + props.address}>
+			<Hoverable id={`${props.chain}:${props.address}`}>
 				<AddViewButton view={props.address} className="select-none cursor-pointer capitalize">
 					{getAccountName(account)}
 				</AddViewButton>
@@ -17,7 +17,7 @@ export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 	}
 
 	return (
-		<Hoverable id={props.chain + props.address}>
+		<Hoverable id={`${props.chain}:${props.address}`}>
 			<AddViewButton
 				view={props.address}
 				className="select-none cursor-pointer truncate inline-block align-top w-18 lg:w-24"
