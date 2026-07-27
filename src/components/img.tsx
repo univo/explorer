@@ -1,21 +1,9 @@
+"use client";
+
 import { useState } from "react";
 
 export function Img(props: { src: string | null; alt?: string; fallback?: string }) {
-	const [src, setSrc] = useState(() => {
-		if (props.src === null) {
-			if (props.fallback === undefined) {
-				return null;
-			}
-
-			return props.fallback;
-		}
-
-		return props.src;
-	});
-
-	if (src === null) {
-		return null;
-	}
+	const [src, setSrc] = useState(props.src);
 
 	function onError() {
 		if (props.fallback === undefined) {
@@ -25,5 +13,11 @@ export function Img(props: { src: string | null; alt?: string; fallback?: string
 		setSrc(props.fallback);
 	}
 
-	return <img src={src} alt={props.alt} onError={onError} />;
+	return (
+		<img
+			alt={props.alt}
+			onError={onError}
+			src={src ?? props.fallback} //
+		/>
+	);
 }
