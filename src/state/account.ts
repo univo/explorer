@@ -263,6 +263,10 @@ export function getAccountName(account: Account) {
 		return `${account["erc20.name"]} (${capitalize(account["erc20.symbol"], { mode: "all" })})`;
 	}
 
+	if (account["erc721.name"] && account["erc721.symbol"]) {
+		return `${account["erc721.name"]} (${capitalize(account["erc721.symbol"], { mode: "all" })})`;
+	}
+
 	if (account.owner_project && account["erc20.symbol"]) {
 		return `${capitalize(account.owner_project)}: ${capitalize(account["erc20.symbol"], { mode: "all" })}`;
 	}
