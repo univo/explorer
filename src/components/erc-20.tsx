@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { isAddressEqual } from "viem";
 
+import { Img } from "./img";
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
@@ -70,7 +71,7 @@ function Image(props: { src: string | null }) {
 
 	return (
 		<div className="rounded-full overflow-hidden size-4">
-			<img alt="" src={props.src} />
+			<Img src={props.src} />
 		</div>
 	);
 }
