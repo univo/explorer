@@ -1,8 +1,9 @@
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
+import type { Chain } from "@/constants";
 import { getAccount, getAccountName } from "@/state/account";
 
-export async function Account(props: { chain: number; address: `0x${string}` }) {
+export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 	const account = await getAccount({ chain: props.chain, address: props.address });
 
 	if (account) {
