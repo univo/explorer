@@ -158,10 +158,18 @@ export async function getErc721(opts: { chain: Chain; address: `0x${string}` }):
 		defined(account) &&
 		defined(account.erc_type) &&
 		defined(account.is_contract) &&
+		defined(account.contract_name) &&
 		defined(account["erc721.name"]) &&
 		defined(account["erc721.symbol"])
 	) {
-		return account;
+		return {
+			...account,
+			erc_type: account.erc_type,
+			is_contract: account.is_contract,
+			contract_name: account.contract_name,
+			"erc721.name": account["erc721.name"],
+			"erc721.symbol": account["erc721.symbol"],
+		};
 	}
 
 	// Load name and symbol
