@@ -17,7 +17,7 @@ export function Img(props: { src: string | null; alt?: string; fallback?: string
 		<img
 			alt={props.alt}
 			onError={onError}
-			src={src ?? props.fallback} //
+			src={src || props.fallback} //
 		/>
 	);
 }
