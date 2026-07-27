@@ -6,6 +6,8 @@ import type { Chain } from "@/constants";
 import { getErc721 } from "@/state/account";
 import { Description } from "./description";
 
+// TODO: Don't display large token ids
+
 export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: `0x${string}` }) {
 	const [account, src] = await Promise.all([
 		getErc721({ chain: props.chain, address: props.address }), //
