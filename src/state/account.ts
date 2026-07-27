@@ -227,8 +227,8 @@ export async function getErc721(opts: { chain: Chain; address: `0x${string}` }):
 						erc_type: sql.raw(`excluded.${table.erc_type.name}`),
 						is_contract: sql.raw(`excluded.${table.is_contract.name}`),
 						contract_name: sql.raw(`excluded.${table.contract_name.name}`),
-						"erc721.name": sql.raw(`excluded.${table["erc721.name"].name}`),
-						"erc721.symbol": sql.raw(`excluded.${table["erc721.symbol"].name}`),
+						"erc721.name": sql`excluded.${sql.identifier(table["erc721.name"].name)}`,
+						"erc721.symbol": sql`excluded.${sql.identifier(table["erc721.symbol"].name)}`,
 					},
 				});
 		}),
