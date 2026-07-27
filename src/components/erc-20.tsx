@@ -4,11 +4,12 @@ import { isAddressEqual } from "viem";
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
+import type { Chain } from "@/constants";
 import { getToken } from "@/state/token";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
 
-export async function Token(props: { chain: number; address: `0x${string}`; quantity?: `0x${string}` | bigint }) {
+export async function Erc20(props: { chain: Chain; address: `0x${string}`; quantity?: `0x${string}` | bigint }) {
 	if (props.chain === 1 && isAddressEqual(props.address, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")) {
 		return (
 			<Fragment>

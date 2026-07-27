@@ -1,7 +1,7 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
-import { Token } from "@/components/token";
+import { Erc20 } from "@/components/erc-20";
 import { getTornadoCashPool } from "./event";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
@@ -29,7 +29,7 @@ export function TornadoCashWithdrawalV3Description(props: { event: TornadoCashWi
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.from_address} />
 				<Action type="received">withdrew</Action>
-				<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
+				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
@@ -47,7 +47,7 @@ export function TornadoCashWithdrawalV3Description(props: { event: TornadoCashWi
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="received">withdrew</Action>
-			<Token chain={chain} address={pool.asset} quantity={quantityAfterFees} />
+			<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.recipient_address} />
 			<span>from</span>
@@ -79,7 +79,7 @@ export function TornadoCashWithdrawalV3AccountDescription(props: {
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="received">Withdrew</Action>
-					<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
+					<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} />
 					<span>from</span>
 					<Account chain={chain} address={props.event.pool_address} />
 				</Description>
@@ -94,7 +94,7 @@ export function TornadoCashWithdrawalV3AccountDescription(props: {
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Token chain={chain} address={pool.asset} quantity={quantityAfterFees} />
+				<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
 				<span>via relay</span>
@@ -112,7 +112,7 @@ export function TornadoCashWithdrawalV3AccountDescription(props: {
 				<span>Relayed</span>
 				<Action type="sent">withdrawal</Action>
 				<span>of</span>
-				<Token chain={chain} address={pool.asset} quantity={pool.quantity} />
+				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
 				<span>by</span>
@@ -120,7 +120,7 @@ export function TornadoCashWithdrawalV3AccountDescription(props: {
 				<span>to</span>
 				<Account chain={chain} address={props.event.recipient_address} />
 				<span>for a fee of</span>
-				<Token chain={chain} address={pool.asset} quantity={props.event.fee} />
+				<Erc20 chain={chain} address={pool.asset} quantity={props.event.fee} />
 			</Description>
 		);
 	}

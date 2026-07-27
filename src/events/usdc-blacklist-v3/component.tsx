@@ -1,7 +1,7 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
-import { Token } from "@/components/token";
+import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
@@ -15,7 +15,7 @@ export function UsdcBlacklistV3Description(props: { event: UsdcBlacklistV3 }) {
 	return (
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Token chain={chain} address={USDC_ADDRESS} />
+			<Erc20 chain={chain} address={USDC_ADDRESS} />
 			<Action type="blacklisted">blacklisted</Action>
 			<Account chain={chain} address={props.event.account_address} />
 		</Description>
@@ -33,7 +33,7 @@ export function UsdcBlacklistV3AccountDescription(props: { event: UsdcBlacklistV
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="blacklisted">Blacklisted</Action>
 				<span>by</span>
-				<Token chain={chain} address={USDC_ADDRESS} />
+				<Erc20 chain={chain} address={USDC_ADDRESS} />
 			</Description>
 		);
 	}
