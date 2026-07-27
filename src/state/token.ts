@@ -1,11 +1,11 @@
+import { getAddress } from "viem";
 import DataLoader from "dataloader";
-import { mainnet } from "viem/chains";
-import { createPublicClient, getAddress } from "viem";
 import { integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
 import { inTuple } from "@/db/types";
+import { getClient } from "@/clients";
+import type { Chain } from "@/constants";
 import { isHexEqual, logger } from "@/utils";
-import { createTransport } from "@/transports";
 import { createPostgresClient } from "@/db/client";
 
 export interface Token {
@@ -34,19 +34,17 @@ export const table = pgTable(
 	],
 );
 
-const clients = {
-	1: createPublicClient({ chain: mainnet, transport: createTransport(process.env.ETHEREUM_URL) }),
-};
-
 const abi = [
 	{ inputs: [], name: "name", type: "function", stateMutability: "view", outputs: [{ type: "string" }] },
 	{ inputs: [], name: "symbol", type: "function", stateMutability: "view", outputs: [{ type: "string" }] },
 	{ inputs: [], type: "function", name: "decimals", stateMutability: "view", outputs: [{ type: "uint8" }] },
 ] as const;
 
-const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${string}` }, Token>(
+const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Token>(
 	async (tokens) => {
-		if (tokens.length === 0) return [];
+		if (tokens.length === 0) {
+			return [];
+		}
 
 		// 1. Clear the loader cache to ensure fresh data
 		loader.clearAll();
@@ -99,9 +97,9 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 				}
 
 				const [name, symbol, decimals] = await Promise.all([
-					clients[chain].readContract({ abi, address, functionName: "name" }),
-					clients[chain].readContract({ abi, address, functionName: "symbol" }),
-					clients[chain].readContract({ abi, address, functionName: "decimals" }),
+					getClient(chain).readContract({ abi, address, functionName: "name" }),
+					getClient(chain).readContract({ abi, address, functionName: "symbol" }),
+					getClient(chain).readContract({ abi, address, functionName: "decimals" }),
 				]);
 
 				const token: Token = {
@@ -151,6 +149,6 @@ const loader = new DataLoader<{ chain: keyof typeof clients; address: `0x${strin
 	},
 );
 
-export async function getToken(opts: { chain: number; address: `0x${string}` }) {
-	return await loader.load(opts as { chain: keyof typeof clients; address: `0x${string}` });
+export async function getToken(opts: { chain: Chain; address: `0x${string}` }) {
+	return await loader.load(opts);
 }
