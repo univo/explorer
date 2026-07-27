@@ -18,7 +18,16 @@ test.concurrent("cancel_pending_tx_v3", async ({ expect }) => {
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ events: ["cancel_pending_tx_v3"], blocks: [block] }],
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"cancel_pending_tx_v3",
+					"cancel_pending_tx_v3_index_account_v3",
+					"cancel_pending_tx_v3_index_block_number_tx_index_v4",
+				],
+			},
+		],
 	});
 
 	const events = await getCancelPendingTxV3(ids);
