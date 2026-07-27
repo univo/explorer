@@ -17,7 +17,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 
 				<Hoverable id={`${props.chain}:${props.address}`}>
 					<Description>
-						<Image image="https://etherscan.io/token/images/ether.png" />
+						<Image src="https://etherscan.io/token/images/ether.png" />
 						<span>Ether</span>
 						<span className="text-gray-500 select-all">(ETH)</span>
 					</Description>
@@ -36,7 +36,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 				<AddViewButton view={props.address} className="select-none cursor-pointer touch-none">
 					<Hoverable id={`${props.chain}:${props.address}`}>
 						<Description>
-							<Image image={token.image} />
+							<Image src={token.image} />
 							<span>{token.name}</span>
 							<span className="text-gray-500 select-all">({token.symbol})</span>
 						</Description>
@@ -63,14 +63,14 @@ function Quantity(props: { decimals: number | null; quantity: `0x${string}` | bi
 	return <span>{formatTokenAmount(props.quantity, props.decimals)}</span>;
 }
 
-function Image(props: { image: string | null }) {
-	if (props.image === null) {
+function Image(props: { src: string | null }) {
+	if (props.src === null) {
 		return null;
 	}
 
 	return (
 		<div className="rounded-full overflow-hidden size-4">
-			<img alt="" src={props.image} />
+			<img alt="" src={props.src} />
 		</div>
 	);
 }
