@@ -3,6 +3,8 @@ import { http, createPublicClient } from "viem";
 
 import type { Chain } from "./constants";
 
+// TODO: Create a custom transport that implements rate-limiting, batching, and deduplication
+
 export const clients = {
 	1: createPublicClient({
 		chain: mainnet,
