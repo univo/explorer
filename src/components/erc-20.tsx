@@ -71,7 +71,7 @@ function Image(props: { src: string | null }) {
 
 	return (
 		<div className="rounded-full overflow-hidden size-4">
-			<Img src={props.src} />
+			<Img src={props.src} fallback="/img/fallback.svg" />
 		</div>
 	);
 }
