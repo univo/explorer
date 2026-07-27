@@ -75,7 +75,7 @@ const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Account 
 		const unique: Record<string, true> = {};
 
 		const filtered = accounts.filter((account) => {
-			const key = [account.chain, account.address.toLowerCase()].join(":");
+			const key = [account.chain, getAddress(account.address)].join(":");
 
 			if (unique[key]) {
 				return false;
@@ -96,7 +96,7 @@ const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Account 
 			.where(
 				inTuple(
 					[table.chain, table.address],
-					filtered.map((account) => [account.chain, account.address.toLowerCase()]),
+					filtered.map((account) => [account.chain, getAddress(account.address)]),
 				),
 			);
 
