@@ -13,11 +13,11 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 	if (props.chain === 1 && isAddressEqual(props.address, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")) {
 		return (
 			<Fragment>
-				<TokenQuantity quantity={props.quantity} decimals={18} />
+				<Quantity quantity={props.quantity} decimals={18} />
 
 				<Hoverable id={`${props.chain}:${props.address}`}>
 					<Description>
-						<TokenImage image="https://etherscan.io/token/images/ether.png" />
+						<Image image="https://etherscan.io/token/images/ether.png" />
 						<span>Ether</span>
 						<span className="text-gray-500 select-all">(ETH)</span>
 					</Description>
@@ -31,12 +31,12 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 	if (token.name && token.symbol) {
 		return (
 			<Fragment>
-				<TokenQuantity quantity={props.quantity} decimals={token.decimals} />
+				<Quantity quantity={props.quantity} decimals={token.decimals} />
 
 				<AddViewButton view={props.address} className="select-none cursor-pointer touch-none">
 					<Hoverable id={`${props.chain}:${props.address}`}>
 						<Description>
-							<TokenImage image={token.image} />
+							<Image image={token.image} />
 							<span>{token.name}</span>
 							<span className="text-gray-500 select-all">({token.symbol})</span>
 						</Description>
@@ -51,7 +51,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 	return <Account chain={props.chain} address={props.address} />;
 }
 
-function TokenQuantity(props: { decimals: number | null; quantity: `0x${string}` | bigint | undefined }) {
+function Quantity(props: { decimals: number | null; quantity: `0x${string}` | bigint | undefined }) {
 	if (!props.quantity) {
 		return null;
 	}
@@ -63,7 +63,7 @@ function TokenQuantity(props: { decimals: number | null; quantity: `0x${string}`
 	return <span>{formatTokenAmount(props.quantity, props.decimals)}</span>;
 }
 
-function TokenImage(props: { image: string | null }) {
+function Image(props: { image: string | null }) {
 	if (props.image === null) {
 		return null;
 	}
