@@ -1,10 +1,10 @@
+import { parseId } from "@/helpers";
+import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { Hoverable } from "@/components/hoverable";
 import type { EnsNameRegisteredV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import { formatTokenAmount, parseId } from "@/helpers";
 import type { Account as IAccount } from "@/state/account";
 
 export function EnsNameRegisteredV3Description(props: { event: EnsNameRegisteredV3 }) {
@@ -23,13 +23,7 @@ export function EnsNameRegisteredV3Description(props: { event: EnsNameRegistered
 			<Action type="registered">registered</Action>
 			<span>{props.event.name}.eth</span>
 			<span>for</span>
-			<span>{formatTokenAmount(props.event.cost_eth, 18)}</span>
-			<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
-				<Description>
-					<span>Ether</span>
-					<span className="text-gray-500 select-all">(ETH)</span>
-				</Description>
-			</Hoverable>
+			<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.cost_eth} />
 			<span>expiring</span>
 			<span>{expiring}</span>
 		</Description>
@@ -37,6 +31,8 @@ export function EnsNameRegisteredV3Description(props: { event: EnsNameRegistered
 }
 
 export function EnsNameRegisteredV3AccountDescription(props: { event: EnsNameRegisteredV3; account: IAccount }) {
+	const chain = parseId(props.event.id).chainId;
+
 	const expiring = new Date(Number(BigInt(props.event.expires_at)) * 1000).toLocaleDateString("en", {
 		month: "short",
 		day: "numeric",
@@ -49,13 +45,7 @@ export function EnsNameRegisteredV3AccountDescription(props: { event: EnsNameReg
 			<Action type="registered">Registered</Action>
 			<span>{props.event.name}.eth</span>
 			<span>for</span>
-			<span>{formatTokenAmount(props.event.cost_eth, 18)}</span>
-			<Hoverable id={"10xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"}>
-				<Description>
-					<span>Ether</span>
-					<span className="text-gray-500 select-all">(ETH)</span>
-				</Description>
-			</Hoverable>
+			<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.cost_eth} />
 			<span>expiring</span>
 			<span>{expiring}</span>
 		</Description>
