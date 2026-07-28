@@ -50,7 +50,7 @@ export const event = univo.event({
 					chainId: block.eth_chainId,
 					logIndex: TRANSACTION_EVENT,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.cancel_pending_tx_v2,
+					tableId: TABLES.cancel_pending_tx_v3,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -122,7 +122,7 @@ univo.event({
 });
 
 export async function getCancelPendingTxV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.cancel_pending_tx_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.cancel_pending_tx_v3);
 
 	if (filtered.length === 0) {
 		return [];
