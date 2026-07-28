@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function Img(props: { src: string | null; alt?: string; fallback?: string }) {
+export function Img(props: { src: string | undefined; alt?: string; fallback?: string }) {
 	const [src, setSrc] = useState(props.src);
 
 	function onError() {
@@ -17,7 +17,7 @@ export function Img(props: { src: string | null; alt?: string; fallback?: string
 		<img
 			alt={props.alt}
 			onError={onError}
-			src={src || props.fallback} //
+			src={src || props.fallback || "/img/fallback/svg"} //
 		/>
 	);
 }

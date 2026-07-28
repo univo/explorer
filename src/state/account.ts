@@ -2,7 +2,7 @@ import { getAddress } from "viem";
 import { sql } from "drizzle-orm";
 import DataLoader from "dataloader";
 import { waitUntil } from "cloudflare:workers";
-import { boolean, integer, pgTable, primaryKey, text } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
 import { inTuple } from "@/db/types";
 import { getClient } from "@/clients";
@@ -28,8 +28,9 @@ export interface Account {
 	erc_type: string | undefined;
 
 	"erc20.name": string | undefined;
+	"erc20.image": string | undefined;
 	"erc20.symbol": string | undefined;
-	"erc20.decimals": string | undefined;
+	"erc20.decimals": number | undefined;
 
 	"erc721.name": string | undefined;
 	"erc721.symbol": string | undefined;
@@ -40,6 +41,7 @@ export const table = pgTable(
 	{
 		chain: integer().notNull(),
 		address: text().notNull(),
+
 		is_contract: boolean(),
 		owner_project: text(),
 		contract_name: text(),
@@ -50,12 +52,16 @@ export const table = pgTable(
 		usage_category: text(),
 		deployer_address: text(),
 		source_code_verified: text(),
+
 		erc_type: text(),
-		"erc20.name": text("erc20.name"),
-		"erc20.symbol": text("erc20.symbol"),
-		"erc20.decimals": text("erc20.decimals"),
+
 		"erc721.name": text("erc721.name"),
 		"erc721.symbol": text("erc721.symbol"),
+
+		"erc20.name": text("erc20.name"),
+		"erc20.image": text("erc20.image"),
+		"erc20.symbol": text("erc20.symbol"),
+		"erc20.decimals": smallint("erc20.decimals"),
 	},
 	(table) => [
 		primaryKey({
@@ -110,6 +116,7 @@ const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Account 
 			const account: Account = {
 				chain,
 				address: getAddress(address),
+
 				is_contract: row.is_contract ?? undefined,
 				owner_project: row.owner_project ?? undefined,
 				contract_name: row.contract_name ?? undefined,
@@ -120,10 +127,14 @@ const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Account 
 				usage_category: row.usage_category ?? undefined,
 				deployer_address: row.deployer_address ?? undefined,
 				source_code_verified: row.source_code_verified ?? undefined,
+
 				erc_type: row.erc_type ?? undefined,
+
 				"erc20.name": row["erc20.name"] ?? undefined,
+				"erc20.image": row["erc20.image"] ?? undefined,
 				"erc20.symbol": row["erc20.symbol"] ?? undefined,
 				"erc20.decimals": row["erc20.decimals"] ?? undefined,
+
 				"erc721.name": row["erc721.name"] ?? undefined,
 				"erc721.symbol": row["erc721.symbol"] ?? undefined,
 			};
@@ -151,111 +162,250 @@ type Erc721Account = MakeNonNullable<
 	"is_contract" | "contract_name" | "erc_type" | "erc721.name" | "erc721.symbol"
 >;
 
-export async function getErc721(opts: { chain: Chain; address: `0x${string}` }): Promise<Erc721Account> {
-	const account = await getAccount({ chain: opts.chain, address: opts.address });
+export async function getErc721Account(opts: { chain: Chain; address: `0x${string}` }): Promise<Erc721Account | null> {
+	try {
+		const account = await getAccount({ chain: opts.chain, address: opts.address });
 
-	if (
-		defined(account) &&
-		defined(account.erc_type) &&
-		defined(account.is_contract) &&
-		defined(account.contract_name) &&
-		defined(account["erc721.name"]) &&
-		defined(account["erc721.symbol"])
-	) {
-		return {
-			...account,
-			erc_type: account.erc_type,
-			is_contract: account.is_contract,
-			contract_name: account.contract_name,
-			"erc721.name": account["erc721.name"],
-			"erc721.symbol": account["erc721.symbol"],
-		};
-	}
+		if (
+			defined(account) &&
+			defined(account.erc_type) &&
+			defined(account.is_contract) &&
+			defined(account.contract_name) &&
+			defined(account["erc721.name"]) &&
+			defined(account["erc721.symbol"])
+		) {
+			return {
+				...account,
+				erc_type: account.erc_type,
+				is_contract: account.is_contract,
+				contract_name: account.contract_name,
+				"erc721.name": account["erc721.name"],
+				"erc721.symbol": account["erc721.symbol"],
+			};
+		}
 
-	// Load name and symbol
+		// Load ERC721 metadata
 
-	const [name, symbol] = await Promise.all([
-		getClient(opts.chain).readContract({
-			functionName: "name",
-			address: opts.address,
-			abi: [
-				{
-					inputs: [],
-					name: "name",
-					type: "function",
-					stateMutability: "view",
-					outputs: [{ type: "string" }],
-				},
-			],
-		}),
-		getClient(opts.chain).readContract({
-			address: opts.address,
-			functionName: "symbol",
-			abi: [
-				{
-					inputs: [],
-					name: "symbol",
-					type: "function",
-					stateMutability: "view",
-					outputs: [{ type: "string" }],
-				},
-			],
-		}),
-	]);
-
-	// Upsert new contract information to accounts table
-
-	waitUntil(
-		iife(async () => {
-			const client = await createPostgresClient();
-
-			await client
-				.insert(table)
-				.values({
-					chain: opts.chain,
-					address: opts.address,
-
-					is_contract: true,
-					contract_name: name,
-					"erc721.name": name,
-					erc_type: '["erc721"]',
-					"erc721.symbol": symbol,
-				})
-				.onConflictDoUpdate({
-					target: [table.chain, table.address],
-					set: {
-						erc_type: sql.raw(`excluded.${table.erc_type.name}`),
-						is_contract: sql.raw(`excluded.${table.is_contract.name}`),
-						contract_name: sql.raw(`excluded.${table.contract_name.name}`),
-						"erc721.name": sql`excluded.${sql.identifier(table["erc721.name"].name)}`,
-						"erc721.symbol": sql`excluded.${sql.identifier(table["erc721.symbol"].name)}`,
+		const [name, symbol] = await Promise.all([
+			getClient(opts.chain).readContract({
+				functionName: "name",
+				address: opts.address,
+				abi: [
+					{
+						inputs: [],
+						name: "name",
+						type: "function",
+						stateMutability: "view",
+						outputs: [{ type: "string" }],
 					},
-				});
-		}),
-	);
+				],
+			}),
+			getClient(opts.chain).readContract({
+				address: opts.address,
+				functionName: "symbol",
+				abi: [
+					{
+						inputs: [],
+						name: "symbol",
+						type: "function",
+						stateMutability: "view",
+						outputs: [{ type: "string" }],
+					},
+				],
+			}),
+		]);
 
-	return {
-		chain: opts.chain,
-		address: getAddress(opts.address),
+		// Upsert new contract information to accounts table
 
-		is_contract: true,
-		contract_name: name,
-		"erc721.name": name,
-		erc_type: '["erc721"]',
-		"erc721.symbol": symbol,
+		waitUntil(
+			iife(async () => {
+				const client = await createPostgresClient();
 
-		"erc20.name": undefined,
-		code_compiler: undefined,
-		code_language: undefined,
-		deployment_tx: undefined,
-		owner_project: undefined,
-		deployer_block: undefined,
-		"erc20.symbol": undefined,
-		usage_category: undefined,
-		"erc20.decimals": undefined,
-		deployer_address: undefined,
-		source_code_verified: undefined,
-	};
+				await client
+					.insert(table)
+					.values({
+						chain: opts.chain,
+						address: getAddress(opts.address),
+
+						is_contract: true,
+						contract_name: name,
+						"erc721.name": name,
+						erc_type: '["erc721"]',
+						"erc721.symbol": symbol,
+					})
+					.onConflictDoUpdate({
+						target: [table.chain, table.address],
+						set: {
+							erc_type: sql.raw(`excluded.${table.erc_type.name}`),
+							is_contract: sql.raw(`excluded.${table.is_contract.name}`),
+							contract_name: sql.raw(`excluded.${table.contract_name.name}`),
+							"erc721.name": sql`excluded.${sql.identifier(table["erc721.name"].name)}`,
+							"erc721.symbol": sql`excluded.${sql.identifier(table["erc721.symbol"].name)}`,
+						},
+					});
+			}),
+		);
+
+		return {
+			chain: opts.chain,
+			address: getAddress(opts.address),
+
+			is_contract: true,
+			contract_name: name,
+			"erc721.name": name,
+			erc_type: '["erc721"]',
+			"erc721.symbol": symbol,
+
+			code_compiler: undefined,
+			code_language: undefined,
+			deployment_tx: undefined,
+			owner_project: undefined,
+			deployer_block: undefined,
+			usage_category: undefined,
+			deployer_address: undefined,
+			source_code_verified: undefined,
+
+			"erc20.name": undefined,
+			"erc20.image": undefined,
+			"erc20.symbol": undefined,
+			"erc20.decimals": undefined,
+		};
+	} catch {
+		return null;
+	}
+}
+
+type Erc20Account = MakeNonNullable<
+	Account,
+	"is_contract" | "contract_name" | "erc_type" | "erc20.name" | "erc20.symbol" | "erc20.decimals"
+>;
+
+export async function getErc20Account(opts: { chain: Chain; address: `0x${string}` }): Promise<Erc20Account | null> {
+	try {
+		const account = await getAccount({ chain: opts.chain, address: opts.address });
+
+		if (
+			defined(account) &&
+			defined(account.erc_type) &&
+			defined(account.is_contract) &&
+			defined(account.contract_name) &&
+			defined(account["erc20.name"]) &&
+			defined(account["erc20.symbol"]) &&
+			defined(account["erc20.decimals"])
+		) {
+			return {
+				...account,
+				erc_type: account.erc_type,
+				is_contract: account.is_contract,
+				contract_name: account.contract_name,
+				"erc20.name": account["erc20.name"],
+				"erc20.symbol": account["erc20.symbol"],
+				"erc20.decimals": account["erc20.decimals"],
+			};
+		}
+
+		// Load ERC20 metadata
+
+		const [name, symbol, decimals] = await Promise.all([
+			getClient(opts.chain).readContract({
+				address: opts.address,
+				functionName: "name",
+				abi: [
+					{
+						inputs: [],
+						name: "name",
+						type: "function",
+						stateMutability: "view",
+						outputs: [{ type: "string" }],
+					},
+				],
+			}),
+			getClient(opts.chain).readContract({
+				address: opts.address,
+				functionName: "symbol",
+				abi: [
+					{
+						inputs: [],
+						name: "symbol",
+						type: "function",
+						stateMutability: "view",
+						outputs: [{ type: "string" }],
+					},
+				],
+			}),
+			getClient(opts.chain).readContract({
+				address: opts.address,
+				functionName: "decimals",
+				abi: [
+					{
+						inputs: [],
+						type: "function",
+						name: "decimals",
+						stateMutability: "view",
+						outputs: [{ type: "uint8" }],
+					},
+				],
+			}),
+		]);
+
+		waitUntil(
+			iife(async () => {
+				const client = await createPostgresClient();
+
+				await client
+					.insert(table)
+					.values({
+						chain: opts.chain,
+						address: getAddress(opts.address),
+
+						is_contract: true,
+						contract_name: name,
+						erc_type: '["erc20"]',
+						"erc20.name": name,
+						"erc20.symbol": symbol,
+						"erc20.decimals": decimals,
+					})
+					.onConflictDoUpdate({
+						target: [table.chain, table.address],
+						set: {
+							erc_type: sql.raw(`excluded.${table.erc_type.name}`),
+							is_contract: sql.raw(`excluded.${table.is_contract.name}`),
+							contract_name: sql.raw(`excluded.${table.contract_name.name}`),
+							"erc20.name": sql`excluded.${sql.identifier(table["erc20.name"].name)}`,
+							"erc20.symbol": sql`excluded.${sql.identifier(table["erc20.symbol"].name)}`,
+							"erc20.decimals": sql`excluded.${sql.identifier(table["erc20.decimals"].name)}`,
+						},
+					});
+			}),
+		);
+
+		return {
+			chain: opts.chain,
+			address: getAddress(opts.address),
+
+			is_contract: true,
+			contract_name: name,
+			erc_type: '["erc20"]',
+			"erc20.name": name,
+			"erc20.symbol": symbol,
+			"erc20.image": undefined,
+			"erc20.decimals": decimals,
+
+			code_compiler: undefined,
+			code_language: undefined,
+			deployment_tx: undefined,
+			owner_project: undefined,
+			deployer_block: undefined,
+			usage_category: undefined,
+			deployer_address: undefined,
+			source_code_verified: undefined,
+
+			"erc721.name": undefined,
+			"erc721.symbol": undefined,
+		};
+	} catch {
+		return null;
+	}
 }
 
 export function getAccountName(account: Account) {
