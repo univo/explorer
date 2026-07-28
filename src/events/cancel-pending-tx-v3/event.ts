@@ -32,12 +32,12 @@ export const event = univo.event({
 				}
 
 				// Must have same from and to address
-				if (tx.from.toLowerCase() !== tx.to.toLowerCase()) {
+				if (!isHexEqual(tx.from, tx.to)) {
 					return;
 				}
 
 				// Must have zero ETH value
-				if (tx.value !== "0x0") {
+				if (BigInt(tx.value) !== 0n) {
 					return;
 				}
 
