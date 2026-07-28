@@ -3,19 +3,19 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
-import { numberToHex, nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
+import { numberToHex, nonNullable, isHexEqual } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface CancelPendingTxV3 {
 	tag: "cancel_pending_tx_v3";
 	id: string;
 	success: boolean;
-	from_address: `0x${string}`;
 	nonce: `0x${string}`;
+	from_address: `0x${string}`;
 }
 
 export const event = univo.event({
@@ -47,15 +47,15 @@ export const event = univo.event({
 				}
 
 				const id = createId({
-					logIndex: "0x0",
 					chainId: block.eth_chainId,
+					logIndex: TRANSACTION_EVENT,
 					txIndex: tx.transactionIndex,
-					tableId: tables.cancel_pending_tx_v2,
+					tableId: TABLES.cancel_pending_tx_v2,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
 					id,
@@ -80,9 +80,9 @@ export const event = univo.event({
 					.onConflictDoUpdate({
 						target: table.id,
 						set: {
+							nonce: sql.raw(`excluded.${table.nonce.name}`),
 							success: sql.raw(`excluded.${table.success.name}`),
 							from_address: sql.raw(`excluded.${table.from_address.name}`),
-							nonce: sql.raw(`excluded.${table.nonce.name}`),
 						},
 					});
 			}
@@ -122,7 +122,7 @@ univo.event({
 });
 
 export async function getCancelPendingTxV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.cancel_pending_tx_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.cancel_pending_tx_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -130,15 +130,19 @@ export async function getCancelPendingTxV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, filtered))
+		.orderBy(asc(table.id));
 
 	return rows.map<CancelPendingTxV3>((result) => {
 		return {
 			tag: "cancel_pending_tx_v3" as const,
 			id: result.id,
+			nonce: result.nonce,
 			success: result.success,
 			from_address: getAddress(result.from_address),
-			nonce: result.nonce,
 		};
 	});
 }
