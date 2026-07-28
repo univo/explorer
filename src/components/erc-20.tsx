@@ -6,9 +6,9 @@ import { Account } from "./account";
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
 import type { Chain } from "@/constants";
-import { getToken } from "@/state/token";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
+import { getErc20Account } from "@/state/account";
 
 export async function Erc20(props: { chain: Chain; address: `0x${string}`; quantity?: `0x${string}` | bigint }) {
 	if (props.chain === 1 && isAddressEqual(props.address, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")) {
@@ -27,45 +27,39 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 		);
 	}
 
-	const token = await getToken({ chain: props.chain, address: props.address });
+	const account = await getErc20Account({ chain: props.chain, address: props.address });
 
-	if (token.name && token.symbol) {
-		return (
-			<Fragment>
-				<Quantity quantity={props.quantity} decimals={token.decimals} />
-
-				<AddViewButton view={props.address} className="select-none cursor-pointer touch-none">
-					<Hoverable id={`${props.chain}:${props.address}`}>
-						<Description>
-							<Image src={token.image} />
-							<span>{token.name}</span>
-							<span className="text-gray-500 select-all">({token.symbol})</span>
-						</Description>
-					</Hoverable>
-				</AddViewButton>
-			</Fragment>
-		);
+	if (account === null) {
+		return <Account chain={props.chain} address={props.address} />;
 	}
 
-	// Unfortunately this creates a waterfall.
+	return (
+		<Fragment>
+			<Quantity quantity={props.quantity} decimals={account["erc20.decimals"]} />
 
-	return <Account chain={props.chain} address={props.address} />;
+			<AddViewButton view={props.address} className="select-none cursor-pointer touch-none">
+				<Hoverable id={`${props.chain}:${props.address}`}>
+					<Description>
+						<Image src={account["erc20.image"]} />
+						<span>{account["erc20.name"]}</span>
+						<span className="text-gray-500 select-all">({account["erc20.symbol"]})</span>
+					</Description>
+				</Hoverable>
+			</AddViewButton>
+		</Fragment>
+	);
 }
 
-function Quantity(props: { decimals: number | null; quantity: `0x${string}` | bigint | undefined }) {
-	if (!props.quantity) {
-		return null;
-	}
-
-	if (!props.decimals) {
+function Quantity(props: { decimals: number; quantity: `0x${string}` | bigint | undefined }) {
+	if (props.quantity === undefined) {
 		return null;
 	}
 
 	return <span>{formatTokenAmount(props.quantity, props.decimals)}</span>;
 }
 
-function Image(props: { src: string | null }) {
-	if (props.src === null) {
+function Image(props: { src: string | undefined }) {
+	if (props.src === undefined) {
 		return null;
 	}
 

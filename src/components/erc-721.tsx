@@ -1,21 +1,26 @@
 import { Img } from "./img";
+import { Account } from "./account";
 import { getClient } from "@/clients";
 import { AddViewButton } from "./views";
 import { Hoverable } from "./hoverable";
 import type { Chain } from "@/constants";
 import { defined, logger } from "@/utils";
-import { getErc721 } from "@/state/account";
 import { Description } from "./description";
+import { getErc721Account } from "@/state/account";
 
 export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: `0x${string}` }) {
 	const [account, metadata] = await Promise.all([
-		getErc721({ chain: props.chain, address: props.address }), //
+		getErc721Account({ chain: props.chain, address: props.address }), //
 		getErc721Metadata({ chain: props.chain, address: props.address, id: props.id }),
 	]);
 
+	if (account === null) {
+		return <Account chain={props.chain} address={props.address} />;
+	}
+
 	return (
 		<AddViewButton view={props.address} className="select-none touch-none cursor-pointer">
-			<Hoverable id={`${props.chain}:${props.address}`}>
+			<Hoverable id={`${props.chain}:${props.address}:${props.id}`}>
 				<Description>
 					{defined(metadata) && <Image src={metadata.image} />}
 					<span>{account["erc721.name"]}</span>
@@ -67,11 +72,11 @@ async function getErc721Metadata(opts: { chain: Chain; address: `0x${string}`; i
 			logger.error(`Failed to get erc721 metadata: ${error.message}`);
 		}
 
-		return null;
+		return undefined;
 	}
 }
 
-function Image(props: { src: string | null }) {
+function Image(props: { src: string | undefined }) {
 	return (
 		<div className="overflow-hidden rounded-md size-4 bg-gray-300">
 			<Img src={props.src} fallback="/img/fallback.svg" />
