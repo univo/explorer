@@ -1,6 +1,6 @@
 import type { RpcTransactionReceipt } from "viem";
 
-import { chains, chainsReversed } from "./constants";
+import { CHAINS, CHAINS_REVERSED } from "./constants";
 import { formatNumber, hexToNumber, raise } from "./utils";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
@@ -136,15 +136,15 @@ export function formatTokenAmount(quantity: `0x${string}` | bigint, decimals: nu
  * @param external_chain External chain identifier
  * @returns Internal chain identifier for the provided chain
  */
-export function getInternalChain(external_chain: `0x${string}` | keyof typeof chains) {
+export function getInternalChain(external_chain: `0x${string}` | keyof typeof CHAINS) {
 	if (typeof external_chain === "string") {
 		return (
-			chains[hexToNumber(external_chain) as keyof typeof chains] ||
+			CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] ||
 			raise(`Unsupported chain id ${hexToNumber(external_chain)}`)
 		);
 	}
 
-	return chains[external_chain];
+	return CHAINS[external_chain];
 }
 
 /**
@@ -156,7 +156,7 @@ export function getInternalChain(external_chain: `0x${string}` | keyof typeof ch
  */
 export function getExternalChain(internal_chain: number) {
 	return (
-		(chainsReversed[internal_chain as keyof typeof chainsReversed] as keyof typeof chains) ||
+		(CHAINS_REVERSED[internal_chain as keyof typeof CHAINS_REVERSED] as keyof typeof CHAINS) ||
 		raise(`Unknown internal chain id ${internal_chain}`)
 	);
 }

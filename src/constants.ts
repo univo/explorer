@@ -4,13 +4,13 @@ export type Chain = 1;
 // We use an internal representation so that we can use the minimum number of bytes to represent a chain id.
 // E.g. in our id creation we use a 2 byte unsigned integer allowing 65,535 chains
 
-export const chains: Record<Chain, number> = {
+export const CHAINS: Record<Chain, number> = {
 	1: 1,
 };
 
 // Reverse look up table for chains to convert back
 
-export const chainsReversed: Record<number, Chain> = {
+export const CHAINS_REVERSED: Record<number, Chain> = {
 	1: 1,
 };
 
@@ -18,7 +18,7 @@ export const chainsReversed: Record<number, Chain> = {
 
 // TODO: Move and update to actual table names
 
-export const tables = {
+export const TABLES = {
 	native_transfer_v1: 0,
 	erc20_transfer_v1: 1,
 	erc20_approval_v1: 2,
@@ -40,3 +40,11 @@ export const tables = {
 	tornado_cash_withdrawal_v1: 18,
 	usdc_blacklist_v1: 19,
 };
+
+// Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
+// tx as a whole. When this happens it's important to use the `TRANSACTION_EVENT` constant as the provided
+// logIndex for those event identifiers. This ensures that any log level events that actually do need to specify
+// their logIndex in the id do not conflict. It also makes it easy to detect when we have multiple valid
+// interpretations of the same transaction
+
+export const TRANSACTION_EVENT = "0xffffff";

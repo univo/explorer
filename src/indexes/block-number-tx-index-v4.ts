@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
-import type { chains } from "@/constants";
+import type { Chain } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { logger, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
@@ -111,7 +111,7 @@ export const index_block_number_tx_index_v4 = {
 	},
 };
 
-export async function getEventIdsForBlockNumber(chain: keyof typeof chains, block: number) {
+export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
@@ -135,7 +135,7 @@ export async function getEventIdsForBlockNumber(chain: keyof typeof chains, bloc
 	});
 }
 
-export async function getEventIdsForTxPosition(chain: keyof typeof chains, block: number, tx: number) {
+export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: number) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
