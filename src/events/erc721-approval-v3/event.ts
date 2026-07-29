@@ -15,8 +15,8 @@ export interface Erc721ApprovalV3 {
 	success: boolean;
 	token_id: `0x${string}`;
 	owner_address: `0x${string}`;
-	spender_address: `0x${string}`;
 	token_address: `0x${string}`;
+	spender_address: `0x${string}`;
 }
 
 const abi = parseAbiItem("event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)");
