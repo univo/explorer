@@ -8,6 +8,7 @@ import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
+import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface ContractDeploymentV3 {
 	tag: "contract_deployment_v3";
@@ -80,6 +81,13 @@ export const event = univo.event({
 			);
 		},
 	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v4,
+	id: "contract_deployment_v3_index_block_number_tx_index_v4",
+	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
