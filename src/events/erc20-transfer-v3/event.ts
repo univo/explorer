@@ -3,10 +3,9 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
+import { TABLES } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
-import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -43,7 +42,7 @@ export const event = univo.event({
 						logIndex: log.logIndex,
 						chainId: block.eth_chainId,
 						txIndex: log.transactionIndex,
-						tableId: tables.erc20_transfer_v2,
+						tableId: TABLES.erc20_transfer_v3,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
@@ -52,9 +51,9 @@ export const event = univo.event({
 
 					return {
 						id,
+						to_address: getAddress(args.to),
 						quantity: numberToHex(args.value),
 						success: getEventSuccess(receipt),
-						to_address: getAddress(args.to),
 						from_address: getAddress(args.from),
 						token_address: getAddress(log.address),
 					};
@@ -108,23 +107,8 @@ univo.event({
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
-univo.event({
-	filters: event.filters,
-	storage: index_account_v3,
-	id: "erc20_transfer_v3_index_account_v3",
-	handler: (block) => {
-		return event.handler(block).flatMap((event) => {
-			return [
-				{ event_id: event.id, account: event.to_address }, //
-				{ event_id: event.id, account: event.from_address },
-				{ event_id: event.id, account: event.token_address },
-			];
-		});
-	},
-});
-
 export async function getErc20TransferV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.erc20_transfer_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.erc20_transfer_v3);
 
 	if (filtered.length === 0) {
 		return [];
@@ -132,7 +116,11 @@ export async function getErc20TransferV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, ids)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, ids))
+		.orderBy(asc(table.id));
 
 	return rows.map<Erc20TransferV3>((result) => {
 		return {
