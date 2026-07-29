@@ -3,11 +3,11 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
-import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
+import { isHexEqual, nonNullable } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface NativeTransferV3 {
@@ -27,31 +27,36 @@ export const event = univo.event({
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions
 			.map((tx) => {
+				if (BigInt(tx.value) === 0n) {
+					return;
+				}
+
 				// When deploying a contract `to` field is null
 				if (tx.to === null) {
 					return;
 				}
 
-				if (tx.value === "0x0") {
+				// Ensure that calldata is empty, otherwise it's likely a contract interaction
+				if (!(tx.input === "0x" || tx.input === "0x0")) {
 					return;
 				}
 
 				const id = createId({
-					logIndex: "0x0",
 					chainId: block.eth_chainId,
+					logIndex: TRANSACTION_EVENT,
 					txIndex: tx.transactionIndex,
-					tableId: tables.native_transfer_v2,
+					tableId: TABLES.native_transfer_v3,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
 					id,
-					success: getEventSuccess(receipt),
-					quantity: numberToHex(BigInt(tx.value)),
+					quantity: tx.value,
 					to_address: getAddress(tx.to),
+					success: getEventSuccess(receipt),
 					from_address: getAddress(tx.from),
 				};
 			})
@@ -115,7 +120,7 @@ univo.event({
 });
 
 export async function getNativeTransferV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.native_transfer_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.native_transfer_v3);
 
 	if (filtered.length === 0) {
 		return [];
@@ -123,7 +128,11 @@ export async function getNativeTransferV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, filtered))
+		.orderBy(asc(table.id));
 
 	return rows.map<NativeTransferV3>((result) => {
 		return {
