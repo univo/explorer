@@ -1,27 +1,30 @@
 import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
-import { event } from "@/events/native-transfer-v3/event";
+import { event as erc20_transfer_v3 } from "@/events/erc20-transfer-v3/event";
+import { event as native_transfer_v3 } from "@/events/native-transfer-v3/event";
 import {
-	getEventIdsForTxPosition,
 	getEventIdsForBlockNumber,
+	getEventIdsForTxPosition,
 	index_block_number_tx_index_v4,
 } from "./block-number-tx-index-v4";
 
-test.concurrent("block-number-tx-index-v4", async ({ expect }) => {
+test.concurrent("native_transfer_v3", async ({ expect }) => {
 	const block_number = 10000000;
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
-	const ids = event.handler(block).map((event) => event.id);
+	const indexes = native_transfer_v3.handler(block).map((event) => {
+		return event.id;
+	});
 
-	await index_block_number_tx_index_v4.delete(ids);
+	await index_block_number_tx_index_v4.delete(indexes);
 
-	await index_block_number_tx_index_v4.upsert(ids);
+	await index_block_number_tx_index_v4.upsert(indexes);
 
-	const idsForBlock = await getEventIdsForBlockNumber(1, block_number);
+	const ids = await getEventIdsForBlockNumber(1, block_number);
 
-	expect(idsForBlock).toMatchInlineSnapshot(`
+	expect(ids).toMatchInlineSnapshot(`
 		[
 		  "5eb01705009896800000ffffff0001000a",
 		  "5eb01705009896800001ffffff0001000a",
@@ -56,12 +59,33 @@ test.concurrent("block-number-tx-index-v4", async ({ expect }) => {
 		  "5eb01705009896800066ffffff0001000a",
 		]
 	`);
+});
 
-	const idsForTx = await getEventIdsForTxPosition(1, block_number, 0);
+test.concurrent("erc20_transfer_v3", async ({ expect }) => {
+	const block_number = 20000000;
 
-	expect(idsForTx).toMatchInlineSnapshot(`
+	const block = await test_getBlock({ chain: 1, block_number });
+
+	const indexes = erc20_transfer_v3.handler(block).map((event) => {
+		return event.id;
+	});
+
+	await index_block_number_tx_index_v4.delete(indexes);
+
+	await index_block_number_tx_index_v4.upsert(indexes);
+
+	const ids = await getEventIdsForTxPosition(1, block_number, 0);
+
+	expect(ids).toMatchInlineSnapshot(`
 		[
-		  "5eb01705009896800000ffffff0001000a",
+		  "665ba27f01312d00000000000000010009",
+		  "665ba27f01312d00000000000100010009",
+		  "665ba27f01312d00000000000400010009",
+		  "665ba27f01312d00000000000500010009",
+		  "665ba27f01312d00000000000800010009",
+		  "665ba27f01312d00000000000900010009",
+		  "665ba27f01312d00000000000c00010009",
+		  "665ba27f01312d00000000000d00010009",
 		]
 	`);
 });
