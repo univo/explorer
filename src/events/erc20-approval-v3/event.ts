@@ -3,10 +3,9 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
+import { TABLES } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { nonNullable, numberToHex } from "@/utils";
-import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -16,8 +15,8 @@ export interface Erc20ApprovalV3 {
 	success: boolean;
 	quantity: `0x${string}`;
 	owner_address: `0x${string}`;
-	spender_address: `0x${string}`;
 	token_address: `0x${string}`;
+	spender_address: `0x${string}`;
 }
 
 const abi = parseAbiItem("event Approval(address indexed owner, address indexed spender, uint256 value)");
@@ -39,7 +38,7 @@ export const event = univo.event({
 						logIndex: log.logIndex,
 						chainId: block.eth_chainId,
 						txIndex: log.transactionIndex,
-						tableId: tables.erc20_approval_v2,
+						tableId: TABLES.erc20_approval_v3,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
@@ -51,8 +50,8 @@ export const event = univo.event({
 						success: getEventSuccess(receipt),
 						quantity: numberToHex(args.value),
 						owner_address: getAddress(args.owner),
-						spender_address: getAddress(args.spender),
 						token_address: getAddress(log.address),
+						spender_address: getAddress(args.spender),
 					};
 				} catch {
 					return null;
@@ -104,23 +103,8 @@ univo.event({
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
-univo.event({
-	filters: event.filters,
-	storage: index_account_v3,
-	id: "erc20_approval_v3_index_account_v3",
-	handler: (block) => {
-		return event.handler(block).flatMap((event) => {
-			return [
-				{ event_id: event.id, account: event.token_address }, //
-				{ event_id: event.id, account: event.spender_address },
-				{ event_id: event.id, account: event.owner_address },
-			];
-		});
-	},
-});
-
 export async function getErc20ApprovalV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.erc20_approval_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.erc20_approval_v3);
 
 	if (filtered.length === 0) {
 		return [];
@@ -128,7 +112,11 @@ export async function getErc20ApprovalV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, filtered))
+		.orderBy(asc(table.id));
 
 	return rows.map<Erc20ApprovalV3>((result) => {
 		return {
@@ -137,8 +125,8 @@ export async function getErc20ApprovalV3(ids: string[]) {
 			success: result.success,
 			quantity: result.quantity,
 			owner_address: getAddress(result.owner_address),
-			spender_address: getAddress(result.spender_address),
 			token_address: getAddress(result.token_address),
+			spender_address: getAddress(result.spender_address),
 		};
 	});
 }
