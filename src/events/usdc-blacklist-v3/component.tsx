@@ -48,6 +48,7 @@ export function UsdcBlacklistV3AccountDescription(props: { event: UsdcBlacklistV
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="blacklisted">Blacklisted</Action>
 				<Account chain={chain} address={props.event.account_address} />
+				<span>from transferring any tokens</span>
 			</Description>
 		);
 	}

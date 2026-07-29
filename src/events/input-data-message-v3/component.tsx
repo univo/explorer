@@ -40,7 +40,8 @@ export function InputDataMessageV3AccountDescription(props: { event: InputDataMe
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Received message from</Action>
+				<Action type="sent">Received message</Action>
+				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 				<span>"{props.event.message}"</span>
 			</Description>
