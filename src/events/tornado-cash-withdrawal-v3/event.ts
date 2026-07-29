@@ -3,18 +3,12 @@ import { decodeFunctionData, getAddress, isAddressEqual, parseAbiItem, toFunctio
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
 import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
-
-// TODO
-// Events based on a interpretting a single transaction should have a unique logIndex that indicates this.
-// This allow us to identify it and not show its "logIndex" on the transactions view page. It also indicates
-// the event has less specificity than the other and should be ordered first. We could use this to disregard
-// events of more specificity. If there is a tx event we don't care about the log events.
 
 export interface TornadoCashWithdrawalV3 {
 	tag: "tornado_cash_withdrawal_v3";
@@ -50,10 +44,10 @@ export const event = univo.event({
 					}
 
 					const id = createId({
-						logIndex: "0x0",
 						chainId: block.eth_chainId,
+						logIndex: TRANSACTION_EVENT,
 						txIndex: tx.transactionIndex,
-						tableId: tables.tornado_cash_withdrawal_v1,
+						tableId: TABLES.tornado_cash_withdrawal_v3,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
@@ -140,7 +134,7 @@ univo.event({
 });
 
 export async function getTornadoCashWithdrawalV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.tornado_cash_withdrawal_v1);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.tornado_cash_withdrawal_v3);
 
 	if (filtered.length === 0) {
 		return [];
