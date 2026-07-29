@@ -32,10 +32,6 @@ export const event = univo.event({
 						return null;
 					}
 
-					if (tx.input.length < 16) {
-						return null;
-					}
-
 					// When deploying a contract the `to` field is null and we know input data is not a message
 					if (tx.to === null) {
 						return null;
@@ -45,8 +41,13 @@ export const event = univo.event({
 					const numValidChars = countValidChars(message);
 					const percentValidChars = numValidChars / message.length;
 
-					// Use some heuristic to decide if input data is not gibberish characters
-					if (percentValidChars < 0.7) {
+					// Ignore short messages
+					if (message.length < 16) {
+						return null;
+					}
+
+					// Ensure data is not gibberish characters
+					if (percentValidChars < 0.9) {
 						return null;
 					}
 
