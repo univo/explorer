@@ -48,7 +48,19 @@ test.concurrent("fwa_nft_deposited_v3 deletes, writes, and reads from storage", 
 
 	const final = await getFwaNftDepositedV3(ids);
 
-	expect(final).toMatchObject(events);
+	expect(final).toMatchInlineSnapshot(`
+		[
+		  {
+		    "backing_eth": "0xb1a2bc2ec50000",
+		    "collection_address": "0x26D7Ad0E930b54b84C00DAad077Ee31Ba9e2Fb2E",
+		    "depositor_address": "0x906691Bc9F0b5b505F3E9024B2e9342c554C7958",
+		    "id": "6a6a9483018743dd0017ffffff00010014",
+		    "success": true,
+		    "tag": "fwa_nft_deposited_v3",
+		    "token_id": "0x0afe",
+		  },
+		]
+	`);
 });
 
 test.concurrent("fwa_nft_deposited_v3 includes failed submissions", async ({ expect }) => {

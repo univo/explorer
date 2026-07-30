@@ -44,7 +44,22 @@ test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ e
 
 	const final = await getFwaWonV3(ids);
 
-	expect(final).toMatchObject(events);
+	expect(final).toMatchInlineSnapshot(`
+		[
+		  {
+		    "depositor_address": "0xC694108e704b3AC3C5b099A4B06208Bd0695aD00",
+		    "id": "6a6a948f018743de0045ffffff00010015",
+		    "listing_id": "0xf8ac",
+		    "payout_eth": "0x0fccc3b7ccc84000",
+		    "purchaser_address": "0x5984bb82F11171cb1DC2287E2A6935c44D491538",
+		    "retained_eth": "0x00",
+		    "settlement_type": "kept",
+		    "success": true,
+		    "tag": "fwa_won_v3",
+		    "token_out": "0x00",
+		  },
+		]
+	`);
 });
 
 test.concurrent("fwa_won_v3 handles all settlement types", async ({ expect }) => {
