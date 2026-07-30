@@ -17,7 +17,7 @@ import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { UsdcBlacklistV3Description } from "@/events/usdc-blacklist-v3/component";
 import { FwaNftDepositedV3Description } from "@/events/fwa-nft-deposited-v3/component";
-import { FwaPositionSettledV3Description } from "@/events/fwa-position-settled-v3/component";
+import { FwaWonV3Description } from "@/events/fwa-won-v3/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
@@ -160,8 +160,8 @@ export function EventDescription(props: { event: Event }) {
 		return <FwaNftDepositedV3Description event={props.event} />;
 	}
 
-	if (props.event.tag === "fwa_position_settled_v3") {
-		return <FwaPositionSettledV3Description event={props.event} />;
+	if (props.event.tag === "fwa_won_v3") {
+		return <FwaWonV3Description event={props.event} />;
 	}
 }
 

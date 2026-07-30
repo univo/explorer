@@ -372,8 +372,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.event_fwa_position_settled_v3": {
-      "name": "event_fwa_position_settled_v3",
+    "public.event_fwa_won_v3": {
+      "name": "event_fwa_won_v3",
       "schema": "",
       "columns": {
         "id": {

@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { event, getFwaPositionSettledV3 } from "./event";
+import { event, getFwaWonV3 } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
 
-test.concurrent("fwa_position_settled_v3 deletes, writes, and reads from storage", async ({ expect }) => {
+test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25641950 });
 
 	const wins = event.handler(block);
@@ -14,7 +14,7 @@ test.concurrent("fwa_position_settled_v3 deletes, writes, and reads from storage
 
 	const ids = wins.map((event) => event.id);
 
-	const initial = await getFwaPositionSettledV3(ids);
+	const initial = await getFwaWonV3(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -23,21 +23,17 @@ test.concurrent("fwa_position_settled_v3 deletes, writes, and reads from storage
 		params: [
 			{
 				blocks: [block],
-				events: [
-					"fwa_position_settled_v3",
-					"fwa_position_settled_v3_index_account_v3",
-					"fwa_position_settled_v3_index_block_number_tx_index_v4",
-				],
+				events: ["fwa_won_v3", "fwa_won_v3_index_account_v3", "fwa_won_v3_index_block_number_tx_index_v4"],
 			},
 		],
 	});
 
-	const stored = await getFwaPositionSettledV3(ids);
+	const stored = await getFwaWonV3(ids);
 
 	expect(stored).toMatchInlineSnapshot(wins);
 });
 
-test.concurrent("fwa_position_settled_v3 handles all settlement types", async ({ expect }) => {
+test.concurrent("fwa_won_v3 handles all settlement types", async ({ expect }) => {
 	const b25641950 = await test_getBlock({ chain: 1, block_number: 25641950 });
 
 	expect(event.handler(b25641950)).toMatchInlineSnapshot(`
@@ -104,7 +100,7 @@ test.concurrent("fwa_position_settled_v3 handles all settlement types", async ({
 	`);
 });
 
-test.concurrent("fwa_position_settled_v3 uses sentinels for failed settlements", async ({ expect }) => {
+test.concurrent("fwa_won_v3 uses sentinels for failed settlements", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25642555 });
 
 	expect(event.handler(block)).toMatchInlineSnapshot(`

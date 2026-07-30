@@ -1,12 +1,12 @@
 import { logger } from "@/utils";
+import { getFwaWonV3 } from "@/events/fwa-won-v3/event";
 import { getErc20ApprovalV3 } from "@/events/erc20-approval-v3/event";
 import { getErc20TransferV3 } from "@/events/erc20-transfer-v3/event";
 import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
-import { getFwaNftDepositedV3 } from "@/events/fwa-nft-deposited-v3/event";
-import { getFwaPositionSettledV3 } from "@/events/fwa-position-settled-v3/event";
 import { getNativeTransferV3 } from "@/events/native-transfer-v3/event";
 import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
 import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
+import { getFwaNftDepositedV3 } from "@/events/fwa-nft-deposited-v3/event";
 import { getCancelPendingTxV3 } from "@/events/cancel-pending-tx-v3/event";
 import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
@@ -21,14 +21,14 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
+		getFwaWonV3(ids),
 		getUsdcBlacklistV3(ids),
-		getFwaNftDepositedV3(ids),
-		getFwaPositionSettledV3(ids),
 		getErc20TransferV3(ids),
 		getErc20ApprovalV3(ids),
 		getNativeTransferV3(ids),
 		getErc721TransferV3(ids),
 		getErc721ApprovalV3(ids),
+		getFwaNftDepositedV3(ids),
 		getCancelPendingTxV3(ids),
 		getInputDataMessageV3(ids),
 		getEnsNameRegisteredV3(ids),

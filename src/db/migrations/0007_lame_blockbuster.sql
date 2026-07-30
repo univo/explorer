@@ -1,4 +1,4 @@
-CREATE TABLE "event_fwa_position_settled_v3" (
+CREATE TABLE "event_fwa_won_v3" (
 	"id" "bytea" PRIMARY KEY NOT NULL,
 	"success" boolean NOT NULL,
 	"settlement_type" text NOT NULL,

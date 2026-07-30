@@ -2,7 +2,7 @@ import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 
 import { hex, id } from "@/db/types";
 
-export const table = pgTable("event_fwa_position_settled_v3", {
+export const table = pgTable("event_fwa_won_v3", {
 	id: id().primaryKey(),
 	success: boolean().notNull(),
 	settlement_type: text().notNull(),

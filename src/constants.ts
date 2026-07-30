@@ -40,7 +40,7 @@ export const TABLES = {
 	tornado_cash_withdrawal_v3: 18,
 	usdc_blacklist_v3: 19,
 	fwa_nft_deposited_v3: 20,
-	fwa_position_settled_v3: 21,
+	fwa_won_v3: 21,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
