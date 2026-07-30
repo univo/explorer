@@ -1,5 +1,6 @@
 import { logger } from "@/utils";
 import { getFwaWonV3 } from "@/events/fwa-won-v3/event";
+import { getFwaNftListedV3 } from "@/events/fwa-nft-listed-v3/event";
 import { getErc20ApprovalV3 } from "@/events/erc20-approval-v3/event";
 import { getErc20TransferV3 } from "@/events/erc20-transfer-v3/event";
 import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
@@ -22,6 +23,7 @@ export async function getEventsForIds(ids: string[]) {
 
 	const events = await Promise.all([
 		getFwaWonV3(ids),
+		getFwaNftListedV3(ids),
 		getUsdcBlacklistV3(ids),
 		getErc20TransferV3(ids),
 		getErc20ApprovalV3(ids),
