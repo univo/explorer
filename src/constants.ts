@@ -37,6 +37,7 @@ export const TABLES = {
 	erc721_approval_v3: 17,
 	tornado_cash_withdrawal_v3: 18,
 	usdc_blacklist_v3: 19,
+	fwa_nft_deposited_v3: 20,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
@@ -46,3 +47,7 @@ export const TABLES = {
 // interpretations of the same transaction
 
 export const TRANSACTION_EVENT = "0xffffff";
+
+// This our standard way of representing native ether as an ERC-20
+
+export const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";

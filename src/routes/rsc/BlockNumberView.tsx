@@ -16,6 +16,7 @@ import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { UsdcBlacklistV3Description } from "@/events/usdc-blacklist-v3/component";
+import { FwaNftDepositedV3Description } from "@/events/fwa-nft-deposited-v3/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
@@ -152,6 +153,10 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "usdc_blacklist_v3") {
 		return <UsdcBlacklistV3Description event={props.event} />;
+	}
+
+	if (props.event.tag === "fwa_nft_deposited_v3") {
+		return <FwaNftDepositedV3Description event={props.event} />;
 	}
 }
 

@@ -14,6 +14,7 @@ type Action =
 	| "registered"
 	| "bridged"
 	| "deployed"
+	| "deposited"
 	| "cancelled"
 	| "blacklisted";
 
@@ -45,6 +46,7 @@ const colors: Record<Action, Color> = {
 	bought: "purple",
 	minted: "purple",
 	deployed: "purple",
+	deposited: "purple",
 
 	sold: "gray",
 };
