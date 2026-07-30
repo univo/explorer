@@ -159,7 +159,15 @@ export function numberToHex(number: number | bigint) {
 	return `0x${number.toString(16)}` as const;
 }
 
-export function isHexEqual(a: `0x${string}`, b: `0x${string}`) {
+export function isHexEqual(a: `0x${string}` | undefined, b: `0x${string}` | undefined) {
+	if (a === undefined) {
+		return false;
+	}
+
+	if (b === undefined) {
+		return false;
+	}
+
 	return a.toLowerCase() === b.toLowerCase();
 }
 
