@@ -6,7 +6,7 @@ import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
-import { isHexEqual, nonNullable, numberToHex } from "@/utils";
+import { defineBatchLoader, isHexEqual, nonNullable, numberToHex } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/fwa-nft-deposited-v3/event";
 
@@ -153,8 +153,8 @@ export async function getFwaNftListedV3(ids: string[]) {
 	});
 }
 
-export async function getFwaNftListedV3ByListingIds(listingIds: `0x${string}`[]) {
-	if (listingIds.length === 0) {
+export const getFwaNftListedV3ByListingId = defineBatchLoader(async (ids: readonly `0x${string}`[]) => {
+	if (ids.length === 0) {
 		return [];
 	}
 
@@ -163,10 +163,15 @@ export async function getFwaNftListedV3ByListingIds(listingIds: `0x${string}`[])
 	const rows = await client
 		.select() //
 		.from(table)
-		.where(inArray(table.listing_id, listingIds))
-		.orderBy(asc(table.listing_id));
+		.where(inArray(table.listing_id, ids));
 
-	return rows.map<FwaNftListedV3>((result) => {
+	return ids.map((listingId) => {
+		const result = rows.find((row) => row.listing_id === listingId);
+
+		if (!result) {
+			return null;
+		}
+
 		return {
 			tag: "fwa_nft_listed_v3",
 			id: result.id,
@@ -180,4 +185,4 @@ export async function getFwaNftListedV3ByListingIds(listingIds: `0x${string}`[])
 			collection_address: getAddress(result.collection_address),
 		};
 	});
-}
+});
