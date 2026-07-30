@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { event, getFwaNftListedV3 } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
+import { event, getFwaNftListedV3, getFwaNftListedV3ByListingId } from "./event";
 
 test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25643505 });
@@ -167,4 +167,19 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		  },
 		]
 	`);
+
+	const listing = await getFwaNftListedV3ByListingId("0x017cb6");
+
+	expect(listing).toMatchObject({
+		backing_eth: "0x02b4c77783338000",
+		collection_address: "0x470879Abd61FdCA91436fE27ed87dB2c8650f3e7",
+		depositor_address: "0x5b938Ec9b920B6C1Ab351F65581F17Dd2090f579",
+		id: "6a6add97018749f1001d0000b500010016",
+		listing_id: "0x017cb6",
+		slot: "0x1a63",
+		success: true,
+		tag: "fwa_nft_listed_v3",
+		token_id: "0x89",
+		weight: "0x472b0b64ca00d20d",
+	});
 });
