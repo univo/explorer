@@ -1,4 +1,11 @@
 import { custom } from "valibot";
+import DataLoader from "dataloader";
+import type { BatchLoadFn } from "dataloader";
+
+export function defineBatchLoader<K, V>(fn: BatchLoadFn<K, V>) {
+	const loader = new DataLoader(fn);
+	return (id: K) => loader.load(id);
+}
 
 export function unreachable(error?: string): never {
 	throw new Error(error);
