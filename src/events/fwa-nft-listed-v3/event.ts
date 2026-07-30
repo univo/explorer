@@ -167,7 +167,7 @@ export const getFwaNftListedV3ByListingId = defineBatchLoader(async (ids: readon
 		.from(table)
 		.where(inArray(table.listing_id, ids));
 
-	return ids.map((id) => {
+	return ids.map<FwaNftListedV3 | null>((id) => {
 		const result = rows.find((row) => row.listing_id === id);
 
 		if (!result) {
