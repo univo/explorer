@@ -35,7 +35,7 @@ test.concurrent("ens_name_registered_v3", async ({ expect }) => {
 		  {
 		    "cost_eth": "0x049b7758054231",
 		    "expires_at": "0x6adbebc3",
-		    "id": "68fab8430168c51f008a0001610001000e",
+		    "id": "68fab8430168c51f008affffff0001000e",
 		    "name": "hangytong",
 		    "owner_address": "0xeFb564F5623978F68ff3546b0769ed564A9058EC",
 		    "success": true,
@@ -64,7 +64,7 @@ test.concurrent("ens_name_registered_v3", async ({ expect }) => {
 		  {
 		    "cost_eth": "0x07d7658f98752e",
 		    "expires_at": "0x67529483",
-		    "id": "65716103011dd5ed009c00017b0001000e",
+		    "id": "65716103011dd5ed009cffffff0001000e",
 		    "name": "payblock",
 		    "owner_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",
 		    "success": true,

@@ -3,10 +3,10 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
 import { nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -26,13 +26,15 @@ export const event = univo.event({
 	handler: (block) => {
 		return block.eth_getBlockReceipts
 			.map((receipt) => {
-				if (receipt.contractAddress === null || receipt.contractAddress === undefined) return null;
+				if (receipt.contractAddress === null || receipt.contractAddress === undefined) {
+					return null;
+				}
 
 				const id = createId({
-					logIndex: "0x0",
 					chainId: block.eth_chainId,
+					logIndex: TRANSACTION_EVENT,
 					txIndex: receipt.transactionIndex,
-					tableId: tables.contract_deployment_v2,
+					tableId: TABLES.contract_deployment_v3,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -103,7 +105,7 @@ univo.event({
 });
 
 export async function getContractDeploymentV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.contract_deployment_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.contract_deployment_v3);
 
 	if (filtered.length === 0) {
 		return [];
@@ -111,7 +113,11 @@ export async function getContractDeploymentV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, filtered))
+		.orderBy(asc(table.id));
 
 	return rows.map<ContractDeploymentV3>((result) => {
 		return {

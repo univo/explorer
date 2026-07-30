@@ -3,10 +3,10 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
-import { nonNullable } from "@/utils";
+import { isHexEqual, nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -28,42 +28,39 @@ export const event = univo.event({
 		return block.eth_getBlockByNumber.transactions
 			.map((tx) => {
 				try {
-					if (tx.input === "0x") {
+					if (tx.input === "0x" || tx.input === "0x0") {
 						return null;
 					}
 
-					if (tx.input === "0x0") {
-						return null;
-					}
-
-					if (tx.input.length < 16) {
-						return null;
-					}
-
-					// When deploying a contract `to` field is null and we know input data is not a message
+					// When deploying a contract the `to` field is null and we know input data is not a message
 					if (tx.to === null) {
 						return null;
 					}
 
 					const message = hexToString(tx.input);
-					const num_valid_chars = countValidChars(message);
-					const percent_valid_chars = num_valid_chars / message.length;
+					const numValidChars = countValidChars(message);
+					const percentValidChars = numValidChars / message.length;
 
-					// Use some heuristic to decide if input data is not gibberish characters
-					if (percent_valid_chars < 0.6) {
+					// Ignore short messages
+					if (message.length < 16) {
+						return null;
+					}
+
+					// Ensure data is not gibberish characters
+					if (percentValidChars < 0.9) {
 						return null;
 					}
 
 					const id = createId({
-						logIndex: "0x0",
 						chainId: block.eth_chainId,
+						logIndex: TRANSACTION_EVENT,
 						txIndex: tx.transactionIndex,
-						tableId: tables.input_data_message_v2,
+						tableId: TABLES.input_data_message_v3,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
-					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+					const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 					return {
 						id,
@@ -172,7 +169,7 @@ function countValidChars(string: string) {
 }
 
 export async function getInputDataMessageV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.input_data_message_v2);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.input_data_message_v3);
 
 	if (filtered.length === 0) {
 		return [];
@@ -180,7 +177,11 @@ export async function getInputDataMessageV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, filtered))
+		.orderBy(asc(table.id));
 
 	return rows.map<InputDataMessageV3>((result) => {
 		return {

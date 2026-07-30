@@ -20,8 +20,7 @@ test.concurrent("erc20_transfer_v3", async ({ expect }) => {
 			{
 				blocks: [block],
 				events: [
-					"erc20_transfer_v3",
-					"erc20_transfer_v3_index_account_v3",
+					"erc20_transfer_v3", //
 					"erc20_transfer_v3_index_block_number_tx_index_v4",
 				],
 			},

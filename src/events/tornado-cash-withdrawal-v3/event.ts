@@ -3,18 +3,12 @@ import { decodeFunctionData, getAddress, isAddressEqual, parseAbiItem, toFunctio
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { tables } from "@/constants";
-import { nonNullable, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
+import { iife, nonNullable, numberToHex } from "@/utils";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
-
-// TODO
-// Events based on a interpretting a single transaction should have a unique logIndex that indicates this.
-// This allow us to identify it and not show its "logIndex" on the transactions view page. It also indicates
-// the event has less specificity than the other and should be ordered first. We could use this to disregard
-// events of more specificity. If there is a tx event we don't care about the log events.
 
 export interface TornadoCashWithdrawalV3 {
 	tag: "tornado_cash_withdrawal_v3";
@@ -43,17 +37,60 @@ export const event = univo.event({
 						return null;
 					}
 
-					const withdrawal = getTornadoCashWithdrawal(tx.to, tx.input);
+					const withdrawal = iife(() => {
+						if (tx.to === null) {
+							return null;
+						}
+
+						if (tx.input.startsWith(DIRECT_WITHDRAWAL_SELECTOR)) {
+							const pool = getTornadoCashPool(tx.to);
+
+							if (pool === undefined) {
+								return null;
+							}
+
+							const decoded = decodeFunctionData({ abi: [DIRECT_WITHDRAWAL_ABI], data: tx.input });
+
+							return {
+								pool,
+								fee: decoded.args[5],
+								relayer: decoded.args[4],
+								recipient: decoded.args[3],
+							};
+						}
+
+						if (tx.input.startsWith(PROXY_WITHDRAWAL_SELECTOR)) {
+							if (isWithdrawalProxy(tx.to) === false) {
+								return null;
+							}
+
+							const decoded = decodeFunctionData({ abi: [PROXY_WITHDRAWAL_ABI], data: tx.input });
+							const pool = getTornadoCashPool(decoded.args[0]);
+
+							if (pool === undefined) {
+								return null;
+							}
+
+							return {
+								pool,
+								fee: decoded.args[6],
+								relayer: decoded.args[5],
+								recipient: decoded.args[4],
+							};
+						}
+
+						return null;
+					});
 
 					if (withdrawal === null) {
 						return null;
 					}
 
 					const id = createId({
-						logIndex: "0x0",
 						chainId: block.eth_chainId,
+						logIndex: TRANSACTION_EVENT,
 						txIndex: tx.transactionIndex,
-						tableId: tables.tornado_cash_withdrawal_v1,
+						tableId: TABLES.tornado_cash_withdrawal_v3,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
@@ -140,7 +177,7 @@ univo.event({
 });
 
 export async function getTornadoCashWithdrawalV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === tables.tornado_cash_withdrawal_v1);
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.tornado_cash_withdrawal_v3);
 
 	if (filtered.length === 0) {
 		return [];
@@ -219,47 +256,6 @@ const PROXY_WITHDRAWAL_ABI = parseAbiItem(
 
 const PROXY_WITHDRAWAL_SELECTOR = toFunctionSelector(PROXY_WITHDRAWAL_ABI);
 const DIRECT_WITHDRAWAL_SELECTOR = toFunctionSelector(DIRECT_WITHDRAWAL_ABI);
-
-function getTornadoCashWithdrawal(to: `0x${string}`, input: `0x${string}`) {
-	if (input.startsWith(DIRECT_WITHDRAWAL_SELECTOR)) {
-		const pool = getTornadoCashPool(to);
-
-		if (pool === undefined) {
-			return null;
-		}
-
-		const decoded = decodeFunctionData({ abi: [DIRECT_WITHDRAWAL_ABI], data: input });
-
-		return {
-			pool,
-			fee: decoded.args[5],
-			relayer: decoded.args[4],
-			recipient: decoded.args[3],
-		};
-	}
-
-	if (input.startsWith(PROXY_WITHDRAWAL_SELECTOR)) {
-		if (isWithdrawalProxy(to) === false) {
-			return null;
-		}
-
-		const decoded = decodeFunctionData({ abi: [PROXY_WITHDRAWAL_ABI], data: input });
-		const pool = getTornadoCashPool(decoded.args[0]);
-
-		if (pool === undefined) {
-			return null;
-		}
-
-		return {
-			pool,
-			fee: decoded.args[6],
-			relayer: decoded.args[5],
-			recipient: decoded.args[4],
-		};
-	}
-
-	return null;
-}
 
 const WITHDRAWAL_PROXY_ADDRESSES = [
 	"0x905b63Fff465B9fFBF41DeA908CEb12478ec7601",

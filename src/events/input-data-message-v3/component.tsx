@@ -14,7 +14,8 @@ export function InputDataMessageV3Description(props: { event: InputDataMessageV3
 	return (
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Action type="sent">Message sent from</Action>
+			<Action type="sent">Message sent</Action>
+			<span>from</span>
 			<Account chain={chain} address={props.event.from_address} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
@@ -29,7 +30,8 @@ export function InputDataMessageV3AccountDescription(props: { event: InputDataMe
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Sent message to</Action>
+				<Action type="sent">Sent message</Action>
+				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 				<span>"{props.event.message}"</span>
 			</Description>
@@ -40,7 +42,8 @@ export function InputDataMessageV3AccountDescription(props: { event: InputDataMe
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Received message from</Action>
+				<Action type="sent">Received message</Action>
+				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 				<span>"{props.event.message}"</span>
 			</Description>

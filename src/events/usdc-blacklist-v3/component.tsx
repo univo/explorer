@@ -1,13 +1,15 @@
-import { isAddressEqual } from "viem";
+import { getAddress, isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
+import type { UsdcBlacklistV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { Account as IAccount } from "@/state/account";
-import { USDC_ADDRESS, type UsdcBlacklistV3 } from "./event";
+
+const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
 export function UsdcBlacklistV3Description(props: { event: UsdcBlacklistV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -46,6 +48,7 @@ export function UsdcBlacklistV3AccountDescription(props: { event: UsdcBlacklistV
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="blacklisted">Blacklisted</Action>
 				<Account chain={chain} address={props.event.account_address} />
+				<span>from transferring any tokens</span>
 			</Description>
 		);
 	}

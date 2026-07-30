@@ -9,6 +9,7 @@ test.concurrent("usdc_blacklist_v3", async ({ expect }) => {
 	await event.storage.delete(event.handler(block));
 
 	const ids = event.handler(block).map((event) => event.id);
+
 	const initial = await getUsdcBlacklistV3(ids);
 
 	expect(initial).toStrictEqual([]);
@@ -33,7 +34,7 @@ test.concurrent("usdc_blacklist_v3", async ({ expect }) => {
 		[
 		  {
 		    "account_address": "0x3E140E2Db21D0AEC7fde9f0E134c02C5321f0Cd3",
-		    "id": "6a5003e301850f3c002300006000010013",
+		    "id": "6a5003e301850f3c0023ffffff00010013",
 		    "success": true,
 		    "tag": "usdc_blacklist_v3",
 		  },
