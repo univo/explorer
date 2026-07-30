@@ -3,10 +3,10 @@ import { decodeFunctionData, getAddress, parseAbiItem, toFunctionSelector } from
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
+import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
-import { isHexEqual, nonNullable, numberToHex } from "@/utils";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -37,43 +37,41 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				try {
-					if (tx.to === null) {
-						return null;
-					}
-
-					if (!isHexEqual(tx.to, FWA_ADDRESS) || !tx.input.startsWith(toFunctionSelector(LIST_NFT_ABI))) {
-						return null;
-					}
-
-					const { args } = decodeFunctionData({ abi: [LIST_NFT_ABI], data: tx.input });
-
-					const id = createId({
-						logIndex: TRANSACTION_EVENT,
-						chainId: block.eth_chainId,
-						txIndex: tx.transactionIndex,
-						tableId: TABLES.fwa_nft_deposited_v3,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
-					const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-
-					return {
-						id,
-						backing_eth: tx.value,
-						token_id: numberToHex(args[1]),
-						success: getEventSuccess(receipt),
-						depositor_address: getAddress(tx.from),
-						collection_address: getAddress(args[0]),
-					};
-				} catch {
-					return null;
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			try {
+				if (tx.to === null) {
+					return [];
 				}
-			})
-			.filter(nonNullable);
+
+				if (!isHexEqual(tx.to, FWA_ADDRESS) || !tx.input.startsWith(toFunctionSelector(LIST_NFT_ABI))) {
+					return [];
+				}
+
+				const { args } = decodeFunctionData({ abi: [LIST_NFT_ABI], data: tx.input });
+
+				const id = createId({
+					logIndex: TRANSACTION_EVENT,
+					chainId: block.eth_chainId,
+					txIndex: tx.transactionIndex,
+					tableId: TABLES.fwa_nft_deposited_v3,
+					blockNumber: block.eth_getBlockByNumber.number,
+					blockTimestamp: block.eth_getBlockByNumber.timestamp,
+				});
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+
+				return {
+					id,
+					backing_eth: tx.value,
+					token_id: numberToHex(args[1]),
+					success: getEventSuccess(receipt),
+					depositor_address: getAddress(tx.from),
+					collection_address: getAddress(args[0]),
+				};
+			} catch {
+				return [];
+			}
+		});
 	},
 
 	storage: {
@@ -142,7 +140,11 @@ export async function getFwaNftDepositedV3(ids: string[]) {
 
 	const client = await createPostgresClient();
 
-	const rows = await client.select().from(table).where(inArray(table.id, filtered)).orderBy(asc(table.id));
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.id, filtered))
+		.orderBy(asc(table.id));
 
 	return rows.map<FwaNftDepositedV3>((result) => {
 		return {

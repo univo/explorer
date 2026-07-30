@@ -10,10 +10,10 @@ import {
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
+import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { createId, getEventSuccess, parseId } from "@/helpers";
-import { isHexEqual, nonNullable, numberToHex } from "@/utils";
 import { TABLES, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/fwa-nft-deposited-v3/event";
@@ -63,150 +63,148 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				try {
-					if (tx.to === null || !isHexEqual(tx.to, FWA_ADDRESS)) {
-						return null;
-					}
-
-					let listingId: bigint;
-					let settlementType: "kept" | "relisted" | "accepted_eth" | "accepted_fwa";
-
-					if (tx.input.startsWith(toFunctionSelector(KEEP_NFT_ABI))) {
-						settlementType = "kept";
-						listingId = decodeFunctionData({ abi: [KEEP_NFT_ABI], data: tx.input }).args[0];
-					} else if (tx.input.startsWith(toFunctionSelector(RELIST_NFT_ABI))) {
-						settlementType = "relisted";
-						listingId = decodeFunctionData({ abi: [RELIST_NFT_ABI], data: tx.input }).args[0];
-					} else if (tx.input.startsWith(toFunctionSelector(ACCEPT_DEPOSITOR_BID_ABI))) {
-						settlementType = "accepted_eth";
-						listingId = decodeFunctionData({ abi: [ACCEPT_DEPOSITOR_BID_ABI], data: tx.input }).args[0];
-					} else if (tx.input.startsWith(toFunctionSelector(ACCEPT_BID_AS_TOKENS_ABI))) {
-						settlementType = "accepted_fwa";
-						listingId = decodeFunctionData({ abi: [ACCEPT_BID_AS_TOKENS_ABI], data: tx.input }).args[0];
-					} else {
-						return null;
-					}
-
-					const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-					const success = getEventSuccess(receipt);
-
-					let depositorAddress = ZERO_ADDRESS;
-					let tokenOut: `0x${string}` = ZERO_VALUE;
-					let payoutEth: `0x${string}` = ZERO_VALUE;
-					let purchaserAddress = getAddress(tx.from);
-					let retainedEth: `0x${string}` = ZERO_VALUE;
-
-					if (success) {
-						if (settlementType === "kept") {
-							const log = receipt?.logs.find(
-								(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_KEPT_ABI),
-							);
-
-							if (log === undefined) {
-								throw new Error("Expected NFTKept log");
-							}
-
-							const { args } = decodeEventLog({
-								abi: [NFT_KEPT_ABI],
-								data: log.data,
-								topics: log.topics,
-								strict: true,
-							});
-
-							payoutEth = numberToHex(args.backing);
-							purchaserAddress = getAddress(args.purchaser);
-							depositorAddress = getAddress(args.depositor);
-						} else if (settlementType === "relisted") {
-							const log = receipt?.logs.find(
-								(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_RELISTED_ABI),
-							);
-
-							if (log === undefined) {
-								throw new Error("Expected NFTRelisted log");
-							}
-
-							const { args } = decodeEventLog({
-								abi: [NFT_RELISTED_ABI],
-								data: log.data,
-								topics: log.topics,
-								strict: true,
-							});
-
-							payoutEth = numberToHex(args.toDepositor);
-						} else if (settlementType === "accepted_eth") {
-							const log = receipt?.logs.find(
-								(log) =>
-									isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(DEPOSITOR_BID_ACCEPTED_ABI),
-							);
-
-							if (log === undefined) {
-								throw new Error("Expected DepositorBidAccepted log");
-							}
-
-							const { args } = decodeEventLog({
-								abi: [DEPOSITOR_BID_ACCEPTED_ABI],
-								data: log.data,
-								topics: log.topics,
-								strict: true,
-							});
-
-							payoutEth = numberToHex(args.payout);
-							retainedEth = numberToHex(args.retained);
-							purchaserAddress = getAddress(args.purchaser);
-							depositorAddress = getAddress(args.depositor);
-						} else {
-							const log = receipt?.logs.find(
-								(log) =>
-									isHexEqual(log.address, FWA_ADDRESS) &&
-									log.topics[0] === toEventSelector(DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI),
-							);
-
-							if (log === undefined) {
-								throw new Error("Expected DepositorBidAcceptedAsTokens log");
-							}
-
-							const { args } = decodeEventLog({
-								abi: [DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI],
-								data: log.data,
-								topics: log.topics,
-								strict: true,
-							});
-
-							tokenOut = numberToHex(args.tokenOut);
-							payoutEth = numberToHex(args.ethPayout);
-							retainedEth = numberToHex(args.retained);
-							purchaserAddress = getAddress(args.purchaser);
-							depositorAddress = getAddress(args.depositor);
-						}
-					}
-
-					const id = createId({
-						logIndex: TRANSACTION_EVENT,
-						chainId: block.eth_chainId,
-						txIndex: tx.transactionIndex,
-						tableId: TABLES.fwa_won_v3,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
-					return {
-						id,
-						success,
-						token_out: tokenOut,
-						payout_eth: payoutEth,
-						listing_id: numberToHex(listingId),
-						retained_eth: retainedEth,
-						settlement_type: settlementType,
-						purchaser_address: purchaserAddress,
-						depositor_address: depositorAddress,
-					};
-				} catch {
-					return null;
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			try {
+				if (tx.to === null || !isHexEqual(tx.to, FWA_ADDRESS)) {
+					return [];
 				}
-			})
-			.filter(nonNullable);
+
+				let listingId: bigint;
+				let settlementType: "kept" | "relisted" | "accepted_eth" | "accepted_fwa";
+
+				if (tx.input.startsWith(toFunctionSelector(KEEP_NFT_ABI))) {
+					settlementType = "kept";
+					listingId = decodeFunctionData({ abi: [KEEP_NFT_ABI], data: tx.input }).args[0];
+				} else if (tx.input.startsWith(toFunctionSelector(RELIST_NFT_ABI))) {
+					settlementType = "relisted";
+					listingId = decodeFunctionData({ abi: [RELIST_NFT_ABI], data: tx.input }).args[0];
+				} else if (tx.input.startsWith(toFunctionSelector(ACCEPT_DEPOSITOR_BID_ABI))) {
+					settlementType = "accepted_eth";
+					listingId = decodeFunctionData({ abi: [ACCEPT_DEPOSITOR_BID_ABI], data: tx.input }).args[0];
+				} else if (tx.input.startsWith(toFunctionSelector(ACCEPT_BID_AS_TOKENS_ABI))) {
+					settlementType = "accepted_fwa";
+					listingId = decodeFunctionData({ abi: [ACCEPT_BID_AS_TOKENS_ABI], data: tx.input }).args[0];
+				} else {
+					return [];
+				}
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+				const success = getEventSuccess(receipt);
+
+				let depositorAddress = ZERO_ADDRESS;
+				let tokenOut: `0x${string}` = ZERO_VALUE;
+				let payoutEth: `0x${string}` = ZERO_VALUE;
+				let purchaserAddress = getAddress(tx.from);
+				let retainedEth: `0x${string}` = ZERO_VALUE;
+
+				if (success) {
+					if (settlementType === "kept") {
+						const log = receipt?.logs.find(
+							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_KEPT_ABI),
+						);
+
+						if (log === undefined) {
+							throw new Error("Expected NFTKept log");
+						}
+
+						const { args } = decodeEventLog({
+							abi: [NFT_KEPT_ABI],
+							data: log.data,
+							topics: log.topics,
+							strict: true,
+						});
+
+						payoutEth = numberToHex(args.backing);
+						purchaserAddress = getAddress(args.purchaser);
+						depositorAddress = getAddress(args.depositor);
+					} else if (settlementType === "relisted") {
+						const log = receipt?.logs.find(
+							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_RELISTED_ABI),
+						);
+
+						if (log === undefined) {
+							throw new Error("Expected NFTRelisted log");
+						}
+
+						const { args } = decodeEventLog({
+							abi: [NFT_RELISTED_ABI],
+							data: log.data,
+							topics: log.topics,
+							strict: true,
+						});
+
+						payoutEth = numberToHex(args.toDepositor);
+					} else if (settlementType === "accepted_eth") {
+						const log = receipt?.logs.find(
+							(log) =>
+								isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(DEPOSITOR_BID_ACCEPTED_ABI),
+						);
+
+						if (log === undefined) {
+							throw new Error("Expected DepositorBidAccepted log");
+						}
+
+						const { args } = decodeEventLog({
+							abi: [DEPOSITOR_BID_ACCEPTED_ABI],
+							data: log.data,
+							topics: log.topics,
+							strict: true,
+						});
+
+						payoutEth = numberToHex(args.payout);
+						retainedEth = numberToHex(args.retained);
+						purchaserAddress = getAddress(args.purchaser);
+						depositorAddress = getAddress(args.depositor);
+					} else {
+						const log = receipt?.logs.find(
+							(log) =>
+								isHexEqual(log.address, FWA_ADDRESS) &&
+								log.topics[0] === toEventSelector(DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI),
+						);
+
+						if (log === undefined) {
+							throw new Error("Expected DepositorBidAcceptedAsTokens log");
+						}
+
+						const { args } = decodeEventLog({
+							abi: [DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI],
+							data: log.data,
+							topics: log.topics,
+							strict: true,
+						});
+
+						tokenOut = numberToHex(args.tokenOut);
+						payoutEth = numberToHex(args.ethPayout);
+						retainedEth = numberToHex(args.retained);
+						purchaserAddress = getAddress(args.purchaser);
+						depositorAddress = getAddress(args.depositor);
+					}
+				}
+
+				const id = createId({
+					logIndex: TRANSACTION_EVENT,
+					chainId: block.eth_chainId,
+					txIndex: tx.transactionIndex,
+					tableId: TABLES.fwa_won_v3,
+					blockNumber: block.eth_getBlockByNumber.number,
+					blockTimestamp: block.eth_getBlockByNumber.timestamp,
+				});
+
+				return {
+					id,
+					success,
+					token_out: tokenOut,
+					payout_eth: payoutEth,
+					listing_id: numberToHex(listingId),
+					retained_eth: retainedEth,
+					settlement_type: settlementType,
+					purchaser_address: purchaserAddress,
+					depositor_address: depositorAddress,
+				};
+			} catch {
+				return [];
+			}
+		});
 	},
 
 	storage: {

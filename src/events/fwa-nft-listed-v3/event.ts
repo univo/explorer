@@ -6,7 +6,7 @@ import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
-import { defineBatchLoader, isHexEqual, nonNullable, numberToHex } from "@/utils";
+import { defineBatchLoader, isHexEqual, numberToHex } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/fwa-nft-deposited-v3/event";
 
@@ -40,11 +40,13 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockReceipts
-			.flatMap((receipt) => receipt.logs)
-			.filter((log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_LISTED_ABI))
-			.map((log) => {
+		return block.eth_getBlockReceipts.flatMap((receipt) => {
+			return receipt.logs.flatMap((log) => {
 				try {
+					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], toEventSelector(NFT_LISTED_ABI))) {
+						return [];
+					}
+
 					const { args } = decodeEventLog({
 						abi: [NFT_LISTED_ABI],
 						data: log.data,
@@ -72,10 +74,10 @@ export const event = univo.event({
 						collection_address: getAddress(args.collection),
 					};
 				} catch {
-					return null;
+					return [];
 				}
-			})
-			.filter(nonNullable);
+			});
+		});
 	},
 
 	storage: {
@@ -165,8 +167,8 @@ export const getFwaNftListedV3ByListingId = defineBatchLoader(async (ids: readon
 		.from(table)
 		.where(inArray(table.listing_id, ids));
 
-	return ids.map((listingId) => {
-		const result = rows.find((row) => row.listing_id === listingId);
+	return ids.map((id) => {
+		const result = rows.find((row) => row.listing_id === id);
 
 		if (!result) {
 			return null;
