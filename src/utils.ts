@@ -1,5 +1,9 @@
 import { custom } from "valibot";
 
+export function unreachable(error?: string): never {
+	throw new Error(error);
+}
+
 export function hashstring() {
 	return custom<`0x${string}`>((val) => typeof val === "string" && val.startsWith("0x"));
 }
