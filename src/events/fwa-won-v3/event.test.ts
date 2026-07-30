@@ -6,13 +6,27 @@ import { test_client, test_getBlock } from "@/tests/utils";
 test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25641950 });
 
-	const wins = event.handler(block);
+	const events = event.handler(block);
 
-	expect(wins).toMatchInlineSnapshot(wins);
+	expect(events).toMatchInlineSnapshot(`
+		[
+		  {
+		    "depositor_address": "0xC694108e704b3AC3C5b099A4B06208Bd0695aD00",
+		    "id": "6a6a948f018743de0045ffffff00010015",
+		    "listing_id": "0xf8ac",
+		    "payout_eth": "0xfccc3b7ccc84000",
+		    "purchaser_address": "0x5984bb82F11171cb1DC2287E2A6935c44D491538",
+		    "retained_eth": "0x0",
+		    "settlement_type": "kept",
+		    "success": true,
+		    "token_out": "0x0",
+		  },
+		]
+	`);
 
-	await event.storage.delete(wins);
+	await event.storage.delete(events);
 
-	const ids = wins.map((event) => event.id);
+	const ids = events.map((event) => event.id);
 
 	const initial = await getFwaWonV3(ids);
 
@@ -28,9 +42,9 @@ test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ e
 		],
 	});
 
-	const stored = await getFwaWonV3(ids);
+	const final = await getFwaWonV3(ids);
 
-	expect(stored).toMatchInlineSnapshot(wins);
+	expect(final).toMatchObject(events);
 });
 
 test.concurrent("fwa_won_v3 handles all settlement types", async ({ expect }) => {
