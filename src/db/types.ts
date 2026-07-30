@@ -52,8 +52,6 @@ export const id = customType<{ data: string; driverData: Uint8Array | string }>(
 				output += hex.length === 1 ? `0${hex}` : hex;
 			}
 
-			// Ids always have an even length of bytes
-
 			return output;
 		}
 
@@ -91,10 +89,6 @@ export const hex = customType<{ data: `0x${string}` }>({
 			for (const byte of value as unknown as Uint8Array) {
 				const hex = byte.toString(16);
 				output += hex.length === 1 ? `0${hex}` : hex;
-			}
-
-			if (output.startsWith("0")) {
-				return `0x${output.slice(1)}`;
 			}
 
 			return `0x${output}`;
