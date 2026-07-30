@@ -5,6 +5,7 @@ export { table as index_block_number_tx_index_v4 } from "@/indexes/block-number-
 
 export { table as event_usdc_blacklist_v3 } from "@/events/usdc-blacklist-v3/table";
 export { table as event_fwa_nft_deposited_v3 } from "@/events/fwa-nft-deposited-v3/table";
+export { table as event_fwa_position_settled_v3 } from "@/events/fwa-position-settled-v3/table";
 export { table as event_erc20_transfer_v3 } from "@/events/erc20-transfer-v3/table";
 export { table as event_erc20_approval_v3 } from "@/events/erc20-approval-v3/table";
 export { table as event_erc721_transfer_v3 } from "@/events/erc721-transfer-v3/table";

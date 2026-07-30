@@ -6,6 +6,7 @@ import { univo } from "@/lib/univo";
 
 import "@/events/usdc-blacklist-v3/event";
 import "@/events/fwa-nft-deposited-v3/event";
+import "@/events/fwa-position-settled-v3/event";
 import "@/events/erc20-transfer-v3/event";
 import "@/events/erc20-approval-v3/event";
 import "@/events/erc721-approval-v3/event";

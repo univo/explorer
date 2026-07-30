@@ -17,6 +17,7 @@ import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
 import { UsdcBlacklistV3AccountDescription } from "@/events/usdc-blacklist-v3/component";
 import { FwaNftDepositedV3AccountDescription } from "@/events/fwa-nft-deposited-v3/component";
+import { FwaPositionSettledV3AccountDescription } from "@/events/fwa-position-settled-v3/component";
 import { Erc20ApprovalV3AccountDescription } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/component";
 import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
@@ -184,6 +185,10 @@ function AccountEventDescription(props: { account: Account; event: Event }) {
 
 	if (props.event.tag === "fwa_nft_deposited_v3") {
 		return <FwaNftDepositedV3AccountDescription event={props.event} account={props.account} />;
+	}
+
+	if (props.event.tag === "fwa_position_settled_v3") {
+		return <FwaPositionSettledV3AccountDescription event={props.event} account={props.account} />;
 	}
 }
 

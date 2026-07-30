@@ -2,6 +2,7 @@ import clsx from "clsx";
 import type { ReactNode } from "react";
 
 type Action =
+	| "won"
 	| "sent"
 	| "received"
 	| "sold"
@@ -10,7 +11,6 @@ type Action =
 	| "revoked"
 	| "minted"
 	| "burnt"
-	| "called"
 	| "registered"
 	| "bridged"
 	| "deployed"
@@ -41,7 +41,7 @@ const colors: Record<Action, Color> = {
 	revoked: "red",
 	blacklisted: "red",
 
-	called: "pink",
+	won: "pink",
 
 	bought: "purple",
 	minted: "purple",
