@@ -14,5 +14,8 @@ export const table = pgTable(
 		depositor_address: hex().notNull(),
 		collection_address: hex().notNull(),
 	},
-	(table) => [index("event_fwa_nft_listed_v3_listing_id_idx").on(table.listing_id)],
+	(table) => [
+		// Allows us to perform joins on the listing id from other events
+		index("event_fwa_nft_listed_v3_listing_id_idx").on(table.listing_id),
+	],
 );
