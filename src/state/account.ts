@@ -1,6 +1,5 @@
 import { getAddress } from "viem";
 import { sql } from "drizzle-orm";
-import DataLoader from "dataloader";
 import { waitUntil } from "cloudflare:workers";
 import { boolean, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
@@ -8,7 +7,7 @@ import { inTuple } from "@/db/types";
 import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { capitalize, defined, iife, isHexEqual, type MakeNonNullable } from "@/utils";
+import { capitalize, defineBatchLoader, defined, iife, isHexEqual, type MakeNonNullable } from "@/utils";
 
 export interface Account {
 	chain: number;
@@ -70,88 +69,77 @@ export const table = pgTable(
 	],
 );
 
-const loader = new DataLoader<{ chain: Chain; address: `0x${string}` }, Account | null>(
-	async (accounts) => {
-		if (accounts.length === 0) {
-			return [];
+const getAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
+	if (accounts.length === 0) {
+		return [];
+	}
+
+	// Determine unique accounts
+
+	const unique: Record<string, true> = {};
+
+	const filtered = accounts.filter((account) => {
+		const key = [account.chain, getAddress(account.address)].join(":");
+
+		if (unique[key]) {
+			return false;
 		}
 
-		// Determine unique accounts
+		unique[key] = true;
 
-		const unique: Record<string, true> = {};
+		return true;
+	});
 
-		const filtered = accounts.filter((account) => {
-			const key = [account.chain, getAddress(account.address)].join(":");
+	// Fetch accounts
 
-			if (unique[key]) {
-				return false;
-			}
+	const client = await createPostgresClient();
 
-			unique[key] = true;
+	const rows = await client
+		.select()
+		.from(table)
+		.where(
+			inTuple(
+				[table.chain, table.address],
+				filtered.map((account) => [account.chain, getAddress(account.address)]),
+			),
+		);
 
-			return true;
-		});
+	return accounts.map(({ chain, address }) => {
+		const row = rows.find((row) => row.chain === chain && isHexEqual(row.address as `0x`, address));
 
-		// Fetch accounts
+		if (!row) {
+			return null;
+		}
 
-		const client = await createPostgresClient();
+		const account: Account = {
+			chain,
+			address: getAddress(address),
 
-		const rows = await client
-			.select()
-			.from(table)
-			.where(
-				inTuple(
-					[table.chain, table.address],
-					filtered.map((account) => [account.chain, getAddress(account.address)]),
-				),
-			);
+			is_contract: row.is_contract ?? undefined,
+			owner_project: row.owner_project ?? undefined,
+			contract_name: row.contract_name ?? undefined,
+			code_compiler: row.code_compiler ?? undefined,
+			code_language: row.code_language ?? undefined,
+			deployment_tx: row.deployment_tx ?? undefined,
+			deployer_block: row.deployer_block ?? undefined,
+			usage_category: row.usage_category ?? undefined,
+			deployer_address: row.deployer_address ?? undefined,
+			source_code_verified: row.source_code_verified ?? undefined,
 
-		return accounts.map(({ chain, address }) => {
-			const row = rows.find((row) => row.chain === chain && isHexEqual(row.address as `0x`, address));
+			erc_type: row.erc_type ?? undefined,
 
-			if (!row) {
-				return null;
-			}
+			"erc20.name": row["erc20.name"] ?? undefined,
+			"erc20.image": row["erc20.image"] ?? undefined,
+			"erc20.symbol": row["erc20.symbol"] ?? undefined,
+			"erc20.decimals": row["erc20.decimals"] ?? undefined,
 
-			const account: Account = {
-				chain,
-				address: getAddress(address),
+			"erc721.name": row["erc721.name"] ?? undefined,
+			"erc721.symbol": row["erc721.symbol"] ?? undefined,
+		};
 
-				is_contract: row.is_contract ?? undefined,
-				owner_project: row.owner_project ?? undefined,
-				contract_name: row.contract_name ?? undefined,
-				code_compiler: row.code_compiler ?? undefined,
-				code_language: row.code_language ?? undefined,
-				deployment_tx: row.deployment_tx ?? undefined,
-				deployer_block: row.deployer_block ?? undefined,
-				usage_category: row.usage_category ?? undefined,
-				deployer_address: row.deployer_address ?? undefined,
-				source_code_verified: row.source_code_verified ?? undefined,
-
-				erc_type: row.erc_type ?? undefined,
-
-				"erc20.name": row["erc20.name"] ?? undefined,
-				"erc20.image": row["erc20.image"] ?? undefined,
-				"erc20.symbol": row["erc20.symbol"] ?? undefined,
-				"erc20.decimals": row["erc20.decimals"] ?? undefined,
-
-				"erc721.name": row["erc721.name"] ?? undefined,
-				"erc721.symbol": row["erc721.symbol"] ?? undefined,
-			};
-
-			return account;
-		});
-	},
-	{
-		// @ts-expect-error incorrect types for cacheKeyFn
-		// https://github.com/graphql/dataloader/blob/main/examples/GoogleDatastore.md
-		cacheKeyFn: (key) => JSON.stringify(key),
-	},
-);
-
-export async function getAccount(opts: { chain: Chain; address: `0x${string}` }) {
-	return await loader.load(opts);
-}
+		return account;
+	});
+});
 
 // We can call this function when we are expecting an erc721 compatible account. We first attempt to load
 // the erc721 related information from storage, only if that information does not exist do we load it from
