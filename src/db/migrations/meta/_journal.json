@@ -43,6 +43,13 @@
       "when": 1785201226305,
       "tag": "0005_clammy_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785477543223,
+      "tag": "0006_perfect_nightshade",
+      "breakpoints": true
     }
   ]
 }
