@@ -3,10 +3,10 @@ import { decodeFunctionData, getAddress, isAddressEqual, parseAbiItem, toFunctio
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
+import { iife, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
-import { iife, nonNullable, numberToHex } from "@/utils";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -30,88 +30,86 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: TORNADO_CASH_DEPLOYED_BLOCK }],
 
 	handler(block) {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				try {
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			try {
+				if (tx.to === null) {
+					return [];
+				}
+
+				const withdrawal = iife(() => {
 					if (tx.to === null) {
 						return null;
 					}
 
-					const withdrawal = iife(() => {
-						if (tx.to === null) {
+					if (tx.input.startsWith(DIRECT_WITHDRAWAL_SELECTOR)) {
+						const pool = getTornadoCashPool(tx.to);
+
+						if (pool === undefined) {
 							return null;
 						}
 
-						if (tx.input.startsWith(DIRECT_WITHDRAWAL_SELECTOR)) {
-							const pool = getTornadoCashPool(tx.to);
+						const decoded = decodeFunctionData({ abi: [DIRECT_WITHDRAWAL_ABI], data: tx.input });
 
-							if (pool === undefined) {
-								return null;
-							}
-
-							const decoded = decodeFunctionData({ abi: [DIRECT_WITHDRAWAL_ABI], data: tx.input });
-
-							return {
-								pool,
-								fee: decoded.args[5],
-								relayer: decoded.args[4],
-								recipient: decoded.args[3],
-							};
-						}
-
-						if (tx.input.startsWith(PROXY_WITHDRAWAL_SELECTOR)) {
-							if (isWithdrawalProxy(tx.to) === false) {
-								return null;
-							}
-
-							const decoded = decodeFunctionData({ abi: [PROXY_WITHDRAWAL_ABI], data: tx.input });
-							const pool = getTornadoCashPool(decoded.args[0]);
-
-							if (pool === undefined) {
-								return null;
-							}
-
-							return {
-								pool,
-								fee: decoded.args[6],
-								relayer: decoded.args[5],
-								recipient: decoded.args[4],
-							};
-						}
-
-						return null;
-					});
-
-					if (withdrawal === null) {
-						return null;
+						return {
+							pool,
+							fee: decoded.args[5],
+							relayer: decoded.args[4],
+							recipient: decoded.args[3],
+						};
 					}
 
-					const id = createId({
-						chainId: block.eth_chainId,
-						logIndex: TRANSACTION_EVENT,
-						txIndex: tx.transactionIndex,
-						tableId: TABLES.tornado_cash_withdrawal_v3,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
+					if (tx.input.startsWith(PROXY_WITHDRAWAL_SELECTOR)) {
+						if (isWithdrawalProxy(tx.to) === false) {
+							return null;
+						}
 
-					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+						const decoded = decodeFunctionData({ abi: [PROXY_WITHDRAWAL_ABI], data: tx.input });
+						const pool = getTornadoCashPool(decoded.args[0]);
 
-					return {
-						id,
-						to_address: getAddress(tx.to),
-						fee: numberToHex(withdrawal.fee),
-						success: getEventSuccess(receipt),
-						from_address: getAddress(tx.from),
-						pool_address: withdrawal.pool.pool,
-						relayer_address: getAddress(withdrawal.relayer),
-						recipient_address: getAddress(withdrawal.recipient),
-					};
-				} catch {
+						if (pool === undefined) {
+							return null;
+						}
+
+						return {
+							pool,
+							fee: decoded.args[6],
+							relayer: decoded.args[5],
+							recipient: decoded.args[4],
+						};
+					}
+
 					return null;
+				});
+
+				if (withdrawal === null) {
+					return [];
 				}
-			})
-			.filter(nonNullable);
+
+				const id = createId({
+					chainId: block.eth_chainId,
+					logIndex: TRANSACTION_EVENT,
+					txIndex: tx.transactionIndex,
+					tableId: TABLES.tornado_cash_withdrawal_v3,
+					blockNumber: block.eth_getBlockByNumber.number,
+					blockTimestamp: block.eth_getBlockByNumber.timestamp,
+				});
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+
+				return {
+					id,
+					to_address: getAddress(tx.to),
+					fee: numberToHex(withdrawal.fee),
+					success: getEventSuccess(receipt),
+					from_address: getAddress(tx.from),
+					pool_address: withdrawal.pool.pool,
+					relayer_address: getAddress(withdrawal.relayer),
+					recipient_address: getAddress(withdrawal.recipient),
+				};
+			} catch {
+				return [];
+			}
+		});
 	},
 
 	storage: {

@@ -3,7 +3,6 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { nonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -24,29 +23,27 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockReceipts
-			.map((receipt) => {
-				if (receipt.contractAddress === null || receipt.contractAddress === undefined) {
-					return null;
-				}
+		return block.eth_getBlockReceipts.flatMap((receipt) => {
+			if (receipt.contractAddress === null || receipt.contractAddress === undefined) {
+				return [];
+			}
 
-				const id = createId({
-					chainId: block.eth_chainId,
-					logIndex: TRANSACTION_EVENT,
-					txIndex: receipt.transactionIndex,
-					tableId: TABLES.contract_deployment_v3,
-					blockNumber: block.eth_getBlockByNumber.number,
-					blockTimestamp: block.eth_getBlockByNumber.timestamp,
-				});
+			const id = createId({
+				chainId: block.eth_chainId,
+				logIndex: TRANSACTION_EVENT,
+				txIndex: receipt.transactionIndex,
+				tableId: TABLES.contract_deployment_v3,
+				blockNumber: block.eth_getBlockByNumber.number,
+				blockTimestamp: block.eth_getBlockByNumber.timestamp,
+			});
 
-				return {
-					id,
-					success: getEventSuccess(receipt),
-					deployer_address: getAddress(receipt.from),
-					contract_address: getAddress(receipt.contractAddress),
-				};
-			})
-			.filter(nonNullable);
+			return {
+				id,
+				success: getEventSuccess(receipt),
+				deployer_address: getAddress(receipt.from),
+				contract_address: getAddress(receipt.contractAddress),
+			};
+		});
 	},
 
 	storage: {

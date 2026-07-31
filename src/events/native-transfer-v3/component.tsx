@@ -7,7 +7,6 @@ import { Account } from "@/components/account";
 import type { NativeTransferV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function NativeTransferV3Description(props: { event: NativeTransferV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -24,10 +23,10 @@ export function NativeTransferV3Description(props: { event: NativeTransferV3 }) 
 	);
 }
 
-export function NativeTransferV3AccountDescription(props: { event: NativeTransferV3; account: IAccount }) {
+export function NativeTransferV3AccountDescription(props: { event: NativeTransferV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
-	if (isAddressEqual(props.account.address, props.event.from_address)) {
+	if (isAddressEqual(props.address, props.event.from_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -39,7 +38,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 		);
 	}
 
-	if (isAddressEqual(props.account.address, props.event.to_address)) {
+	if (isAddressEqual(props.address, props.event.to_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

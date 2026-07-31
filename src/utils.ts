@@ -3,12 +3,8 @@ import DataLoader from "dataloader";
 import type { BatchLoadFn } from "dataloader";
 
 export function defineBatchLoader<K, V>(fn: BatchLoadFn<K, V>) {
-	const loader = new DataLoader(fn);
+	const loader = new DataLoader(fn, { cacheKeyFn: (key) => JSON.stringify(key) });
 	return (id: K) => loader.load(id);
-}
-
-export function unreachable(error?: string): never {
-	throw new Error(error);
 }
 
 export function hashstring() {
@@ -93,10 +89,6 @@ export function formatDay(date: Date) {
 
 export function iife<T>(fn: () => T): T {
 	return fn();
-}
-
-export function nonNullable<Type>(value: Type): value is NonNullable<Type> {
-	return value !== null && value !== undefined;
 }
 
 export function raise(err: string, options?: ErrorOptions): never {

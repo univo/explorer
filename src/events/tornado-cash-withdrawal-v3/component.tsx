@@ -8,7 +8,6 @@ import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { TornadoCashWithdrawalV3 } from "./event";
-import type { Account as IAccount } from "@/state/account";
 
 export function TornadoCashWithdrawalV3Description(props: { event: TornadoCashWithdrawalV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -60,7 +59,7 @@ export function TornadoCashWithdrawalV3Description(props: { event: TornadoCashWi
 
 export function TornadoCashWithdrawalV3AccountDescription(props: {
 	event: TornadoCashWithdrawalV3;
-	account: IAccount;
+	address: `0x${string}`;
 }) {
 	const chain = parseId(props.event.id).chainId;
 	const pool = getTornadoCashPool(props.event.pool_address);
@@ -71,7 +70,7 @@ export function TornadoCashWithdrawalV3AccountDescription(props: {
 
 	// 1. From the perspective of the recipient
 
-	if (isAddressEqual(props.account.address, props.event.recipient_address)) {
+	if (isAddressEqual(props.address, props.event.recipient_address)) {
 		// 1.1. Self-submission
 
 		if (isAddressEqual(props.event.from_address, props.event.recipient_address)) {
@@ -105,7 +104,7 @@ export function TornadoCashWithdrawalV3AccountDescription(props: {
 
 	// 2. From the perspective of the relayer
 
-	if (isAddressEqual(props.account.address, props.event.relayer_address)) {
+	if (isAddressEqual(props.address, props.event.relayer_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

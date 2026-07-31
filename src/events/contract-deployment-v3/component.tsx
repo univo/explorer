@@ -6,7 +6,6 @@ import { Account } from "@/components/account";
 import type { ContractDeploymentV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function ContractDeploymentV3Description(props: { event: ContractDeploymentV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -22,10 +21,10 @@ export function ContractDeploymentV3Description(props: { event: ContractDeployme
 	);
 }
 
-export function ContractDeploymentV3AccountDescription(props: { event: ContractDeploymentV3; account: IAccount }) {
+export function ContractDeploymentV3AccountDescription(props: { event: ContractDeploymentV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
-	if (isAddressEqual(props.account.address, props.event.deployer_address)) {
+	if (isAddressEqual(props.address, props.event.deployer_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -36,7 +35,7 @@ export function ContractDeploymentV3AccountDescription(props: { event: ContractD
 		);
 	}
 
-	if (isAddressEqual(props.account.address, props.event.contract_address)) {
+	if (isAddressEqual(props.address, props.event.contract_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

@@ -5,7 +5,6 @@ import { Account } from "@/components/account";
 import type { EnsNameRegisteredV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function EnsNameRegisteredV3Description(props: { event: EnsNameRegisteredV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -30,7 +29,7 @@ export function EnsNameRegisteredV3Description(props: { event: EnsNameRegistered
 	);
 }
 
-export function EnsNameRegisteredV3AccountDescription(props: { event: EnsNameRegisteredV3; account: IAccount }) {
+export function EnsNameRegisteredV3AccountDescription(props: { event: EnsNameRegisteredV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
 	const expiring = new Date(Number(BigInt(props.event.expires_at)) * 1000).toLocaleDateString("en", {
