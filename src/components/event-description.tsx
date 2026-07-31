@@ -1,5 +1,5 @@
 import type { Event } from "@/db/events";
-import { FwaWonV3Description } from "@/events/fwa-won-v3/component";
+import { IntentFwaWonV1Description } from "@/events/intent_fwa_won_v1/component";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { UsdcBlacklistV3Description } from "@/events/usdc-blacklist-v3/component";
@@ -67,7 +67,7 @@ export function EventDescription(props: { event: Event }) {
 		return <LogFwaNftListedV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "fwa_won_v3") {
-		return <FwaWonV3Description event={props.event} />;
+	if (props.event.tag === "intent_fwa_won_v1") {
+		return <IntentFwaWonV1Description event={props.event} />;
 	}
 }

@@ -18,8 +18,8 @@ import { TABLES, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/fwa-nft-deposited-v3/event";
 
-export interface FwaWonV3 {
-	tag: "fwa_won_v3";
+export interface IntentFwaWonV1 {
+	tag: "intent_fwa_won_v1";
 	id: string;
 	success: boolean;
 	token_out: `0x${string}`;
@@ -52,7 +52,7 @@ const DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI = parseAbiItem(
 const ZERO_VALUE = numberToHex(0);
 
 export const event = univo.event({
-	id: "fwa_won_v3",
+	id: "intent_fwa_won_v1",
 
 	filters: [
 		{
@@ -185,7 +185,7 @@ export const event = univo.event({
 					logIndex: TRANSACTION_EVENT,
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.fwa_won_v3,
+					tableId: TABLES.intent_fwa_won_v1,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -195,9 +195,9 @@ export const event = univo.event({
 					success,
 					token_out: tokenOut,
 					payout_eth: payoutEth,
-					listing_id: numberToHex(listingId),
 					retained_eth: retainedEth,
 					settlement_type: settlementType,
+					listing_id: numberToHex(listingId),
 					purchaser_address: purchaserAddress,
 					depositor_address: depositorAddress,
 				};
@@ -248,14 +248,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "fwa_won_v3_index_block_number_tx_index_v4",
+	id: "intent_fwa_won_v1_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v3,
-	id: "fwa_won_v3_index_account_v3",
+	id: "intent_fwa_won_v1_index_account_v3",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			const accounts = [FWA_ADDRESS, event.purchaser_address];
@@ -269,8 +269,8 @@ univo.event({
 	},
 });
 
-export async function getFwaWonV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.fwa_won_v3);
+export async function getIntentFwaWonV1(ids: string[]) {
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_fwa_won_v1);
 
 	if (filtered.length === 0) {
 		return [];
@@ -284,9 +284,9 @@ export async function getFwaWonV3(ids: string[]) {
 		.where(inArray(table.id, filtered))
 		.orderBy(asc(table.id));
 
-	return rows.map<FwaWonV3>((result) => {
+	return rows.map<IntentFwaWonV1>((result) => {
 		return {
-			tag: "fwa_won_v3" as const,
+			tag: "intent_fwa_won_v1" as const,
 			id: result.id,
 			success: result.success,
 			token_out: result.token_out,

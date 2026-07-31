@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { event, getFwaWonV3 } from "./event";
+import { event, getIntentFwaWonV1 } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
 
-test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ expect }) => {
+test.concurrent("intent_fwa_won_v1 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25641950 });
 
 	const events = event.handler(block);
@@ -12,7 +12,7 @@ test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ e
 
 	const ids = events.map((event) => event.id);
 
-	const initial = await getFwaWonV3(ids);
+	const initial = await getIntentFwaWonV1(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -22,15 +22,15 @@ test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ e
 			{
 				blocks: [block],
 				events: [
-					"fwa_won_v3", //
-					"fwa_won_v3_index_account_v3",
-					"fwa_won_v3_index_block_number_tx_index_v4",
+					"intent_fwa_won_v1", //
+					"intent_fwa_won_v1_index_account_v3",
+					"intent_fwa_won_v1_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const final = await getFwaWonV3(ids);
+	const final = await getIntentFwaWonV1(ids);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -43,14 +43,14 @@ test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ e
 		    "retained_eth": "0x00",
 		    "settlement_type": "kept",
 		    "success": true,
-		    "tag": "fwa_won_v3",
+		    "tag": "intent_fwa_won_v1",
 		    "token_out": "0x00",
 		  },
 		]
 	`);
 });
 
-test.concurrent("fwa_won_v3 handles all settlement types", async ({ expect }) => {
+test.concurrent("intent_fwa_won_v1 handles all settlement types", async ({ expect }) => {
 	const b25641950 = await test_getBlock({ chain: 1, block_number: 25641950 });
 
 	expect(event.handler(b25641950)).toMatchInlineSnapshot(`
@@ -117,7 +117,7 @@ test.concurrent("fwa_won_v3 handles all settlement types", async ({ expect }) =>
 	`);
 });
 
-test.concurrent("fwa_won_v3 uses sentinels for failed settlements", async ({ expect }) => {
+test.concurrent("intent_fwa_won_v1 uses sentinels for failed settlements", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25642555 });
 
 	expect(event.handler(block)).toMatchInlineSnapshot(`
