@@ -1,6 +1,7 @@
 import { isAddressEqual } from "viem";
 
 import { parseId } from "@/helpers";
+import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
@@ -16,7 +17,7 @@ export function NativeTransferV3Description(props: { event: NativeTransferV3 }) 
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.quantity} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
@@ -31,7 +32,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -43,7 +44,7 @@ export function NativeTransferV3AccountDescription(props: { event: NativeTransfe
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>

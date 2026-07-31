@@ -5,13 +5,13 @@ import { Img } from "./img";
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
-import type { Chain } from "@/constants";
 import { Description } from "./description";
 import { formatTokenAmount } from "@/helpers";
 import { getErc20Account } from "@/state/account";
+import { ETH_ADDRESS, type Chain } from "@/constants";
 
 export async function Erc20(props: { chain: Chain; address: `0x${string}`; quantity?: `0x${string}` | bigint }) {
-	if (props.chain === 1 && isAddressEqual(props.address, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")) {
+	if (props.chain === 1 && isAddressEqual(props.address, ETH_ADDRESS)) {
 		return (
 			<Fragment>
 				<Quantity quantity={props.quantity} decimals={18} />
