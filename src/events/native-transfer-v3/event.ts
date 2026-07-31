@@ -3,7 +3,7 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { isHexEqual, nonNullable } from "@/utils";
+import { isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -25,42 +25,40 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				if (BigInt(tx.value) === 0n) {
-					return;
-				}
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			if (BigInt(tx.value) === 0n) {
+				return [];
+			}
 
-				// When deploying a contract `to` field is null
-				if (tx.to === null) {
-					return;
-				}
+			// When deploying a contract `to` field is null
+			if (tx.to === null) {
+				return [];
+			}
 
-				// Ensure that calldata is empty, otherwise it's likely a contract interaction
-				if (!(tx.input === "0x" || tx.input === "0x0")) {
-					return;
-				}
+			// Ensure that calldata is empty, otherwise it's likely a contract interaction
+			if (!(tx.input === "0x" || tx.input === "0x0")) {
+				return [];
+			}
 
-				const id = createId({
-					chainId: block.eth_chainId,
-					logIndex: TRANSACTION_EVENT,
-					txIndex: tx.transactionIndex,
-					tableId: TABLES.native_transfer_v3,
-					blockNumber: block.eth_getBlockByNumber.number,
-					blockTimestamp: block.eth_getBlockByNumber.timestamp,
-				});
+			const id = createId({
+				chainId: block.eth_chainId,
+				logIndex: TRANSACTION_EVENT,
+				txIndex: tx.transactionIndex,
+				tableId: TABLES.native_transfer_v3,
+				blockNumber: block.eth_getBlockByNumber.number,
+				blockTimestamp: block.eth_getBlockByNumber.timestamp,
+			});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+			const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
-				return {
-					id,
-					quantity: tx.value,
-					to_address: getAddress(tx.to),
-					success: getEventSuccess(receipt),
-					from_address: getAddress(tx.from),
-				};
-			})
-			.filter(nonNullable);
+			return {
+				id,
+				quantity: tx.value,
+				to_address: getAddress(tx.to),
+				success: getEventSuccess(receipt),
+				from_address: getAddress(tx.from),
+			};
+		});
 	},
 
 	storage: {

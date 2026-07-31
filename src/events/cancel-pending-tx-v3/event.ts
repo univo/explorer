@@ -3,11 +3,11 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
+import { numberToHex, isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
-import { numberToHex, nonNullable, isHexEqual } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface CancelPendingTxV3 {
@@ -24,47 +24,45 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				// Must have a to address (not contract deployment)
-				if (tx.to === null) {
-					return;
-				}
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			// Must have a to address (not contract deployment)
+			if (tx.to === null) {
+				return [];
+			}
 
-				// Must have same from and to address
-				if (!isHexEqual(tx.from, tx.to)) {
-					return;
-				}
+			// Must have same from and to address
+			if (!isHexEqual(tx.from, tx.to)) {
+				return [];
+			}
 
-				// Must have zero ETH value
-				if (BigInt(tx.value) !== 0n) {
-					return;
-				}
+			// Must have zero ETH value
+			if (BigInt(tx.value) !== 0n) {
+				return [];
+			}
 
-				// Must have empty input data
-				if (tx.input !== "0x") {
-					return;
-				}
+			// Must have empty input data
+			if (tx.input !== "0x") {
+				return [];
+			}
 
-				const id = createId({
-					chainId: block.eth_chainId,
-					logIndex: TRANSACTION_EVENT,
-					txIndex: tx.transactionIndex,
-					tableId: TABLES.cancel_pending_tx_v3,
-					blockNumber: block.eth_getBlockByNumber.number,
-					blockTimestamp: block.eth_getBlockByNumber.timestamp,
-				});
+			const id = createId({
+				chainId: block.eth_chainId,
+				logIndex: TRANSACTION_EVENT,
+				txIndex: tx.transactionIndex,
+				tableId: TABLES.cancel_pending_tx_v3,
+				blockNumber: block.eth_getBlockByNumber.number,
+				blockTimestamp: block.eth_getBlockByNumber.timestamp,
+			});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+			const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
-				return {
-					id,
-					success: getEventSuccess(receipt),
-					from_address: getAddress(tx.from),
-					nonce: numberToHex(Number(tx.nonce)),
-				};
-			})
-			.filter(nonNullable);
+			return {
+				id,
+				success: getEventSuccess(receipt),
+				from_address: getAddress(tx.from),
+				nonce: numberToHex(Number(tx.nonce)),
+			};
+		});
 	},
 
 	storage: {

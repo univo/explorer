@@ -4,8 +4,8 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
+import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { nonNullable, numberToHex } from "@/utils";
 import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -27,11 +27,12 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
 
 	handler: (block) => {
-		return block.eth_getBlockReceipts
-			.flatMap((receipt) => receipt.logs)
-			.filter((log) => log.topics[0] === toEventSelector(abi))
-			.map((log) => {
+		return block.eth_getBlockReceipts.flatMap((receipt) => {
+			return receipt.logs.flatMap((log) => {
 				try {
+					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
+						return [];
+					}
 					const { args } = decodeEventLog({ topics: log.topics, data: log.data, strict: true, abi: [abi] });
 
 					const id = createId({
@@ -54,10 +55,10 @@ export const event = univo.event({
 						spender_address: getAddress(args.approved),
 					};
 				} catch {
-					return null;
+					return [];
 				}
-			})
-			.filter(nonNullable);
+			});
+		});
 	},
 
 	storage: {

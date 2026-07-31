@@ -11,10 +11,10 @@ import {
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { createPostgresClient } from "@/db/client";
+import { iife, isHexEqual, numberToHex } from "@/utils";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { getEventSuccess, createId, parseId } from "@/helpers";
-import { iife, isHexEqual, nonNullable, numberToHex } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface EnsNameRegisteredV3 {
@@ -40,92 +40,90 @@ export const event = univo.event({
 	],
 
 	handler(block) {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				try {
-					if (tx.to === null) {
-						return null;
-					}
-
-					const registration = iife(() => {
-						if (isHexEqual(tx.to!, V2_ADDRESS)) {
-							if (tx.input.startsWith(toFunctionSelector(V2_REGISTER_ABI))) {
-								const { args } = decodeFunctionData({ abi: [V2_REGISTER_ABI], data: tx.input });
-								return { version: "v2" as const, eventAbi: v2, name: args[0], owner: getAddress(args[1]) };
-							}
-
-							if (tx.input.startsWith(toFunctionSelector(V2_REGISTER_WITH_CONFIG_ABI))) {
-								const { args } = decodeFunctionData({ abi: [V2_REGISTER_WITH_CONFIG_ABI], data: tx.input });
-								return { version: "v2" as const, eventAbi: v2, name: args[0], owner: getAddress(args[1]) };
-							}
-						}
-
-						if (isHexEqual(tx.to!, V3_ADDRESS)) {
-							if (tx.input.startsWith(toFunctionSelector(V3_REGISTER_ABI))) {
-								const { args } = decodeFunctionData({ abi: [V3_REGISTER_ABI], data: tx.input });
-								return { version: "v3" as const, eventAbi: v3, name: args[0], owner: getAddress(args[1]) };
-							}
-						}
-
-						return null;
-					});
-
-					if (registration === null) {
-						return null;
-					}
-
-					const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
-					const success = getEventSuccess(receipt);
-
-					const { cost, expires } = iife(() => {
-						if (success === false) {
-							return { cost: 0, expires: 0n };
-						}
-
-						const log = receipt?.logs.find(
-							(log) => isHexEqual(log.address, tx.to!) && log.topics[0] === toEventSelector(registration.eventAbi),
-						);
-
-						if (log === undefined) {
-							throw new Error("Expected ENS registration log");
-						}
-
-						if (registration.version === "v2") {
-							const { args } = decodeEventLog({ data: log.data, topics: log.topics, strict: true, abi: [v2] });
-							return { cost: args.cost, expires: args.expires };
-						}
-
-						const { args } = decodeEventLog({ data: log.data, topics: log.topics, strict: true, abi: [v3] });
-						return { cost: args.baseCost + args.premium, expires: args.expires };
-					});
-
-					const id = createId({
-						logIndex: TRANSACTION_EVENT,
-						chainId: block.eth_chainId,
-						txIndex: tx.transactionIndex,
-						tableId: TABLES.ens_name_registered_v3,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
-					return {
-						id,
-						success,
-						name: registration.name,
-						cost_eth: numberToHex(cost),
-						expires_at: numberToHex(expires),
-						owner_address: registration.owner,
-
-						// Used for indexes
-						receipt_to: getAddress(tx.to),
-						log_address: getAddress(tx.to),
-						receipt_from: getAddress(tx.from),
-					};
-				} catch {
-					return null;
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			try {
+				if (tx.to === null) {
+					return [];
 				}
-			})
-			.filter(nonNullable);
+
+				const registration = iife(() => {
+					if (isHexEqual(tx.to!, V2_ADDRESS)) {
+						if (tx.input.startsWith(toFunctionSelector(V2_REGISTER_ABI))) {
+							const { args } = decodeFunctionData({ abi: [V2_REGISTER_ABI], data: tx.input });
+							return { version: "v2" as const, eventAbi: v2, name: args[0], owner: getAddress(args[1]) };
+						}
+
+						if (tx.input.startsWith(toFunctionSelector(V2_REGISTER_WITH_CONFIG_ABI))) {
+							const { args } = decodeFunctionData({ abi: [V2_REGISTER_WITH_CONFIG_ABI], data: tx.input });
+							return { version: "v2" as const, eventAbi: v2, name: args[0], owner: getAddress(args[1]) };
+						}
+					}
+
+					if (isHexEqual(tx.to!, V3_ADDRESS)) {
+						if (tx.input.startsWith(toFunctionSelector(V3_REGISTER_ABI))) {
+							const { args } = decodeFunctionData({ abi: [V3_REGISTER_ABI], data: tx.input });
+							return { version: "v3" as const, eventAbi: v3, name: args[0], owner: getAddress(args[1]) };
+						}
+					}
+
+					return null;
+				});
+
+				if (registration === null) {
+					return [];
+				}
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
+				const success = getEventSuccess(receipt);
+
+				const { cost, expires } = iife(() => {
+					if (success === false) {
+						return { cost: 0, expires: 0n };
+					}
+
+					const log = receipt?.logs.find(
+						(log) => isHexEqual(log.address, tx.to!) && log.topics[0] === toEventSelector(registration.eventAbi),
+					);
+
+					if (log === undefined) {
+						throw new Error("Expected ENS registration log");
+					}
+
+					if (registration.version === "v2") {
+						const { args } = decodeEventLog({ data: log.data, topics: log.topics, strict: true, abi: [v2] });
+						return { cost: args.cost, expires: args.expires };
+					}
+
+					const { args } = decodeEventLog({ data: log.data, topics: log.topics, strict: true, abi: [v3] });
+					return { cost: args.baseCost + args.premium, expires: args.expires };
+				});
+
+				const id = createId({
+					logIndex: TRANSACTION_EVENT,
+					chainId: block.eth_chainId,
+					txIndex: tx.transactionIndex,
+					tableId: TABLES.ens_name_registered_v3,
+					blockNumber: block.eth_getBlockByNumber.number,
+					blockTimestamp: block.eth_getBlockByNumber.timestamp,
+				});
+
+				return {
+					id,
+					success,
+					name: registration.name,
+					cost_eth: numberToHex(cost),
+					expires_at: numberToHex(expires),
+					owner_address: registration.owner,
+
+					// Used for indexes
+					receipt_to: getAddress(tx.to),
+					log_address: getAddress(tx.to),
+					receipt_from: getAddress(tx.from),
+				};
+			} catch {
+				return [];
+			}
+		});
 	},
 
 	storage: {
