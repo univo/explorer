@@ -4,12 +4,12 @@ import { hex, id } from "@/db/types";
 
 export const table = pgTable("intent_fwa_won_v1", {
 	id: id().primaryKey(),
-	success: boolean().notNull(),
-	settlement_type: text().notNull(),
+	token_out: hex().notNull(),
 	listing_id: hex().notNull(),
 	payout_eth: hex().notNull(),
+	success: boolean().notNull(),
 	retained_eth: hex().notNull(),
-	token_out: hex().notNull(),
+	settlement_type: text().notNull(),
 	purchaser_address: hex().notNull(),
 	depositor_address: hex().notNull(),
 });
