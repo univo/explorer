@@ -6,7 +6,6 @@ import { Account } from "@/components/account";
 import type { InputDataMessageV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function InputDataMessageV3Description(props: { event: InputDataMessageV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -24,9 +23,9 @@ export function InputDataMessageV3Description(props: { event: InputDataMessageV3
 	);
 }
 
-export function InputDataMessageV3AccountDescription(props: { event: InputDataMessageV3; account: IAccount }) {
+export function InputDataMessageV3AccountDescription(props: { event: InputDataMessageV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
-	if (isAddressEqual(props.account.address, props.event.from_address)) {
+	if (isAddressEqual(props.address, props.event.from_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -38,7 +37,7 @@ export function InputDataMessageV3AccountDescription(props: { event: InputDataMe
 		);
 	}
 
-	if (isAddressEqual(props.account.address, props.event.to_address)) {
+	if (isAddressEqual(props.address, props.event.to_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

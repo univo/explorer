@@ -7,7 +7,6 @@ import { Account } from "@/components/account";
 import type { Erc721ApprovalV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function Erc721ApprovalV3Description(props: { event: Erc721ApprovalV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -38,11 +37,11 @@ export function Erc721ApprovalV3Description(props: { event: Erc721ApprovalV3 }) 
 	);
 }
 
-export function Erc721ApprovalV3AccountDescription(props: { event: Erc721ApprovalV3; account: IAccount }) {
+export function Erc721ApprovalV3AccountDescription(props: { event: Erc721ApprovalV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 	const revoked = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 
-	if (isAddressEqual(props.account.address, props.event.owner_address)) {
+	if (isAddressEqual(props.address, props.event.owner_address)) {
 		if (revoked) {
 			return (
 				<Description>
@@ -66,7 +65,7 @@ export function Erc721ApprovalV3AccountDescription(props: { event: Erc721Approva
 		);
 	}
 
-	if (isAddressEqual(props.account.address, props.event.spender_address)) {
+	if (isAddressEqual(props.address, props.event.spender_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

@@ -7,7 +7,6 @@ import { Account } from "@/components/account";
 import type { Erc20ApprovalV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function Erc20ApprovalV3Description(props: { event: Erc20ApprovalV3 }) {
 	const all = props.event.quantity.length >= 30;
@@ -43,7 +42,7 @@ export function Erc20ApprovalV3Description(props: { event: Erc20ApprovalV3 }) {
 	);
 }
 
-export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV3; account: IAccount }) {
+export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV3; address: `0x${string}` }) {
 	const all = props.event.quantity.length >= 30;
 	const chain = parseId(props.event.id).chainId;
 	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
@@ -52,7 +51,7 @@ export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV
 	const type = revoked ? "revoked" : "approved";
 	const quantity = !revoked && !all ? props.event.quantity : undefined;
 
-	if (isAddressEqual(props.account.address, props.event.owner_address)) {
+	if (isAddressEqual(props.address, props.event.owner_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -66,7 +65,7 @@ export function Erc20ApprovalV3AccountDescription(props: { event: Erc20ApprovalV
 		);
 	}
 
-	if (isAddressEqual(props.account.address, props.event.spender_address)) {
+	if (isAddressEqual(props.address, props.event.spender_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

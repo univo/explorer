@@ -7,7 +7,6 @@ import { Account } from "@/components/account";
 import type { Erc20TransferV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function Erc20TransferV3Description(props: { event: Erc20TransferV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -46,10 +45,10 @@ export function Erc20TransferV3Description(props: { event: Erc20TransferV3 }) {
 	);
 }
 
-export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV3; account: IAccount }) {
+export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
-	if (isAddressEqual(props.account.address, props.event.from_address)) {
+	if (isAddressEqual(props.address, props.event.from_address)) {
 		if (isBurnAddress(props.event.to_address)) {
 			return (
 				<Description>
@@ -71,7 +70,7 @@ export function Erc20TransferV3AccountDescription(props: { event: Erc20TransferV
 		);
 	}
 
-	if (isAddressEqual(props.account.address, props.event.to_address)) {
+	if (isAddressEqual(props.address, props.event.to_address)) {
 		if (isBurnAddress(props.event.from_address)) {
 			return (
 				<Description>

@@ -7,7 +7,6 @@ import { Account } from "@/components/account";
 import type { CancelPendingTxV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 export function CancelPendingTxV3Description(props: { event: CancelPendingTxV3 }) {
 	const chain = parseId(props.event.id).chainId;
@@ -23,8 +22,8 @@ export function CancelPendingTxV3Description(props: { event: CancelPendingTxV3 }
 	);
 }
 
-export function CancelPendingTxV3AccountDescription(props: { event: CancelPendingTxV3; account: IAccount }) {
-	if (isAddressEqual(props.account.address, props.event.from_address)) {
+export function CancelPendingTxV3AccountDescription(props: { event: CancelPendingTxV3; address: `0x${string}` }) {
+	if (isAddressEqual(props.address, props.event.from_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}

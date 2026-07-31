@@ -7,7 +7,6 @@ import { Account } from "@/components/account";
 import type { UsdcBlacklistV3 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 
 const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
@@ -24,12 +23,12 @@ export function UsdcBlacklistV3Description(props: { event: UsdcBlacklistV3 }) {
 	);
 }
 
-export function UsdcBlacklistV3AccountDescription(props: { event: UsdcBlacklistV3; account: IAccount }) {
+export function UsdcBlacklistV3AccountDescription(props: { event: UsdcBlacklistV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
 	// 1. From the perspective of the blacklisted account
 
-	if (isAddressEqual(props.account.address, props.event.account_address)) {
+	if (isAddressEqual(props.address, props.event.account_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -42,7 +41,7 @@ export function UsdcBlacklistV3AccountDescription(props: { event: UsdcBlacklistV
 
 	// 2. From the perspective of USDC
 
-	if (isAddressEqual(props.account.address, USDC_ADDRESS)) {
+	if (isAddressEqual(props.address, USDC_ADDRESS)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
