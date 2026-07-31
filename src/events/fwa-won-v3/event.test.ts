@@ -21,7 +21,11 @@ test.concurrent("fwa_won_v3 deletes, writes, and reads from storage", async ({ e
 		params: [
 			{
 				blocks: [block],
-				events: ["fwa_won_v3", "fwa_won_v3_index_account_v3", "fwa_won_v3_index_block_number_tx_index_v4"],
+				events: [
+					"fwa_won_v3", //
+					"fwa_won_v3_index_account_v3",
+					"fwa_won_v3_index_block_number_tx_index_v4",
+				],
 			},
 		],
 	});

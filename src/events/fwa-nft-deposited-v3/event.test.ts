@@ -25,7 +25,7 @@ test.concurrent("fwa_nft_deposited_v3 deletes, writes, and reads from storage", 
 			{
 				blocks: [block],
 				events: [
-					"fwa_nft_deposited_v3",
+					"fwa_nft_deposited_v3", //
 					"fwa_nft_deposited_v3_index_account_v3",
 					"fwa_nft_deposited_v3_index_block_number_tx_index_v4",
 				],
