@@ -6,12 +6,12 @@ import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
 import { getNativeTransferV3 } from "@/events/native-transfer-v3/event";
 import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
 import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
-import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getCancelPendingTxV3 } from "@/events/cancel-pending-tx-v3/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
 import { getContractDeploymentV3 } from "@/events/contract-deployment-v3/event";
+import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
 
 // This is our central point of configuration for which all the events the app loads.
