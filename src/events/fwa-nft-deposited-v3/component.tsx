@@ -22,15 +22,16 @@ export function FwaNftDepositedV3Description(props: { event: FwaNftDepositedV3 }
 			<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
 			<span>into</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
-			<span>with</span>
+			<span>with a backing of </span>
 			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} />
-			<span>backing</span>
 		</Description>
 	);
 }
 
 export function FwaNftDepositedV3AccountDescription(props: { event: FwaNftDepositedV3; account: IAccount }) {
 	const chain = parseId(props.event.id).chainId;
+
+	// From the perspective of the depositor
 
 	if (isAddressEqual(props.account.address, props.event.depositor_address)) {
 		return (
@@ -40,9 +41,8 @@ export function FwaNftDepositedV3AccountDescription(props: { event: FwaNftDeposi
 				<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
 				<span>into</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
-				<span>with</span>
+				<span>with a backing of</span>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} />
-				<span>backing</span>
 			</Description>
 		);
 	}
