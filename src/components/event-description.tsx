@@ -1,6 +1,5 @@
 import type { Event } from "@/db/events";
 import { FwaWonV3Description } from "@/events/fwa-won-v3/component";
-import { FwaNftListedV3Description } from "@/events/fwa-nft-listed-v3/component";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { UsdcBlacklistV3Description } from "@/events/usdc-blacklist-v3/component";
@@ -9,6 +8,7 @@ import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/compone
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
 import { CancelPendingTxV3Description } from "@/events/cancel-pending-tx-v3/component";
 import { FwaNftDepositedV3Description } from "@/events/fwa-nft-deposited-v3/component";
+import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
 import { InputDataMessageV3Description } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3Description } from "@/events/contract-deployment-v3/component";
@@ -63,8 +63,8 @@ export function EventDescription(props: { event: Event }) {
 		return <FwaNftDepositedV3Description event={props.event} />;
 	}
 
-	if (props.event.tag === "fwa_nft_listed_v3") {
-		return <FwaNftListedV3Description event={props.event} />;
+	if (props.event.tag === "log_fwa_nft_listed_v1") {
+		return <LogFwaNftListedV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "fwa_won_v3") {

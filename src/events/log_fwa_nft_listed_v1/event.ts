@@ -10,8 +10,8 @@ import { defineBatchLoader, isHexEqual, numberToHex } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/fwa-nft-deposited-v3/event";
 
-export interface FwaNftListedV3 {
-	tag: "fwa_nft_listed_v3";
+export interface LogFwaNftListedV1 {
+	tag: "log_fwa_nft_listed_v1";
 	id: string;
 	success: true;
 	slot: `0x${string}`;
@@ -28,7 +28,7 @@ const NFT_LISTED_ABI = parseAbiItem(
 );
 
 export const event = univo.event({
-	id: "fwa_nft_listed_v3",
+	id: "log_fwa_nft_listed_v1",
 
 	filters: [
 		{
@@ -58,7 +58,7 @@ export const event = univo.event({
 						logIndex: log.logIndex,
 						chainId: block.eth_chainId,
 						txIndex: log.transactionIndex,
-						tableId: TABLES.fwa_nft_listed_v3,
+						tableId: TABLES.log_fwa_nft_listed_v1,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
@@ -120,12 +120,12 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "fwa_nft_listed_v3_index_block_number_tx_index_v4",
+	id: "log_fwa_nft_listed_v1_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
-export async function getFwaNftListedV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.fwa_nft_listed_v3);
+export async function getLogFwaNftListedV1(ids: string[]) {
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.log_fwa_nft_listed_v1);
 
 	if (filtered.length === 0) {
 		return [];
@@ -139,9 +139,9 @@ export async function getFwaNftListedV3(ids: string[]) {
 		.where(inArray(table.id, filtered))
 		.orderBy(asc(table.id));
 
-	return rows.map<FwaNftListedV3>((result) => {
+	return rows.map<LogFwaNftListedV1>((result) => {
 		return {
-			tag: "fwa_nft_listed_v3",
+			tag: "log_fwa_nft_listed_v1",
 			id: result.id,
 			success: true,
 			slot: result.slot,
@@ -155,7 +155,7 @@ export async function getFwaNftListedV3(ids: string[]) {
 	});
 }
 
-export const getFwaNftListedV3ByListingId = defineBatchLoader(async (ids: readonly `0x${string}`[]) => {
+export const getLogFwaNftListedV1ByListingId = defineBatchLoader(async (ids: readonly `0x${string}`[]) => {
 	if (ids.length === 0) {
 		return [];
 	}
@@ -167,7 +167,7 @@ export const getFwaNftListedV3ByListingId = defineBatchLoader(async (ids: readon
 		.from(table)
 		.where(inArray(table.listing_id, ids));
 
-	return ids.map<FwaNftListedV3 | null>((id) => {
+	return ids.map<LogFwaNftListedV1 | null>((id) => {
 		const result = rows.find((row) => row.listing_id === id);
 
 		if (!result) {
@@ -175,7 +175,7 @@ export const getFwaNftListedV3ByListingId = defineBatchLoader(async (ids: readon
 		}
 
 		return {
-			tag: "fwa_nft_listed_v3",
+			tag: "log_fwa_nft_listed_v1",
 			id: result.id,
 			success: true,
 			slot: result.slot,

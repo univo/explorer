@@ -8,14 +8,14 @@ import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "../fwa-nft-deposited-v3/event";
-import { getFwaNftListedV3ByListingId } from "../fwa-nft-listed-v3/event";
+import { getLogFwaNftListedV1ByListingId } from "../log_fwa_nft_listed_v1/event";
 
 const FWA_TOKEN_ADDRESS = "0xa0Df17B5aC76ABaBA36E1450E2cbCd18A620C845";
 
 export async function FwaWonV3Description(props: { event: FwaWonV3 }) {
 	const chain = parseId(props.event.id).chainId;
 
-	const listing = await getFwaNftListedV3ByListingId(props.event.listing_id);
+	const listing = await getLogFwaNftListedV1ByListingId(props.event.listing_id);
 
 	if (listing === null) {
 		throw new Error("Expected listing to be activated if it was included in a position settled event");

@@ -4,11 +4,11 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import type { FwaNftListedV3 } from "./event";
+import type { LogFwaNftListedV1 } from "./event";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "@/events/fwa-nft-deposited-v3/event";
 
-export function FwaNftListedV3Description(props: { event: FwaNftListedV3 }) {
+export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1 }) {
 	const chain = parseId(props.event.id).chainId;
 
 	return (

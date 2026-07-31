@@ -3,7 +3,7 @@ import { index, pgTable } from "drizzle-orm/pg-core";
 import { hex, id } from "@/db/types";
 
 export const table = pgTable(
-	"event_fwa_nft_listed_v3",
+	"log_fwa_nft_listed_v1",
 	{
 		id: id().primaryKey(),
 		slot: hex().notNull(),
@@ -16,6 +16,6 @@ export const table = pgTable(
 	},
 	(table) => [
 		// Allows us to perform joins on the listing id from other events
-		index("event_fwa_nft_listed_v3_listing_id_idx").on(table.listing_id),
+		index("log_fwa_nft_listed_v1_listing_id_idx").on(table.listing_id),
 	],
 );

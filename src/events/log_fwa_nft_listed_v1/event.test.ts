@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
 import { test_client, test_getBlock } from "@/tests/utils";
-import { event, getFwaNftListedV3, getFwaNftListedV3ByListingId } from "./event";
+import { event, getLogFwaNftListedV1, getLogFwaNftListedV1ByListingId } from "./event";
 
-test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", async ({ expect }) => {
+test.concurrent("log_fwa_nft_listed_v1 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25643505 });
 
 	const events = event.handler(block);
@@ -12,7 +12,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 
 	const ids = events.map((event) => event.id);
 
-	const initial = await getFwaNftListedV3(ids);
+	const initial = await getLogFwaNftListedV1(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -22,14 +22,14 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 			{
 				blocks: [block],
 				events: [
-					"fwa_nft_listed_v3", //
-					"fwa_nft_listed_v3_index_block_number_tx_index_v4",
+					"log_fwa_nft_listed_v1", //
+					"log_fwa_nft_listed_v1_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const final = await getFwaNftListedV3(ids);
+	const final = await getLogFwaNftListedV1(ids);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -41,7 +41,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cb6",
 		    "slot": "0x1a63",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x89",
 		    "weight": "0x472b0b64ca00d20d",
 		  },
@@ -53,7 +53,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cb7",
 		    "slot": "0x02af",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x5826",
 		    "weight": "0x01158e460913d00000",
 		  },
@@ -65,7 +65,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cb8",
 		    "slot": "0x077d",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x15c7",
 		    "weight": "0x01158e460913d00000",
 		  },
@@ -77,7 +77,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cb9",
 		    "slot": "0x1fd6",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x2034",
 		    "weight": "0x01158e460913d00000",
 		  },
@@ -89,7 +89,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cba",
 		    "slot": "0x188a",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0xa1",
 		    "weight": "0x01158e460913d00000",
 		  },
@@ -101,7 +101,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cbb",
 		    "slot": "0x13a6",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x0c2d",
 		    "weight": "0xf7d150d13f676db6",
 		  },
@@ -113,7 +113,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cbc",
 		    "slot": "0x0da7",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x8a",
 		    "weight": "0x472b0b64ca00d20d",
 		  },
@@ -125,7 +125,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cbd",
 		    "slot": "0x152c",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x12bf",
 		    "weight": "0x57481c76c77019c2",
 		  },
@@ -137,7 +137,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cbe",
 		    "slot": "0x1091",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x1c4b",
 		    "weight": "0xcf2193c9a3cce540",
 		  },
@@ -149,7 +149,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cbf",
 		    "slot": "0x1a20",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x0e1a",
 		    "weight": "0xd581222e5e027627",
 		  },
@@ -161,14 +161,14 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		    "listing_id": "0x017cc0",
 		    "slot": "0x14b2",
 		    "success": true,
-		    "tag": "fwa_nft_listed_v3",
+		    "tag": "log_fwa_nft_listed_v1",
 		    "token_id": "0x1e71",
 		    "weight": "0xf7d150d13f676db6",
 		  },
 		]
 	`);
 
-	const listing = await getFwaNftListedV3ByListingId("0x017cb6");
+	const listing = await getLogFwaNftListedV1ByListingId("0x017cb6");
 
 	expect(listing).toMatchObject({
 		backing_eth: "0x02b4c77783338000",
@@ -178,7 +178,7 @@ test.concurrent("fwa_nft_listed_v3 deletes, writes, and reads from storage", asy
 		listing_id: "0x017cb6",
 		slot: "0x1a63",
 		success: true,
-		tag: "fwa_nft_listed_v3",
+		tag: "log_fwa_nft_listed_v1",
 		token_id: "0x89",
 		weight: "0x472b0b64ca00d20d",
 	});

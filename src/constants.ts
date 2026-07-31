@@ -41,7 +41,7 @@ export const TABLES = {
 	usdc_blacklist_v3: 19,
 	fwa_nft_deposited_v3: 20,
 	fwa_won_v3: 21,
-	fwa_nft_listed_v3: 22,
+	log_fwa_nft_listed_v1: 22,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

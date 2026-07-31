@@ -1,6 +1,6 @@
 import type { Event } from "@/db/events";
 import { FwaWonV3AccountDescription } from "@/events/fwa-won-v3/component";
-import { FwaNftListedV3Description } from "@/events/fwa-nft-listed-v3/component";
+import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
 import { UsdcBlacklistV3AccountDescription } from "@/events/usdc-blacklist-v3/component";
 import { Erc20ApprovalV3AccountDescription } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/component";
@@ -69,7 +69,7 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	// Log events
 
-	if (props.event.tag === "fwa_nft_listed_v3") {
-		return <FwaNftListedV3Description event={props.event} />;
+	if (props.event.tag === "log_fwa_nft_listed_v1") {
+		return <LogFwaNftListedV1Description event={props.event} />;
 	}
 }

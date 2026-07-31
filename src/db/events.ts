@@ -1,6 +1,5 @@
 import { logger } from "@/utils";
 import { getFwaWonV3 } from "@/events/fwa-won-v3/event";
-import { getFwaNftListedV3 } from "@/events/fwa-nft-listed-v3/event";
 import { getErc20ApprovalV3 } from "@/events/erc20-approval-v3/event";
 import { getErc20TransferV3 } from "@/events/erc20-transfer-v3/event";
 import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
@@ -9,6 +8,7 @@ import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
 import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
 import { getFwaNftDepositedV3 } from "@/events/fwa-nft-deposited-v3/event";
 import { getCancelPendingTxV3 } from "@/events/cancel-pending-tx-v3/event";
+import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
 import { getContractDeploymentV3 } from "@/events/contract-deployment-v3/event";
@@ -23,7 +23,6 @@ export async function getEventsForIds(ids: string[]) {
 
 	const events = await Promise.all([
 		getFwaWonV3(ids),
-		getFwaNftListedV3(ids),
 		getUsdcBlacklistV3(ids),
 		getErc20TransferV3(ids),
 		getErc20ApprovalV3(ids),
@@ -32,6 +31,7 @@ export async function getEventsForIds(ids: string[]) {
 		getErc721ApprovalV3(ids),
 		getFwaNftDepositedV3(ids),
 		getCancelPendingTxV3(ids),
+		getLogFwaNftListedV1(ids),
 		getInputDataMessageV3(ids),
 		getEnsNameRegisteredV3(ids),
 		getContractDeploymentV3(ids),
