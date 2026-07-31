@@ -8,7 +8,7 @@ import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/
 import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/component";
 import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-v3/component";
-import { FwaNftDepositedV3AccountDescription } from "@/events/fwa-nft-deposited-v3/component";
+import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
@@ -59,8 +59,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <UsdcBlacklistV3AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "fwa_nft_deposited_v3") {
-		return <FwaNftDepositedV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_fwa_deposited_v1") {
+		return <IntentFwaDepositedV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_fwa_won_v1") {

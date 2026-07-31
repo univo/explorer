@@ -6,7 +6,7 @@ import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import type { LogFwaNftListedV1 } from "./event";
 import { Description } from "@/components/description";
-import { FWA_ADDRESS } from "@/events/fwa-nft-deposited-v3/event";
+import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v1/event";
 
 export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1 }) {
 	const chain = parseId(props.event.id).chainId;

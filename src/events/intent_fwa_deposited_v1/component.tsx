@@ -8,9 +8,9 @@ import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import { FWA_ADDRESS, type FwaNftDepositedV3 } from "./event";
+import { FWA_ADDRESS, type IntentFwaDepositedV1 } from "./event";
 
-export function FwaNftDepositedV3Description(props: { event: FwaNftDepositedV3 }) {
+export function IntentFwaDepositedV1Description(props: { event: IntentFwaDepositedV1 }) {
 	const chain = parseId(props.event.id).chainId;
 
 	return (
@@ -27,7 +27,7 @@ export function FwaNftDepositedV3Description(props: { event: FwaNftDepositedV3 }
 	);
 }
 
-export function FwaNftDepositedV3AccountDescription(props: { event: FwaNftDepositedV3; address: `0x${string}` }) {
+export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwaDepositedV1; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
 	// From the perspective of the depositor
@@ -46,5 +46,5 @@ export function FwaNftDepositedV3AccountDescription(props: { event: FwaNftDeposi
 		);
 	}
 
-	return <FwaNftDepositedV3Description event={props.event} />;
+	return <IntentFwaDepositedV1Description event={props.event} />;
 }

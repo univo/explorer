@@ -8,7 +8,7 @@ import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { defineBatchLoader, isHexEqual, numberToHex } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
-import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/fwa-nft-deposited-v3/event";
+import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v1/event";
 
 export interface LogFwaNftListedV1 {
 	tag: "log_fwa_nft_listed_v1";

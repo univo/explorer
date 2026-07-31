@@ -12,7 +12,7 @@ import "@/events/erc20-approval-v3/event";
 import "@/events/erc721-approval-v3/event";
 import "@/events/erc721-transfer-v3/event";
 import "@/events/native-transfer-v3/event";
-import "@/events/fwa-nft-deposited-v3/event";
+import "@/events/intent_fwa_deposited_v1/event";
 import "@/events/cancel-pending-tx-v3/event";
 import "@/events/input-data-message-v3/event";
 import "@/events/contract-deployment-v3/event";

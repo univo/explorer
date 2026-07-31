@@ -10,8 +10,8 @@ import { index_account_v3 } from "@/indexes/account-v3";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
-export interface FwaNftDepositedV3 {
-	tag: "fwa_nft_deposited_v3";
+export interface IntentFwaDepositedV1 {
+	tag: "intent_fwa_deposited_v1";
 	id: string;
 	success: boolean;
 	token_id: `0x${string}`;
@@ -26,7 +26,7 @@ export const FWA_ADDRESS = getAddress("0xB276F62DB0ce8CA2Ca5bc522695bE604521eAc1
 const LIST_NFT_ABI = parseAbiItem("function listNFT(address collection, uint256 tokenId)");
 
 export const event = univo.event({
-	id: "fwa_nft_deposited_v3",
+	id: "intent_fwa_deposited_v1",
 
 	filters: [
 		{
@@ -53,7 +53,7 @@ export const event = univo.event({
 					logIndex: TRANSACTION_EVENT,
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.fwa_nft_deposited_v3,
+					tableId: TABLES.intent_fwa_deposited_v1,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -112,14 +112,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "fwa_nft_deposited_v3_index_block_number_tx_index_v4",
+	id: "intent_fwa_deposited_v1_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v3,
-	id: "fwa_nft_deposited_v3_index_account_v3",
+	id: "intent_fwa_deposited_v1_index_account_v3",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
@@ -131,8 +131,8 @@ univo.event({
 	},
 });
 
-export async function getFwaNftDepositedV3(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.fwa_nft_deposited_v3);
+export async function getIntentFwaDepositedV1(ids: string[]) {
+	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_fwa_deposited_v1);
 
 	if (filtered.length === 0) {
 		return [];
@@ -146,9 +146,9 @@ export async function getFwaNftDepositedV3(ids: string[]) {
 		.where(inArray(table.id, filtered))
 		.orderBy(asc(table.id));
 
-	return rows.map<FwaNftDepositedV3>((result) => {
+	return rows.map<IntentFwaDepositedV1>((result) => {
 		return {
-			tag: "fwa_nft_deposited_v3" as const,
+			tag: "intent_fwa_deposited_v1" as const,
 			id: result.id,
 			success: result.success,
 			token_id: result.token_id,

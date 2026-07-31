@@ -39,7 +39,7 @@ export const TABLES = {
 	erc721_approval_v3: 17,
 	tornado_cash_withdrawal_v3: 18,
 	usdc_blacklist_v3: 19,
-	fwa_nft_deposited_v3: 20,
+	intent_fwa_deposited_v1: 20,
 	intent_fwa_won_v1: 21,
 	log_fwa_nft_listed_v1: 22,
 };
