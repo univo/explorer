@@ -1,5 +1,4 @@
 import { parseId } from "@/helpers";
-import { unreachable } from "@/utils";
 import type { FwaWonV3 } from "./event";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
@@ -8,7 +7,6 @@ import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 import { FWA_ADDRESS } from "../fwa-nft-deposited-v3/event";
 import { getFwaNftListedV3ByListingId } from "../fwa-nft-listed-v3/event";
 
@@ -81,10 +79,8 @@ export async function FwaWonV3Description(props: { event: FwaWonV3 }) {
 			</Description>
 		);
 	}
-
-	unreachable();
 }
 
-export function FwaWonV3AccountDescription(props: { event: FwaWonV3; account: IAccount }) {
+export function FwaWonV3AccountDescription(props: { event: FwaWonV3; address: `0x${string}` }) {
 	return <FwaWonV3Description event={props.event} />;
 }

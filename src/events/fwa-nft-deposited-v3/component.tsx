@@ -8,7 +8,6 @@ import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
-import type { Account as IAccount } from "@/state/account";
 import { FWA_ADDRESS, type FwaNftDepositedV3 } from "./event";
 
 export function FwaNftDepositedV3Description(props: { event: FwaNftDepositedV3 }) {
@@ -28,12 +27,12 @@ export function FwaNftDepositedV3Description(props: { event: FwaNftDepositedV3 }
 	);
 }
 
-export function FwaNftDepositedV3AccountDescription(props: { event: FwaNftDepositedV3; account: IAccount }) {
+export function FwaNftDepositedV3AccountDescription(props: { event: FwaNftDepositedV3; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
 	// From the perspective of the depositor
 
-	if (isAddressEqual(props.account.address, props.event.depositor_address)) {
+	if (isAddressEqual(props.address, props.event.depositor_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
