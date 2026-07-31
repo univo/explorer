@@ -3,7 +3,7 @@ import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { isHexEqual, nonNullable } from "@/utils";
+import { isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -25,55 +25,53 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler(block) {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				try {
-					if (tx.input === "0x" || tx.input === "0x0") {
-						return null;
-					}
-
-					// When deploying a contract the `to` field is null and we know input data is not a message
-					if (tx.to === null) {
-						return null;
-					}
-
-					const message = hexToString(tx.input);
-					const numValidChars = countValidChars(message);
-					const percentValidChars = numValidChars / message.length;
-
-					// Ignore short messages
-					if (message.length < 16) {
-						return null;
-					}
-
-					// Ensure data is not gibberish characters
-					if (percentValidChars < 0.9) {
-						return null;
-					}
-
-					const id = createId({
-						chainId: block.eth_chainId,
-						logIndex: TRANSACTION_EVENT,
-						txIndex: tx.transactionIndex,
-						tableId: TABLES.input_data_message_v3,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
-					const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-
-					return {
-						id,
-						message,
-						to_address: getAddress(tx.to),
-						success: getEventSuccess(receipt),
-						from_address: getAddress(tx.from),
-					};
-				} catch {
-					return null;
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			try {
+				if (tx.input === "0x" || tx.input === "0x0") {
+					return [];
 				}
-			})
-			.filter(nonNullable);
+
+				// When deploying a contract the `to` field is null and we know input data is not a message
+				if (tx.to === null) {
+					return [];
+				}
+
+				const message = hexToString(tx.input);
+				const numValidChars = countValidChars(message);
+				const percentValidChars = numValidChars / message.length;
+
+				// Ignore short messages
+				if (message.length < 16) {
+					return [];
+				}
+
+				// Ensure data is not gibberish characters
+				if (percentValidChars < 0.9) {
+					return [];
+				}
+
+				const id = createId({
+					chainId: block.eth_chainId,
+					logIndex: TRANSACTION_EVENT,
+					txIndex: tx.transactionIndex,
+					tableId: TABLES.input_data_message_v3,
+					blockNumber: block.eth_getBlockByNumber.number,
+					blockTimestamp: block.eth_getBlockByNumber.timestamp,
+				});
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+
+				return {
+					id,
+					message,
+					to_address: getAddress(tx.to),
+					success: getEventSuccess(receipt),
+					from_address: getAddress(tx.from),
+				};
+			} catch {
+				return [];
+			}
+		});
 	},
 
 	storage: {

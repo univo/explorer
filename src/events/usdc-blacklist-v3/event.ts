@@ -3,7 +3,7 @@ import { decodeFunctionData, getAddress, isAddressEqual, parseAbiItem, toFunctio
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { isHexEqual, nonNullable } from "@/utils";
+import { isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v3 } from "@/indexes/account-v3";
@@ -35,36 +35,34 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions
-			.map((tx) => {
-				try {
-					if (tx.to === null || !isAddressEqual(tx.to, USDC_ADDRESS) || !tx.input.startsWith(BLACKLIST_SELECTOR)) {
-						return null;
-					}
-
-					const { args } = decodeFunctionData({ abi: [BLACKLIST_ABI], data: tx.input });
-
-					const id = createId({
-						logIndex: TRANSACTION_EVENT,
-						chainId: block.eth_chainId,
-						txIndex: tx.transactionIndex,
-						tableId: TABLES.usdc_blacklist_v3,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
-					const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-
-					return {
-						id,
-						success: getEventSuccess(receipt),
-						account_address: getAddress(args[0]),
-					};
-				} catch {
-					return null;
+		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+			try {
+				if (tx.to === null || !isAddressEqual(tx.to, USDC_ADDRESS) || !tx.input.startsWith(BLACKLIST_SELECTOR)) {
+					return [];
 				}
-			})
-			.filter(nonNullable);
+
+				const { args } = decodeFunctionData({ abi: [BLACKLIST_ABI], data: tx.input });
+
+				const id = createId({
+					logIndex: TRANSACTION_EVENT,
+					chainId: block.eth_chainId,
+					txIndex: tx.transactionIndex,
+					tableId: TABLES.usdc_blacklist_v3,
+					blockNumber: block.eth_getBlockByNumber.number,
+					blockTimestamp: block.eth_getBlockByNumber.timestamp,
+				});
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+
+				return {
+					id,
+					success: getEventSuccess(receipt),
+					account_address: getAddress(args[0]),
+				};
+			} catch {
+				return [];
+			}
+		});
 	},
 
 	storage: {
