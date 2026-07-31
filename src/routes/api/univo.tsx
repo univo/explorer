@@ -4,15 +4,15 @@ import { univo } from "@/lib/univo";
 
 // We import every event here so that we guarantee all the events will be picked up by the indexer.
 
-import "@/events/usdc-blacklist-v3/event";
-import "@/events/fwa-nft-deposited-v3/event";
-import "@/events/fwa-nft-listed-v3/event";
 import "@/events/fwa-won-v3/event";
+import "@/events/usdc-blacklist-v3/event";
+import "@/events/fwa-nft-listed-v3/event";
 import "@/events/erc20-transfer-v3/event";
 import "@/events/erc20-approval-v3/event";
 import "@/events/erc721-approval-v3/event";
 import "@/events/erc721-transfer-v3/event";
 import "@/events/native-transfer-v3/event";
+import "@/events/fwa-nft-deposited-v3/event";
 import "@/events/cancel-pending-tx-v3/event";
 import "@/events/input-data-message-v3/event";
 import "@/events/contract-deployment-v3/event";
