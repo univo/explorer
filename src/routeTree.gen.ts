@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
-import { Route as RscTransactionViewRouteImport } from './routes/rsc/TransactionView'
+import { Route as RscTxViewRouteImport } from './routes/rsc/tx-view'
 import { Route as RscBlockNumberViewRouteImport } from './routes/rsc/BlockNumberView'
 import { Route as RscAddressHeaderRouteImport } from './routes/rsc/AddressHeader'
 import { Route as RscAddressEventsRouteImport } from './routes/rsc/AddressEvents'
@@ -21,9 +21,9 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RscTransactionViewRoute = RscTransactionViewRouteImport.update({
-  id: '/rsc/TransactionView',
-  path: '/rsc/TransactionView',
+const RscTxViewRoute = RscTxViewRouteImport.update({
+  id: '/rsc/tx-view',
+  path: '/rsc/tx-view',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RscBlockNumberViewRoute = RscBlockNumberViewRouteImport.update({
@@ -53,7 +53,7 @@ export interface FileRoutesByFullPath {
   '/rsc/AddressEvents': typeof RscAddressEventsRoute
   '/rsc/AddressHeader': typeof RscAddressHeaderRoute
   '/rsc/BlockNumberView': typeof RscBlockNumberViewRoute
-  '/rsc/TransactionView': typeof RscTransactionViewRoute
+  '/rsc/tx-view': typeof RscTxViewRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
@@ -61,7 +61,7 @@ export interface FileRoutesByTo {
   '/rsc/AddressEvents': typeof RscAddressEventsRoute
   '/rsc/AddressHeader': typeof RscAddressHeaderRoute
   '/rsc/BlockNumberView': typeof RscBlockNumberViewRoute
-  '/rsc/TransactionView': typeof RscTransactionViewRoute
+  '/rsc/tx-view': typeof RscTxViewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,7 +70,7 @@ export interface FileRoutesById {
   '/rsc/AddressEvents': typeof RscAddressEventsRoute
   '/rsc/AddressHeader': typeof RscAddressHeaderRoute
   '/rsc/BlockNumberView': typeof RscBlockNumberViewRoute
-  '/rsc/TransactionView': typeof RscTransactionViewRoute
+  '/rsc/tx-view': typeof RscTxViewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,7 +80,7 @@ export interface FileRouteTypes {
     | '/rsc/AddressEvents'
     | '/rsc/AddressHeader'
     | '/rsc/BlockNumberView'
-    | '/rsc/TransactionView'
+    | '/rsc/tx-view'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
@@ -88,7 +88,7 @@ export interface FileRouteTypes {
     | '/rsc/AddressEvents'
     | '/rsc/AddressHeader'
     | '/rsc/BlockNumberView'
-    | '/rsc/TransactionView'
+    | '/rsc/tx-view'
   id:
     | '__root__'
     | '/$'
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
     | '/rsc/AddressEvents'
     | '/rsc/AddressHeader'
     | '/rsc/BlockNumberView'
-    | '/rsc/TransactionView'
+    | '/rsc/tx-view'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -105,7 +105,7 @@ export interface RootRouteChildren {
   RscAddressEventsRoute: typeof RscAddressEventsRoute
   RscAddressHeaderRoute: typeof RscAddressHeaderRoute
   RscBlockNumberViewRoute: typeof RscBlockNumberViewRoute
-  RscTransactionViewRoute: typeof RscTransactionViewRoute
+  RscTxViewRoute: typeof RscTxViewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -117,11 +117,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rsc/TransactionView': {
-      id: '/rsc/TransactionView'
-      path: '/rsc/TransactionView'
-      fullPath: '/rsc/TransactionView'
-      preLoaderRoute: typeof RscTransactionViewRouteImport
+    '/rsc/tx-view': {
+      id: '/rsc/tx-view'
+      path: '/rsc/tx-view'
+      fullPath: '/rsc/tx-view'
+      preLoaderRoute: typeof RscTxViewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rsc/BlockNumberView': {
@@ -161,7 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   RscAddressEventsRoute: RscAddressEventsRoute,
   RscAddressHeaderRoute: RscAddressHeaderRoute,
   RscBlockNumberViewRoute: RscBlockNumberViewRoute,
-  RscTransactionViewRoute: RscTransactionViewRoute,
+  RscTxViewRoute: RscTxViewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
