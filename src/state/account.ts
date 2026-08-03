@@ -69,7 +69,7 @@ export const table = pgTable(
 	],
 );
 
-const getAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
+export const getAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {
 		return [];
 	}

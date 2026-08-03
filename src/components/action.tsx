@@ -2,6 +2,7 @@ import clsx from "clsx";
 import type { ReactNode } from "react";
 
 type Action =
+	| "won"
 	| "sent"
 	| "received"
 	| "sold"
@@ -10,10 +11,10 @@ type Action =
 	| "revoked"
 	| "minted"
 	| "burnt"
-	| "called"
 	| "registered"
 	| "bridged"
 	| "deployed"
+	| "deposited"
 	| "cancelled"
 	| "blacklisted";
 
@@ -24,7 +25,8 @@ type Color =
 	| "green"
 	| "red"
 	| "pink"
-	| "blue";
+	| "blue"
+	| "gold";
 
 const colors: Record<Action, Color> = {
 	sent: "yellow",
@@ -40,11 +42,12 @@ const colors: Record<Action, Color> = {
 	revoked: "red",
 	blacklisted: "red",
 
-	called: "pink",
+	won: "gold",
 
 	bought: "purple",
 	minted: "purple",
 	deployed: "purple",
+	deposited: "purple",
 
 	sold: "gray",
 };
@@ -54,6 +57,7 @@ const classes: Record<Color, string> = {
 	blue: "bg-blue-100 text-blue-800",
 	gray: "bg-gray-100 text-gray-600",
 	pink: "bg-pink-100 text-pink-700",
+	gold: "bg-amber-100 text-amber-800",
 	green: "bg-green-100 text-green-800",
 	purple: "bg-purple-100 text-purple-700",
 	yellow: "bg-yellow-100 text-yellow-800",

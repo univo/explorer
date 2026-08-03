@@ -1,4 +1,5 @@
 import { parseId } from "@/helpers";
+import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
@@ -22,7 +23,7 @@ export function EnsNameRegisteredV3Description(props: { event: EnsNameRegistered
 			<Action type="registered">registered</Action>
 			<span>{props.event.name}.eth</span>
 			<span>for</span>
-			<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.cost_eth} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.cost_eth} />
 			<span>expiring</span>
 			<span>{expiring}</span>
 		</Description>
@@ -44,7 +45,7 @@ export function EnsNameRegisteredV3AccountDescription(props: { event: EnsNameReg
 			<Action type="registered">Registered</Action>
 			<span>{props.event.name}.eth</span>
 			<span>for</span>
-			<Erc20 chain={chain} address="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" quantity={props.event.cost_eth} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.cost_eth} />
 			<span>expiring</span>
 			<span>{expiring}</span>
 		</Description>

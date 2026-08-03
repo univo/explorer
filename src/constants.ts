@@ -1,3 +1,5 @@
+import { getAddress } from "viem";
+
 export type Chain = 1;
 
 // Responsible for mapping the full set of supported chain ids with our internal chain id representation.
@@ -37,6 +39,9 @@ export const TABLES = {
 	erc721_approval_v3: 17,
 	tornado_cash_withdrawal_v3: 18,
 	usdc_blacklist_v3: 19,
+	intent_fwa_deposited_v1: 20,
+	intent_fwa_won_v1: 21,
+	log_fwa_nft_listed_v1: 22,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
@@ -46,3 +51,11 @@ export const TABLES = {
 // interpretations of the same transaction
 
 export const TRANSACTION_EVENT = "0xffffff";
+
+// This our standard way of representing native ether as an ERC-20
+
+export const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
+// Null address utility
+
+export const ZERO_ADDRESS = getAddress("0x0000000000000000000000000000000000000000");
