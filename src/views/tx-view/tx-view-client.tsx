@@ -4,20 +4,20 @@ import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { CloseViewButton } from "@/components/views";
 
-export function TransactionView(props: { block: number; tx: number }) {
+export function TxViewClient(props: { block: number; tx: number }) {
 	const query = useQuery({
 		queryKey: ["tx", props.tx],
-		queryFn: () => createFromFetch(fetch(`/rsc/TransactionView?block=${props.block}&tx=${props.tx}`)),
+		queryFn: () => createFromFetch(fetch(`/rsc/tx-view?block=${props.block}&tx=${props.tx}`)),
 	});
 
 	if (query.status === "pending") {
-		return <TransactionViewFallback block={props.block} tx={props.tx} />;
+		return <TxViewFallback block={props.block} tx={props.tx} />;
 	}
 
-	return <Suspense fallback={<TransactionViewFallback block={props.block} tx={props.tx} />}>{query.data}</Suspense>;
+	return <Suspense fallback={<TxViewFallback block={props.block} tx={props.tx} />}>{query.data}</Suspense>;
 }
 
-function TransactionViewFallback(props: { block: number; tx: number }) {
+function TxViewFallback(props: { block: number; tx: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header block={props.block} tx={props.tx} />
@@ -28,7 +28,7 @@ function TransactionViewFallback(props: { block: number; tx: number }) {
 
 function Header(props: { block: number; tx: number }) {
 	return (
-		<div className="border-b border-gray-200 bg-white p-3 flex flex-col gap-3">
+		<div className="bg-white p-3 flex flex-col gap-3">
 			<div className="flex items-center justify-between gap-3">
 				<div className="flex items-center gap-2 overflow-hidden">
 					<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
@@ -45,6 +45,7 @@ function Header(props: { block: number; tx: number }) {
 					<p>Timestamp</p>
 					<p>Block #</p>
 					<p>Tx Index</p>
+					<p>Action</p>
 				</div>
 			</div>
 		</div>
