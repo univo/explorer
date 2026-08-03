@@ -11,6 +11,7 @@ import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
+import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
 import { IntentAaveV3BorrowV1AccountDescription } from "@/events/intent_aave_v3_borrow_v1/component";
@@ -84,5 +85,9 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	if (props.event.tag === "intent_aave_v3_borrow_v1") {
 		return <IntentAaveV3BorrowV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_repay_v1") {
+		return <IntentAaveV3RepayV1AccountDescription event={props.event} address={props.address} />;
 	}
 }
