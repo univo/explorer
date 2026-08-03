@@ -14,11 +14,9 @@ export interface IntentAaveV3RepayV1 {
 	tag: "intent_aave_v3_repay_v1";
 	id: string;
 	success: boolean;
-	use_atokens: boolean;
 	quantity: `0x${string}`;
 	token_address: `0x${string}`;
 	repayer_address: `0x${string}`;
-	interest_rate_mode: `0x${string}`;
 	on_behalf_of_address: `0x${string}`;
 }
 
@@ -56,8 +54,7 @@ export const event = univo.event({
 				}
 
 				const decoded = decodeFunctionData({ abi: REPAY_ABI, data: tx.input });
-				const useATokens = decoded.functionName === "repayWithATokens";
-				const onBehalfOf = useATokens ? tx.from : decoded.args[3];
+				const onBehalfOf = decoded.functionName === "repayWithATokens" ? tx.from : decoded.args[3];
 
 				const id = createId({
 					logIndex: TRANSACTION_EVENT,
@@ -72,13 +69,11 @@ export const event = univo.event({
 
 				return {
 					id,
-					use_atokens: useATokens,
 					success: getEventSuccess(receipt),
 					repayer_address: getAddress(tx.from),
 					quantity: numberToHex(decoded.args[1]),
 					token_address: getAddress(decoded.args[0]),
 					on_behalf_of_address: getAddress(onBehalfOf),
-					interest_rate_mode: numberToHex(decoded.args[2]),
 				};
 			} catch {
 				return [];
@@ -100,10 +95,8 @@ export const event = univo.event({
 						set: {
 							success: sql.raw(`excluded.${table.success.name}`),
 							quantity: sql.raw(`excluded.${table.quantity.name}`),
-							use_atokens: sql.raw(`excluded.${table.use_atokens.name}`),
 							token_address: sql.raw(`excluded.${table.token_address.name}`),
 							repayer_address: sql.raw(`excluded.${table.repayer_address.name}`),
-							interest_rate_mode: sql.raw(`excluded.${table.interest_rate_mode.name}`),
 							on_behalf_of_address: sql.raw(`excluded.${table.on_behalf_of_address.name}`),
 						},
 					});
@@ -167,8 +160,6 @@ export async function getIntentAaveV3RepayV1(ids: string[]) {
 			id: result.id,
 			success: result.success,
 			quantity: result.quantity,
-			use_atokens: result.use_atokens,
-			interest_rate_mode: result.interest_rate_mode,
 			token_address: getAddress(result.token_address),
 			repayer_address: getAddress(result.repayer_address),
 			on_behalf_of_address: getAddress(result.on_behalf_of_address),

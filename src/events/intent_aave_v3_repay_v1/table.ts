@@ -7,8 +7,6 @@ export const table = pgTable("intent_aave_v3_repay_v1", {
 	quantity: hex().notNull(),
 	success: boolean().notNull(),
 	token_address: hex().notNull(),
-	use_atokens: boolean().notNull(),
 	repayer_address: hex().notNull(),
-	interest_rate_mode: hex().notNull(),
 	on_behalf_of_address: hex().notNull(),
 });

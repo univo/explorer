@@ -24,7 +24,6 @@ export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3Repay
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} />
 				<span>to</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
-				{props.event.use_atokens ? <span>using aTokens</span> : null}
 			</Description>
 		);
 	}
@@ -61,7 +60,6 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} />
 					<span>to</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
-					{props.event.use_atokens ? <span>using aTokens</span> : null}
 				</Description>
 			);
 		}
