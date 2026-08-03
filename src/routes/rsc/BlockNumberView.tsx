@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { ErrorBoundary } from "react-error-boundary";
 import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
@@ -82,13 +83,15 @@ async function EventsTable(props: { ids: string[] }) {
 
 			{ordered.map((event) => {
 				return (
-					<div key={event.id} className="border-b border-gray-200">
-						<EventTableRow id={event.id}>
-							<div className="px-3 py-1.5 overflow-hidden grow">
-								<EventDescription event={event} />
-							</div>
-						</EventTableRow>
-					</div>
+					<ErrorBoundary key={event.id} fallback={null}>
+						<div className="border-b border-gray-200">
+							<EventTableRow id={event.id}>
+								<div className="px-3 py-1.5 overflow-hidden grow">
+									<EventDescription event={event} />
+								</div>
+							</EventTableRow>
+						</div>
+					</ErrorBoundary>
 				);
 			})}
 
