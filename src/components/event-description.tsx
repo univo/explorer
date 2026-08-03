@@ -11,7 +11,11 @@ import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/com
 import { InputDataMessageV3Description } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { ContractDeploymentV3Description } from "@/events/contract-deployment-v3/component";
+import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1Description } from "@/events/intent_fwa_deposited_v1/component";
+import { IntentAaveV3SupplyV1Description } from "@/events/intent_aave_v3_supply_v1/component";
+import { IntentAaveV3BorrowV1Description } from "@/events/intent_aave_v3_borrow_v1/component";
+import { IntentAaveV3WithdrawV1Description } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3Description } from "@/events/tornado-cash-withdrawal-v3/component";
 
 export function EventDescription(props: { event: Event }) {
@@ -69,5 +73,21 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "intent_fwa_won_v1") {
 		return <IntentFwaWonV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_supply_v1") {
+		return <IntentAaveV3SupplyV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_withdraw_v1") {
+		return <IntentAaveV3WithdrawV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_borrow_v1") {
+		return <IntentAaveV3BorrowV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_repay_v1") {
+		return <IntentAaveV3RepayV1Description event={props.event} />;
 	}
 }

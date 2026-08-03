@@ -15,6 +15,10 @@ type Action =
 	| "bridged"
 	| "deployed"
 	| "deposited"
+	| "supplied"
+	| "withdrew"
+	| "borrowed"
+	| "repaid"
 	| "cancelled"
 	| "blacklisted";
 
@@ -29,15 +33,14 @@ type Color =
 	| "gold";
 
 const colors: Record<Action, Color> = {
-	sent: "yellow",
-	received: "yellow",
+	sent: "gray",
+	received: "gray",
 
 	approved: "green",
 
 	registered: "blue",
 
 	burnt: "red",
-	bridged: "red",
 	cancelled: "red",
 	revoked: "red",
 	blacklisted: "red",
@@ -48,8 +51,13 @@ const colors: Record<Action, Color> = {
 	minted: "purple",
 	deployed: "purple",
 	deposited: "purple",
+	supplied: "purple",
+	borrowed: "purple",
 
-	sold: "gray",
+	sold: "yellow",
+	repaid: "yellow",
+	bridged: "yellow",
+	withdrew: "yellow",
 };
 
 const classes: Record<Color, string> = {
