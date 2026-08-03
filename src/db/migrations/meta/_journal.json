@@ -50,6 +50,13 @@
       "when": 1785477543223,
       "tag": "0006_perfect_nightshade",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785800669917,
+      "tag": "0007_aspiring_dorian_gray",
+      "breakpoints": true
     }
   ]
 }
