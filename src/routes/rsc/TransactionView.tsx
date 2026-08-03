@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import * as v from "valibot";
+import { ErrorBoundary } from "react-error-boundary";
 import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
@@ -114,10 +115,12 @@ async function Events(props: { ids: string[] }) {
 					const { logIndex } = parseId(event.id);
 
 					return (
-						<div key={event.id} className="flex">
-							<span className="text-sm text-gray-700 min-w-10">({formatNumber(logIndex)})</span>
-							<EventDescription event={event} />
-						</div>
+						<ErrorBoundary key={event.id} fallback={null}>
+							<div className="flex">
+								<span className="text-sm text-gray-700 min-w-10">({formatNumber(logIndex)})</span>
+								<EventDescription event={event} />
+							</div>
+						</ErrorBoundary>
 					);
 				})}
 			</div>

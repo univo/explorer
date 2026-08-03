@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import * as v from "valibot";
-import { Fragment } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
@@ -63,7 +63,7 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 						const showHeader = eventString !== previousString;
 
 						return (
-							<Fragment key={event.id}>
+							<ErrorBoundary key={event.id} fallback={null}>
 								{showHeader && (
 									<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
 										<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{eventString}</p>
@@ -82,7 +82,7 @@ async function AddressEvents(props: { address: `0x${string}`; startCursor: strin
 										</div>
 									</EventTableRow>
 								</div>
-							</Fragment>
+							</ErrorBoundary>
 						);
 					})}
 				</VirtualisationContainer>
