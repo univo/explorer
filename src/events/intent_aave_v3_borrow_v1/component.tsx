@@ -31,7 +31,7 @@ export function IntentAaveV3BorrowV1Description(props: { event: IntentAaveV3Borr
 			<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 			<span>from</span>
 			<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
-			<span>on behalf of</span>
+			<span>against the debt position owned by</span>
 			<Account chain={chain} address={props.event.on_behalf_of_address} />
 		</Description>
 	);
@@ -62,7 +62,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
 				<span>from</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
-				<span>against</span>
+				<span>against the debt position owned by</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />
 			</Description>
 		);
