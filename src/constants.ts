@@ -42,6 +42,7 @@ export const TABLES = {
 	intent_fwa_deposited_v1: 20,
 	intent_fwa_won_v1: 21,
 	log_fwa_nft_listed_v1: 22,
+	intent_aave_v3_supply_v1: 23,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

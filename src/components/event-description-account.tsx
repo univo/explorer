@@ -13,6 +13,7 @@ import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registe
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
+import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
 	if (props.event.tag === "erc20_approval_v3") {
@@ -69,5 +70,9 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	if (props.event.tag === "log_fwa_nft_listed_v1") {
 		return <LogFwaNftListedV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_supply_v1") {
+		return <IntentAaveV3SupplyV1AccountDescription event={props.event} address={props.address} />;
 	}
 }
