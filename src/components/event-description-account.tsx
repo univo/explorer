@@ -13,6 +13,7 @@ import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registe
 import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
+import { IntentAaveV3BorrowV1AccountDescription } from "@/events/intent_aave_v3_borrow_v1/component";
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
 
@@ -79,5 +80,9 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	if (props.event.tag === "intent_aave_v3_withdraw_v1") {
 		return <IntentAaveV3WithdrawV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "intent_aave_v3_borrow_v1") {
+		return <IntentAaveV3BorrowV1AccountDescription event={props.event} address={props.address} />;
 	}
 }

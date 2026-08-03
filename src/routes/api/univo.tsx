@@ -18,6 +18,7 @@ import "@/events/contract-deployment-v3/event";
 import "@/events/ens-name-registered-v3/event";
 import "@/events/intent_fwa_deposited_v1/event";
 import "@/events/intent_aave_v3_supply_v1/event";
+import "@/events/intent_aave_v3_borrow_v1/event";
 import "@/events/intent_aave_v3_withdraw_v1/event";
 import "@/events/tornado-cash-withdrawal-v3/event";
 
