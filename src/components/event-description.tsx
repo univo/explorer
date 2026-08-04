@@ -16,6 +16,7 @@ import { IntentFwaDepositedV1Description } from "@/events/intent_fwa_deposited_v
 import { IntentAaveV3SupplyV1Description } from "@/events/intent_aave_v3_supply_v1/component";
 import { IntentAaveV3BorrowV1Description } from "@/events/intent_aave_v3_borrow_v1/component";
 import { IntentAaveV3WithdrawV1Description } from "@/events/intent_aave_v3_withdraw_v1/component";
+import { IntentUniswapV3SwapV1Description } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { TornadoCashWithdrawalV3Description } from "@/events/tornado-cash-withdrawal-v3/component";
 
 export function EventDescription(props: { event: Event }) {
@@ -89,5 +90,9 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "intent_aave_v3_repay_v1") {
 		return <IntentAaveV3RepayV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_uniswap_v3_swap_v1") {
+		return <IntentUniswapV3SwapV1Description event={props.event} />;
 	}
 }
