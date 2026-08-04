@@ -21,6 +21,8 @@ import "@/events/intent_aave_v3_repay_v1/event";
 import "@/events/intent_aave_v3_supply_v1/event";
 import "@/events/intent_aave_v3_borrow_v1/event";
 import "@/events/intent_aave_v3_withdraw_v1/event";
+import "@/events/intent_uniswap_v3_swap_v1/event";
+import "@/events/intent_uniswap_v3_mint_v1/event";
 import "@/events/tornado-cash-withdrawal-v3/event";
 
 export const Route = createFileRoute("/api/univo")({

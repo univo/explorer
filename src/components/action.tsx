@@ -19,6 +19,7 @@ type Action =
 	| "withdrew"
 	| "borrowed"
 	| "repaid"
+	| "swapped"
 	| "cancelled"
 	| "blacklisted";
 
@@ -53,6 +54,7 @@ const colors: Record<Action, Color> = {
 	deposited: "purple",
 	supplied: "purple",
 	borrowed: "purple",
+	swapped: "purple",
 
 	sold: "yellow",
 	repaid: "yellow",

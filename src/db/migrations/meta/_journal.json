@@ -57,6 +57,13 @@
       "when": 1785800669917,
       "tag": "0007_aspiring_dorian_gray",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1785886371316,
+      "tag": "0008_jittery_masque",
+      "breakpoints": true
     }
   ]
 }
