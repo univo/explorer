@@ -47,6 +47,7 @@ export const TABLES = {
 	intent_aave_v3_borrow_v1: 25,
 	intent_aave_v3_repay_v1: 26,
 	intent_uniswap_v3_swap_v1: 27,
+	intent_uniswap_v3_mint_v1: 28,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

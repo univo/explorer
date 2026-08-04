@@ -15,8 +15,9 @@ import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getIntentAaveV3SupplyV1 } from "@/events/intent_aave_v3_supply_v1/event";
 import { getIntentAaveV3BorrowV1 } from "@/events/intent_aave_v3_borrow_v1/event";
-import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/event";
+import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
+import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
 
 // This is our central point of configuration for which all the events the app loads.
@@ -43,8 +44,9 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV1(ids),
 		getIntentAaveV3BorrowV1(ids),
-		getIntentAaveV3WithdrawV1(ids),
 		getIntentUniswapV3SwapV1(ids),
+		getIntentUniswapV3MintV1(ids),
+		getIntentAaveV3WithdrawV1(ids),
 		getTornadoCashWithdrawalV3(ids),
 	]);
 

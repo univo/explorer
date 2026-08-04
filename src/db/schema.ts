@@ -19,6 +19,7 @@ export { table as event_intent_fwa_deposited_v1 } from "@/events/intent_fwa_depo
 export { table as event_intent_aave_v3_repay_v1 } from "@/events/intent_aave_v3_repay_v1/table";
 export { table as event_intent_aave_v3_supply_v1 } from "@/events/intent_aave_v3_supply_v1/table";
 export { table as event_intent_aave_v3_borrow_v1 } from "@/events/intent_aave_v3_borrow_v1/table";
-export { table as event_intent_aave_v3_withdraw_v1 } from "@/events/intent_aave_v3_withdraw_v1/table";
 export { table as event_intent_uniswap_v3_swap_v1 } from "@/events/intent_uniswap_v3_swap_v1/table";
+export { table as event_intent_uniswap_v3_mint_v1 } from "@/events/intent_uniswap_v3_mint_v1/table";
+export { table as event_intent_aave_v3_withdraw_v1 } from "@/events/intent_aave_v3_withdraw_v1/table";
 export { table as event_tornado_cash_withdrawal_v3 } from "@/events/tornado-cash-withdrawal-v3/table";
