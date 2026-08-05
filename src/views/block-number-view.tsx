@@ -10,8 +10,8 @@ import { IconButton } from "@/components/icon-button";
 
 export function BlockNumberView(props: { number: number }) {
 	const query = useQuery({
-		queryKey: ["block-number", props.number],
-		queryFn: () => createFromFetch(fetch(`/rsc/BlockNumberView?number=${props.number}`)),
+		queryKey: [`/rsc/block-number-view?number=${props.number}`],
+		queryFn: () => createFromFetch(fetch(`/rsc/block-number-view?number=${props.number}`)),
 	});
 
 	if (query.status === "pending") {

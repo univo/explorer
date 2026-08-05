@@ -25,8 +25,8 @@ export function AddressView(props: { address: `0x${string}` }) {
 
 function Header(props: { address: `0x${string}` }) {
 	const query = useQuery({
-		queryKey: ["AddressHeader", props.address],
-		queryFn: () => createFromFetch(fetch(`/rsc/AddressHeader?address=${props.address}`)),
+		queryKey: [`/rsc/address-header?address=${props.address}`],
+		queryFn: () => createFromFetch(fetch(`/rsc/address-header?address=${props.address}`)),
 	});
 
 	if (query.status === "success") {
@@ -129,8 +129,8 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 
 function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
 	const query = useQuery({
-		queryKey: ["AddressEvents", props.address, props.startCursor],
-		queryFn: () => createFromFetch(fetch(`/rsc/AddressEvents?address=${props.address}&cursor=${props.startCursor}`)),
+		queryKey: [`/rsc/address-events?address=${props.address}&cursor=${props.startCursor}`],
+		queryFn: () => createFromFetch(fetch(`/rsc/address-events?address=${props.address}&cursor=${props.startCursor}`)),
 	});
 
 	if (query.status === "error") {

@@ -129,7 +129,7 @@ const getFlightStream = createServerFn({ method: "GET" })
 // TODO: Add CDN caching
 // TODO: We can cache immutably based on the timestamp in the cursor
 
-export const Route = createFileRoute("/rsc/AddressEvents")({
+export const Route = createFileRoute("/rsc/address-events")({
 	server: {
 		handlers: {
 			GET: async ({ request }) => {

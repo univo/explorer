@@ -6,7 +6,7 @@ import { CloseViewButton } from "@/components/views";
 
 export function TxViewClient(props: { block: number; tx: number }) {
 	const query = useQuery({
-		queryKey: ["tx", props.tx],
+		queryKey: [`/rsc/tx-view?block=${props.block}&tx=${props.tx}`],
 		queryFn: () => createFromFetch(fetch(`/rsc/tx-view?block=${props.block}&tx=${props.tx}`)),
 	});
 

@@ -106,7 +106,7 @@ const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ number: BlockNumberSchema }))
 	.handler(({ data }) => renderToReadableStream(<BlockNumberView number={data.number} />));
 
-export const Route = createFileRoute("/rsc/BlockNumberView")({
+export const Route = createFileRoute("/rsc/block-number-view")({
 	server: {
 		handlers: {
 			GET: async ({ request }) => {

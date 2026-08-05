@@ -56,7 +56,7 @@ const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ address: AddressSchema }))
 	.handler(({ data }) => renderToReadableStream(<AddressHeader address={data.address} />));
 
-export const Route = createFileRoute("/rsc/AddressHeader")({
+export const Route = createFileRoute("/rsc/address-header")({
 	server: {
 		handlers: {
 			GET: async ({ request }) => {
