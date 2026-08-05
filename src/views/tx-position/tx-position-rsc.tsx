@@ -13,7 +13,7 @@ import { AddViewButton, CloseViewButton } from "@/components/views";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
 import { defined, formatDateTime, formatNumber, isHexEqual, numberToHex, raise } from "@/utils";
 
-export async function TxViewServer(props: { block: number; tx: number }) {
+export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [tx, ids] = await Promise.all([
 		getTx({ block: props.block, tx: props.tx }),
 		getEventIdsForTxPosition(1, props.block, props.tx),

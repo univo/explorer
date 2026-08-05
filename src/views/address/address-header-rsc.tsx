@@ -3,7 +3,7 @@ import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
 import { getAccount, getAccountName, type Account } from "@/state/account";
 
-export async function AddressHeaderServer(props: { address: `0x${string}` }) {
+export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 	const account = await getAccount({ chain: 1, address: props.address });
 
 	if (account === null) {

@@ -11,7 +11,7 @@ import { EventDescription } from "@/components/event-description";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
 
-export async function BlockNumberServer(props: { number: number }) {
+export async function BlockNumberRsc(props: { number: number }) {
 	const [block, ids] = await Promise.all([
 		getBlock(props.number), //
 		getEventIdsForBlockNumber(1, props.number),

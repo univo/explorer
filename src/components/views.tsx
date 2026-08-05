@@ -13,7 +13,7 @@ import { parseId } from "@/helpers";
 import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
 import { AddressClient } from "@/views/address/address-client";
-import { TxPositionClient } from "@/views/tx-position/tx-position-client";
+import { TxPositionClient } from "@/views/tx-position/tx-position.client";
 import { BlockNumberClient } from "@/views/block-number/block-number-client";
 import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 

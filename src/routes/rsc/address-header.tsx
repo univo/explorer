@@ -4,11 +4,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { AddressSchema } from "@/schema";
-import { AddressHeaderServer } from "@/views/address/address-header-server";
+import { AddressHeaderRsc } from "@/views/address/address-header-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ address: AddressSchema }))
-	.handler(({ data }) => renderToReadableStream(<AddressHeaderServer address={data.address} />));
+	.handler(({ data }) => renderToReadableStream(<AddressHeaderRsc address={data.address} />));
 
 export const Route = createFileRoute("/rsc/address-header")({
 	server: {

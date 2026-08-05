@@ -11,7 +11,7 @@ import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { EventDescriptionAccount } from "@/components/event-description-account";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address/address-client";
 
-export async function AddressEventsServer(props: { address: `0x${string}`; startCursor: string }) {
+export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
 		order: "latest",

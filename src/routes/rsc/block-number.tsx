@@ -4,11 +4,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { BlockNumberSchema } from "@/schema";
-import { BlockNumberServer } from "@/views/block-number/block-number-server";
+import { BlockNumberRsc } from "@/views/block-number/block-number-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ number: BlockNumberSchema }))
-	.handler(({ data }) => renderToReadableStream(<BlockNumberServer number={data.number} />));
+	.handler(({ data }) => renderToReadableStream(<BlockNumberRsc number={data.number} />));
 
 export const Route = createFileRoute("/rsc/block-number")({
 	server: {
