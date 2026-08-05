@@ -6,6 +6,10 @@ import { Command, useCommandState } from "cmdk";
 import { getView, useViews } from "./views";
 import { SearchIcon, XIcon } from "./icons";
 
+// TODO
+// Probably need to add a dropdown for the supported chains, this makes it explictly clear when pasting
+// an address or block number which chain is actually intended for the search
+
 interface SearchProps {
 	onClose?: () => void;
 }
