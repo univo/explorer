@@ -44,7 +44,7 @@ function HeaderFallback(props: { address: `0x${string}` }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={props.address} />
+				<CloseViewButton />
 			</div>
 		</div>
 	);

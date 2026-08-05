@@ -11,22 +11,22 @@ export function TxViewClient(props: { block: number; tx: number }) {
 	});
 
 	if (query.status === "pending") {
-		return <TxViewFallback block={props.block} tx={props.tx} />;
+		return <TxViewFallback />;
 	}
 
-	return <Suspense fallback={<TxViewFallback block={props.block} tx={props.tx} />}>{query.data}</Suspense>;
+	return <Suspense fallback={<TxViewFallback />}>{query.data}</Suspense>;
 }
 
-function TxViewFallback(props: { block: number; tx: number }) {
+function TxViewFallback() {
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header block={props.block} tx={props.tx} />
+			<Header />
 			<Events />
 		</div>
 	);
 }
 
-function Header(props: { block: number; tx: number }) {
+function Header() {
 	return (
 		<div className="bg-white p-3 flex flex-col gap-3">
 			<div className="flex items-center justify-between gap-3">
@@ -35,7 +35,7 @@ function Header(props: { block: number; tx: number }) {
 				</div>
 
 				<div className="flex items-center gap-2">
-					<CloseViewButton view={`${props.block}-${props.tx}`} />
+					<CloseViewButton />
 				</div>
 			</div>
 

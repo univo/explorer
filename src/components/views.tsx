@@ -27,7 +27,7 @@ export type View =
 type ViewContextValue = {
 	value: string[];
 	clear(): Promise<void>;
-	remove(view: string): Promise<void>;
+	remove(index: number | null): Promise<void>;
 	push(view: string, index: number | null): Promise<void>;
 };
 
@@ -49,20 +49,23 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		await navigate({ to: `/$`, params: { _splat: undefined } });
 	}
 
-	async function remove(view: string) {
-		const updated = state.value.filter((s) => s !== view);
+	async function remove(index: number | null) {
+		if (index === null) {
+			return; // Can't remember why I made index nullable
+		}
+
+		const updated = state.value.filter((_, i) => i !== index);
 
 		if (updated.length === state.value.length) {
 			return; // View doesn't exist
 		}
-
-		const index = state.value.findIndex((s) => s === view);
 
 		if (index === state.value.length - 1) {
 			scrollToView(index - 1); // Scroll to previous view
 		}
 
 		setState({ value: updated });
+
 		await navigate({ to: `/$`, params: { _splat: updated.join("/") } });
 	}
 
@@ -219,11 +222,12 @@ export function ClearViewsButton(props: { children?: ReactNode }) {
 	);
 }
 
-export function CloseViewButton(props: { view: string }) {
+export function CloseViewButton() {
 	const views = useViews();
+	const index = useViewIndex();
 
 	return (
-		<IconButton type="button" onMouseDown={() => views.remove(props.view)}>
+		<IconButton type="button" onMouseDown={() => views.remove(index)}>
 			<XIcon className="shrink-0 size-4" />
 		</IconButton>
 	);

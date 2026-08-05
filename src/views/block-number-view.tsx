@@ -43,7 +43,7 @@ function Header(props: { number: number }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={String(props.number)} />
+				<CloseViewButton />
 			</div>
 		</div>
 	);

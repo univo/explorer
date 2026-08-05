@@ -25,7 +25,7 @@ async function AddressHeader(props: { address: `0x${string}` }) {
 						<EtherscanIcon className="shrink-0 size-4" />
 					</IconButton>
 
-					<CloseViewButton view={props.address} />
+					<CloseViewButton />
 				</div>
 			</div>
 		);
@@ -46,7 +46,7 @@ function AccountHeader(props: { account: Account }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={props.account.address} />
+				<CloseViewButton />
 			</div>
 		</div>
 	);
