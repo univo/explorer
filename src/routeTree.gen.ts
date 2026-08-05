@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as RscTxViewRouteImport } from './routes/rsc/tx-view'
-import { Route as RscBlockNumberViewRouteImport } from './routes/rsc/block-number-view'
+import { Route as RscBlockNumberRouteImport } from './routes/rsc/block-number'
 import { Route as RscAddressHeaderRouteImport } from './routes/rsc/address-header'
 import { Route as RscAddressEventsRouteImport } from './routes/rsc/address-events'
 import { Route as ApiUnivoRouteImport } from './routes/api/univo'
@@ -26,9 +26,9 @@ const RscTxViewRoute = RscTxViewRouteImport.update({
   path: '/rsc/tx-view',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RscBlockNumberViewRoute = RscBlockNumberViewRouteImport.update({
-  id: '/rsc/block-number-view',
-  path: '/rsc/block-number-view',
+const RscBlockNumberRoute = RscBlockNumberRouteImport.update({
+  id: '/rsc/block-number',
+  path: '/rsc/block-number',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RscAddressHeaderRoute = RscAddressHeaderRouteImport.update({
@@ -52,7 +52,7 @@ export interface FileRoutesByFullPath {
   '/api/univo': typeof ApiUnivoRoute
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
-  '/rsc/block-number-view': typeof RscBlockNumberViewRoute
+  '/rsc/block-number': typeof RscBlockNumberRoute
   '/rsc/tx-view': typeof RscTxViewRoute
 }
 export interface FileRoutesByTo {
@@ -60,7 +60,7 @@ export interface FileRoutesByTo {
   '/api/univo': typeof ApiUnivoRoute
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
-  '/rsc/block-number-view': typeof RscBlockNumberViewRoute
+  '/rsc/block-number': typeof RscBlockNumberRoute
   '/rsc/tx-view': typeof RscTxViewRoute
 }
 export interface FileRoutesById {
@@ -69,7 +69,7 @@ export interface FileRoutesById {
   '/api/univo': typeof ApiUnivoRoute
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
-  '/rsc/block-number-view': typeof RscBlockNumberViewRoute
+  '/rsc/block-number': typeof RscBlockNumberRoute
   '/rsc/tx-view': typeof RscTxViewRoute
 }
 export interface FileRouteTypes {
@@ -79,7 +79,7 @@ export interface FileRouteTypes {
     | '/api/univo'
     | '/rsc/address-events'
     | '/rsc/address-header'
-    | '/rsc/block-number-view'
+    | '/rsc/block-number'
     | '/rsc/tx-view'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -87,7 +87,7 @@ export interface FileRouteTypes {
     | '/api/univo'
     | '/rsc/address-events'
     | '/rsc/address-header'
-    | '/rsc/block-number-view'
+    | '/rsc/block-number'
     | '/rsc/tx-view'
   id:
     | '__root__'
@@ -95,7 +95,7 @@ export interface FileRouteTypes {
     | '/api/univo'
     | '/rsc/address-events'
     | '/rsc/address-header'
-    | '/rsc/block-number-view'
+    | '/rsc/block-number'
     | '/rsc/tx-view'
   fileRoutesById: FileRoutesById
 }
@@ -104,7 +104,7 @@ export interface RootRouteChildren {
   ApiUnivoRoute: typeof ApiUnivoRoute
   RscAddressEventsRoute: typeof RscAddressEventsRoute
   RscAddressHeaderRoute: typeof RscAddressHeaderRoute
-  RscBlockNumberViewRoute: typeof RscBlockNumberViewRoute
+  RscBlockNumberRoute: typeof RscBlockNumberRoute
   RscTxViewRoute: typeof RscTxViewRoute
 }
 
@@ -124,11 +124,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RscTxViewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rsc/block-number-view': {
-      id: '/rsc/block-number-view'
-      path: '/rsc/block-number-view'
-      fullPath: '/rsc/block-number-view'
-      preLoaderRoute: typeof RscBlockNumberViewRouteImport
+    '/rsc/block-number': {
+      id: '/rsc/block-number'
+      path: '/rsc/block-number'
+      fullPath: '/rsc/block-number'
+      preLoaderRoute: typeof RscBlockNumberRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rsc/address-header': {
@@ -160,7 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUnivoRoute: ApiUnivoRoute,
   RscAddressEventsRoute: RscAddressEventsRoute,
   RscAddressHeaderRoute: RscAddressHeaderRoute,
-  RscBlockNumberViewRoute: RscBlockNumberViewRoute,
+  RscBlockNumberRoute: RscBlockNumberRoute,
   RscTxViewRoute: RscTxViewRoute,
 }
 export const routeTree = rootRouteImport

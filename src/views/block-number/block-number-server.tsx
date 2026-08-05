@@ -1,10 +1,5 @@
-import * as v from "valibot";
 import { ErrorBoundary } from "react-error-boundary";
-import { createServerFn } from "@tanstack/react-start";
-import { createFileRoute } from "@tanstack/react-router";
-import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { BlockNumberSchema } from "@/schema";
 import { getEventsForIds } from "@/db/events";
 import { EtherscanIcon } from "@/components/icons";
 import { getBlock, type Block } from "@/state/block";
@@ -16,7 +11,7 @@ import { EventDescription } from "@/components/event-description";
 import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
 
-async function BlockNumberView(props: { number: number }) {
+export async function BlockNumberServer(props: { number: number }) {
 	const [block, ids] = await Promise.all([
 		getBlock(props.number), //
 		getEventIdsForBlockNumber(1, props.number),
@@ -101,28 +96,3 @@ async function EventsTable(props: { ids: string[] }) {
 		</div>
 	);
 }
-
-const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ number: BlockNumberSchema }))
-	.handler(({ data }) => renderToReadableStream(<BlockNumberView number={data.number} />));
-
-export const Route = createFileRoute("/rsc/block-number-view")({
-	server: {
-		handlers: {
-			GET: async ({ request }) => {
-				const search = new URL(request.url).searchParams;
-
-				const number = search.get("number");
-				if (number === null) throw new Error("Expected number");
-
-				const stream = await getFlightStream({ data: { number } });
-
-				return new Response(stream, {
-					headers: {
-						"Content-Type": "text/x-component",
-					},
-				});
-			},
-		},
-	},
-});
