@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
-import { Route as RscTxViewRouteImport } from './routes/rsc/tx-view'
+import { Route as RscTxPositionRouteImport } from './routes/rsc/tx-position'
 import { Route as RscBlockNumberRouteImport } from './routes/rsc/block-number'
 import { Route as RscAddressHeaderRouteImport } from './routes/rsc/address-header'
 import { Route as RscAddressEventsRouteImport } from './routes/rsc/address-events'
@@ -21,9 +21,9 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RscTxViewRoute = RscTxViewRouteImport.update({
-  id: '/rsc/tx-view',
-  path: '/rsc/tx-view',
+const RscTxPositionRoute = RscTxPositionRouteImport.update({
+  id: '/rsc/tx-position',
+  path: '/rsc/tx-position',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RscBlockNumberRoute = RscBlockNumberRouteImport.update({
@@ -53,7 +53,7 @@ export interface FileRoutesByFullPath {
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
   '/rsc/block-number': typeof RscBlockNumberRoute
-  '/rsc/tx-view': typeof RscTxViewRoute
+  '/rsc/tx-position': typeof RscTxPositionRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
@@ -61,7 +61,7 @@ export interface FileRoutesByTo {
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
   '/rsc/block-number': typeof RscBlockNumberRoute
-  '/rsc/tx-view': typeof RscTxViewRoute
+  '/rsc/tx-position': typeof RscTxPositionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,7 +70,7 @@ export interface FileRoutesById {
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
   '/rsc/block-number': typeof RscBlockNumberRoute
-  '/rsc/tx-view': typeof RscTxViewRoute
+  '/rsc/tx-position': typeof RscTxPositionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,7 +80,7 @@ export interface FileRouteTypes {
     | '/rsc/address-events'
     | '/rsc/address-header'
     | '/rsc/block-number'
-    | '/rsc/tx-view'
+    | '/rsc/tx-position'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
@@ -88,7 +88,7 @@ export interface FileRouteTypes {
     | '/rsc/address-events'
     | '/rsc/address-header'
     | '/rsc/block-number'
-    | '/rsc/tx-view'
+    | '/rsc/tx-position'
   id:
     | '__root__'
     | '/$'
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
     | '/rsc/address-events'
     | '/rsc/address-header'
     | '/rsc/block-number'
-    | '/rsc/tx-view'
+    | '/rsc/tx-position'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -105,7 +105,7 @@ export interface RootRouteChildren {
   RscAddressEventsRoute: typeof RscAddressEventsRoute
   RscAddressHeaderRoute: typeof RscAddressHeaderRoute
   RscBlockNumberRoute: typeof RscBlockNumberRoute
-  RscTxViewRoute: typeof RscTxViewRoute
+  RscTxPositionRoute: typeof RscTxPositionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -117,11 +117,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rsc/tx-view': {
-      id: '/rsc/tx-view'
-      path: '/rsc/tx-view'
-      fullPath: '/rsc/tx-view'
-      preLoaderRoute: typeof RscTxViewRouteImport
+    '/rsc/tx-position': {
+      id: '/rsc/tx-position'
+      path: '/rsc/tx-position'
+      fullPath: '/rsc/tx-position'
+      preLoaderRoute: typeof RscTxPositionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rsc/block-number': {
@@ -161,7 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   RscAddressEventsRoute: RscAddressEventsRoute,
   RscAddressHeaderRoute: RscAddressHeaderRoute,
   RscBlockNumberRoute: RscBlockNumberRoute,
-  RscTxViewRoute: RscTxViewRoute,
+  RscTxPositionRoute: RscTxPositionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

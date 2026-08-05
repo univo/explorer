@@ -3,14 +3,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { TxViewServer } from "@/views/tx-view/tx-view-server";
+import { TxViewServer } from "@/views/tx-position/tx-view-server";
 import { BlockNumberSchema, TxIndexSchema } from "@/schema";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ block: BlockNumberSchema, tx: TxIndexSchema }))
 	.handler(({ data }) => renderToReadableStream(<TxViewServer block={data.block} tx={data.tx} />));
 
-export const Route = createFileRoute("/rsc/tx-view")({
+export const Route = createFileRoute("/rsc/tx-position")({
 	server: {
 		handlers: {
 			GET: async ({ request }) => {

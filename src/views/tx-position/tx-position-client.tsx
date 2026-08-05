@@ -4,20 +4,20 @@ import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { CloseViewButton } from "@/components/views";
 
-export function TxViewClient(props: { block: number; tx: number }) {
+export function TxPositionClient(props: { block: number; tx: number }) {
 	const query = useQuery({
-		queryKey: [`/rsc/tx-view?block=${props.block}&tx=${props.tx}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/tx-view?block=${props.block}&tx=${props.tx}`)),
+		queryKey: [`/rsc/tx-position?block=${props.block}&tx=${props.tx}`],
+		queryFn: () => createFromFetch(fetch(`/rsc/tx-position?block=${props.block}&tx=${props.tx}`)),
 	});
 
 	if (query.status === "pending") {
-		return <TxViewFallback />;
+		return <TxPositionFallback />;
 	}
 
-	return <Suspense fallback={<TxViewFallback />}>{query.data}</Suspense>;
+	return <Suspense fallback={<TxPositionFallback />}>{query.data}</Suspense>;
 }
 
-function TxViewFallback() {
+function TxPositionFallback() {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header />
