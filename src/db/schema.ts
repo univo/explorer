@@ -23,3 +23,4 @@ export { table as event_intent_uniswap_v3_swap_v1 } from "@/events/intent_uniswa
 export { table as event_intent_uniswap_v3_mint_v1 } from "@/events/intent_uniswap_v3_mint_v1/table";
 export { table as event_intent_aave_v3_withdraw_v1 } from "@/events/intent_aave_v3_withdraw_v1/table";
 export { table as event_tornado_cash_withdrawal_v3 } from "@/events/tornado-cash-withdrawal-v3/table";
+export { table as event_intent_ens_name_registered_v1 } from "@/events/intent_ens_name_registered_v1/table";

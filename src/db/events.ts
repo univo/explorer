@@ -19,6 +19,7 @@ import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/eve
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
+import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -46,6 +47,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentAaveV3BorrowV1(ids),
 		getIntentUniswapV3SwapV1(ids),
 		getIntentUniswapV3MintV1(ids),
+		getIntentEnsNameRegisteredV1(ids),
 		getIntentAaveV3WithdrawV1(ids),
 		getTornadoCashWithdrawalV3(ids),
 	]);

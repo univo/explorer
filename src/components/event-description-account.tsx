@@ -19,6 +19,7 @@ import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
+import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
 	if (props.event.tag === "erc20_approval_v3") {
@@ -99,5 +100,9 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	if (props.event.tag === "intent_uniswap_v3_mint_v1") {
 		return <IntentUniswapV3MintV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "intent_ens_name_registered_v1") {
+		return <IntentEnsNameRegisteredV1AccountDescription event={props.event} address={props.address} />;
 	}
 }
