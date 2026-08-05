@@ -1,12 +1,7 @@
 import clsx from "clsx";
-import * as v from "valibot";
 import { ErrorBoundary } from "react-error-boundary";
-import { createServerFn } from "@tanstack/react-start";
-import { createFileRoute } from "@tanstack/react-router";
-import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { raise } from "@/utils";
-import { AddressSchema } from "@/schema";
 import { getEventsForIds } from "@/db/events";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
@@ -14,9 +9,9 @@ import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { EventDescriptionAccount } from "@/components/event-description-account";
-import { StopCursorContainer, VirtualisationContainer } from "@/views/address-view";
+import { StopCursorContainer, VirtualisationContainer } from "@/views/address/address-client";
 
-async function AddressEvents(props: { address: `0x${string}`; startCursor: string }) {
+export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
 		order: "latest",
@@ -121,34 +116,3 @@ function EventTimestamp(props: { timestamp: Date }) {
 		</p>
 	);
 }
-
-const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: AddressSchema, cursor: v.string() }))
-	.handler(({ data }) => renderToReadableStream(<AddressEvents address={data.address} startCursor={data.cursor} />));
-
-// TODO: Add CDN caching
-// TODO: We can cache immutably based on the timestamp in the cursor
-
-export const Route = createFileRoute("/rsc/AddressEvents")({
-	server: {
-		handlers: {
-			GET: async ({ request }) => {
-				const search = new URL(request.url).searchParams;
-
-				const address = search.get("address");
-				if (address === null) throw new Error("Expected request address");
-
-				const cursor = search.get("cursor");
-				if (cursor === null) throw new Error("Expected request cursor");
-
-				const stream = await getFlightStream({ data: { address, cursor } });
-
-				return new Response(stream, {
-					headers: {
-						"Content-Type": "text/x-component",
-					},
-				});
-			},
-		},
-	},
-});

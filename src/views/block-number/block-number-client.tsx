@@ -8,20 +8,20 @@ import { EtherscanIcon } from "@/components/icons";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
 
-export function BlockNumberView(props: { number: number }) {
+export function BlockNumberClient(props: { number: number }) {
 	const query = useQuery({
-		queryKey: ["block-number", props.number],
-		queryFn: () => createFromFetch(fetch(`/rsc/BlockNumberView?number=${props.number}`)),
+		queryKey: [`/rsc/block-number?number=${props.number}`],
+		queryFn: () => createFromFetch(fetch(`/rsc/block-number?number=${props.number}`)),
 	});
 
 	if (query.status === "pending") {
-		return <BlockNumberViewFallback number={props.number} />;
+		return <BlockNumberClientFallback number={props.number} />;
 	}
 
-	return <Suspense fallback={<BlockNumberViewFallback number={props.number} />}>{query.data}</Suspense>;
+	return <Suspense fallback={<BlockNumberClientFallback number={props.number} />}>{query.data}</Suspense>;
 }
 
-function BlockNumberViewFallback(props: { number: number }) {
+function BlockNumberClientFallback(props: { number: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header number={props.number} />
@@ -43,7 +43,7 @@ function Header(props: { number: number }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={String(props.number)} />
+				<CloseViewButton />
 			</div>
 		</div>
 	);

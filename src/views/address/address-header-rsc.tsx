@@ -1,15 +1,9 @@
-import * as v from "valibot";
-import { createServerFn } from "@tanstack/react-start";
-import { createFileRoute } from "@tanstack/react-router";
-import { renderToReadableStream } from "@tanstack/react-start/rsc";
-
-import { AddressSchema } from "@/schema";
 import { EtherscanIcon } from "@/components/icons";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
 import { getAccount, getAccountName, type Account } from "@/state/account";
 
-async function AddressHeader(props: { address: `0x${string}` }) {
+export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 	const account = await getAccount({ chain: 1, address: props.address });
 
 	if (account === null) {
@@ -25,7 +19,7 @@ async function AddressHeader(props: { address: `0x${string}` }) {
 						<EtherscanIcon className="shrink-0 size-4" />
 					</IconButton>
 
-					<CloseViewButton view={props.address} />
+					<CloseViewButton />
 				</div>
 			</div>
 		);
@@ -46,33 +40,8 @@ function AccountHeader(props: { account: Account }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton view={props.account.address} />
+				<CloseViewButton />
 			</div>
 		</div>
 	);
 }
-
-const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: AddressSchema }))
-	.handler(({ data }) => renderToReadableStream(<AddressHeader address={data.address} />));
-
-export const Route = createFileRoute("/rsc/AddressHeader")({
-	server: {
-		handlers: {
-			GET: async ({ request }) => {
-				const search = new URL(request.url).searchParams;
-
-				const address = search.get("address");
-				if (address === null) throw new Error("Expected request address");
-
-				const stream = await getFlightStream({ data: { address } });
-
-				return new Response(stream, {
-					headers: {
-						"Content-Type": "text/x-component",
-					},
-				});
-			},
-		},
-	},
-});

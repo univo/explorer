@@ -12,9 +12,9 @@ import { raise } from "@/utils";
 import { parseId } from "@/helpers";
 import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
-import { AddressView } from "@/views/address-view";
-import { BlockNumberView } from "@/views/block-number-view";
-import { TxViewClient } from "@/views/tx-view/tx-view-client";
+import { AddressClient } from "@/views/address/address-client";
+import { TxPositionClient } from "@/views/tx-position/tx-position-client";
+import { BlockNumberClient } from "@/views/block-number/block-number-client";
 import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type View =
@@ -27,7 +27,7 @@ export type View =
 type ViewContextValue = {
 	value: string[];
 	clear(): Promise<void>;
-	remove(view: string): Promise<void>;
+	remove(index: number | null): Promise<void>;
 	push(view: string, index: number | null): Promise<void>;
 };
 
@@ -49,20 +49,23 @@ export function ViewContextProvider(props: { children?: ReactNode }) {
 		await navigate({ to: `/$`, params: { _splat: undefined } });
 	}
 
-	async function remove(view: string) {
-		const updated = state.value.filter((s) => s !== view);
+	async function remove(index: number | null) {
+		if (index === null) {
+			return; // Can't remember why I made index nullable
+		}
+
+		const updated = state.value.filter((_, i) => i !== index);
 
 		if (updated.length === state.value.length) {
 			return; // View doesn't exist
 		}
-
-		const index = state.value.findIndex((s) => s === view);
 
 		if (index === state.value.length - 1) {
 			scrollToView(index - 1); // Scroll to previous view
 		}
 
 		setState({ value: updated });
+
 		await navigate({ to: `/$`, params: { _splat: updated.join("/") } });
 	}
 
@@ -198,12 +201,12 @@ export function View(props: { view: string; index: number }) {
 		<ViewIndexContext value={props.index}>
 			{view === null && <EmptyView />}
 
-			{view !== null && view.type === "address" && <AddressView address={view.data} />}
+			{view !== null && view.type === "address" && <AddressClient address={view.data} />}
 
-			{view !== null && view.type === "block-number" && <BlockNumberView number={view.data} />}
+			{view !== null && view.type === "block-number" && <BlockNumberClient number={view.data} />}
 
 			{view !== null && view.type === "transaction-position" && (
-				<TxViewClient block={view.data.block} tx={view.data.tx} />
+				<TxPositionClient block={view.data.block} tx={view.data.tx} />
 			)}
 		</ViewIndexContext>
 	);
@@ -219,11 +222,12 @@ export function ClearViewsButton(props: { children?: ReactNode }) {
 	);
 }
 
-export function CloseViewButton(props: { view: string }) {
+export function CloseViewButton() {
 	const views = useViews();
+	const index = useViewIndex();
 
 	return (
-		<IconButton type="button" onMouseDown={() => views.remove(props.view)}>
+		<IconButton type="button" onMouseDown={() => views.remove(index)}>
 			<XIcon className="shrink-0 size-4" />
 		</IconButton>
 	);

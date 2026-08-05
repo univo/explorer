@@ -4,29 +4,29 @@ import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { CloseViewButton } from "@/components/views";
 
-export function TxViewClient(props: { block: number; tx: number }) {
+export function TxPositionClient(props: { block: number; tx: number }) {
 	const query = useQuery({
-		queryKey: ["tx", props.tx],
-		queryFn: () => createFromFetch(fetch(`/rsc/tx-view?block=${props.block}&tx=${props.tx}`)),
+		queryKey: [`/rsc/tx-position?block=${props.block}&tx=${props.tx}`],
+		queryFn: () => createFromFetch(fetch(`/rsc/tx-position?block=${props.block}&tx=${props.tx}`)),
 	});
 
 	if (query.status === "pending") {
-		return <TxViewFallback block={props.block} tx={props.tx} />;
+		return <TxPositionFallback />;
 	}
 
-	return <Suspense fallback={<TxViewFallback block={props.block} tx={props.tx} />}>{query.data}</Suspense>;
+	return <Suspense fallback={<TxPositionFallback />}>{query.data}</Suspense>;
 }
 
-function TxViewFallback(props: { block: number; tx: number }) {
+function TxPositionFallback() {
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header block={props.block} tx={props.tx} />
+			<Header />
 			<Events />
 		</div>
 	);
 }
 
-function Header(props: { block: number; tx: number }) {
+function Header() {
 	return (
 		<div className="bg-white p-3 flex flex-col gap-3">
 			<div className="flex items-center justify-between gap-3">
@@ -35,7 +35,7 @@ function Header(props: { block: number; tx: number }) {
 				</div>
 
 				<div className="flex items-center gap-2">
-					<CloseViewButton view={`${props.block}-${props.tx}`} />
+					<CloseViewButton />
 				</div>
 			</div>
 

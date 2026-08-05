@@ -2,18 +2,18 @@ import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { getTx, type Tx } from "@/state/tx";
-import { getEventsForIds, type Event } from "@/db/events";
+import { TRANSACTION_EVENT } from "@/constants";
 import { EtherscanIcon } from "@/components/icons";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
+import { getEventsForIds, type Event } from "@/db/events";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
-import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex, raise } from "@/utils";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
-import { TRANSACTION_EVENT } from "@/constants";
+import { defined, formatDateTime, formatNumber, isHexEqual, numberToHex, raise } from "@/utils";
 
-export async function TxViewServer(props: { block: number; tx: number }) {
+export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [tx, ids] = await Promise.all([
 		getTx({ block: props.block, tx: props.tx }),
 		getEventIdsForTxPosition(1, props.block, props.tx),
@@ -41,7 +41,7 @@ function Header(props: { tx: Tx }) {
 						<EtherscanIcon className="shrink-0 size-4" />
 					</IconButton>
 
-					<CloseViewButton view={`${hexToNumber(props.tx.blockNumber)}-${hexToNumber(props.tx.transactionIndex)}`} />
+					<CloseViewButton />
 				</div>
 			</div>
 		</div>
