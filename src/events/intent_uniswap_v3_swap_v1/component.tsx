@@ -20,6 +20,8 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} />
 					<span>for at least</span>
 					<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.limit_quantity} />
+					<span>via</span>
+					<Account chain={chain} address={props.event.router_address} />
 				</Description>
 			);
 		}
@@ -34,6 +36,8 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 				<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.limit_quantity} />
 				<span>with recipient</span>
 				<Account chain={chain} address={props.event.recipient_address} />
+				<span>via</span>
+				<Account chain={chain} address={props.event.router_address} />
 			</Description>
 		);
 	}
@@ -48,6 +52,8 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 				<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.limit_quantity} />
 				<span>for exactly</span>
 				<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.exact_quantity} />
+				<span>via</span>
+				<Account chain={chain} address={props.event.router_address} />
 			</Description>
 		);
 	}
@@ -63,6 +69,8 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 			<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.exact_quantity} />
 			<span>with recipient</span>
 			<Account chain={chain} address={props.event.recipient_address} />
+			<span>via</span>
+			<Account chain={chain} address={props.event.router_address} />
 		</Description>
 	);
 }
@@ -85,6 +93,8 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 						<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} />
 						<span>for at least</span>
 						<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.limit_quantity} />
+						<span>via</span>
+						<Account chain={chain} address={props.event.router_address} />
 					</Description>
 				);
 			}
@@ -98,6 +108,8 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 					<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.limit_quantity} />
 					<span>with recipient</span>
 					<Account chain={chain} address={props.event.recipient_address} />
+					<span>via</span>
+					<Account chain={chain} address={props.event.router_address} />
 				</Description>
 			);
 		}
@@ -111,6 +123,8 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.limit_quantity} />
 					<span>for exactly</span>
 					<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.exact_quantity} />
+					<span>via</span>
+					<Account chain={chain} address={props.event.router_address} />
 				</Description>
 			);
 		}
@@ -125,6 +139,8 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 				<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.exact_quantity} />
 				<span>with recipient</span>
 				<Account chain={chain} address={props.event.recipient_address} />
+				<span>via</span>
+				<Account chain={chain} address={props.event.router_address} />
 			</Description>
 		);
 	}
