@@ -12,7 +12,7 @@ import { raise } from "@/utils";
 import { parseId } from "@/helpers";
 import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
-import { AddressView } from "@/views/address-view";
+import { AddressClient } from "@/views/address/address-client";
 import { TxPositionClient } from "@/views/tx-position/tx-position-client";
 import { BlockNumberClient } from "@/views/block-number/block-number-client";
 import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
@@ -201,7 +201,7 @@ export function View(props: { view: string; index: number }) {
 		<ViewIndexContext value={props.index}>
 			{view === null && <EmptyView />}
 
-			{view !== null && view.type === "address" && <AddressView address={view.data} />}
+			{view !== null && view.type === "address" && <AddressClient address={view.data} />}
 
 			{view !== null && view.type === "block-number" && <BlockNumberClient number={view.data} />}
 

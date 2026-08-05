@@ -14,7 +14,7 @@ import { EtherscanIcon } from "@/components/icons";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
 
-export function AddressView(props: { address: `0x${string}` }) {
+export function AddressClient(props: { address: `0x${string}` }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header address={props.address} />
