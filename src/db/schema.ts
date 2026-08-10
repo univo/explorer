@@ -9,9 +9,9 @@ export { table as event_erc20_transfer_v3 } from "@/events/erc20-transfer-v3/tab
 export { table as event_erc20_approval_v3 } from "@/events/erc20-approval-v3/table";
 export { table as event_erc721_transfer_v3 } from "@/events/erc721-transfer-v3/table";
 export { table as event_erc721_approval_v3 } from "@/events/erc721-approval-v3/table";
-export { table as event_native_transfer_v3 } from "@/events/native-transfer-v3/table";
 export { table as event_fwa_nft_listed_v3 } from "@/events/log_fwa_nft_listed_v1/table";
 export { table as event_input_data_message_v3 } from "@/events/input-data-message-v3/table";
+export { table as event_native_transfer_v3 } from "@/events/intent_native_transfer_v1/table";
 export { table as event_ens_name_registered_v3 } from "@/events/ens-name-registered-v3/table";
 export { table as event_intent_fwa_deposited_v1 } from "@/events/intent_fwa_deposited_v1/table";
 export { table as event_intent_aave_v3_repay_v1 } from "@/events/intent_aave_v3_repay_v1/table";

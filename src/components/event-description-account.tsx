@@ -4,7 +4,6 @@ import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/com
 import { UsdcBlacklistV3AccountDescription } from "@/events/usdc-blacklist-v3/component";
 import { Erc20ApprovalV3AccountDescription } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/component";
-import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
 import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/component";
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
@@ -15,6 +14,7 @@ import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_
 import { IntentAaveV3BorrowV1AccountDescription } from "@/events/intent_aave_v3_borrow_v1/component";
 import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
+import { IntentNativeTransferV1AccountDescription } from "@/events/intent_native_transfer_v1/component";
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
 import { IntentCancelPendingTxV1AccountDescription } from "@/events/intent_cancel_pending_tx_v1/component";
@@ -25,8 +25,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <Erc20ApprovalV3AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "native_transfer_v3") {
-		return <NativeTransferV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_native_transfer_v1") {
+		return <IntentNativeTransferV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "erc20_transfer_v3") {

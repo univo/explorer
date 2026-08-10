@@ -3,7 +3,6 @@ import { getIntentFwaWonV1 } from "@/events/intent_fwa_won_v1/event";
 import { getErc20ApprovalV3 } from "@/events/erc20-approval-v3/event";
 import { getErc20TransferV3 } from "@/events/erc20-transfer-v3/event";
 import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
-import { getNativeTransferV3 } from "@/events/native-transfer-v3/event";
 import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
 import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
@@ -15,6 +14,7 @@ import { getIntentAaveV3SupplyV1 } from "@/events/intent_aave_v3_supply_v1/event
 import { getIntentAaveV3BorrowV1 } from "@/events/intent_aave_v3_borrow_v1/event";
 import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/event";
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
+import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
@@ -32,7 +32,6 @@ export async function getEventsForIds(ids: string[]) {
 		getUsdcBlacklistV3(ids),
 		getErc20TransferV3(ids),
 		getErc20ApprovalV3(ids),
-		getNativeTransferV3(ids),
 		getErc721TransferV3(ids),
 		getErc721ApprovalV3(ids),
 		getLogFwaNftListedV1(ids),
@@ -45,6 +44,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentUniswapV3SwapV1(ids),
 		getIntentUniswapV3MintV1(ids),
 		getIntentAaveV3WithdrawV1(ids),
+		getIntentNativeTransferV1(ids),
 		getIntentCancelPendingTxV1(ids),
 		getTornadoCashWithdrawalV3(ids),
 		getIntentContractDeploymentV1(ids),
