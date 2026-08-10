@@ -28,14 +28,14 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
-		getIntentIdmV1(ids),
-		getIntentFwaWonV1(ids),
 		getLogFwaNftListedV1(ids),
 		getLogErc20ApprovalV1(ids),
 		getLogErc20TransferV1(ids),
 		getLogErc721ApprovalV1(ids),
 		getLogErc721TransferV1(ids),
-		getEnsNameRegisteredV3(ids),
+
+		getIntentIdmV1(ids),
+		getIntentFwaWonV1(ids),
 		getIntentAaveV3RepayV1(ids),
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV1(ids),
@@ -48,6 +48,8 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentCancelPendingTxV1(ids),
 		getIntentTornadoWithdrawalV1(ids),
 		getIntentContractDeploymentV1(ids),
+
+		getEnsNameRegisteredV3(ids),
 	]);
 
 	const flat = events.flat(1);
