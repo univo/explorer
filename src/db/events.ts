@@ -2,11 +2,11 @@ import { logger } from "@/utils";
 import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
 import { getIntentFwaWonV1 } from "@/events/intent_fwa_won_v1/event";
 import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
-import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
 import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
+import { getLogErc721ApprovalV1 } from "@/events/log_erc721_approval_v1/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getIntentAaveV3SupplyV1 } from "@/events/intent_aave_v3_supply_v1/event";
@@ -31,10 +31,10 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentIdmV1(ids),
 		getIntentFwaWonV1(ids),
 		getErc721TransferV3(ids),
-		getErc721ApprovalV3(ids),
 		getLogFwaNftListedV1(ids),
 		getLogErc20ApprovalV1(ids),
 		getLogErc20TransferV1(ids),
+		getLogErc721ApprovalV1(ids),
 		getEnsNameRegisteredV3(ids),
 		getIntentAaveV3RepayV1(ids),
 		getIntentFwaDepositedV1(ids),
