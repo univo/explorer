@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
-import { event as erc20_transfer_v3 } from "@/events/erc20-transfer-v3/event";
+import { event as erc20_transfer_v3 } from "@/events/log_erc20_transfer_v1/event";
 import { event as native_transfer_v3 } from "@/events/intent_native_transfer_v1/event";
 import {
 	getEventIdsForBlockNumber,
