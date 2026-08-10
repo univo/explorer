@@ -37,7 +37,7 @@ test.concurrent("intent_ens_name_registered_v1 deletes, writes, and reads from s
 		[
 		  {
 		    "duration": "0x01e13380",
-		    "id": "65716103011dd5ed009cffffff0001001d",
+		    "id": "65716103011dd5ed009cffffff00010027",
 		    "name": "payblock",
 		    "owner_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",
 		    "success": true,
@@ -55,7 +55,7 @@ test.concurrent("intent_ens_name_registered_v1 decodes registration submissions"
 		  {
 		    "controller_address": "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5",
 		    "duration": "0x1e13380",
-		    "id": "68fab8430168c51f008affffff0001001d",
+		    "id": "68fab8430168c51f008affffff00010027",
 		    "name": "hangytong",
 		    "owner_address": "0xeFb564F5623978F68ff3546b0769ed564A9058EC",
 		    "sender_address": "0xeFb564F5623978F68ff3546b0769ed564A9058EC",
@@ -71,7 +71,7 @@ test.concurrent("intent_ens_name_registered_v1 decodes registration submissions"
 		  {
 		    "controller_address": "0x253553366Da8546fC250F225fe3d25d0C782303b",
 		    "duration": "0x1e13380",
-		    "id": "65716103011dd5ed009cffffff0001001d",
+		    "id": "65716103011dd5ed009cffffff00010027",
 		    "name": "payblock",
 		    "owner_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",
 		    "sender_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",
