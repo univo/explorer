@@ -10,7 +10,6 @@ import "@/events/log_erc20_approval_v1/event";
 import "@/events/log_erc20_transfer_v1/event";
 import "@/events/log_fwa_nft_listed_v1/event";
 import "@/events/log_erc721_transfer_v1/event";
-import "@/events/ens-name-registered-v3/event";
 import "@/events/log_erc721_approval_v1/event";
 import "@/events/intent_fwa_deposited_v1/event";
 import "@/events/intent_aave_v3_repay_v1/event";
