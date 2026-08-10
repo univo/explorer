@@ -19,6 +19,7 @@ import { IntentCancelPendingTxV1AccountDescription } from "@/events/intent_cance
 import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tornado_withdrawal_v1/component";
 import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
+import { LogUniswapV3PoolCreatedV1Description } from "@/events/log_uniswap_v3_pool_created_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
 	if (props.event.tag === "log_erc20_approval_v1") {
@@ -99,5 +100,9 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	if (props.event.tag === "intent_uniswap_v3_mint_v1") {
 		return <IntentUniswapV3MintV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_uniswap_v3_pool_created_v1") {
+		return <LogUniswapV3PoolCreatedV1Description event={props.event} />;
 	}
 }
