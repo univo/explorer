@@ -54,6 +54,7 @@ export const TABLES = {
 	intent_tornado_withdrawal_v1: 32,
 	intent_usdc_blacklist_v1: 33,
 	intent_idm_v1: 34,
+	log_erc20_approval_v1: 35,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
