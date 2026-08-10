@@ -1,10 +1,10 @@
 import type { Event } from "@/db/events";
 import { IntentIdmV1Description } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1Description } from "@/events/intent_fwa_won_v1/component";
-import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
 import { LogErc20TransferV1Description } from "@/events/log_erc20_transfer_v1/component";
 import { LogErc20ApprovalV1Description } from "@/events/log_erc20_approval_v1/component";
+import { LogErc721TransferV1Description } from "@/events/log_erc721_transfer_v1/component";
 import { LogErc721ApprovalV1Description } from "@/events/log_erc721_approval_v1/component";
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1/component";
@@ -49,8 +49,8 @@ export function EventDescription(props: { event: Event }) {
 		return <IntentCancelPendingTxV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v3") {
-		return <Erc721TransferV3Description event={props.event} />;
+	if (props.event.tag === "log_erc721_transfer_v1") {
+		return <LogErc721TransferV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "log_erc721_approval_v1") {

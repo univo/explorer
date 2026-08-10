@@ -57,6 +57,7 @@ export const TABLES = {
 	log_erc20_approval_v1: 35,
 	log_erc20_transfer_v1: 36,
 	log_erc721_approval_v1: 37,
+	log_erc721_transfer_v1: 38,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

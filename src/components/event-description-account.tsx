@@ -2,9 +2,9 @@ import type { Event } from "@/db/events";
 import { IntentIdmV1AccountDescription } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1AccountDescription } from "@/events/intent_fwa_won_v1/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
-import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { LogErc20ApprovalV1AccountDescription } from "@/events/log_erc20_approval_v1/component";
 import { LogErc20TransferV1AccountDescription } from "@/events/log_erc20_transfer_v1/component";
+import { LogErc721TransferV1AccountDescription } from "@/events/log_erc721_transfer_v1/component";
 import { LogErc721ApprovalV1AccountDescription } from "@/events/log_erc721_approval_v1/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
@@ -49,8 +49,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <IntentCancelPendingTxV1AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "erc721_transfer_v3") {
-		return <Erc721TransferV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "log_erc721_transfer_v1") {
+		return <LogErc721TransferV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "log_erc721_approval_v1") {
