@@ -48,7 +48,16 @@ export const TABLES = {
 	intent_aave_v3_repay_v1: 26,
 	intent_uniswap_v3_swap_v1: 27,
 	intent_uniswap_v3_mint_v1: 28,
-	intent_ens_name_registered_v1: 29,
+	intent_contract_deployment_v1: 29,
+	intent_cancel_pending_tx_v1: 30,
+	intent_native_transfer_v1: 31,
+	intent_tornado_withdrawal_v1: 32,
+	intent_usdc_blacklist_v1: 33,
+	intent_idm_v1: 34,
+	log_erc20_approval_v1: 35,
+	log_erc20_transfer_v1: 36,
+	log_erc721_approval_v1: 37,
+	log_erc721_transfer_v1: 38,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

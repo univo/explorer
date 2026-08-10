@@ -1,25 +1,24 @@
 import { logger } from "@/utils";
+import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
 import { getIntentFwaWonV1 } from "@/events/intent_fwa_won_v1/event";
-import { getErc20ApprovalV3 } from "@/events/erc20-approval-v3/event";
-import { getErc20TransferV3 } from "@/events/erc20-transfer-v3/event";
-import { getUsdcBlacklistV3 } from "@/events/usdc-blacklist-v3/event";
-import { getNativeTransferV3 } from "@/events/native-transfer-v3/event";
-import { getErc721TransferV3 } from "@/events/erc721-transfer-v3/event";
-import { getErc721ApprovalV3 } from "@/events/erc721-approval-v3/event";
-import { getCancelPendingTxV3 } from "@/events/cancel-pending-tx-v3/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
-import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
+import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
+import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
+import { getLogErc721TransferV1 } from "@/events/log_erc721_transfer_v1/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
-import { getContractDeploymentV3 } from "@/events/contract-deployment-v3/event";
+import { getLogErc721ApprovalV1 } from "@/events/log_erc721_approval_v1/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getIntentAaveV3SupplyV1 } from "@/events/intent_aave_v3_supply_v1/event";
 import { getIntentAaveV3BorrowV1 } from "@/events/intent_aave_v3_borrow_v1/event";
+import { getIntentUsdcBlacklistV1 } from "@/events/intent_usdc_blacklist_v1/event";
 import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/event";
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
+import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
-import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
-import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
+import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
+import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
+import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -29,27 +28,28 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
-		getIntentFwaWonV1(ids),
-		getUsdcBlacklistV3(ids),
-		getErc20TransferV3(ids),
-		getErc20ApprovalV3(ids),
-		getNativeTransferV3(ids),
-		getErc721TransferV3(ids),
-		getErc721ApprovalV3(ids),
-		getCancelPendingTxV3(ids),
 		getLogFwaNftListedV1(ids),
-		getInputDataMessageV3(ids),
-		getEnsNameRegisteredV3(ids),
+		getLogErc20ApprovalV1(ids),
+		getLogErc20TransferV1(ids),
+		getLogErc721ApprovalV1(ids),
+		getLogErc721TransferV1(ids),
+
+		getIntentIdmV1(ids),
+		getIntentFwaWonV1(ids),
 		getIntentAaveV3RepayV1(ids),
-		getContractDeploymentV3(ids),
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV1(ids),
 		getIntentAaveV3BorrowV1(ids),
+		getIntentUsdcBlacklistV1(ids),
 		getIntentUniswapV3SwapV1(ids),
 		getIntentUniswapV3MintV1(ids),
-		getIntentEnsNameRegisteredV1(ids),
 		getIntentAaveV3WithdrawV1(ids),
-		getTornadoCashWithdrawalV3(ids),
+		getIntentNativeTransferV1(ids),
+		getIntentCancelPendingTxV1(ids),
+		getIntentTornadoWithdrawalV1(ids),
+		getIntentContractDeploymentV1(ids),
+
+		getEnsNameRegisteredV3(ids),
 	]);
 
 	const flat = events.flat(1);
