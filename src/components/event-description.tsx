@@ -2,7 +2,6 @@ import type { Event } from "@/db/events";
 import { IntentFwaWonV1Description } from "@/events/intent_fwa_won_v1/component";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
-import { UsdcBlacklistV3Description } from "@/events/usdc-blacklist-v3/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
@@ -12,6 +11,7 @@ import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1
 import { IntentFwaDepositedV1Description } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1Description } from "@/events/intent_aave_v3_supply_v1/component";
 import { IntentAaveV3BorrowV1Description } from "@/events/intent_aave_v3_borrow_v1/component";
+import { IntentUsdcBlacklistV1Description } from "@/events/intent_usdc_blacklist_v1/component";
 import { IntentUniswapV3SwapV1Description } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1Description } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentNativeTransferV1Description } from "@/events/intent_native_transfer_v1/component";
@@ -61,8 +61,8 @@ export function EventDescription(props: { event: Event }) {
 		return <IntentTornadoWithdrawalV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "usdc_blacklist_v3") {
-		return <UsdcBlacklistV3Description event={props.event} />;
+	if (props.event.tag === "intent_usdc_blacklist_v1") {
+		return <IntentUsdcBlacklistV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "intent_fwa_deposited_v1") {

@@ -5,7 +5,6 @@ import { univo } from "@/lib/univo";
 // We import every event here so that we guarantee all the events will be picked up by the indexer.
 
 import "@/events/intent_fwa_won_v1/event";
-import "@/events/usdc-blacklist-v3/event";
 import "@/events/erc20-transfer-v3/event";
 import "@/events/erc20-approval-v3/event";
 import "@/events/erc721-approval-v3/event";
@@ -15,6 +14,7 @@ import "@/events/input-data-message-v3/event";
 import "@/events/ens-name-registered-v3/event";
 import "@/events/intent_fwa_deposited_v1/event";
 import "@/events/intent_aave_v3_repay_v1/event";
+import "@/events/intent_usdc_blacklist_v1/event";
 import "@/events/intent_aave_v3_supply_v1/event";
 import "@/events/intent_aave_v3_borrow_v1/event";
 import "@/events/intent_native_transfer_v1/event";

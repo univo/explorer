@@ -52,6 +52,7 @@ export const TABLES = {
 	intent_cancel_pending_tx_v1: 30,
 	intent_native_transfer_v1: 31,
 	intent_tornado_withdrawal_v1: 32,
+	intent_usdc_blacklist_v1: 33,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
