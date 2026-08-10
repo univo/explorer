@@ -34,7 +34,7 @@ test.concurrent("intent_usdc_blacklist_v1", async ({ expect }) => {
 		[
 		  {
 		    "account_address": "0x3E140E2Db21D0AEC7fde9f0E134c02C5321f0Cd3",
-		    "id": "6a5003e301850f3c0023ffffff00010013",
+		    "id": "6a5003e301850f3c0023ffffff00010021",
 		    "success": true,
 		    "tag": "intent_usdc_blacklist_v1",
 		  },
