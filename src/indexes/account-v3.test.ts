@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
-import { event } from "@/events/native-transfer-v3/event";
+import { event } from "@/events/intent_native_transfer_v1/event";
 import { getEventIdsForAccount, index_account_v3 } from "./account-v3";
 
 test.concurrent("account-v3", async ({ expect }) => {
