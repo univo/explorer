@@ -6,7 +6,6 @@ import { LogErc20TransferV1Description } from "@/events/log_erc20_transfer_v1/co
 import { LogErc20ApprovalV1Description } from "@/events/log_erc20_approval_v1/component";
 import { LogErc721TransferV1Description } from "@/events/log_erc721_transfer_v1/component";
 import { LogErc721ApprovalV1Description } from "@/events/log_erc721_approval_v1/component";
-import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1Description } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1Description } from "@/events/intent_aave_v3_supply_v1/component";
@@ -18,6 +17,7 @@ import { IntentNativeTransferV1Description } from "@/events/intent_native_transf
 import { IntentAaveV3WithdrawV1Description } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { IntentCancelPendingTxV1Description } from "@/events/intent_cancel_pending_tx_v1/component";
 import { IntentTornadoWithdrawalV1Description } from "@/events/intent_tornado_withdrawal_v1/component";
+import { IntentEnsNameRegisteredV1Description } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1Description } from "@/events/intent_contract_deployment_v1/component";
 
 export function EventDescription(props: { event: Event }) {
@@ -37,8 +37,8 @@ export function EventDescription(props: { event: Event }) {
 		return <IntentIdmV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v3") {
-		return <EnsNameRegisteredV3Description event={props.event} />;
+	if (props.event.tag === "intent_ens_name_registered_v1") {
+		return <IntentEnsNameRegisteredV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "intent_contract_deployment_v1") {

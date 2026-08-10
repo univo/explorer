@@ -23,6 +23,7 @@ export { table as intent_aave_v3_withdraw_v1 } from "@/events/intent_aave_v3_wit
 export { table as intent_cancel_pending_tx_v1 } from "@/events/intent_cancel_pending_tx_v1/table";
 export { table as intent_tornado_withdrawal_v1 } from "@/events/intent_tornado_withdrawal_v1/table";
 export { table as intent_contract_deployment_v1 } from "@/events/intent_contract_deployment_v1/table";
+export { table as intent_ens_name_registered_v1 } from "@/events/intent_ens_name_registered_v1/table";
 
 export { table as event_usdc_blacklist_v3 } from "@/events/usdc-blacklist-v3/table";
 export { table as event_erc20_approval_v3 } from "@/events/erc20-approval-v3/table";

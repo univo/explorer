@@ -6,7 +6,6 @@ import { LogErc20ApprovalV1AccountDescription } from "@/events/log_erc20_approva
 import { LogErc20TransferV1AccountDescription } from "@/events/log_erc20_transfer_v1/component";
 import { LogErc721TransferV1AccountDescription } from "@/events/log_erc721_transfer_v1/component";
 import { LogErc721ApprovalV1AccountDescription } from "@/events/log_erc721_approval_v1/component";
-import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
@@ -18,6 +17,7 @@ import { IntentNativeTransferV1AccountDescription } from "@/events/intent_native
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { IntentCancelPendingTxV1AccountDescription } from "@/events/intent_cancel_pending_tx_v1/component";
 import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tornado_withdrawal_v1/component";
+import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
@@ -37,8 +37,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <IntentIdmV1AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "ens_name_registered_v3") {
-		return <EnsNameRegisteredV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_ens_name_registered_v1") {
+		return <IntentEnsNameRegisteredV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_contract_deployment_v1") {
