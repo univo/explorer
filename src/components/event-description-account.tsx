@@ -16,8 +16,8 @@ import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentNativeTransferV1AccountDescription } from "@/events/intent_native_transfer_v1/component";
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
-import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
 import { IntentCancelPendingTxV1AccountDescription } from "@/events/intent_cancel_pending_tx_v1/component";
+import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tornado_withdrawal_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
@@ -57,8 +57,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <Erc721ApprovalV3AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "tornado_cash_withdrawal_v3") {
-		return <TornadoCashWithdrawalV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_tornado_withdrawal_v1") {
+		return <IntentTornadoWithdrawalV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "usdc_blacklist_v3") {

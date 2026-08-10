@@ -16,8 +16,8 @@ import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/eve
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
 import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
-import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
+import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
 import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
 
 // This is our central point of configuration for which all the events the app loads.
@@ -46,7 +46,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentAaveV3WithdrawV1(ids),
 		getIntentNativeTransferV1(ids),
 		getIntentCancelPendingTxV1(ids),
-		getTornadoCashWithdrawalV3(ids),
+		getIntentTornadoWithdrawalV1(ids),
 		getIntentContractDeploymentV1(ids),
 	]);
 
