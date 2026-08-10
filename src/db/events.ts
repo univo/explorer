@@ -10,7 +10,6 @@ import { getCancelPendingTxV3 } from "@/events/cancel-pending-tx-v3/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getInputDataMessageV3 } from "@/events/input-data-message-v3/event";
 import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
-import { getContractDeploymentV3 } from "@/events/contract-deployment-v3/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getIntentAaveV3SupplyV1 } from "@/events/intent_aave_v3_supply_v1/event";
@@ -19,6 +18,7 @@ import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/eve
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getTornadoCashWithdrawalV3 } from "@/events/tornado-cash-withdrawal-v3/event";
+import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -40,7 +40,7 @@ export async function getEventsForIds(ids: string[]) {
 		getInputDataMessageV3(ids),
 		getEnsNameRegisteredV3(ids),
 		getIntentAaveV3RepayV1(ids),
-		getContractDeploymentV3(ids),
+		getIntentContractDeploymentV1(ids),
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV1(ids),
 		getIntentAaveV3BorrowV1(ids),

@@ -10,7 +10,6 @@ import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/
 import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-v3/component";
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
-import { ContractDeploymentV3AccountDescription } from "@/events/contract-deployment-v3/component";
 import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
@@ -19,6 +18,7 @@ import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
+import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
 	if (props.event.tag === "erc20_approval_v3") {
@@ -41,8 +41,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <EnsNameRegisteredV3AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "contract_deployment_v3") {
-		return <ContractDeploymentV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_contract_deployment_v1") {
+		return <IntentContractDeploymentV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "cancel_pending_tx_v3") {

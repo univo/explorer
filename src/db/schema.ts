@@ -13,7 +13,6 @@ export { table as event_native_transfer_v3 } from "@/events/native-transfer-v3/t
 export { table as event_fwa_nft_listed_v3 } from "@/events/log_fwa_nft_listed_v1/table";
 export { table as event_cancel_pending_tx_v3 } from "@/events/cancel-pending-tx-v3/table";
 export { table as event_input_data_message_v3 } from "@/events/input-data-message-v3/table";
-export { table as event_contract_deployment_v3 } from "@/events/contract-deployment-v3/table";
 export { table as event_ens_name_registered_v3 } from "@/events/ens-name-registered-v3/table";
 export { table as event_intent_fwa_deposited_v1 } from "@/events/intent_fwa_deposited_v1/table";
 export { table as event_intent_aave_v3_repay_v1 } from "@/events/intent_aave_v3_repay_v1/table";
@@ -21,5 +20,6 @@ export { table as event_intent_aave_v3_supply_v1 } from "@/events/intent_aave_v3
 export { table as event_intent_aave_v3_borrow_v1 } from "@/events/intent_aave_v3_borrow_v1/table";
 export { table as event_intent_uniswap_v3_swap_v1 } from "@/events/intent_uniswap_v3_swap_v1/table";
 export { table as event_intent_uniswap_v3_mint_v1 } from "@/events/intent_uniswap_v3_mint_v1/table";
+export { table as event_contract_deployment_v3 } from "@/events/intent_contract_deployment_v1/table";
 export { table as event_intent_aave_v3_withdraw_v1 } from "@/events/intent_aave_v3_withdraw_v1/table";
 export { table as event_tornado_cash_withdrawal_v3 } from "@/events/tornado-cash-withdrawal-v3/table";
