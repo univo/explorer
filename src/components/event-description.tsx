@@ -1,11 +1,11 @@
 import type { Event } from "@/db/events";
+import { IntentIdmV1Description } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1Description } from "@/events/intent_fwa_won_v1/component";
 import { Erc20ApprovalV3Description } from "@/events/erc20-approval-v3/component";
 import { Erc20TransferV3Description } from "@/events/erc20-transfer-v3/component";
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
-import { InputDataMessageV3Description } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
 import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1Description } from "@/events/intent_fwa_deposited_v1/component";
@@ -33,8 +33,8 @@ export function EventDescription(props: { event: Event }) {
 		return <Erc20TransferV3Description event={props.event} />;
 	}
 
-	if (props.event.tag === "input_data_message_v3") {
-		return <InputDataMessageV3Description event={props.event} />;
+	if (props.event.tag === "intent_idm_v1") {
+		return <IntentIdmV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "ens_name_registered_v3") {
