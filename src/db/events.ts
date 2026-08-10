@@ -5,7 +5,6 @@ import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
 import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
 import { getLogErc721TransferV1 } from "@/events/log_erc721_transfer_v1/event";
-import { getEnsNameRegisteredV3 } from "@/events/ens-name-registered-v3/event";
 import { getLogErc721ApprovalV1 } from "@/events/log_erc721_approval_v1/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
@@ -18,6 +17,7 @@ import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/ev
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
+import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
 import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
 
 // This is our central point of configuration for which all the events the app loads.
@@ -47,9 +47,8 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentNativeTransferV1(ids),
 		getIntentCancelPendingTxV1(ids),
 		getIntentTornadoWithdrawalV1(ids),
+		getIntentEnsNameRegisteredV1(ids),
 		getIntentContractDeploymentV1(ids),
-
-		getEnsNameRegisteredV3(ids),
 	]);
 
 	const flat = events.flat(1);
