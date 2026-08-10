@@ -36,4 +36,3 @@ export { table as event_input_data_message_v3 } from "@/events/input-data-messag
 export { table as event_ens_name_registered_v3 } from "@/events/ens-name-registered-v3/table";
 export { table as event_contract_deployment_v3 } from "@/events/contract-deployment-v3/table";
 export { table as event_tornado_cash_withdrawal_v3 } from "@/events/tornado-cash-withdrawal-v3/table";
-export { table as event_intent_ens_name_registered_v1 } from "@/events/intent_ens_name_registered_v1/table";
