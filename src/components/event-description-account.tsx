@@ -7,7 +7,6 @@ import { Erc20TransferV3AccountDescription } from "@/events/erc20-transfer-v3/co
 import { NativeTransferV3AccountDescription } from "@/events/native-transfer-v3/component";
 import { Erc721TransferV3AccountDescription } from "@/events/erc721-transfer-v3/component";
 import { Erc721ApprovalV3AccountDescription } from "@/events/erc721-approval-v3/component";
-import { CancelPendingTxV3AccountDescription } from "@/events/cancel-pending-tx-v3/component";
 import { InputDataMessageV3AccountDescription } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3AccountDescription } from "@/events/ens-name-registered-v3/component";
 import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
@@ -18,6 +17,7 @@ import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentAaveV3WithdrawV1AccountDescription } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3AccountDescription } from "@/events/tornado-cash-withdrawal-v3/component";
+import { IntentCancelPendingTxV1AccountDescription } from "@/events/intent_cancel_pending_tx_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
 export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
@@ -45,8 +45,8 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 		return <IntentContractDeploymentV1AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v3") {
-		return <CancelPendingTxV3AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_cancel_pending_tx_v1") {
+		return <IntentCancelPendingTxV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "erc721_transfer_v3") {

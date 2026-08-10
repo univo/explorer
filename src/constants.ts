@@ -49,6 +49,7 @@ export const TABLES = {
 	intent_uniswap_v3_swap_v1: 27,
 	intent_uniswap_v3_mint_v1: 28,
 	intent_contract_deployment_v1: 29,
+	intent_cancel_pending_tx_v1: 30,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

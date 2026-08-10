@@ -6,7 +6,6 @@ import { UsdcBlacklistV3Description } from "@/events/usdc-blacklist-v3/component
 import { Erc721ApprovalV3Description } from "@/events/erc721-approval-v3/component";
 import { Erc721TransferV3Description } from "@/events/erc721-transfer-v3/component";
 import { NativeTransferV3Description } from "@/events/native-transfer-v3/component";
-import { CancelPendingTxV3Description } from "@/events/cancel-pending-tx-v3/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
 import { InputDataMessageV3Description } from "@/events/input-data-message-v3/component";
 import { EnsNameRegisteredV3Description } from "@/events/ens-name-registered-v3/component";
@@ -18,6 +17,7 @@ import { IntentUniswapV3SwapV1Description } from "@/events/intent_uniswap_v3_swa
 import { IntentUniswapV3MintV1Description } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentAaveV3WithdrawV1Description } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { TornadoCashWithdrawalV3Description } from "@/events/tornado-cash-withdrawal-v3/component";
+import { IntentCancelPendingTxV1Description } from "@/events/intent_cancel_pending_tx_v1/component";
 import { IntentContractDeploymentV1Description } from "@/events/intent_contract_deployment_v1/component";
 
 export function EventDescription(props: { event: Event }) {
@@ -45,8 +45,8 @@ export function EventDescription(props: { event: Event }) {
 		return <IntentContractDeploymentV1Description event={props.event} />;
 	}
 
-	if (props.event.tag === "cancel_pending_tx_v3") {
-		return <CancelPendingTxV3Description event={props.event} />;
+	if (props.event.tag === "intent_cancel_pending_tx_v1") {
+		return <IntentCancelPendingTxV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "erc721_transfer_v3") {
