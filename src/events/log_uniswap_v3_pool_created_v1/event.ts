@@ -4,7 +4,7 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
-import { isHexEqual, numberToHex } from "@/utils";
+import { defineBatchLoader, isHexEqual, numberToHex } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
@@ -152,3 +152,35 @@ export async function getLogUniswapV3PoolCreatedV1(ids: string[]) {
 		};
 	});
 }
+
+export const getPoolByAddress = defineBatchLoader(async (pools: readonly `0x${string}`[]) => {
+	if (pools.length === 0) {
+		return [];
+	}
+
+	const client = await createPostgresClient();
+
+	const rows = await client
+		.select() //
+		.from(table)
+		.where(inArray(table.pool_address, pools));
+
+	return pools.map<LogUniswapV3PoolCreatedV1 | null>((pool) => {
+		const result = rows.find((row) => isHexEqual(row.pool_address, pool));
+
+		if (result === undefined) {
+			return null;
+		}
+
+		return {
+			tag: "log_uniswap_v3_pool_created_v1",
+			id: result.id,
+			success: true,
+			fee: result.fee,
+			tick_spacing: result.tick_spacing,
+			pool_address: getAddress(result.pool_address),
+			token_0_address: getAddress(result.token_0_address),
+			token_1_address: getAddress(result.token_1_address),
+		};
+	});
+});
