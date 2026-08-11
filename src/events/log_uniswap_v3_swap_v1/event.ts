@@ -1,10 +1,10 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { decodeEventLog, getAddress, numberToHex as signedNumberToHex, parseAbiItem, toEventSelector } from "viem";
+import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
-import { isHexEqual, numberToHex } from "@/utils";
+import { isHexEqual } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { UNISWAP_V3_FACTORY_DEPLOYED_BLOCK } from "@/events/log_uniswap_v3_pool_created_v1/event";
@@ -14,14 +14,14 @@ export interface LogUniswapV3SwapV1 {
 	tag: "log_uniswap_v3_swap_v1";
 	id: string;
 	success: true;
-	tick: `0x${string}`;
-	amount_0: `0x${string}`;
-	amount_1: `0x${string}`;
-	liquidity: `0x${string}`;
+	tick: number;
+	amount_0: bigint;
+	amount_1: bigint;
+	liquidity: bigint;
+	sqrt_price_x96: bigint;
 	pool_address: `0x${string}`;
 	sender_address: `0x${string}`;
 	recipient_address: `0x${string}`;
-	sqrt_price_x96: `0x${string}`;
 }
 
 const SWAP_ABI = parseAbiItem(
@@ -65,14 +65,14 @@ export const event = univo.event({
 
 					return {
 						id,
+						tick: args.tick,
+						amount_0: args.amount0,
+						amount_1: args.amount1,
+						liquidity: args.liquidity,
+						sqrt_price_x96: args.sqrtPriceX96,
 						pool_address: getAddress(log.address),
-						liquidity: numberToHex(args.liquidity),
 						sender_address: getAddress(args.sender),
 						recipient_address: getAddress(args.recipient),
-						sqrt_price_x96: numberToHex(args.sqrtPriceX96),
-						tick: signedNumberToHex(args.tick, { signed: true, size: 3 }),
-						amount_0: signedNumberToHex(args.amount0, { signed: true, size: 32 }),
-						amount_1: signedNumberToHex(args.amount1, { signed: true, size: 32 }),
 					};
 				} catch {
 					return [];

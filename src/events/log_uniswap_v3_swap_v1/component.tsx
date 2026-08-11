@@ -1,5 +1,3 @@
-import { hexToBigInt } from "viem";
-
 import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
@@ -54,8 +52,8 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 }
 
 function getSwap(pool: LogUniswapV3PoolCreatedV1, swap: LogUniswapV3SwapV1) {
-	const amount0 = hexToBigInt(swap.amount_0, { signed: true });
-	const amount1 = hexToBigInt(swap.amount_1, { signed: true });
+	const amount0 = swap.amount_0;
+	const amount1 = swap.amount_1;
 
 	if (amount0 > 0n && amount1 < 0n) {
 		return {

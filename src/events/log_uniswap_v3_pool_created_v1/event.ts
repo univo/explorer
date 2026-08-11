@@ -4,7 +4,7 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
-import { defineBatchLoader, isHexEqual, numberToHex } from "@/utils";
+import { defineBatchLoader, isHexEqual } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
@@ -13,8 +13,8 @@ export interface LogUniswapV3PoolCreatedV1 {
 	tag: "log_uniswap_v3_pool_created_v1";
 	id: string;
 	success: true;
-	fee: `0x${string}`;
-	tick_spacing: `0x${string}`;
+	fee: number;
+	tick_spacing: number;
 	pool_address: `0x${string}`;
 	token_0_address: `0x${string}`;
 	token_1_address: `0x${string}`;
@@ -69,11 +69,11 @@ export const event = univo.event({
 
 					return {
 						id,
-						fee: numberToHex(args.fee),
+						fee: args.fee,
+						tick_spacing: args.tickSpacing,
 						pool_address: getAddress(args.pool),
 						token_0_address: getAddress(args.token0),
 						token_1_address: getAddress(args.token1),
-						tick_spacing: numberToHex(args.tickSpacing),
 					};
 				} catch {
 					return [];
