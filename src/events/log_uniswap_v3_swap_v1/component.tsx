@@ -3,8 +3,8 @@ import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { Description } from "@/components/description";
 import type { LogUniswapV3SwapV1 } from "./event";
+import { Description } from "@/components/description";
 import { getPoolByAddress, type LogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
 
 export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3SwapV1 }) {
