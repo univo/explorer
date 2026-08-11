@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { event, getLogUniswapV3PoolCreatedV1 } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
+import { event, getLogUniswapV3PoolCreatedV1 } from "./event";
 
 test.concurrent("log_uniswap_v3_pool_created_v1 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 12369760 });
