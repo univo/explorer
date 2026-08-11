@@ -1,12 +1,37 @@
 import { test } from "vitest";
 
-import { event } from "./event";
-import { test_getBlock } from "@/tests/utils";
+import { event, getLogUniswapV3SwapV1 } from "./event";
+import { test_client, test_getBlock } from "@/tests/utils";
 
-test.concurrent("log_uniswap_v3_swap_v1 decodes swap logs", async ({ expect }) => {
+test.concurrent("log_uniswap_v3_swap_v1 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 12369879 });
 
-	expect(event.handler(block)).toMatchInlineSnapshot(`
+	const events = event.handler(block);
+
+	await event.storage.delete(events);
+
+	const ids = events.map((event) => event.id);
+
+	const initial = await getLogUniswapV3SwapV1(ids);
+
+	expect(initial).toStrictEqual([]);
+
+	await test_client.request({
+		method: "private_writeEvents",
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"log_uniswap_v3_swap_v1", //
+					"log_uniswap_v3_swap_v1_index_block_number_tx_index_v4",
+				],
+			},
+		],
+	});
+
+	const final = await getLogUniswapV3SwapV1(ids);
+
+	expect(final).toMatchInlineSnapshot(`
 		[
 		  {
 		    "amount_0": -33854155678824490173n,
@@ -17,6 +42,8 @@ test.concurrent("log_uniswap_v3_swap_v1 decodes swap logs", async ({ expect }) =
 		    "recipient_address": "0x3b8ccaa89FcD432f1334D35b10fF8547001Ce3e5",
 		    "sender_address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
 		    "sqrt_price_x96": 1364573512386034424627810688n,
+		    "success": true,
+		    "tag": "log_uniswap_v3_swap_v1",
 		    "tick": -81234,
 		  },
 		]
