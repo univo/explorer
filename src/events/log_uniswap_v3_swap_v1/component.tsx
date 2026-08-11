@@ -48,22 +48,19 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 }
 
 function getSwap(pool: LogUniswapV3PoolCreatedV1, swap: LogUniswapV3SwapV1) {
-	const amount0 = swap.amount_0;
-	const amount1 = swap.amount_1;
-
-	if (amount0 > 0n && amount1 < 0n) {
+	if (swap.amount_0 > 0n && swap.amount_1 < 0n) {
 		return {
-			amountIn: amount0,
-			amountOut: -amount1,
+			amountIn: swap.amount_0,
+			amountOut: -swap.amount_1,
 			tokenIn: pool.token_0_address,
 			tokenOut: pool.token_1_address,
 		};
 	}
 
-	if (amount1 > 0n && amount0 < 0n) {
+	if (swap.amount_1 > 0n && swap.amount_0 < 0n) {
 		return {
-			amountIn: amount1,
-			amountOut: -amount0,
+			amountIn: swap.amount_1,
+			amountOut: -swap.amount_0,
 			tokenIn: pool.token_1_address,
 			tokenOut: pool.token_0_address,
 		};
