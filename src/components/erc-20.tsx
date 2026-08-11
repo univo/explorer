@@ -118,25 +118,25 @@ function Image(props: { src: string | undefined }) {
 interface TokenPrice {
 	chain: Chain;
 	token: `0x${string}`;
-	price_usd: string;
 	period_end: Date;
+	price_usd: string;
 	observed_at: Date;
+	depth_usd: string | null;
 	route: "usdc" | "direct" | "weth";
 	pool_0_address: `0x${string}` | null;
 	pool_1_address: `0x${string}` | null;
-	depth_usd: string | null;
 }
 
 interface TokenPriceRow extends Record<string, unknown> {
 	chain: Chain;
 	token_address: `0x${string}`;
 	price_usd: string;
-	period_end: Date;
-	observed_at: Date;
+	period_end: string;
+	observed_at: string;
+	depth_usd: string | null;
 	route: TokenPrice["route"];
 	pool_0_address: `0x${string}` | null;
 	pool_1_address: `0x${string}` | null;
-	depth_usd: string | null;
 }
 
 type TokenPriceInput = { chain: Chain; token: `0x${string}`; timestamp: Date };
@@ -186,7 +186,7 @@ const getTokenPrice = defineBatchLoader(async (inputs: readonly TokenPriceInput[
 			return (
 				row.chain === request.chain &&
 				isHexEqual(row.token_address, request.queryToken) &&
-				row.period_end.getTime() === request.periodEnd.getTime()
+				new Date(row.period_end).getTime() === request.periodEnd.getTime()
 			);
 		});
 
@@ -200,8 +200,8 @@ const getTokenPrice = defineBatchLoader(async (inputs: readonly TokenPriceInput[
 			token: request.token,
 			price_usd: row.price_usd,
 			depth_usd: row.depth_usd,
-			period_end: row.period_end,
-			observed_at: row.observed_at,
+			period_end: new Date(row.period_end),
+			observed_at: new Date(row.observed_at),
 			pool_0_address: row.pool_0_address === null ? null : getAddress(row.pool_0_address),
 			pool_1_address: row.pool_1_address === null ? null : getAddress(row.pool_1_address),
 		};
