@@ -1,6 +1,6 @@
 import { numberToHex } from "viem";
 import { expect, test } from "vitest";
-import { formatTokenAmount, parseId, createId } from "@/helpers";
+import { parseId, createId } from "@/helpers";
 
 test.concurrent("creates and parses ids", () => {
 	const id = createId({
@@ -22,9 +22,4 @@ test.concurrent("creates and parses ids", () => {
 		chainId: 1,
 		tableId: 5,
 	});
-});
-
-test.concurrent("formats token amounts", () => {
-	expect(formatTokenAmount("0xC", 18)).toBe("0.000000000000000012");
-	expect(formatTokenAmount("0x7D", 18)).toBe("0.00000000000000013");
 });

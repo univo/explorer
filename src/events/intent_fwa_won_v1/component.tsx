@@ -13,7 +13,7 @@ import { getLogFwaNftListedV1ByListingId } from "../log_fwa_nft_listed_v1/event"
 const FWA_TOKEN_ADDRESS = "0xa0Df17B5aC76ABaBA36E1450E2cbCd18A620C845";
 
 export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	const listing = await getLogFwaNftListedV1ByListingId(props.event.listing_id);
 
@@ -32,7 +32,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
 			</Description>
 		);
 	}
@@ -45,7 +45,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
 				<span>and immediately relisted it back in</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
@@ -60,7 +60,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>but accepted the payout of</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={blockTimestamp} />
 				<span>instead</span>
 			</Description>
 		);
@@ -74,7 +74,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>but accepted the payout of</span>
-				<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} />
+				<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={blockTimestamp} />
 				<span>instead</span>
 			</Description>
 		);

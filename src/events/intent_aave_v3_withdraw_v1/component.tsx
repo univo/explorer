@@ -10,7 +10,8 @@ import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3WithdrawV1 } from "./event";
 
 export function IntentAaveV3WithdrawV1Description(props: { event: IntentAaveV3WithdrawV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+
 	const quantity = BigInt(props.event.quantity);
 	const all = quantity === maxUint256;
 
@@ -21,7 +22,7 @@ export function IntentAaveV3WithdrawV1Description(props: { event: IntentAaveV3Wi
 				<Account chain={chain} address={props.event.withdrawer_address} />
 				<Action type="withdrew">withdrew</Action>
 				{all ? <span>all</span> : null}
-				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 			</Description>
@@ -34,7 +35,7 @@ export function IntentAaveV3WithdrawV1Description(props: { event: IntentAaveV3Wi
 			<Account chain={chain} address={props.event.withdrawer_address} />
 			<Action type="withdrew">withdrew</Action>
 			{all ? <span>all</span> : null}
-			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} />
+			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 			<span>from</span>
 			<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 			<span>to</span>
@@ -47,7 +48,8 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: {
 	event: IntentAaveV3WithdrawV1;
 	address: `0x${string}`;
 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+
 	const quantity = BigInt(props.event.quantity);
 	const all = quantity === maxUint256;
 
@@ -60,7 +62,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: {
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="withdrew">Withdrew</Action>
 					{all ? <span>all</span> : null}
-					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} />
+					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 					<span>from</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 				</Description>
@@ -72,7 +74,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: {
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="withdrew">Withdrew</Action>
 				{all ? <span>all</span> : null}
-				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 				<span>to</span>

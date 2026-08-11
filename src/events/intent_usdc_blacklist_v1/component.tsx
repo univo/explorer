@@ -11,12 +11,12 @@ import { Description } from "@/components/description";
 const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
 export function IntentUsdcBlacklistV1Description(props: { event: IntentUsdcBlacklistV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	return (
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Erc20 chain={chain} address={USDC_ADDRESS} />
+			<Erc20 chain={chain} address={USDC_ADDRESS} at={blockTimestamp} />
 			<Action type="blacklisted">blacklisted</Action>
 			<Account chain={chain} address={props.event.account_address} />
 		</Description>
@@ -27,7 +27,7 @@ export function IntentUsdcBlacklistV1AccountDescription(props: {
 	event: IntentUsdcBlacklistV1;
 	address: `0x${string}`;
 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// 1. From the perspective of the blacklisted account
 
@@ -37,7 +37,7 @@ export function IntentUsdcBlacklistV1AccountDescription(props: {
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="blacklisted">Blacklisted</Action>
 				<span>by</span>
-				<Erc20 chain={chain} address={USDC_ADDRESS} />
+				<Erc20 chain={chain} address={USDC_ADDRESS} at={blockTimestamp} />
 			</Description>
 		);
 	}
