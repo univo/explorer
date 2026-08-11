@@ -18,10 +18,6 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 
 	const swap = getSwap(pool, props.event);
 
-	if (swap === null) {
-		throw new Error("Expected swap amounts to be known");
-	}
-
 	if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 		return (
 			<Description>
@@ -73,5 +69,5 @@ function getSwap(pool: LogUniswapV3PoolCreatedV1, swap: LogUniswapV3SwapV1) {
 		};
 	}
 
-	return null;
+	throw new Error("Expected swap amounts to be known");
 }
