@@ -14,14 +14,8 @@ import { defineBatchLoader, formatNumber, isHexEqual } from "@/utils";
 
 const WETH_ADDRESS = getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
 
-export async function Erc20(props: {
-	chain: Chain;
-	address: `0x${string}`;
-	quantity?: `0x${string}` | bigint;
-	timestamp?: Date;
-}) {
-	const now = new Date();
-	const timestamp = props.timestamp ?? new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+export async function Erc20(props: { chain: Chain; address: `0x${string}`; quantity?: `0x${string}` | bigint; at: number }) {
+	const timestamp = new Date(props.at * 1000);
 
 	if (props.chain === 1 && isAddressEqual(props.address, ETH_ADDRESS)) {
 		const price = await getTokenPrice({ chain: props.chain, token: props.address, timestamp });

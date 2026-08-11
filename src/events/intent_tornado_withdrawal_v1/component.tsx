@@ -10,7 +10,8 @@ import { Description } from "@/components/description";
 import type { IntentTornadoWithdrawalV1 } from "./event";
 
 export function IntentTornadoWithdrawalV1Description(props: { event: IntentTornadoWithdrawalV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+
 	const pool = getTornadoCashPool(props.event.pool_address);
 
 	if (pool === undefined) {
@@ -28,7 +29,7 @@ export function IntentTornadoWithdrawalV1Description(props: { event: IntentTorna
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.from_address} />
 				<Action type="received">withdrew</Action>
-				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} />
+				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
@@ -46,7 +47,7 @@ export function IntentTornadoWithdrawalV1Description(props: { event: IntentTorna
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="received">withdrew</Action>
-			<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} />
+			<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} at={blockTimestamp} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.recipient_address} />
 			<span>from</span>
@@ -61,7 +62,8 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 	event: IntentTornadoWithdrawalV1;
 	address: `0x${string}`;
 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+
 	const pool = getTornadoCashPool(props.event.pool_address);
 
 	if (pool === undefined) {
@@ -78,7 +80,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="received">Withdrew</Action>
-					<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} />
+					<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
 					<span>from</span>
 					<Account chain={chain} address={props.event.pool_address} />
 				</Description>
@@ -93,7 +95,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} />
+				<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
 				<span>via relay</span>
@@ -111,7 +113,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 				<span>Relayed</span>
 				<Action type="sent">withdrawal</Action>
 				<span>of</span>
-				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} />
+				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
 				<span>by</span>
@@ -119,7 +121,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 				<span>to</span>
 				<Account chain={chain} address={props.event.recipient_address} />
 				<span>for a fee of</span>
-				<Erc20 chain={chain} address={pool.asset} quantity={props.event.fee} />
+				<Erc20 chain={chain} address={pool.asset} quantity={props.event.fee} at={blockTimestamp} />
 			</Description>
 		);
 	}

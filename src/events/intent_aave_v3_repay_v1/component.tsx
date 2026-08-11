@@ -10,7 +10,7 @@ import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3RepayV1 } from "./event";
 
 export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3RepayV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 	const quantity = BigInt(props.event.quantity);
 	const all = quantity === maxUint256;
 
@@ -22,7 +22,7 @@ export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3Repay
 					<Account chain={chain} address={props.event.repayer_address} />
 					<Action type="repaid">repaid</Action>
 					<span>their entire</span>
-					<Erc20 chain={chain} address={props.event.token_address} />
+					<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 					<span>debt obligation to</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 				</Description>
@@ -35,7 +35,7 @@ export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3Repay
 				<Account chain={chain} address={props.event.repayer_address} />
 				<span>partially</span>
 				<Action type="repaid">repaid</Action>
-				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 				<span>of their debt obligation to</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 			</Description>
@@ -49,7 +49,7 @@ export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3Repay
 				<Account chain={chain} address={props.event.repayer_address} />
 				<Action type="repaid">repaid</Action>
 				<span>the entire</span>
-				<Erc20 chain={chain} address={props.event.token_address} />
+				<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 				<span>debt obligation owned by</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />
 				<span>to</span>
@@ -64,7 +64,7 @@ export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3Repay
 			<Account chain={chain} address={props.event.repayer_address} />
 			<span>partially</span>
 			<Action type="repaid">repaid</Action>
-			<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
+			<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 			<span>of debt owned by</span>
 			<Account chain={chain} address={props.event.on_behalf_of_address} />
 			<span>to</span>
@@ -74,7 +74,7 @@ export function IntentAaveV3RepayV1Description(props: { event: IntentAaveV3Repay
 }
 
 export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAaveV3RepayV1; address: `0x${string}` }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 	const quantity = BigInt(props.event.quantity);
 	const all = quantity === maxUint256;
 
@@ -88,7 +88,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 						<Action type="repaid">Repaid</Action>
 						<span>their entire</span>
-						<Erc20 chain={chain} address={props.event.token_address} />
+						<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 						<span>debt obligation to</span>
 						<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 					</Description>
@@ -100,7 +100,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<span>Partially</span>
 					<Action type="repaid">repaid</Action>
-					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
+					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 					<span>of their debt obligation to</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
 				</Description>
@@ -113,7 +113,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="repaid">Repaid</Action>
 					<span>the entire</span>
-					<Erc20 chain={chain} address={props.event.token_address} />
+					<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 					<span>debt obligation owned by</span>
 					<Account chain={chain} address={props.event.on_behalf_of_address} />
 					<span>to</span>
@@ -127,7 +127,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<span>Partially</span>
 				<Action type="repaid">repaid</Action>
-				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 				<span>of debt owned by</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />
 				<span>to</span>

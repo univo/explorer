@@ -11,7 +11,7 @@ import { Description } from "@/components/description";
 import { FWA_ADDRESS, type IntentFwaDepositedV1 } from "./event";
 
 export function IntentFwaDepositedV1Description(props: { event: IntentFwaDepositedV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	return (
 		<Description>
@@ -22,13 +22,13 @@ export function IntentFwaDepositedV1Description(props: { event: IntentFwaDeposit
 			<span>into</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
 			<span>with a backing of </span>
-			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} at={blockTimestamp} />
 		</Description>
 	);
 }
 
 export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwaDepositedV1; address: `0x${string}` }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// From the perspective of the depositor
 
@@ -41,7 +41,7 @@ export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwa
 				<span>into</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 				<span>with a backing of</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} at={blockTimestamp} />
 			</Description>
 		);
 	}

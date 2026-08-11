@@ -9,7 +9,7 @@ import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
 export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
 		return (
@@ -17,7 +17,7 @@ export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.to_address} />
 				<Action type="minted">minted</Action>
-				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 			</Description>
 		);
 	}
@@ -28,7 +28,7 @@ export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.from_address} />
 				<Action type="burnt">burnt</Action>
-				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 			</Description>
 		);
 	}
@@ -38,7 +38,7 @@ export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+			<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
@@ -46,7 +46,7 @@ export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1
 }
 
 export function LogErc20TransferV1AccountDescription(props: { event: LogErc20TransferV1; address: `0x${string}` }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	if (isAddressEqual(props.address, props.event.from_address)) {
 		if (isBurnAddress(props.event.to_address)) {
@@ -54,7 +54,7 @@ export function LogErc20TransferV1AccountDescription(props: { event: LogErc20Tra
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="burnt">Burnt</Action>
-					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				</Description>
 			);
 		}
@@ -63,7 +63,7 @@ export function LogErc20TransferV1AccountDescription(props: { event: LogErc20Tra
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -76,7 +76,7 @@ export function LogErc20TransferV1AccountDescription(props: { event: LogErc20Tra
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Action type="minted">Minted</Action>
-					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				</Description>
 			);
 		}
@@ -85,7 +85,7 @@ export function LogErc20TransferV1AccountDescription(props: { event: LogErc20Tra
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>

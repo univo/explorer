@@ -10,7 +10,8 @@ import { Description } from "@/components/description";
 
 export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1 }) {
 	const all = props.event.quantity.length >= 30;
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+
 	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isZeroQuantity || isSpenderNullAddress;
@@ -24,7 +25,7 @@ export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1
 				<span>for</span>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to spend any</span>
-				<Erc20 chain={chain} address={props.event.token_address} />
+				<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 			</Description>
 		);
 	}
@@ -37,14 +38,15 @@ export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1
 			<Account chain={chain} address={props.event.spender_address} />
 			<span>to spend</span>
 			{all === true && <span>all</span>}
-			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} />
+			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} at={blockTimestamp} />
 		</Description>
 	);
 }
 
 export function LogErc20ApprovalV1AccountDescription(props: { event: LogErc20ApprovalV1; address: `0x${string}` }) {
 	const all = props.event.quantity.length >= 30;
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+
 	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
 	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 	const revoked = isZeroQuantity || isSpenderNullAddress;
@@ -60,7 +62,7 @@ export function LogErc20ApprovalV1AccountDescription(props: { event: LogErc20App
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
 				{revoked === false && all === true && <span>all</span>}
-				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 			</Description>
 		);
 	}
@@ -74,7 +76,7 @@ export function LogErc20ApprovalV1AccountDescription(props: { event: LogErc20App
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>{revoked ? "to spend any" : "to spend"}</span>
 				{revoked === false && all === true && <span>all</span>}
-				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} />
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 			</Description>
 		);
 	}

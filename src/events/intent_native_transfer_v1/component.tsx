@@ -10,14 +10,14 @@ import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
 export function IntentNativeTransferV1Description(props: { event: IntentNativeTransferV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	return (
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="sent">sent</Action>
-			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
@@ -28,14 +28,14 @@ export function IntentNativeTransferV1AccountDescription(props: {
 	event: IntentNativeTransferV1;
 	address: `0x${string}`;
 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	if (isAddressEqual(props.address, props.event.from_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="sent">Sent</Action>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -47,7 +47,7 @@ export function IntentNativeTransferV1AccountDescription(props: {
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Action type="received">Received</Action>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>

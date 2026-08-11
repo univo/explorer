@@ -8,7 +8,7 @@ import type { LogUniswapV3SwapV1 } from "./event";
 import { getPoolByAddress, type LogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
 
 export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3SwapV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	const pool = await getPoolByAddress(props.event.pool_address);
 
@@ -27,9 +27,9 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
 				<Action type="swapped">swapped</Action>
-				<Erc20 chain={chain} address={swap.tokenIn} quantity={swap.amountIn} />
+				<Erc20 chain={chain} address={swap.tokenIn} quantity={swap.amountIn} at={blockTimestamp} />
 				<span>for</span>
-				<Erc20 chain={chain} address={swap.tokenOut} quantity={swap.amountOut} />
+				<Erc20 chain={chain} address={swap.tokenOut} quantity={swap.amountOut} at={blockTimestamp} />
 				<span>via</span>
 				<Account chain={chain} address={props.event.pool_address} />
 			</Description>
@@ -40,9 +40,9 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 		<Description>
 			<Account chain={chain} address={props.event.sender_address} />
 			<Action type="swapped">swapped</Action>
-			<Erc20 chain={chain} address={swap.tokenIn} quantity={swap.amountIn} />
+			<Erc20 chain={chain} address={swap.tokenIn} quantity={swap.amountIn} at={blockTimestamp} />
 			<span>for</span>
-			<Erc20 chain={chain} address={swap.tokenOut} quantity={swap.amountOut} />
+			<Erc20 chain={chain} address={swap.tokenOut} quantity={swap.amountOut} at={blockTimestamp} />
 			<span>with recipient</span>
 			<Account chain={chain} address={props.event.recipient_address} />
 			<span>via</span>

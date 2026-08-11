@@ -9,7 +9,7 @@ import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v1/event";
 
 export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1 }) {
-	const chain = parseId(props.event.id).chainId;
+	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	return (
 		<Description>
@@ -19,7 +19,7 @@ export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1 }
 			<span>on</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
 			<span>for a backing of</span>
-			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} at={blockTimestamp} />
 		</Description>
 	);
 }
