@@ -32,7 +32,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 					</Description>
 				</Hoverable>
 
-				<Price price={price?.price_usd} />
+				<Value quantity={props.quantity} decimals={18} price={price} />
 			</Fragment>
 		);
 	}
@@ -60,7 +60,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 				</Hoverable>
 			</AddViewButton>
 
-			<Price price={price?.price_usd} />
+			<Value quantity={props.quantity} decimals={account["erc20.decimals"]} price={price} />
 		</Fragment>
 	);
 }
@@ -85,22 +85,42 @@ function formatTokenQuantity(quantity: `0x${string}` | bigint, decimals: number)
 	return formatNumber(quantityAsNumber, { maximumFractionDigits: 2 });
 }
 
-function Price(props: { price: string | undefined }) {
-	if (props.price === undefined) {
-		return null;
+// Some prices are based on Uniswap pools that don't have significant liquidity. This
+// often causes massively incorrect pricing so we specify some minimum threshold.
+
+const MIN_LIQUIDITY_DEPTH = 10_000;
+
+function Value(props: { quantity: `0x${string}` | bigint | undefined; decimals: number; price: TokenPrice | null }) {
+	if (props.price === null) {
+		return;
 	}
 
-	return <span className="text-gray-500 select-all">(${formatTokenPrice(props.price)})</span>;
-}
+	const quantityAsInteger = Number(props.quantity);
+	const depthAsNumber = Number(props.price.depth_usd);
 
-function formatTokenPrice(price: string) {
-	const priceAsNumber = Number(price);
-
-	if (priceAsNumber < 1) {
-		return formatNumber(priceAsNumber, { maximumSignificantDigits: 4 });
+	if (quantityAsInteger === 0) {
+		return;
 	}
 
-	return formatNumber(priceAsNumber, { maximumFractionDigits: 2 });
+	if (depthAsNumber < MIN_LIQUIDITY_DEPTH) {
+		return;
+	}
+
+	const priceAsNumber = Number(props.price.price_usd);
+	const quantityAsNumber = quantityAsInteger / 10 ** props.decimals;
+
+	const valueAsNumber = quantityAsNumber * priceAsNumber;
+	const valueAsString = String(valueAsNumber);
+
+	if (props.decimals > valueAsString.length) {
+		const formatted = formatNumber(valueAsNumber, { maximumSignificantDigits: 2 });
+
+		return <span className="text-gray-500 select-all">(${formatted})</span>;
+	}
+
+	const formatted = formatNumber(valueAsNumber, { maximumFractionDigits: 2 });
+
+	return <span className="text-gray-500 select-all">(${formatted})</span>;
 }
 
 function Image(props: { src: string | undefined }) {
