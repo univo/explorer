@@ -6,8 +6,9 @@ import { boolean, integer, pgTable, primaryKey, smallint, text } from "drizzle-o
 import { inTuple } from "@/db/types";
 import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
+import type { MakeNonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { capitalize, defineBatchLoader, defined, iife, isHexEqual, type MakeNonNullable } from "@/utils";
+import { capitalize, defineBatchLoader, defined, iife, isHexEqual } from "@/utils";
 
 export interface Account {
 	chain: number;
@@ -145,10 +146,7 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 // the erc721 related information from storage, only if that information does not exist do we load it from
 // onchain and write it to storage
 
-type Erc721Account = MakeNonNullable<
-	Account,
-	"is_contract" | "contract_name" | "erc_type" | "erc721.name" | "erc721.symbol"
->;
+type Erc721Account = MakeNonNullable<Account, "is_contract" | "contract_name" | "erc_type" | "erc721.name" | "erc721.symbol">;
 
 export async function getErc721Account(opts: { chain: Chain; address: `0x${string}` }): Promise<Erc721Account | null> {
 	try {
@@ -172,41 +170,37 @@ export async function getErc721Account(opts: { chain: Chain; address: `0x${strin
 			};
 		}
 
-		// Load ERC721 metadata
-
-		const [name, symbol] = await Promise.all([
-			getClient(opts.chain).readContract({
-				functionName: "name",
-				address: opts.address,
-				abi: [
-					{
-						inputs: [],
-						name: "name",
-						type: "function",
-						stateMutability: "view",
-						outputs: [{ type: "string" }],
-					},
-				],
-			}),
-			getClient(opts.chain).readContract({
-				address: opts.address,
-				functionName: "symbol",
-				abi: [
-					{
-						inputs: [],
-						name: "symbol",
-						type: "function",
-						stateMutability: "view",
-						outputs: [{ type: "string" }],
-					},
-				],
-			}),
-		]);
-
-		// Upsert new contract information to accounts table
-
 		waitUntil(
 			iife(async () => {
+				const [name, symbol] = await Promise.all([
+					getClient(opts.chain).readContract({
+						functionName: "name",
+						address: opts.address,
+						abi: [
+							{
+								inputs: [],
+								name: "name",
+								type: "function",
+								stateMutability: "view",
+								outputs: [{ type: "string" }],
+							},
+						],
+					}),
+					getClient(opts.chain).readContract({
+						address: opts.address,
+						functionName: "symbol",
+						abi: [
+							{
+								inputs: [],
+								name: "symbol",
+								type: "function",
+								stateMutability: "view",
+								outputs: [{ type: "string" }],
+							},
+						],
+					}),
+				]);
+
 				const client = await createPostgresClient();
 
 				await client
@@ -234,30 +228,7 @@ export async function getErc721Account(opts: { chain: Chain; address: `0x${strin
 			}),
 		);
 
-		return {
-			chain: opts.chain,
-			address: getAddress(opts.address),
-
-			is_contract: true,
-			contract_name: name,
-			"erc721.name": name,
-			erc_type: '["erc721"]',
-			"erc721.symbol": symbol,
-
-			code_compiler: undefined,
-			code_language: undefined,
-			deployment_tx: undefined,
-			owner_project: undefined,
-			deployer_block: undefined,
-			usage_category: undefined,
-			deployer_address: undefined,
-			source_code_verified: undefined,
-
-			"erc20.name": undefined,
-			"erc20.image": undefined,
-			"erc20.symbol": undefined,
-			"erc20.decimals": undefined,
-		};
+		return null;
 	} catch {
 		return null;
 	}
@@ -292,52 +263,50 @@ export async function getErc20Account(opts: { chain: Chain; address: `0x${string
 			};
 		}
 
-		// Load ERC20 metadata
-
-		const [name, symbol, decimals] = await Promise.all([
-			getClient(opts.chain).readContract({
-				address: opts.address,
-				functionName: "name",
-				abi: [
-					{
-						inputs: [],
-						name: "name",
-						type: "function",
-						stateMutability: "view",
-						outputs: [{ type: "string" }],
-					},
-				],
-			}),
-			getClient(opts.chain).readContract({
-				address: opts.address,
-				functionName: "symbol",
-				abi: [
-					{
-						inputs: [],
-						name: "symbol",
-						type: "function",
-						stateMutability: "view",
-						outputs: [{ type: "string" }],
-					},
-				],
-			}),
-			getClient(opts.chain).readContract({
-				address: opts.address,
-				functionName: "decimals",
-				abi: [
-					{
-						inputs: [],
-						type: "function",
-						name: "decimals",
-						stateMutability: "view",
-						outputs: [{ type: "uint8" }],
-					},
-				],
-			}),
-		]);
-
 		waitUntil(
 			iife(async () => {
+				const [name, symbol, decimals] = await Promise.all([
+					getClient(opts.chain).readContract({
+						address: opts.address,
+						functionName: "name",
+						abi: [
+							{
+								inputs: [],
+								name: "name",
+								type: "function",
+								stateMutability: "view",
+								outputs: [{ type: "string" }],
+							},
+						],
+					}),
+					getClient(opts.chain).readContract({
+						address: opts.address,
+						functionName: "symbol",
+						abi: [
+							{
+								inputs: [],
+								name: "symbol",
+								type: "function",
+								stateMutability: "view",
+								outputs: [{ type: "string" }],
+							},
+						],
+					}),
+					getClient(opts.chain).readContract({
+						address: opts.address,
+						functionName: "decimals",
+						abi: [
+							{
+								inputs: [],
+								type: "function",
+								name: "decimals",
+								stateMutability: "view",
+								outputs: [{ type: "uint8" }],
+							},
+						],
+					}),
+				]);
+
 				const client = await createPostgresClient();
 
 				await client
@@ -367,30 +336,7 @@ export async function getErc20Account(opts: { chain: Chain; address: `0x${string
 			}),
 		);
 
-		return {
-			chain: opts.chain,
-			address: getAddress(opts.address),
-
-			is_contract: true,
-			contract_name: name,
-			erc_type: '["erc20"]',
-			"erc20.name": name,
-			"erc20.symbol": symbol,
-			"erc20.image": undefined,
-			"erc20.decimals": decimals,
-
-			code_compiler: undefined,
-			code_language: undefined,
-			deployment_tx: undefined,
-			owner_project: undefined,
-			deployer_block: undefined,
-			usage_category: undefined,
-			deployer_address: undefined,
-			source_code_verified: undefined,
-
-			"erc721.name": undefined,
-			"erc721.symbol": undefined,
-		};
+		return null;
 	} catch {
 		return null;
 	}
