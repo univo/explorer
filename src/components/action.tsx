@@ -24,22 +24,21 @@ type Action =
 	| "blacklisted";
 
 type Color =
-	| "yellow" //
-	| "purple"
+	| "purple" //
 	| "gray"
 	| "green"
 	| "red"
 	| "pink"
 	| "blue"
-	| "gold";
+	| "gold"
+	| "orange";
 
 const colors: Record<Action, Color> = {
 	sent: "gray",
 	received: "gray",
 
 	approved: "green",
-
-	registered: "blue",
+	registered: "green",
 
 	burnt: "red",
 	cancelled: "red",
@@ -54,12 +53,13 @@ const colors: Record<Action, Color> = {
 	deposited: "purple",
 	supplied: "purple",
 	borrowed: "purple",
-	swapped: "purple",
 
-	sold: "yellow",
-	repaid: "yellow",
-	bridged: "yellow",
-	withdrew: "yellow",
+	swapped: "blue",
+
+	sold: "orange",
+	repaid: "orange",
+	bridged: "orange",
+	withdrew: "orange",
 };
 
 const classes: Record<Color, string> = {
@@ -69,8 +69,8 @@ const classes: Record<Color, string> = {
 	pink: "bg-pink-100 text-pink-700",
 	gold: "bg-amber-100 text-amber-800",
 	green: "bg-green-100 text-green-800",
+	orange: "bg-orange-100 text-orange-800",
 	purple: "bg-purple-100 text-purple-700",
-	yellow: "bg-yellow-100 text-yellow-800",
 };
 
 export function Action(props: { type: Action; children: ReactNode }) {
