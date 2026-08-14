@@ -95,6 +95,10 @@ function Value(props: { quantity: `0x${string}` | bigint | undefined; decimals: 
 		return;
 	}
 
+	if (props.quantity === undefined) {
+		return;
+	}
+
 	const quantityAsInteger = Number(props.quantity);
 	const depthAsNumber = Number(props.price.depth_usd);
 
