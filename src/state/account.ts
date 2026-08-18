@@ -184,7 +184,7 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 	// Only addresses that have interacted with a reverse registrar can have a primary ENS name.
 
 	const [ensExists, legacyEnsExists] = await Promise.all([
-		getEnsExistsForAccounts(accounts),
+		getEnsExistsForAccounts(accounts), //
 		getLegacyEnsExistsForAccounts(accounts),
 	]);
 
@@ -195,6 +195,9 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 	if (eligibleAccounts.length === 0) {
 		return;
 	}
+
+	// This eligibility check isn't perfect. It's obviously possible for accounts to clear or
+	// update a reverse record.
 
 	// What's not obvious here is that viem automatically batches these requests into
 	// a single HTTP call. This is great because Cloudflare Workers can only fetch headers

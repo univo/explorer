@@ -7,6 +7,7 @@ import { isHexEqual } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { TABLES, type Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
+import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface LogEnsNameForAddrChangedV1 {
 	tag: "log_ens_name_for_addr_changed_v1";
@@ -103,6 +104,13 @@ export const event = univo.event({
 			);
 		},
 	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v4,
+	id: "log_ens_name_for_addr_changed_v1_index_block_number_tx_index_v4",
+	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 export async function getLogEnsNameForAddrChangedV1(ids: string[]) {

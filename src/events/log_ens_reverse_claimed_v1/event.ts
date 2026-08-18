@@ -7,6 +7,7 @@ import { isHexEqual } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { TABLES, type Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
+import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface LogEnsReverseClaimedV1 {
 	tag: "log_ens_reverse_claimed_v1";
@@ -16,24 +17,15 @@ export interface LogEnsReverseClaimedV1 {
 	account_address: `0x${string}`;
 }
 
-export const ENS_REVERSE_REGISTRAR_V1_ADDRESS = getAddress("0x22d350A65ef25F9596dcdb8A3A5212fa5bad345F");
-export const ENS_REVERSE_REGISTRAR_V1_DEPLOYED_BLOCK = 16924698;
 export const ENS_REVERSE_REGISTRAR_V2_ADDRESS = getAddress("0xa58E81fe9b61B5c3fE2AFD33CF304c454AbFc7Cb");
 export const ENS_REVERSE_REGISTRAR_V2_DEPLOYED_BLOCK = 16925606;
 
 const REVERSE_CLAIMED_ABI = parseAbiItem("event ReverseClaimed(address indexed addr, bytes32 indexed node)");
-const REVERSE_REGISTRARS = [ENS_REVERSE_REGISTRAR_V1_ADDRESS, ENS_REVERSE_REGISTRAR_V2_ADDRESS];
 
 export const event = univo.event({
 	id: "log_ens_reverse_claimed_v1",
 
 	filters: [
-		{
-			chain: 1,
-			address: ENS_REVERSE_REGISTRAR_V1_ADDRESS,
-			event: toEventSelector(REVERSE_CLAIMED_ABI),
-			fromBlock: ENS_REVERSE_REGISTRAR_V1_DEPLOYED_BLOCK,
-		},
 		{
 			chain: 1,
 			address: ENS_REVERSE_REGISTRAR_V2_ADDRESS,
@@ -46,7 +38,7 @@ export const event = univo.event({
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap((log) => {
 				try {
-					if (!REVERSE_REGISTRARS.some((address) => isHexEqual(log.address, address))) {
+					if (!isHexEqual(log.address, ENS_REVERSE_REGISTRAR_V2_ADDRESS)) {
 						return [];
 					}
 
@@ -112,6 +104,13 @@ export const event = univo.event({
 			);
 		},
 	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v4,
+	id: "log_ens_reverse_claimed_v1_index_block_number_tx_index_v4",
+	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 export async function getLogEnsReverseClaimedV1(ids: string[]) {

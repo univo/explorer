@@ -21,7 +21,16 @@ test.concurrent("log_ens_reverse_claimed_v1 deletes, writes, and reads from stor
 
 	await test_client.request({
 		method: "private_writeEvents",
-		params: [{ blocks: [block], events: ["log_ens_reverse_claimed_v1"] }],
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"log_ens_reverse_claimed_v1",
+					"log_ens_reverse_claimed_v1_index_account_v3",
+					"log_ens_reverse_claimed_v1_index_block_number_tx_index_v4",
+				],
+			},
+		],
 	});
 
 	const stored = await getLogEnsReverseClaimedV1(ids);

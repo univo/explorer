@@ -4,6 +4,7 @@ import { IntentFwaWonV1Description } from "@/events/intent_fwa_won_v1/component"
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
 import { LogErc20TransferV1Description } from "@/events/log_erc20_transfer_v1/component";
 import { LogErc20ApprovalV1Description } from "@/events/log_erc20_approval_v1/component";
+import { LogUniswapV3SwapV1Description } from "@/events/log_uniswap_v3_swap_v1/component";
 import { LogErc721TransferV1Description } from "@/events/log_erc721_transfer_v1/component";
 import { LogErc721ApprovalV1Description } from "@/events/log_erc721_approval_v1/component";
 import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1/component";
@@ -14,15 +15,24 @@ import { IntentUsdcBlacklistV1Description } from "@/events/intent_usdc_blacklist
 import { IntentUniswapV3SwapV1Description } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1Description } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentNativeTransferV1Description } from "@/events/intent_native_transfer_v1/component";
+import { LogEnsReverseClaimedV1Description } from "@/events/log_ens_reverse_claimed_v1/component";
 import { IntentAaveV3WithdrawV1Description } from "@/events/intent_aave_v3_withdraw_v1/component";
 import { IntentCancelPendingTxV1Description } from "@/events/intent_cancel_pending_tx_v1/component";
 import { IntentTornadoWithdrawalV1Description } from "@/events/intent_tornado_withdrawal_v1/component";
 import { IntentEnsNameRegisteredV1Description } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1Description } from "@/events/intent_contract_deployment_v1/component";
 import { LogUniswapV3PoolCreatedV1Description } from "@/events/log_uniswap_v3_pool_created_v1/component";
-import { LogUniswapV3SwapV1Description } from "@/events/log_uniswap_v3_swap_v1/component";
+import { LogEnsNameForAddrChangedV1Description } from "@/events/log_ens_name_for_addr_changed_v1/component";
 
 export function EventDescription(props: { event: Event }) {
+	if (props.event.tag === "log_ens_reverse_claimed_v1") {
+		return <LogEnsReverseClaimedV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "log_ens_name_for_addr_changed_v1") {
+		return <LogEnsNameForAddrChangedV1Description event={props.event} />;
+	}
+
 	if (props.event.tag === "log_erc20_approval_v1") {
 		return <LogErc20ApprovalV1Description event={props.event} />;
 	}

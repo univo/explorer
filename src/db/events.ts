@@ -6,7 +6,6 @@ import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
 import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
 import { getLogErc721TransferV1 } from "@/events/log_erc721_transfer_v1/event";
 import { getLogErc721ApprovalV1 } from "@/events/log_erc721_approval_v1/event";
-import { getLogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
 import { getLogUniswapV3SwapV1 } from "@/events/log_uniswap_v3_swap_v1/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
@@ -16,11 +15,14 @@ import { getIntentUsdcBlacklistV1 } from "@/events/intent_usdc_blacklist_v1/even
 import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/event";
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
 import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
+import { getLogEnsReverseClaimedV1 } from "@/events/log_ens_reverse_claimed_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
 import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
+import { getLogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
 import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
+import { getLogEnsNameForAddrChangedV1 } from "@/events/log_ens_name_for_addr_changed_v1/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -37,6 +39,8 @@ export async function getEventsForIds(ids: string[]) {
 		getLogErc721TransferV1(ids),
 		getLogUniswapV3PoolCreatedV1(ids),
 		getLogUniswapV3SwapV1(ids),
+		getLogEnsReverseClaimedV1(ids),
+		getLogEnsNameForAddrChangedV1(ids),
 
 		getIntentIdmV1(ids),
 		getIntentFwaWonV1(ids),
