@@ -9,6 +9,8 @@ import type { Chain } from "@/constants";
 import type { MakeNonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { capitalize, defineBatchLoader, defined, iife, isHexEqual } from "@/utils";
+import { getEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
+import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
 
 export interface Account {
 	chain: number;
@@ -179,16 +181,27 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 		return;
 	}
 
-	const client = await createPostgresClient();
+	// Only addresses that have interacted with a reverse registrar can have a primary ENS name.
 
-	// TODO: Request database and determine if addresses might have an ENS specified
+	const [ensExists, legacyEnsExists] = await Promise.all([
+		getEnsExistsForAccounts(accounts),
+		getLegacyEnsExistsForAccounts(accounts),
+	]);
+
+	const eligibleAccounts = accounts.filter((_, index) => {
+		return ensExists[index] || legacyEnsExists[index];
+	});
+
+	if (eligibleAccounts.length === 0) {
+		return;
+	}
 
 	// What's not obvious here is that viem automatically batches these requests into
 	// a single HTTP call. This is great because Cloudflare Workers can only fetch headers
-	// for 6 requests at once
+	// for 6 requests concurrently
 
 	const results = await Promise.allSettled(
-		accounts.map(async (account) => {
+		eligibleAccounts.map(async (account) => {
 			const ens = await getEnsName(account);
 
 			return { chain: account.chain, address: account.address, ens };
@@ -206,6 +219,8 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 	if (ens.length === 0) {
 		return;
 	}
+
+	const client = await createPostgresClient();
 
 	await client
 		.insert(table)
@@ -234,7 +249,25 @@ async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promi
 }
 
 export async function invalidateEnsCacheForAccount(opts: { chain: Chain; address: `0x${string}` }) {
-	//
+	await invalidateEnsCacheForAccounts([opts]);
+}
+
+export async function invalidateEnsCacheForAccounts(accounts: readonly { chain: Chain; address: `0x${string}` }[]) {
+	if (accounts.length === 0) {
+		return;
+	}
+
+	const client = await createPostgresClient();
+
+	await client
+		.update(table)
+		.set({ ens: null })
+		.where(
+			inTuple(
+				[table.chain, table.address],
+				accounts.map((account) => [account.chain, getAddress(account.address)]),
+			),
+		);
 }
 
 // We can call this function when we are expecting an erc721 compatible account. We first attempt to load
