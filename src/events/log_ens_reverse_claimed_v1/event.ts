@@ -137,7 +137,11 @@ export async function getLogEnsReverseClaimedV1(ids: string[]) {
 	}));
 }
 
-export async function getEnsExistsForAccounts(accounts: { chain: Chain; address: `0x${string}` }[]) {
+// This event is also useful as eligibility check to quickly know if an account _might_ have specified
+// an ENS name. This is used to prevent issuing RPC calls for ENS names for accounts the definitely will
+// not have one specified.
+
+export async function getLegacyEnsExistsForAccounts(accounts: { chain: Chain; address: `0x${string}` }[]) {
 	if (accounts.length === 0) {
 		return [];
 	}

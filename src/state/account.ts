@@ -9,8 +9,8 @@ import type { Chain } from "@/constants";
 import type { MakeNonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { capitalize, defineBatchLoader, defined, iife, isHexEqual } from "@/utils";
-import { getEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
-import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
+import { getEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
+import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
 
 export interface Account {
 	chain: number;
