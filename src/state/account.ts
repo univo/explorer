@@ -181,7 +181,9 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 		return;
 	}
 
-	// Only addresses that have interacted with a reverse registrar can have a primary ENS name.
+	// An optimisation to reduce the number of RPC calls is to first check if a given account
+	// has ever actually specified a reverse ENS record. This massively reduces the search space
+	// as there are only approx 1m unique accounts with an ENS name.
 
 	const [ensExists, legacyEnsExists] = await Promise.all([
 		getEnsExistsForAccounts(accounts), //
@@ -196,11 +198,12 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 		return;
 	}
 
-	// This eligibility check isn't perfect. It's obviously possible for accounts to clear or
-	// update a reverse record.
+	// This eligibility check isn't perfect. If an account clears it's ENS name we will
+	// indefinitely poll for one. This isn't a big issue because this represents only a
+	// small proportion of accounts and won't incur any large RPC costs.
 
-	// What's not obvious here is that viem automatically batches these requests into
-	// a single HTTP call. This is great because Cloudflare Workers can only fetch headers
+	// What's not obvious here is that viem automatically batches these requests into a
+	// single HTTP call. This is great because Cloudflare Workers can only fetch headers
 	// for 6 requests concurrently
 
 	const results = await Promise.allSettled(
@@ -243,7 +246,11 @@ async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promi
 	// viem handles the details: it supports CCIP reads, ensures we perform both forward and reverse
 	// resolution to prevent impersonation, and implements multi-chain resolution for ENSNIP-19
 
+	// It's also important that we only ever load an ENS name that has finalized to prevent myriad
+	// possible correctness issues with our cache invalidation strategy
+
 	const ens = await client.getEnsName({
+		blockTag: "finalized",
 		coinType: toCoinType(opts.chain),
 		address: getAddress(opts.address),
 	});
@@ -251,13 +258,9 @@ async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promi
 	return ens;
 }
 
-export async function invalidateEnsCacheForAccount(opts: { chain: Chain; address: `0x${string}` }) {
-	await invalidateEnsCacheForAccounts([opts]);
-}
-
-export async function invalidateEnsCacheForAccounts(accounts: readonly { chain: Chain; address: `0x${string}` }[]) {
+export const invalidateEnsCacheForAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {
-		return;
+		return [];
 	}
 
 	const client = await createPostgresClient();
@@ -271,7 +274,9 @@ export async function invalidateEnsCacheForAccounts(accounts: readonly { chain: 
 				accounts.map((account) => [account.chain, getAddress(account.address)]),
 			),
 		);
-}
+
+	return new Array(accounts.length).fill(true);
+});
 
 // We can call this function when we are expecting an erc721 compatible account. We first attempt to load
 // the erc721 related information from storage, only if that information does not exist do we load it from
