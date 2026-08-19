@@ -2,8 +2,15 @@ import { custom } from "valibot";
 import DataLoader from "dataloader";
 import type { BatchLoadFn } from "dataloader";
 
-export function defineBatchLoader<K, V>(fn: BatchLoadFn<K, V>) {
-	const loader = new DataLoader(fn, { cacheKeyFn: (key) => JSON.stringify(key) });
+/**
+ * Creates a loader with automatic caching, batching, and deduplication
+ */
+export function defineLoader<K, V>(fn: BatchLoadFn<K, V>) {
+	const loader = new DataLoader(fn, {
+		batch: true,
+		cacheKeyFn: (key) => JSON.stringify(key),
+	});
+
 	return (id: K) => loader.load(id);
 }
 
@@ -14,7 +21,7 @@ export function hashstring() {
 /**
  * Capitalize the first character of a string
  */
-export function capitalize(str: string, opts: { mode: "first" | "all" } = { mode: "first" }): string | undefined {
+export function capitalize(str: string, opts: { mode: "first" | "all" } = { mode: "first" }): string {
 	if (opts.mode === "all") return str?.toUpperCase();
 	return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }

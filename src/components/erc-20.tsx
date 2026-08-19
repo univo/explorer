@@ -10,7 +10,7 @@ import { Description } from "./description";
 import { getErc20Account } from "@/state/account";
 import { createPostgresClient } from "@/db/client";
 import { ETH_ADDRESS, type Chain } from "@/constants";
-import { defineBatchLoader, formatNumber, isHexEqual } from "@/utils";
+import { defineLoader, formatNumber, isHexEqual } from "@/utils";
 
 const WETH_ADDRESS = getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
 
@@ -127,8 +127,8 @@ function Value(props: { quantity: `0x${string}` | bigint | undefined; decimals: 
 	return <span className="text-gray-500 select-all">(${formatted})</span>;
 }
 
-function Image(props: { src: string | undefined }) {
-	if (props.src === undefined) {
+function Image(props: { src: string | null }) {
+	if (props.src === null) {
 		return null;
 	}
 
@@ -165,7 +165,7 @@ interface TokenPriceRow extends Record<string, unknown> {
 
 type TokenPriceInput = { chain: Chain; token: `0x${string}`; timestamp: Date };
 
-const getTokenPrice = defineBatchLoader(async (inputs: readonly TokenPriceInput[]) => {
+const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInput[]) => {
 	if (inputs.length === 0) {
 		return [];
 	}

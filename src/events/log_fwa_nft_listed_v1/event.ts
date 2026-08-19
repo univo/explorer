@@ -6,7 +6,7 @@ import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
-import { defineBatchLoader, isHexEqual, numberToHex } from "@/utils";
+import { defineLoader, isHexEqual, numberToHex } from "@/utils";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v1/event";
 
@@ -155,7 +155,7 @@ export async function getLogFwaNftListedV1(ids: string[]) {
 	});
 }
 
-export const getLogFwaNftListedV1ByListingId = defineBatchLoader(async (ids: readonly `0x${string}`[]) => {
+export const getLogFwaNftListedV1ByListingId = defineLoader(async (ids: readonly `0x${string}`[]) => {
 	if (ids.length === 0) {
 		return [];
 	}

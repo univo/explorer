@@ -1,5 +1,5 @@
-import { getAddress } from "viem";
 import { sql } from "drizzle-orm";
+import { getAddress } from "viem";
 import { waitUntil } from "cloudflare:workers";
 import { boolean, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
@@ -8,32 +8,32 @@ import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
 import type { MakeNonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { capitalize, defineBatchLoader, defined, iife, isHexEqual } from "@/utils";
+import { capitalize, defineLoader, defined, iife, isHexEqual } from "@/utils";
 
 export interface Account {
 	chain: number;
 	address: `0x${string}`;
 
-	is_contract: boolean | undefined;
-	owner_project: string | undefined;
-	contract_name: string | undefined;
-	code_compiler: string | undefined;
-	code_language: string | undefined;
-	deployment_tx: string | undefined;
-	deployer_block: string | undefined;
-	usage_category: string | undefined;
-	deployer_address: string | undefined;
-	source_code_verified: string | undefined;
+	is_contract: boolean | null;
+	owner_project: string | null;
+	contract_name: string | null;
+	code_compiler: string | null;
+	code_language: string | null;
+	deployment_tx: string | null;
+	deployer_block: string | null;
+	usage_category: string | null;
+	deployer_address: string | null;
+	source_code_verified: string | null;
 
-	erc_type: string | undefined;
+	erc_type: string | null;
 
-	"erc20.name": string | undefined;
-	"erc20.image": string | undefined;
-	"erc20.symbol": string | undefined;
-	"erc20.decimals": number | undefined;
+	"erc20.name": string | null;
+	"erc20.image": string | null;
+	"erc20.symbol": string | null;
+	"erc20.decimals": number | null;
 
-	"erc721.name": string | undefined;
-	"erc721.symbol": string | undefined;
+	"erc721.name": string | null;
+	"erc721.symbol": string | null;
 }
 
 export const table = pgTable(
@@ -70,28 +70,10 @@ export const table = pgTable(
 	],
 );
 
-export const getAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
+export const getAccount = defineLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {
 		return [];
 	}
-
-	// Determine unique accounts
-
-	const unique: Record<string, true> = {};
-
-	const filtered = accounts.filter((account) => {
-		const key = [account.chain, getAddress(account.address)].join(":");
-
-		if (unique[key]) {
-			return false;
-		}
-
-		unique[key] = true;
-
-		return true;
-	});
-
-	// Fetch accounts
 
 	const client = await createPostgresClient();
 
@@ -101,14 +83,14 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 		.where(
 			inTuple(
 				[table.chain, table.address],
-				filtered.map((account) => [account.chain, getAddress(account.address)]),
+				accounts.map((account) => [account.chain, getAddress(account.address)]),
 			),
 		);
 
 	return accounts.map(({ chain, address }) => {
 		const row = rows.find((row) => row.chain === chain && isHexEqual(row.address as `0x`, address));
 
-		if (!row) {
+		if (row === undefined) {
 			return null;
 		}
 
@@ -116,26 +98,26 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 			chain,
 			address: getAddress(address),
 
-			is_contract: row.is_contract ?? undefined,
-			owner_project: row.owner_project ?? undefined,
-			contract_name: row.contract_name ?? undefined,
-			code_compiler: row.code_compiler ?? undefined,
-			code_language: row.code_language ?? undefined,
-			deployment_tx: row.deployment_tx ?? undefined,
-			deployer_block: row.deployer_block ?? undefined,
-			usage_category: row.usage_category ?? undefined,
-			deployer_address: row.deployer_address ?? undefined,
-			source_code_verified: row.source_code_verified ?? undefined,
+			is_contract: row.is_contract,
+			owner_project: row.owner_project,
+			contract_name: row.contract_name,
+			code_compiler: row.code_compiler,
+			code_language: row.code_language,
+			deployment_tx: row.deployment_tx,
+			deployer_block: row.deployer_block,
+			usage_category: row.usage_category,
+			deployer_address: row.deployer_address,
+			source_code_verified: row.source_code_verified,
 
-			erc_type: row.erc_type ?? undefined,
+			erc_type: row.erc_type,
 
-			"erc20.name": row["erc20.name"] ?? undefined,
-			"erc20.image": row["erc20.image"] ?? undefined,
-			"erc20.symbol": row["erc20.symbol"] ?? undefined,
-			"erc20.decimals": row["erc20.decimals"] ?? undefined,
+			"erc20.name": row["erc20.name"],
+			"erc20.image": row["erc20.image"],
+			"erc20.symbol": row["erc20.symbol"],
+			"erc20.decimals": row["erc20.decimals"],
 
-			"erc721.name": row["erc721.name"] ?? undefined,
-			"erc721.symbol": row["erc721.symbol"] ?? undefined,
+			"erc721.name": row["erc721.name"],
+			"erc721.symbol": row["erc721.symbol"],
 		};
 
 		return account;
@@ -146,7 +128,10 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 // the erc721 related information from storage, only if that information does not exist do we load it from
 // onchain and write it to storage
 
-type Erc721Account = MakeNonNullable<Account, "is_contract" | "contract_name" | "erc_type" | "erc721.name" | "erc721.symbol">;
+type Erc721Account = MakeNonNullable<
+	Account, //
+	"is_contract" | "contract_name" | "erc_type" | "erc721.name" | "erc721.symbol"
+>;
 
 export async function getErc721Account(opts: { chain: Chain; address: `0x${string}` }): Promise<Erc721Account | null> {
 	try {
@@ -172,6 +157,10 @@ export async function getErc721Account(opts: { chain: Chain; address: `0x${strin
 
 		waitUntil(
 			iife(async () => {
+				// We should also be caching errors. This ensures that a single ERC20 contract that indefinitely errors
+				// doesn't cause a request every time it is shown on the explorer. Once implemented we can consider
+				// blocking on render while we load the name and symbol.
+
 				const [name, symbol] = await Promise.all([
 					getClient(opts.chain).readContract({
 						functionName: "name",
@@ -371,5 +360,8 @@ export function getAccountName(account: Account) {
 		return account.contract_name;
 	}
 
-	return account.address;
+	// Getting here usually means we need to add a new case. The account is stored because we know something
+	// about it in the first place. That info should always display in the name
+
+	throw new Error("Expected account to have some name defined");
 }
