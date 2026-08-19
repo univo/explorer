@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { univo } from "@/lib/univo";
 
 // We import every event here so that we guarantee all the events will be picked up by the indexer.
-// This should be fixed in a later version of univo that fixes the module side-affects issue.
+// This should be fixed in a later version of univo that avoids the module side-affects issue.
 
 import "@/actions/invalidate_ens_cache";
 
