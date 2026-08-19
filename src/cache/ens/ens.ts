@@ -8,8 +8,7 @@ import type { Chain } from "@/constants";
 import { table } from "@/cache/ens/table";
 import { createPostgresClient } from "@/db/client";
 import { defineLoader, isHexEqual, logger } from "@/utils";
-import { getEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
-import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
+import { getEnsExistsForAccounts } from "@/events/log_ens_new_owner_v1/event";
 
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
@@ -73,16 +72,12 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 	logger.debug(`Revalidating ENS for ${accounts.length} account(s)`);
 
 	// An optimisation to reduce the number of RPC calls is to first check if a given account
-	// has ever actually specified a reverse ENS record. This massively reduces the search space
-	// as there are only approx 1m unique accounts with an ENS name.
+	// has ever claimed its reverse ENS node. This massively reduces the search space.
 
-	const [ensExists, legacyEnsExists] = await Promise.all([
-		getEnsExistsForAccounts(accounts), //
-		getLegacyEnsExistsForAccounts(accounts),
-	]);
+	const ensExists = await getEnsExistsForAccounts(accounts);
 
 	const eligibleAccounts = accounts.filter((_, index) => {
-		return ensExists[index] || legacyEnsExists[index];
+		return ensExists[index];
 	});
 
 	logger.debug(`Found ${eligibleAccounts.length} eligible account(s)`);

@@ -9,6 +9,7 @@ import "@/actions/invalidate_ens_cache";
 
 import "@/events/intent_idm_v1/event";
 import "@/events/intent_fwa_won_v1/event";
+import "@/events/log_ens_new_owner_v1/event";
 import "@/events/log_erc20_approval_v1/event";
 import "@/events/log_erc20_transfer_v1/event";
 import "@/events/log_fwa_nft_listed_v1/event";

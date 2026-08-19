@@ -1,6 +1,7 @@
 import type { Event } from "@/db/events";
 import { IntentIdmV1Description } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1Description } from "@/events/intent_fwa_won_v1/component";
+import { LogEnsNewOwnerV1Description } from "@/events/log_ens_new_owner_v1/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
 import { LogErc20TransferV1Description } from "@/events/log_erc20_transfer_v1/component";
 import { LogErc20ApprovalV1Description } from "@/events/log_erc20_approval_v1/component";
@@ -25,6 +26,10 @@ import { LogUniswapV3PoolCreatedV1Description } from "@/events/log_uniswap_v3_po
 import { LogEnsNameForAddrChangedV1Description } from "@/events/log_ens_name_for_addr_changed_v1/component";
 
 export function EventDescription(props: { event: Event }) {
+	if (props.event.tag === "log_ens_new_owner_v1") {
+		return <LogEnsNewOwnerV1Description event={props.event} />;
+	}
+
 	if (props.event.tag === "log_ens_reverse_claimed_v1") {
 		return <LogEnsReverseClaimedV1Description event={props.event} />;
 	}

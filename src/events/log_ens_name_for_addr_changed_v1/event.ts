@@ -4,8 +4,8 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { isHexEqual } from "@/utils";
+import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
-import { TABLES, type Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
@@ -135,25 +135,4 @@ export async function getLogEnsNameForAddrChangedV1(ids: string[]) {
 		success: true,
 		account_address: getAddress(row.account_address),
 	}));
-}
-
-// This event is also useful as eligibility check to quickly know if an account _might_ have specified
-// an ENS name. This is used to prevent issuing RPC calls for ENS names for accounts the definitely will
-// not have one specified.
-
-export async function getEnsExistsForAccounts(accounts: { chain: Chain; address: `0x${string}` }[]) {
-	if (accounts.length === 0) {
-		return [];
-	}
-
-	const addresses = [...new Set(accounts.map((account) => getAddress(account.address)))];
-
-	const client = await createPostgresClient();
-
-	const rows = await client
-		.selectDistinct({ address: table.account_address }) //
-		.from(table)
-		.where(inArray(table.account_address, addresses));
-
-	return accounts.map((account) => rows.some((row) => isHexEqual(row.address, account.address)));
 }
