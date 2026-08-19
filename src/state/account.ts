@@ -8,7 +8,7 @@ import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
 import type { MakeNonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { capitalize, defineBatchLoader, defined, iife, isHexEqual } from "@/utils";
+import { capitalize, defineLoader, defined, iife, isHexEqual } from "@/utils";
 
 export interface Account {
 	chain: number;
@@ -70,7 +70,7 @@ export const table = pgTable(
 	],
 );
 
-export const getAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
+export const getAccount = defineLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {
 		return [];
 	}

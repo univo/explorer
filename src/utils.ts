@@ -5,7 +5,7 @@ import type { BatchLoadFn } from "dataloader";
 /**
  * Creates a loader with automatic caching, batching, and deduplication
  */
-export function defineBatchLoader<K, V>(fn: BatchLoadFn<K, V>) {
+export function defineLoader<K, V>(fn: BatchLoadFn<K, V>) {
 	const loader = new DataLoader(fn, { cacheKeyFn: (key) => JSON.stringify(key) });
 	return (id: K) => loader.load(id);
 }

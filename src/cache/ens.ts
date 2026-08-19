@@ -7,7 +7,7 @@ import { inTuple } from "@/db/types";
 import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { defineBatchLoader, isHexEqual } from "@/utils";
+import { defineLoader, isHexEqual } from "@/utils";
 import { getEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
 import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
 
@@ -28,7 +28,7 @@ export const table = pgTable(
 	],
 );
 
-export const getEnsNameForAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
+export const getEnsNameForAccount = defineLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {
 		return [];
 	}
@@ -167,7 +167,7 @@ async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promi
 
 // Using a batch loader here allows us to deduplicate all cache invalidations into a single request
 
-export const invalidateEnsCacheForAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
+export const invalidateEnsCacheForAccount = defineLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {
 		return [];
 	}
