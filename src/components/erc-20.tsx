@@ -127,8 +127,8 @@ function Value(props: { quantity: `0x${string}` | bigint | undefined; decimals: 
 	return <span className="text-gray-500 select-all">(${formatted})</span>;
 }
 
-function Image(props: { src: string | undefined }) {
-	if (props.src === undefined) {
+function Image(props: { src: string | null }) {
+	if (props.src === null) {
 		return null;
 	}
 
