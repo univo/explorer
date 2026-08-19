@@ -59,6 +59,8 @@ export const getEnsNameForAccount = defineBatchLoader(async (accounts: readonly 
 		if (Date.now() - entry.created_at.getTime() > TTL_MS) {
 			return true;
 		}
+
+		return false;
 	});
 
 	waitUntil(cacheEnsNames(accountsToRevalidate));
