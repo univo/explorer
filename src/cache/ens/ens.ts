@@ -7,7 +7,7 @@ import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
 import { table } from "@/cache/ens/table";
 import { createPostgresClient } from "@/db/client";
-import { defineLoader, isHexEqual } from "@/utils";
+import { defineLoader, isHexEqual, logger } from "@/utils";
 import { getEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
 import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
 
@@ -17,6 +17,8 @@ export const getEnsNameForAccount = defineLoader(async (accounts: readonly { cha
 	if (accounts.length === 0) {
 		return [];
 	}
+
+	logger.debug(`Loading ENS for ${accounts.length} account(s)`);
 
 	const client = await createPostgresClient();
 
@@ -68,6 +70,8 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 		return;
 	}
 
+	logger.debug(`Revalidating ENS for ${accounts.length} account(s)`);
+
 	// An optimisation to reduce the number of RPC calls is to first check if a given account
 	// has ever actually specified a reverse ENS record. This massively reduces the search space
 	// as there are only approx 1m unique accounts with an ENS name.
@@ -80,6 +84,8 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 	const eligibleAccounts = accounts.filter((_, index) => {
 		return ensExists[index] || legacyEnsExists[index];
 	});
+
+	logger.debug(`Found ${eligibleAccounts.length} eligible account(s)`);
 
 	if (eligibleAccounts.length === 0) {
 		return;
@@ -129,6 +135,8 @@ async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[
 				created_at: sql.raw(`excluded.${table.created_at.name}`),
 			},
 		});
+
+	logger.debug(`Cached ${ens.length} ENS name(s)`);
 }
 
 async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promise<string | null> {
@@ -156,6 +164,8 @@ export const invalidateEnsCacheForAccount = defineLoader(async (accounts: readon
 	if (accounts.length === 0) {
 		return [];
 	}
+
+	logger.debug(`Invalidating ENS cache for ${accounts.length} account(s)`);
 
 	const client = await createPostgresClient();
 
