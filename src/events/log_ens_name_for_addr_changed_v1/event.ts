@@ -47,10 +47,10 @@ export const event = univo.event({
 					}
 
 					const { args } = decodeEventLog({
-						abi: [NAME_FOR_ADDR_CHANGED_ABI],
+						strict: true,
 						data: log.data,
 						topics: log.topics,
-						strict: true,
+						abi: [NAME_FOR_ADDR_CHANGED_ABI],
 					});
 
 					const id = createId({
