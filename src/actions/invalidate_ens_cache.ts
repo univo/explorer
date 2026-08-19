@@ -1,6 +1,6 @@
 import { univo } from "@/lib/univo";
 import { parseId } from "@/helpers";
-import { invalidateEnsCacheForAccount } from "@/cache/ens";
+import { invalidateEnsCacheForAccount } from "@/cache/ens/ens";
 import { event as log_ens_name_for_addr_changed_v1 } from "@/events/log_ens_name_for_addr_changed_v1/event";
 
 // We use a finalized handler here for correctness. A latest handler would be faster to invalidate

@@ -2,9 +2,9 @@ import { Fragment } from "react";
 import { getAddress } from "viem";
 
 import { EtherscanIcon } from "@/components/icons";
-import { getEnsNameForAccount } from "@/cache/ens";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
+import { getEnsNameForAccount } from "@/cache/ens/ens";
 import { getAccount, getAccountName } from "@/state/account";
 
 export async function AddressHeaderRsc(props: { address: `0x${string}` }) {

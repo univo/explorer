@@ -4,7 +4,7 @@ import { getAddress } from "viem";
 import { Hoverable } from "./hoverable";
 import { AddViewButton } from "./views";
 import type { Chain } from "@/constants";
-import { getEnsNameForAccount } from "@/cache/ens";
+import { getEnsNameForAccount } from "@/cache/ens/ens";
 import { getAccount, getAccountName } from "@/state/account";
 
 export async function Account(props: { chain: Chain; address: `0x${string}` }) {

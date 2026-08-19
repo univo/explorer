@@ -1,32 +1,17 @@
 import { sql } from "drizzle-orm";
 import { getAddress, toCoinType } from "viem";
 import { waitUntil } from "cloudflare:workers";
-import { integer, pgTable, primaryKey, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 import { inTuple } from "@/db/types";
 import { getClient } from "@/clients";
 import type { Chain } from "@/constants";
+import { table } from "@/cache/ens/table";
 import { createPostgresClient } from "@/db/client";
 import { defineLoader, isHexEqual } from "@/utils";
 import { getEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
 import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
 
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-export const table = pgTable(
-	"cache_ens",
-	{
-		chain: integer().notNull(),
-		address: text().notNull(),
-		ens: varchar({ length: 255 }), // Maximum length enforced by ENS
-		created_at: timestamp({ precision: 3, mode: "date", withTimezone: true }).notNull(),
-	},
-	(table) => [
-		primaryKey({
-			columns: [table.chain, table.address],
-		}),
-	],
-);
 
 export const getEnsNameForAccount = defineLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
 	if (accounts.length === 0) {

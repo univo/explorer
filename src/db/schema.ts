@@ -1,4 +1,4 @@
-export { table as cache_ens } from "@/cache/ens";
+export { table as cache_ens } from "@/cache/ens/table";
 
 export { table as state_accounts_v3 } from "@/state/account";
 
