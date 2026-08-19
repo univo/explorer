@@ -258,26 +258,6 @@ async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promi
 	return ens;
 }
 
-export const invalidateEnsCacheForAccount = defineBatchLoader(async (accounts: readonly { chain: Chain; address: `0x${string}` }[]) => {
-	if (accounts.length === 0) {
-		return [];
-	}
-
-	const client = await createPostgresClient();
-
-	await client
-		.update(table)
-		.set({ ens: null })
-		.where(
-			inTuple(
-				[table.chain, table.address],
-				accounts.map((account) => [account.chain, getAddress(account.address)]),
-			),
-		);
-
-	return new Array(accounts.length).fill(true);
-});
-
 // We can call this function when we are expecting an erc721 compatible account. We first attempt to load
 // the erc721 related information from storage, only if that information does not exist do we load it from
 // onchain and write it to storage

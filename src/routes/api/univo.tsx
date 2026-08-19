@@ -4,6 +4,8 @@ import { univo } from "@/lib/univo";
 
 // We import every event here so that we guarantee all the events will be picked up by the indexer.
 
+import "@/actions/invalidate_ens_cache";
+
 import "@/events/intent_idm_v1/event";
 import "@/events/intent_fwa_won_v1/event";
 import "@/events/log_erc20_approval_v1/event";
