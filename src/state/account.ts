@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { getAddress, toCoinType } from "viem";
+import { getAddress } from "viem";
 import { waitUntil } from "cloudflare:workers";
 import { boolean, integer, pgTable, primaryKey, smallint, text } from "drizzle-orm/pg-core";
 
@@ -9,8 +9,6 @@ import type { Chain } from "@/constants";
 import type { MakeNonNullable } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { capitalize, defineBatchLoader, defined, iife, isHexEqual } from "@/utils";
-import { getEnsExistsForAccounts } from "@/events/log_ens_name_for_addr_changed_v1/event";
-import { getLegacyEnsExistsForAccounts } from "@/events/log_ens_reverse_claimed_v1/event";
 
 export interface Account {
 	chain: number;
@@ -36,8 +34,6 @@ export interface Account {
 
 	"erc721.name": string | null;
 	"erc721.symbol": string | null;
-
-	ens: string | null;
 }
 
 export const table = pgTable(
@@ -66,8 +62,6 @@ export const table = pgTable(
 		"erc20.image": text("erc20.image"),
 		"erc20.symbol": text("erc20.symbol"),
 		"erc20.decimals": smallint("erc20.decimals"),
-
-		ens: text(),
 	},
 	(table) => [
 		primaryKey({
@@ -81,24 +75,6 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 		return [];
 	}
 
-	// Determine unique accounts
-
-	const unique: Record<string, true> = {};
-
-	const filtered = accounts.filter((account) => {
-		const key = [account.chain, getAddress(account.address)].join(":");
-
-		if (unique[key]) {
-			return false;
-		}
-
-		unique[key] = true;
-
-		return true;
-	});
-
-	// Fetch accounts
-
 	const client = await createPostgresClient();
 
 	const rows = await client
@@ -107,11 +83,11 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 		.where(
 			inTuple(
 				[table.chain, table.address],
-				filtered.map((account) => [account.chain, getAddress(account.address)]),
+				accounts.map((account) => [account.chain, getAddress(account.address)]),
 			),
 		);
 
-	const results = accounts.map(({ chain, address }) => {
+	return accounts.map(({ chain, address }) => {
 		const row = rows.find((row) => row.chain === chain && isHexEqual(row.address as `0x`, address));
 
 		if (row === undefined) {
@@ -142,121 +118,11 @@ export const getAccount = defineBatchLoader(async (accounts: readonly { chain: C
 
 			"erc721.name": row["erc721.name"],
 			"erc721.symbol": row["erc721.symbol"],
-
-			ens: row.ens,
 		};
 
 		return account;
 	});
-
-	// Check if an ENS name is defined, otherwise request one
-
-	waitUntil(
-		cacheEnsNames(
-			accounts.filter((account) => {
-				const row = rows.find((row) => {
-					return row.chain === account.chain && isHexEqual(row.address as "0x", account.address);
-				});
-
-				if (row === undefined) {
-					return true;
-				}
-
-				if (row.ens === null) {
-					return true;
-				}
-
-				return false;
-			}),
-		),
-	);
-
-	// Return resulting accounts
-
-	return results;
 });
-
-async function cacheEnsNames(accounts: { chain: Chain; address: `0x${string}` }[]) {
-	if (accounts.length === 0) {
-		return;
-	}
-
-	// An optimisation to reduce the number of RPC calls is to first check if a given account
-	// has ever actually specified a reverse ENS record. This massively reduces the search space
-	// as there are only approx 1m unique accounts with an ENS name.
-
-	const [ensExists, legacyEnsExists] = await Promise.all([
-		getEnsExistsForAccounts(accounts), //
-		getLegacyEnsExistsForAccounts(accounts),
-	]);
-
-	const eligibleAccounts = accounts.filter((_, index) => {
-		return ensExists[index] || legacyEnsExists[index];
-	});
-
-	if (eligibleAccounts.length === 0) {
-		return;
-	}
-
-	// This eligibility check isn't perfect. If an account clears it's ENS name we will
-	// indefinitely poll for one. This isn't a big issue because this represents only a
-	// small proportion of accounts and won't incur any large RPC costs.
-
-	// What's not obvious here is that viem automatically batches these requests into a
-	// single HTTP call. This is great because Cloudflare Workers can only fetch headers
-	// for 6 requests concurrently
-
-	const results = await Promise.allSettled(
-		eligibleAccounts.map(async (account) => {
-			const ens = await getEnsName(account);
-
-			return { chain: account.chain, address: account.address, ens };
-		}),
-	);
-
-	const ens = results.flatMap((result) => {
-		if (result.status === "rejected") {
-			return [];
-		}
-
-		return result.value;
-	});
-
-	if (ens.length === 0) {
-		return;
-	}
-
-	const client = await createPostgresClient();
-
-	await client
-		.insert(table)
-		.values(ens)
-		.onConflictDoUpdate({
-			target: [table.chain, table.address],
-			set: {
-				ens: sql.raw(`excluded.${table.ens.name}`),
-			},
-		});
-}
-
-async function getEnsName(opts: { chain: Chain; address: `0x${string}` }): Promise<string | null> {
-	const client = getClient(opts.chain);
-
-	// Might be worth implementing this ourselves with raw RPC calls? I don't mind this atm because
-	// viem handles the details: it supports CCIP reads, ensures we perform both forward and reverse
-	// resolution to prevent impersonation, and implements multi-chain resolution for ENSNIP-19
-
-	// It's also important that we only ever load an ENS name that has finalized to prevent myriad
-	// possible correctness issues with our cache invalidation strategy
-
-	const ens = await client.getEnsName({
-		blockTag: "finalized",
-		coinType: toCoinType(opts.chain),
-		address: getAddress(opts.address),
-	});
-
-	return ens;
-}
 
 // We can call this function when we are expecting an erc721 compatible account. We first attempt to load
 // the erc721 related information from storage, only if that information does not exist do we load it from
