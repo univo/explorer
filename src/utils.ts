@@ -17,7 +17,7 @@ export function hashstring() {
 /**
  * Capitalize the first character of a string
  */
-export function capitalize(str: string, opts: { mode: "first" | "all" } = { mode: "first" }): string | undefined {
+export function capitalize(str: string, opts: { mode: "first" | "all" } = { mode: "first" }): string {
 	if (opts.mode === "all") return str?.toUpperCase();
 	return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }
