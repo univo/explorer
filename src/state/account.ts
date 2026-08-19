@@ -360,5 +360,8 @@ export function getAccountName(account: Account) {
 		return account.contract_name;
 	}
 
-	return account.address;
+	// Getting here usually means we need to add a new case. The account is stored because we know something
+	// about it in the first place. That info should always display in the name
+
+	throw new Error("Expected account to have some name defined");
 }
