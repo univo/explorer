@@ -35,11 +35,11 @@ export async function getEventsForIds(ids: string[]) {
 		getLogFwaNftListedV1(ids),
 		getLogErc20ApprovalV1(ids),
 		getLogErc20TransferV1(ids),
+		getLogUniswapV3SwapV1(ids),
 		getLogErc721ApprovalV1(ids),
 		getLogErc721TransferV1(ids),
-		getLogUniswapV3PoolCreatedV1(ids),
-		getLogUniswapV3SwapV1(ids),
 		getLogEnsReverseClaimedV1(ids),
+		getLogUniswapV3PoolCreatedV1(ids),
 		getLogEnsNameForAddrChangedV1(ids),
 
 		getIntentIdmV1(ids),
