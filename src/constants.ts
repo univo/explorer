@@ -64,6 +64,7 @@ export const TABLES = {
 	log_ens_reverse_claimed_v1: 42,
 	log_ens_name_for_addr_changed_v1: 43,
 	log_ens_new_owner_v1: 44,
+	intent_erc20_transfer_v1: 45,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single

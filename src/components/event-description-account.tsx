@@ -11,6 +11,7 @@ import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_r
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
 import { IntentAaveV3BorrowV1AccountDescription } from "@/events/intent_aave_v3_borrow_v1/component";
+import { IntentErc20TransferV1AccountDescription } from "@/events/intent_erc20_transfer_v1/component";
 import { IntentUsdcBlacklistV1AccountDescription } from "@/events/intent_usdc_blacklist_v1/component";
 import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
@@ -39,6 +40,10 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 
 	if (props.event.tag === "intent_native_transfer_v1") {
 		return <IntentNativeTransferV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "intent_erc20_transfer_v1") {
+		return <IntentErc20TransferV1AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "log_erc20_transfer_v1") {

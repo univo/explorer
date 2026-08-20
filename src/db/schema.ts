@@ -23,6 +23,7 @@ export { table as intent_aave_v3_repay_v1 } from "@/events/intent_aave_v3_repay_
 export { table as intent_usdc_blacklist_v1 } from "@/events/intent_usdc_blacklist_v1/table";
 export { table as intent_aave_v3_supply_v1 } from "@/events/intent_aave_v3_supply_v1/table";
 export { table as intent_aave_v3_borrow_v1 } from "@/events/intent_aave_v3_borrow_v1/table";
+export { table as intent_erc20_transfer_v1 } from "@/events/intent_erc20_transfer_v1/table";
 export { table as intent_native_transfer_v1 } from "@/events/intent_native_transfer_v1/table";
 export { table as intent_uniswap_v3_swap_v1 } from "@/events/intent_uniswap_v3_swap_v1/table";
 export { table as intent_uniswap_v3_mint_v1 } from "@/events/intent_uniswap_v3_mint_v1/table";
