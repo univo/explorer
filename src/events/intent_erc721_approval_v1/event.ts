@@ -3,11 +3,11 @@ import { decodeFunctionData, getAddress, isAddressEqual, parseAbi, toFunctionSel
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
-import { iife, isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { TABLES, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
+import { iife, isHexEqual, numberToHex } from "@/utils";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { createId, getEventSuccess, parseId } from "@/helpers";
+import { TABLES, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface IntentErc721ApprovalV1 {
