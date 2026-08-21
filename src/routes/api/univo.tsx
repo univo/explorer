@@ -23,6 +23,7 @@ import "@/events/intent_aave_v3_supply_v1/event";
 import "@/events/intent_aave_v3_borrow_v1/event";
 import "@/events/intent_erc20_approval_v1/event";
 import "@/events/intent_erc20_transfer_v1/event";
+import "@/events/intent_erc721_transfer_v1/event";
 import "@/events/intent_native_transfer_v1/event";
 import "@/events/intent_uniswap_v3_swap_v1/event";
 import "@/events/intent_uniswap_v3_mint_v1/event";

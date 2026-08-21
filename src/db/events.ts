@@ -17,6 +17,7 @@ import { getIntentErc20TransferV1 } from "@/events/intent_erc20_transfer_v1/even
 import { getIntentUsdcBlacklistV1 } from "@/events/intent_usdc_blacklist_v1/event";
 import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/event";
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
+import { getIntentErc721TransferV1 } from "@/events/intent_erc721_transfer_v1/event";
 import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
 import { getLogEnsReverseClaimedV1 } from "@/events/log_ens_reverse_claimed_v1/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
@@ -54,6 +55,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentAaveV3BorrowV1(ids),
 		getIntentErc20ApprovalV1(ids),
 		getIntentErc20TransferV1(ids),
+		getIntentErc721TransferV1(ids),
 		getIntentUsdcBlacklistV1(ids),
 		getIntentUniswapV3SwapV1(ids),
 		getIntentUniswapV3MintV1(ids),
