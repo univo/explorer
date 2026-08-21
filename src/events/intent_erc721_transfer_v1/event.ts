@@ -1,5 +1,5 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { decodeFunctionData, getAddress, parseAbi, toFunctionSelector } from "viem";
+import { decodeEventLog, decodeFunctionData, getAddress, parseAbi, parseAbiItem, toEventSelector, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
@@ -27,11 +27,13 @@ const TRANSFER_ABI = parseAbi([
 	"function safeTransferFrom(address from, address to, uint256 tokenId, bytes data)",
 ]);
 const TRANSFER_SELECTORS = new Set(TRANSFER_ABI.map((item) => toFunctionSelector(item)));
+const TRANSFER_EVENT_ABI = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)");
+const TRANSFER_EVENT_SELECTOR = toEventSelector(TRANSFER_EVENT_ABI);
 
 export const event = univo.event({
 	id: "intent_erc721_transfer_v1",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [{ chain: 1, fromBlock: 0, event: TRANSFER_EVENT_SELECTOR }],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
@@ -45,7 +47,51 @@ export const event = univo.event({
 					return [];
 				}
 
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
+
+				if (receipt === undefined) {
+					return [];
+				}
+
+				// Again, this intent is slightly different because the `transferFrom` function signature is shared
+				// between the ERC20 and ERC721 interfaces. Thankfully, the emitted Transfer logs are different
+				// so we use those to differentiate between the two intents
+
+				// The caveat here is that we will not record an intent if the transaction fails before
+				// emitting the necessary logs. This is rare so i'm fine with this.
+
 				const { args } = decodeFunctionData({ abi: TRANSFER_ABI, data: tx.input });
+
+				const transfer = receipt.logs.find((log) => {
+					try {
+						if (tx.to === null || log.address === null || log.topics[0] === null) {
+							return false;
+						}
+
+						if (!isHexEqual(log.address, tx.to) || !isHexEqual(log.topics[0], TRANSFER_EVENT_SELECTOR)) {
+							return false;
+						}
+
+						const decoded = decodeEventLog({
+							strict: true,
+							data: log.data,
+							topics: log.topics,
+							abi: [TRANSFER_EVENT_ABI],
+						});
+
+						const toEqual = isHexEqual(decoded.args.to, args[1]);
+						const tokenIdEqual = decoded.args.tokenId === args[2];
+						const fromEqual = isHexEqual(decoded.args.from, args[0]);
+
+						return toEqual && tokenIdEqual && fromEqual;
+					} catch {
+						return false;
+					}
+				});
+
+				if (transfer === undefined) {
+					return [];
+				}
 
 				const id = createId({
 					logIndex: TRANSACTION_EVENT,
@@ -56,16 +102,14 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-
 				return {
 					id,
-					to_address: getAddress(args[1]),
 					token_id: numberToHex(args[2]),
+					to_address: getAddress(args[1]),
+					token_address: getAddress(tx.to),
 					success: getEventSuccess(receipt),
 					from_address: getAddress(args[0]),
 					caller_address: getAddress(tx.from),
-					token_address: getAddress(tx.to),
 				};
 			} catch {
 				return [];
@@ -89,8 +133,8 @@ export const event = univo.event({
 							token_id: sql.raw(`excluded.${table.token_id.name}`),
 							to_address: sql.raw(`excluded.${table.to_address.name}`),
 							from_address: sql.raw(`excluded.${table.from_address.name}`),
-							caller_address: sql.raw(`excluded.${table.caller_address.name}`),
 							token_address: sql.raw(`excluded.${table.token_address.name}`),
+							caller_address: sql.raw(`excluded.${table.caller_address.name}`),
 						},
 					});
 			}
@@ -125,8 +169,8 @@ univo.event({
 			return [
 				{ event_id: event.id, account: event.to_address },
 				{ event_id: event.id, account: event.from_address },
-				{ event_id: event.id, account: event.caller_address },
 				{ event_id: event.id, account: event.token_address },
+				{ event_id: event.id, account: event.caller_address },
 			];
 		});
 	},
@@ -155,8 +199,8 @@ export async function getIntentErc721TransferV1(ids: string[]) {
 			token_id: result.token_id,
 			to_address: getAddress(result.to_address),
 			from_address: getAddress(result.from_address),
-			caller_address: getAddress(result.caller_address),
 			token_address: getAddress(result.token_address),
+			caller_address: getAddress(result.caller_address),
 		};
 	});
 }
