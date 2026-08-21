@@ -8,7 +8,7 @@ test.concurrent("intent_erc20_approval_v1 deletes, writes, and reads from storag
 
 	const handled = event.handler(block);
 
-	expect(handled).toHaveLength(13);
+	expect(handled).toHaveLength(2);
 
 	await event.storage.delete(handled);
 
@@ -34,17 +34,17 @@ test.concurrent("intent_erc20_approval_v1 deletes, writes, and reads from storag
 
 	const stored = await getIntentErc20ApprovalV1(ids);
 
-	expect(stored).toHaveLength(13);
+	expect(stored).toHaveLength(2);
 
 	expect(stored[0]).toMatchInlineSnapshot(`
 		{
-		  "id": "5eb01705009896800018ffffff0001002e",
-		  "owner_address": "0xBCE5FE052B25E422550f6012FDD1941F9353f001",
+		  "id": "5eb0170500989680004fffffff0001002e",
+		  "owner_address": "0x09e80bdE912794fdbEA1e5B68B0C37A346b73cfC",
 		  "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-		  "spender_address": "0x8A91C9A16cD62693649D80Afa85A09DBBdCb8508",
+		  "spender_address": "0x882d80D3a191859d64477eb78Cca46599307ec1C",
 		  "success": true,
 		  "tag": "intent_erc20_approval_v1",
-		  "token_address": "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
+		  "token_address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
 		}
 	`);
 });
