@@ -1,5 +1,5 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { decodeFunctionData, getAddress, parseAbiItem, toFunctionSelector } from "viem";
+import { decodeEventLog, decodeFunctionData, getAddress, parseAbiItem, toEventSelector, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
@@ -22,11 +22,19 @@ export interface IntentErc20ApprovalV1 {
 
 const APPROVE_ABI = parseAbiItem("function approve(address spender, uint256 value)");
 const APPROVE_SELECTOR = toFunctionSelector(APPROVE_ABI);
+const APPROVAL_ABI = parseAbiItem("event Approval(address indexed owner, address indexed spender, uint256 value)");
+const APPROVAL_SELECTOR = toEventSelector(APPROVAL_ABI);
 
 export const event = univo.event({
 	id: "intent_erc20_approval_v1",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+			event: APPROVAL_SELECTOR,
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
@@ -40,7 +48,52 @@ export const event = univo.event({
 					return [];
 				}
 
+				// This intent is slightly different to others because of one edge case: the approval
+				// function selector is identical on erc20 and erc721 interfaces. Thankfully, they
+				// emit different log signatures for a successful approval so we can inspect those
+				// to differentiate
+
+				// The caveat here is that we will not record an intent if the transaction fails before
+				// emitting the necessary logs. This is rare so i'm fine with this.
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
+
+				if (receipt === undefined) {
+					return [];
+				}
+
 				const { args } = decodeFunctionData({ abi: [APPROVE_ABI], data: tx.input });
+
+				const approval = receipt.logs.find((log) => {
+					try {
+						if (tx.to === null || log.address === null || log.topics[0] === null) {
+							return false;
+						}
+
+						if (!isHexEqual(log.address, tx.to) || !isHexEqual(log.topics[0], APPROVAL_SELECTOR)) {
+							return false;
+						}
+
+						const decoded = decodeEventLog({
+							strict: true,
+							data: log.data,
+							topics: log.topics,
+							abi: [APPROVAL_ABI],
+						});
+
+						const quantityEqual = decoded.args.value === args[1];
+						const ownerEqual = isHexEqual(decoded.args.owner, tx.from);
+						const spenderEqual = isHexEqual(decoded.args.spender, args[0]);
+
+						return ownerEqual && spenderEqual && quantityEqual;
+					} catch {
+						return false;
+					}
+				});
+
+				if (approval === undefined) {
+					return [];
+				}
 
 				const id = createId({
 					logIndex: TRANSACTION_EVENT,
@@ -51,15 +104,13 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-
 				return {
 					id,
-					spender_address: getAddress(args[0]),
 					quantity: numberToHex(args[1]),
+					token_address: getAddress(tx.to),
 					success: getEventSuccess(receipt),
 					owner_address: getAddress(tx.from),
-					token_address: getAddress(tx.to),
+					spender_address: getAddress(args[0]),
 				};
 			} catch {
 				return [];
