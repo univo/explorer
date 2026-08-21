@@ -5,7 +5,7 @@ import { hex, id } from "@/db/types";
 export const table = pgTable("intent_erc721_approval_v1", {
 	id: id().primaryKey(),
 	approved: boolean().notNull(),
-	token_id: hex(), // Nullable so that we different `approve` from `setApprovalForAll`
+	token_id: hex(), // Nullable so that we can differentiate `approve` from `setApprovalForAll`
 	success: boolean().notNull(),
 	caller_address: hex().notNull(),
 	spender_address: hex().notNull(),
