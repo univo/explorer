@@ -1,36 +1,40 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import { decodeFunctionData, getAddress, isAddressEqual, parseAbi, toFunctionSelector } from "viem";
+import { decodeEventLog, decodeFunctionData, getAddress, parseAbiItem, toEventSelector, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { createPostgresClient } from "@/db/client";
-import { iife, isHexEqual, numberToHex } from "@/utils";
+import { isHexEqual, numberToHex } from "@/utils";
 import { index_account_v3 } from "@/indexes/account-v3";
 import { createId, getEventSuccess, parseId } from "@/helpers";
-import { TABLES, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 
 export interface IntentErc721ApprovalV1 {
 	tag: "intent_erc721_approval_v1";
 	id: string;
-	approved: boolean;
 	success: boolean;
-	token_id: `0x${string}` | null;
+	token_id: `0x${string}`;
 	caller_address: `0x${string}`;
 	token_address: `0x${string}`;
 	spender_address: `0x${string}`;
 }
 
-const APPROVAL_ABI = parseAbi([
-	"function approve(address spender, uint256 tokenId)",
-	"function setApprovalForAll(address operator, bool approved)",
-]);
-const APPROVAL_SELECTORS = new Set(APPROVAL_ABI.map((item) => toFunctionSelector(item)));
+const APPROVE_ABI = parseAbiItem("function approve(address spender, uint256 tokenId)");
+const APPROVE_SELECTOR = toFunctionSelector(APPROVE_ABI);
+const APPROVAL_ABI = parseAbiItem("event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)");
+const APPROVAL_SELECTOR = toEventSelector(APPROVAL_ABI);
 
 export const event = univo.event({
 	id: "intent_erc721_approval_v1",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+			event: APPROVAL_SELECTOR,
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
@@ -40,26 +44,55 @@ export const event = univo.event({
 					return [];
 				}
 
-				if (!APPROVAL_SELECTORS.has(tx.input.slice(0, 10) as `0x${string}`)) {
+				if (!tx.input.startsWith(APPROVE_SELECTOR)) {
 					return [];
 				}
 
-				const decoded = decodeFunctionData({ abi: APPROVAL_ABI, data: tx.input });
-				const spender_address = getAddress(decoded.args[0]);
+				// This intent is slightly different to others because of one edge case: the approval
+				// function selector is identical on erc20 and erc721 interfaces. Thankfully, they
+				// emit different log signatures for a successful approval so we can inspect those
+				// to differentiate
 
-				const approval = iife(() => {
-					if (decoded.functionName === "approve") {
-						return {
-							approved: !isAddressEqual(spender_address, ZERO_ADDRESS),
-							token_id: numberToHex(decoded.args[1]),
-						};
+				// The caveat here is that we will not record an intent if the transaction fails before
+				// emitting the necessary logs. This is rare so i'm fine with this.
+
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
+
+				if (receipt === undefined) {
+					return [];
+				}
+
+				const { args } = decodeFunctionData({ abi: [APPROVE_ABI], data: tx.input });
+
+				const approval = receipt.logs.find((log) => {
+					try {
+						if (tx.to === null || log.address === null || log.topics[0] === null) {
+							return false;
+						}
+
+						if (!isHexEqual(log.address, tx.to) || !isHexEqual(log.topics[0], APPROVAL_SELECTOR)) {
+							return false;
+						}
+
+						const decoded = decodeEventLog({
+							strict: true,
+							data: log.data,
+							topics: log.topics,
+							abi: [APPROVAL_ABI],
+						});
+
+						const tokenIdEqual = decoded.args.tokenId === args[1];
+						const spenderEqual = isHexEqual(decoded.args.approved, args[0]);
+
+						return spenderEqual && tokenIdEqual;
+					} catch {
+						return false;
 					}
-
-					return {
-						approved: decoded.args[1],
-						token_id: null,
-					};
 				});
+
+				if (approval === undefined) {
+					return [];
+				}
 
 				const id = createId({
 					logIndex: TRANSACTION_EVENT,
@@ -70,15 +103,13 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
-
 				return {
 					id,
-					...approval,
-					spender_address,
 					success: getEventSuccess(receipt),
-					caller_address: getAddress(tx.from),
+					token_id: numberToHex(args[1]),
 					token_address: getAddress(tx.to),
+					caller_address: getAddress(tx.from),
+					spender_address: getAddress(args[0]),
 				};
 			} catch {
 				return [];
@@ -98,12 +129,11 @@ export const event = univo.event({
 					.onConflictDoUpdate({
 						target: table.id,
 						set: {
-							approved: sql.raw(`excluded.${table.approved.name}`),
 							success: sql.raw(`excluded.${table.success.name}`),
 							token_id: sql.raw(`excluded.${table.token_id.name}`),
+							token_address: sql.raw(`excluded.${table.token_address.name}`),
 							caller_address: sql.raw(`excluded.${table.caller_address.name}`),
 							spender_address: sql.raw(`excluded.${table.spender_address.name}`),
-							token_address: sql.raw(`excluded.${table.token_address.name}`),
 						},
 					});
 			}
@@ -136,9 +166,9 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
+				{ event_id: event.id, account: event.token_address },
 				{ event_id: event.id, account: event.caller_address },
 				{ event_id: event.id, account: event.spender_address },
-				{ event_id: event.id, account: event.token_address },
 			];
 		});
 	},
@@ -163,11 +193,10 @@ export async function getIntentErc721ApprovalV1(ids: string[]) {
 		return {
 			tag: "intent_erc721_approval_v1" as const,
 			id: result.id,
-			approved: result.approved,
 			success: result.success,
 			token_id: result.token_id,
-			caller_address: getAddress(result.caller_address),
 			token_address: getAddress(result.token_address),
+			caller_address: getAddress(result.caller_address),
 			spender_address: getAddress(result.spender_address),
 		};
 	});
