@@ -33,7 +33,13 @@ const TRANSFER_EVENT_SELECTOR = toEventSelector(TRANSFER_EVENT_ABI);
 export const event = univo.event({
 	id: "intent_erc721_transfer_v1",
 
-	filters: [{ chain: 1, fromBlock: 0, event: TRANSFER_EVENT_SELECTOR }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+			event: TRANSFER_EVENT_SELECTOR,
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
