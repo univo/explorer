@@ -31,7 +31,12 @@ export const event = univo.event({
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
 			try {
-				if (tx.to === null || !tx.input.startsWith(APPROVE_SELECTOR)) {
+				// When deploying a contract the `to` field is null
+				if (tx.to === null) {
+					return [];
+				}
+
+				if (!tx.input.startsWith(APPROVE_SELECTOR)) {
 					return [];
 				}
 

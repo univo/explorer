@@ -40,7 +40,12 @@ export const event = univo.event({
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
 			try {
-				if (tx.to === null || !isHexEqual(tx.to, AAVE_V3_ETHEREUM_POOL_ADDRESS)) {
+				// When deploying a contract the `to` field is null
+				if (tx.to === null) {
+					return [];
+				}
+
+				if (!isHexEqual(tx.to, AAVE_V3_ETHEREUM_POOL_ADDRESS)) {
 					return [];
 				}
 
