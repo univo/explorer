@@ -17,6 +17,7 @@ import { IntentErc20TransferV1Description } from "@/events/intent_erc20_transfer
 import { IntentUsdcBlacklistV1Description } from "@/events/intent_usdc_blacklist_v1/component";
 import { IntentUniswapV3SwapV1Description } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1Description } from "@/events/intent_uniswap_v3_mint_v1/component";
+import { IntentErc721ApprovalV1Description } from "@/events/intent_erc721_approval_v1/component";
 import { IntentErc721TransferV1Description } from "@/events/intent_erc721_transfer_v1/component";
 import { IntentNativeTransferV1Description } from "@/events/intent_native_transfer_v1/component";
 import { LogEnsReverseClaimedV1Description } from "@/events/log_ens_reverse_claimed_v1/component";
@@ -59,6 +60,10 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "intent_erc721_transfer_v1") {
 		return <IntentErc721TransferV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_erc721_approval_v1") {
+		return <IntentErc721ApprovalV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "log_erc20_transfer_v1") {
