@@ -79,7 +79,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="received">Withdrew</Action>
+					<Action type="received">Withdraw</Action>
 					<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
 					<span>from</span>
 					<Account chain={chain} address={props.event.pool_address} />
@@ -94,7 +94,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="received">Received</Action>
+				<Action type="received">Receive</Action>
 				<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.pool_address} />
@@ -110,7 +110,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<span>Relayed</span>
+				<span>Relay</span>
 				<Action type="sent">withdrawal</Action>
 				<span>of</span>
 				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />

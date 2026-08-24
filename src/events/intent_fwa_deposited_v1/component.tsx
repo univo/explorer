@@ -36,7 +36,7 @@ export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwa
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="deposited">Deposited</Action>
+				<Action type="deposited">Deposit</Action>
 				<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
 				<span>into</span>
 				<Account chain={chain} address={FWA_ADDRESS} />

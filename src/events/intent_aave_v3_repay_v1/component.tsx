@@ -86,7 +86,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 				return (
 					<Description>
 						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-						<Action type="repaid">Repaid</Action>
+						<Action type="repaid">Repay</Action>
 						<span>their entire</span>
 						<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 						<span>debt obligation to</span>
@@ -99,7 +99,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<span>Partially</span>
-					<Action type="repaid">repaid</Action>
+					<Action type="repaid">Repay</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 					<span>of their debt obligation to</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
@@ -111,7 +111,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="repaid">Repaid</Action>
+					<Action type="repaid">Repay</Action>
 					<span>the entire</span>
 					<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 					<span>debt obligation owned by</span>
@@ -126,7 +126,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<span>Partially</span>
-				<Action type="repaid">repaid</Action>
+				<Action type="repaid">Repay</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 				<span>of debt owned by</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />

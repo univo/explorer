@@ -30,7 +30,7 @@ export function IntentCancelPendingTxV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="cancelled">Cancelled</Action>
+				<Action type="cancelled">Cancel</Action>
 				<span>pending transaction with nonce</span>
 				<span>{formatNumber(BigInt(props.event.nonce))}</span>
 			</Description>

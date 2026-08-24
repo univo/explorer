@@ -17,8 +17,8 @@ export function IntentErc721ApprovalV1Description(props: { event: IntentErc721Ap
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.caller_address} />
-				<Action type="revoked">revoked approval</Action>
-				<span>for</span>
+				<Action type="revoked">revoked</Action>
+				<span>approval for</span>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>to be transferred</span>
 			</Description>
@@ -48,8 +48,8 @@ export function IntentErc721ApprovalV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="revoked">Revoked approval</Action>
-					<span>for</span>
+					<Action type="revoked">Revoke</Action>
+					<span>approval for</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>to be transferred</span>
 				</Description>
@@ -59,7 +59,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="approved">Approved</Action>
+				<Action type="approved">Approve</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to transfer</span>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />

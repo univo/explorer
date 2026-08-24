@@ -47,7 +47,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="supplied">Supplied</Action>
+					<Action type="supplied">Supply</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 					<span>to</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
@@ -58,7 +58,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="supplied">Supplied</Action>
+				<Action type="supplied">Supply</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />

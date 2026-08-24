@@ -45,7 +45,7 @@ export function IntentErc721TransferV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="burnt">Burnt</Action>
+					<Action type="burnt">Burn</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
 			);
@@ -54,7 +54,7 @@ export function IntentErc721TransferV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Sent</Action>
+				<Action type="sent">Send</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
@@ -67,7 +67,7 @@ export function IntentErc721TransferV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="received">Received</Action>
+					<Action type="received">Receive</Action>
 					<span>freshly minted</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
@@ -77,7 +77,7 @@ export function IntentErc721TransferV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="received">Received</Action>
+				<Action type="received">Receive</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />

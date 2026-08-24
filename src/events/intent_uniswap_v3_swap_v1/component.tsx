@@ -89,7 +89,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 				return (
 					<Description>
 						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-						<Action type="swapped">Swapped</Action>
+						<Action type="swapped">Swap</Action>
 						<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} at={blockTimestamp} />
 						<span>for at least</span>
 						<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.limit_quantity} at={blockTimestamp} />
@@ -102,7 +102,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="swapped">Swapped</Action>
+					<Action type="swapped">Swap</Action>
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} at={blockTimestamp} />
 					<span>for at least</span>
 					<Erc20 chain={chain} address={props.event.token_out_address} quantity={props.event.limit_quantity} at={blockTimestamp} />
@@ -118,7 +118,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="swapped">Swapped</Action>
+					<Action type="swapped">Swap</Action>
 					<span>up to</span>
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.limit_quantity} at={blockTimestamp} />
 					<span>for exactly</span>
@@ -132,7 +132,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="swapped">Swapped</Action>
+				<Action type="swapped">Swap</Action>
 				<span>up to</span>
 				<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.limit_quantity} at={blockTimestamp} />
 				<span>for exactly</span>

@@ -45,7 +45,7 @@ export function IntentEnsNameRegisteredV1AccountDescription(props: {
 	return (
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Action type="registered">Registered</Action>
+			<Action type="registered">Register</Action>
 			<span>{props.event.name}.eth</span>
 			<span>expiring</span>
 			<span>{expiryFormatted}</span>

@@ -29,8 +29,8 @@ export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; addre
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Sent message</Action>
-				<span>to</span>
+				<Action type="sent">Send</Action>
+				<span>message to</span>
 				<Account chain={chain} address={props.event.to_address} />
 				<span>"{props.event.message}"</span>
 			</Description>
@@ -41,8 +41,8 @@ export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; addre
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Received message</Action>
-				<span>from</span>
+				<Action type="sent">Receive</Action>
+				<span>message from</span>
 				<Account chain={chain} address={props.event.from_address} />
 				<span>"{props.event.message}"</span>
 			</Description>

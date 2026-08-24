@@ -35,8 +35,8 @@ export function IntentUsdcBlacklistV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="blacklisted">Blacklisted</Action>
-				<span>by</span>
+				<Action type="blacklisted">Blacklist</Action>
+				<span>account from transferring any</span>
 				<Erc20 chain={chain} address={USDC_ADDRESS} at={blockTimestamp} />
 			</Description>
 		);
@@ -48,7 +48,7 @@ export function IntentUsdcBlacklistV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="blacklisted">Blacklisted</Action>
+				<Action type="blacklisted">Blacklist</Action>
 				<Account chain={chain} address={props.event.account_address} />
 				<span>from transferring any tokens</span>
 			</Description>

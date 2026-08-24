@@ -31,7 +31,7 @@ export function IntentContractDeploymentV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="deployed">Deployed</Action>
+				<Action type="deployed">Deploy</Action>
 				<span>contract</span>
 				<Account chain={chain} address={props.event.contract_address} />
 			</Description>
@@ -42,9 +42,8 @@ export function IntentContractDeploymentV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<span>Contract</span>
-				<Action type="deployed">deployed</Action>
-				<span>by</span>
+				<Action type="deployed">Deploy</Action>
+				<span>contract by</span>
 				<Account chain={chain} address={props.event.deployer_address} />
 			</Description>
 		);

@@ -34,7 +34,7 @@ export function IntentNativeTransferV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="sent">Sent</Action>
+				<Action type="sent">Send</Action>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
@@ -46,7 +46,7 @@ export function IntentNativeTransferV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="received">Received</Action>
+				<Action type="received">Receive</Action>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />

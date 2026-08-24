@@ -60,7 +60,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: {
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="withdrew">Withdrew</Action>
+					<Action type="withdrew">Withdraw</Action>
 					{all ? <span>all</span> : null}
 					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 					<span>from</span>
@@ -72,7 +72,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="withdrew">Withdrew</Action>
+				<Action type="withdrew">Withdraw</Action>
 				{all ? <span>all</span> : null}
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>from</span>

@@ -37,7 +37,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="minted">Supplied</Action>
+				<Action type="minted">Supply</Action>
 				<span>liquidity</span>
 				<Erc20 chain={chain} address={props.event.token_0_address} quantity={props.event.token_0_desired_quantity} at={blockTimestamp} />
 				<span>and</span>
