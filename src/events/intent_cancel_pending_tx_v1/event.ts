@@ -25,7 +25,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
-			// Must have a to address (not contract deployment)
+			// When deploying a contract the `to` field is null
 			if (tx.to === null) {
 				return [];
 			}

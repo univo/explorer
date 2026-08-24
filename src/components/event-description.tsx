@@ -12,9 +12,13 @@ import { IntentAaveV3RepayV1Description } from "@/events/intent_aave_v3_repay_v1
 import { IntentFwaDepositedV1Description } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1Description } from "@/events/intent_aave_v3_supply_v1/component";
 import { IntentAaveV3BorrowV1Description } from "@/events/intent_aave_v3_borrow_v1/component";
+import { IntentErc20ApprovalV1Description } from "@/events/intent_erc20_approval_v1/component";
+import { IntentErc20TransferV1Description } from "@/events/intent_erc20_transfer_v1/component";
 import { IntentUsdcBlacklistV1Description } from "@/events/intent_usdc_blacklist_v1/component";
 import { IntentUniswapV3SwapV1Description } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1Description } from "@/events/intent_uniswap_v3_mint_v1/component";
+import { IntentErc721ApprovalV1Description } from "@/events/intent_erc721_approval_v1/component";
+import { IntentErc721TransferV1Description } from "@/events/intent_erc721_transfer_v1/component";
 import { IntentNativeTransferV1Description } from "@/events/intent_native_transfer_v1/component";
 import { LogEnsReverseClaimedV1Description } from "@/events/log_ens_reverse_claimed_v1/component";
 import { IntentAaveV3WithdrawV1Description } from "@/events/intent_aave_v3_withdraw_v1/component";
@@ -44,6 +48,22 @@ export function EventDescription(props: { event: Event }) {
 
 	if (props.event.tag === "intent_native_transfer_v1") {
 		return <IntentNativeTransferV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_erc20_transfer_v1") {
+		return <IntentErc20TransferV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_erc20_approval_v1") {
+		return <IntentErc20ApprovalV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_erc721_transfer_v1") {
+		return <IntentErc721TransferV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "intent_erc721_approval_v1") {
+		return <IntentErc721ApprovalV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "log_erc20_transfer_v1") {
