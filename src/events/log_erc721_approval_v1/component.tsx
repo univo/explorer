@@ -17,8 +17,8 @@ export function LogErc721ApprovalV1Description(props: { event: LogErc721Approval
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.owner_address} />
-				<Action type="revoked">revoked approval</Action>
-				<span>for</span>
+				<Action type="revoked">revoked</Action>
+				<span>approval for</span>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>to be transferred</span>
 			</Description>
@@ -46,8 +46,8 @@ export function LogErc721ApprovalV1AccountDescription(props: { event: LogErc721A
 			return (
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="revoked">Revoked approval</Action>
-					<span>for</span>
+					<Action type="revoked">Revoked</Action>
+					<span>approval for</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>to be transferred</span>
 				</Description>
@@ -69,7 +69,8 @@ export function LogErc721ApprovalV1AccountDescription(props: { event: LogErc721A
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="approved">Received approval</Action>
+				<span>Received</span>
+				<Action type="approved">approval</Action>
 				<span>from</span>
 				<Account chain={chain} address={props.event.owner_address} />
 				<span>to transfer</span>
