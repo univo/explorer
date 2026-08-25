@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import type { ReactNode } from "react";
 
 type Action =
 	| "won"
@@ -73,7 +72,7 @@ const classes: Record<Color, string> = {
 	purple: "bg-purple-100 text-purple-700",
 };
 
-export function Action(props: { type: Action; children: ReactNode }) {
+export function Action(props: { type: Action; children: string }) {
 	const color = colors[props.type];
 	const className = classes[color];
 
