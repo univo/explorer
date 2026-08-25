@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { rpc } from "./helpers";
 import { getTx } from "./state/tx";
 import { hexToNumber } from "./utils";
-import { BlockHashSchema, TxHashSchema } from "./schema";
+import { TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
 // identifiers are stable according to these two things. So any time they are updated we will break old
@@ -39,21 +39,4 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
 			block: hexToNumber(tx.blockNumber),
 			tx: hexToNumber(tx.transactionIndex),
 		};
-	});
-
-export const sf_getBlockNumber = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ block_hash: BlockHashSchema }))
-	.handler(async ({ data }) => {
-		const block = await rpc({
-			id: 1,
-			jsonrpc: "2.0",
-			params: [data.block_hash],
-			method: "eth_getBlockByHash",
-		});
-
-		if (block === null) {
-			throw new Error("Unknown block");
-		}
-
-		return hexToNumber(block.number);
 	});

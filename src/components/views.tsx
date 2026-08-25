@@ -2,8 +2,8 @@
 
 import * as v from "valibot";
 import { create } from "zustand";
-import type { ComponentProps, ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import type { ComponentProps, ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { createContext, useContext, useRef, useState } from "react";
 
@@ -14,12 +14,10 @@ import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
 import { AddressClient } from "@/views/address/address-client";
 import { TxPositionClient } from "@/views/tx-position/tx-position-client";
-import { BlockNumberClient } from "@/views/block-number/block-number-client";
-import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
+import { AddressSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type View =
 	| { type: "event"; data: string; raw: string }
-	| { type: "block-number"; data: number; raw: string }
 	| { type: "address"; data: `0x${string}`; raw: string }
 	| { type: "transaction-hash"; data: `0x${string}`; raw: string }
 	| { type: "transaction-position"; data: { block: number; tx: number }; raw: string };
@@ -140,9 +138,6 @@ export function getView(view: string): View | null {
 	const tx_position = v.safeParse(TxPositionSchema, view);
 	if (tx_position.success) return { type: "transaction-position", data: tx_position.output, raw: view };
 
-	const block_number = v.safeParse(BlockNumberSchema, view);
-	if (block_number.success) return { type: "block-number", data: block_number.output, raw: view };
-
 	const event = v.safeParse(EventSchema, view);
 	if (event.success) return { type: "event", data: event.output, raw: view };
 
@@ -203,11 +198,7 @@ export function View(props: { view: string; index: number }) {
 
 			{view !== null && view.type === "address" && <AddressClient address={view.data} />}
 
-			{view !== null && view.type === "block-number" && <BlockNumberClient number={view.data} />}
-
-			{view !== null && view.type === "transaction-position" && (
-				<TxPositionClient block={view.data.block} tx={view.data.tx} />
-			)}
+			{view !== null && view.type === "transaction-position" && <TxPositionClient block={view.data.block} tx={view.data.tx} />}
 		</ViewIndexContext>
 	);
 }
