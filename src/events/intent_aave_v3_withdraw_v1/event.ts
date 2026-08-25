@@ -95,8 +95,8 @@ export const event = univo.event({
 							success: sql.raw(`excluded.${table.success.name}`),
 							quantity: sql.raw(`excluded.${table.quantity.name}`),
 							token_address: sql.raw(`excluded.${table.token_address.name}`),
-							withdrawer_address: sql.raw(`excluded.${table.withdrawer_address.name}`),
 							recipient_address: sql.raw(`excluded.${table.recipient_address.name}`),
+							withdrawer_address: sql.raw(`excluded.${table.withdrawer_address.name}`),
 						},
 					});
 			}
