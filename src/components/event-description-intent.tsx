@@ -19,7 +19,7 @@ import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tor
 import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
-export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
+export function EventDescriptionIntent(props: { address: `0x${string}`; event: Event }) {
 	if (props.event.tag === "intent_native_transfer_v1") {
 		return <IntentNativeTransferV1AccountDescription event={props.event} address={props.address} />;
 	}
