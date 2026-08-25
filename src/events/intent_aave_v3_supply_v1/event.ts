@@ -137,10 +137,10 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event_id: event.id, account: AAVE_V3_ETHEREUM_POOL_ADDRESS },
 				{ event_id: event.id, account: event.token_address },
 				{ event_id: event.id, account: event.supplier_address },
 				{ event_id: event.id, account: event.on_behalf_of_address },
+				{ event_id: event.id, account: AAVE_V3_ETHEREUM_POOL_ADDRESS },
 			];
 		});
 	},
