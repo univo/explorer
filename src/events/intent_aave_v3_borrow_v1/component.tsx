@@ -7,9 +7,6 @@ import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3BorrowV1 } from "./event";
 
-// Ensure every account indexed has a handled perspective
-// From each perspective we don't show that account in the description
-
 export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAaveV3BorrowV1; address: `0x${string}` }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
