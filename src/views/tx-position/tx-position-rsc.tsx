@@ -11,6 +11,7 @@ import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
 import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
+import { EventDescriptionIntent } from "@/components/event-description-intent";
 import { defined, formatDateTime, formatNumber, isHexEqual, numberToHex, raise } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
@@ -22,7 +23,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header tx={tx} />
-			<Events ids={ids} />
+			<Events tx={tx} ids={ids} />
 		</div>
 	);
 }
@@ -62,7 +63,7 @@ function EmptyState() {
 	);
 }
 
-async function Events(props: { ids: string[] }) {
+async function Events(props: { tx: Tx; ids: string[] }) {
 	if (props.ids.length === 0) {
 		return <EmptyState />;
 	}
@@ -127,7 +128,7 @@ async function Events(props: { ids: string[] }) {
 
 						{defined(intent) && (
 							<ErrorBoundary fallback={null}>
-								<EventDescriptionLog event={intent} />
+								<EventDescriptionIntent event={intent} address={props.tx.from} />
 							</ErrorBoundary>
 						)}
 					</div>
