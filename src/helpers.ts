@@ -50,7 +50,6 @@ export function createId(opts: IdOptions) {
 	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
 	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
 	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
-
 	const logIndex = opts.logIndex.slice(2).padStart(6, "0");
 	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
 	const tableId = opts.tableId.toString(16).padStart(4, "0");
@@ -126,10 +125,7 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
  */
 export function getInternalChain(external_chain: `0x${string}` | keyof typeof CHAINS) {
 	if (typeof external_chain === "string") {
-		return (
-			CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] ||
-			raise(`Unsupported chain id ${hexToNumber(external_chain)}`)
-		);
+		return CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] || raise(`Unsupported chain id ${hexToNumber(external_chain)}`);
 	}
 
 	return CHAINS[external_chain];
