@@ -1,36 +1,19 @@
-import { isAddressEqual } from "viem";
-
 import { parseId } from "@/helpers";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { IntentNativeTransferV1 } from "./event";
+import { isHexEqual, unreachable } from "@/utils";
 import { ExclamationIcon } from "@/components/icons";
+import type { IntentNativeTransferV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentNativeTransferV1Description(props: { event: IntentNativeTransferV1 }) {
+export function IntentNativeTransferV1AccountDescription(props: { event: IntentNativeTransferV1; address: `0x${string}` }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
-	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Account chain={chain} address={props.event.from_address} />
-			<Action type="sent">sent</Action>
-			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
-			<span>to</span>
-			<Account chain={chain} address={props.event.to_address} />
-		</Description>
-	);
-}
+	// (tx.from) from_address
 
-export function IntentNativeTransferV1AccountDescription(props: {
-	event: IntentNativeTransferV1;
-	address: `0x${string}`;
-}) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
-
-	if (isAddressEqual(props.address, props.event.from_address)) {
+	if (isHexEqual(props.address, props.event.from_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -42,7 +25,9 @@ export function IntentNativeTransferV1AccountDescription(props: {
 		);
 	}
 
-	if (isAddressEqual(props.address, props.event.to_address)) {
+	// (tx.to) to_address
+
+	if (isHexEqual(props.address, props.event.to_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -54,5 +39,5 @@ export function IntentNativeTransferV1AccountDescription(props: {
 		);
 	}
 
-	return <IntentNativeTransferV1Description event={props.event} />;
+	unreachable();
 }
