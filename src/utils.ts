@@ -173,3 +173,7 @@ export function isHexEqual(a: `0x${string}` | undefined, b: `0x${string}` | unde
 export type MakeNonNullable<T, K extends keyof T> = Omit<T, K> & {
 	[P in K]: NonNullable<T[P]>;
 };
+
+export function unreachable(error?: string): never {
+	throw new Error(error || "Reached unreachable code path");
+}
