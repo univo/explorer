@@ -21,7 +21,3 @@ export function LogEnsReverseClaimedV1Description(props: { event: LogEnsReverseC
 		</Description>
 	);
 }
-
-export function LogEnsReverseClaimedV1AccountDescription(props: { event: LogEnsReverseClaimedV1; address: `0x${string}` }) {
-	return <LogEnsReverseClaimedV1Description event={props.event} />;
-}

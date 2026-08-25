@@ -1,5 +1,3 @@
-import { isAddressEqual } from "viem";
-
 import { parseId } from "@/helpers";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
@@ -41,75 +39,4 @@ export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1
 			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} at={blockTimestamp} />
 		</Description>
 	);
-}
-
-export function LogErc20ApprovalV1AccountDescription(props: { event: LogErc20ApprovalV1; address: `0x${string}` }) {
-	const all = props.event.quantity.length >= 30;
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
-
-	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
-	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
-	const revoked = isZeroQuantity || isSpenderNullAddress;
-	const quantity = !revoked && !all ? props.event.quantity : undefined;
-
-	// 1. From the perspective of the owner
-
-	if (isAddressEqual(props.address, props.event.owner_address)) {
-		if (revoked) {
-			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<Action type="revoked">Revoked</Action>
-					<span>approval for</span>
-					<Account chain={chain} address={props.event.spender_address} />
-					<span>to spend any</span>
-					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
-				</Description>
-			);
-		}
-
-		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="approved">Approved</Action>
-				<Account chain={chain} address={props.event.spender_address} />
-				<span>to spend</span>
-				{all === true && <span>all</span>}
-				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
-			</Description>
-		);
-	}
-
-	// 2. From the perspective of the spender
-
-	if (isAddressEqual(props.address, props.event.spender_address)) {
-		if (revoked) {
-			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-					<span>Approval</span>
-					<Action type="revoked">revoked</Action>
-					<span>by</span>
-					<Account chain={chain} address={props.event.owner_address} />
-					<span>to spend any</span>
-					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
-				</Description>
-			);
-		}
-
-		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<span>Received</span>
-				<Action type="approved">approval</Action>
-				<span>from</span>
-				<Account chain={chain} address={props.event.owner_address} />
-				<span>to spend</span>
-				{all === true && <span>all</span>}
-				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
-			</Description>
-		);
-	}
-
-	return <LogErc20ApprovalV1Description event={props.event} />;
 }

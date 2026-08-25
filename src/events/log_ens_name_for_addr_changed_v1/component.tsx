@@ -26,7 +26,3 @@ export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsName
 		</Description>
 	);
 }
-
-export function LogEnsNameForAddrChangedV1AccountDescription(props: { event: LogEnsNameForAddrChangedV1; address: `0x${string}` }) {
-	return <LogEnsNameForAddrChangedV1Description event={props.event} />;
-}
