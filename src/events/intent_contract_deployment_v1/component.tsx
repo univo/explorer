@@ -1,33 +1,17 @@
-import { isAddressEqual } from "viem";
-
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { IntentContractDeploymentV1 } from "./event";
+import { isHexEqual, unreachable } from "@/utils";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
+import type { IntentContractDeploymentV1 } from "./event";
 
-export function IntentContractDeploymentV1Description(props: { event: IntentContractDeploymentV1 }) {
+export function IntentContractDeploymentV1AccountDescription(props: { event: IntentContractDeploymentV1; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
-	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Account chain={chain} address={props.event.deployer_address} />
-			<Action type="deployed">deployed</Action>
-			<span>contract</span>
-			<Account chain={chain} address={props.event.contract_address} />
-		</Description>
-	);
-}
+	// (tx.from) deployer_address
 
-export function IntentContractDeploymentV1AccountDescription(props: {
-	event: IntentContractDeploymentV1;
-	address: `0x${string}`;
-}) {
-	const chain = parseId(props.event.id).chainId;
-
-	if (isAddressEqual(props.address, props.event.deployer_address)) {
+	if (isHexEqual(props.address, props.event.deployer_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -38,7 +22,9 @@ export function IntentContractDeploymentV1AccountDescription(props: {
 		);
 	}
 
-	if (isAddressEqual(props.address, props.event.contract_address)) {
+	// contract_address
+
+	if (isHexEqual(props.address, props.event.contract_address)) {
 		return (
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
@@ -49,5 +35,5 @@ export function IntentContractDeploymentV1AccountDescription(props: {
 		);
 	}
 
-	return <IntentContractDeploymentV1Description event={props.event} />;
+	unreachable();
 }
