@@ -81,7 +81,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 				<Description>
 					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 					<Account chain={chain} address={props.event.repayer_address} />
-					<Action type="repaid">repaid</Action>
+					<Action type="repaid">repays</Action>
 					<span>our entire</span>
 					<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
 					<span>debt with</span>
