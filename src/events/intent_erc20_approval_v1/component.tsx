@@ -1,3 +1,5 @@
+import { zeroAddress } from "viem";
+
 import { parseId } from "@/helpers";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
@@ -12,7 +14,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 
 	const all = props.event.quantity.length >= 30;
 	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
-	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
+	const isSpenderNullAddress = isHexEqual(props.event.spender_address, zeroAddress);
 
 	const revoked = isZeroQuantity || isSpenderNullAddress;
 	const quantity = !revoked && !all ? props.event.quantity : undefined;
