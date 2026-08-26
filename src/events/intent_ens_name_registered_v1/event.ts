@@ -93,8 +93,8 @@ export const event = univo.event({
 					owner_address: getAddress(args[1]),
 
 					// Used for indexes
-					controller_address: getAddress(tx.to),
 					sender_address: getAddress(tx.from),
+					controller_address: getAddress(tx.to),
 				};
 			} catch {
 				return [];
