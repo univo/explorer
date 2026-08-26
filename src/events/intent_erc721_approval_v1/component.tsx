@@ -4,7 +4,6 @@ import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { isHexEqual, unreachable } from "@/utils";
-import { ExclamationIcon } from "@/components/icons";
 import type { IntentErc721ApprovalV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -19,8 +18,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 	if (isHexEqual(props.address, props.event.caller_address)) {
 		if (revoked) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="revoked">Revoke</Action>
 					<span>approval to transfer</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
@@ -29,8 +27,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="approved">Approve</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to transfer</span>
@@ -44,8 +41,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 	if (isHexEqual(props.address, props.event.token_address)) {
 		if (revoked) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
 					<Action type="revoked">revokes</Action>
 					<span>approval to transfer</span>
@@ -55,8 +51,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.caller_address} />
 				<Action type="approved">approves</Action>
 				<Account chain={chain} address={props.event.spender_address} />
@@ -71,8 +66,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 	if (isHexEqual(props.address, props.event.spender_address)) {
 		if (revoked) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
 					<Action type="revoked">revokes</Action>
 					<span>approval to transfer</span>
@@ -82,8 +76,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.caller_address} />
 				<Action type="approved">approves</Action>
 				<span>this account to transfer</span>

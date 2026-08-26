@@ -4,7 +4,6 @@ import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { unreachable, isHexEqual } from "@/utils";
 import type { IntentErc20TransferV1 } from "./event";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
 export function IntentErc20TransferV1AccountDescription(props: { event: IntentErc20TransferV1; address: `0x${string}` }) {
@@ -14,8 +13,7 @@ export function IntentErc20TransferV1AccountDescription(props: { event: IntentEr
 
 	if (isHexEqual(props.address, props.event.from_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="sent">Send</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
@@ -28,8 +26,7 @@ export function IntentErc20TransferV1AccountDescription(props: { event: IntentEr
 
 	if (isHexEqual(props.address, props.event.to_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="received">Receive</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
@@ -42,8 +39,7 @@ export function IntentErc20TransferV1AccountDescription(props: { event: IntentEr
 
 	if (isHexEqual(props.address, props.event.token_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.from_address} />
 				<Action type="sent">sends</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />

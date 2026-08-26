@@ -3,7 +3,6 @@ import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { ExclamationIcon } from "@/components/icons";
 import type { IntentUniswapV3MintV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -11,8 +10,7 @@ export function IntentUniswapV3MintV1Description(props: { event: IntentUniswapV3
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.sender_address} />
 			<Action type="supplied">supplied</Action>
 			<span>liquidity</span>
@@ -35,8 +33,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: {
 
 	if (isHexEqual(props.address, props.event.sender_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="minted">Supply</Action>
 				<span>liquidity</span>
 				<Erc20 chain={chain} address={props.event.token_0_address} quantity={props.event.token_0_desired_quantity} at={blockTimestamp} />

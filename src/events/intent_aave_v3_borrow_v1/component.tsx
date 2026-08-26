@@ -3,7 +3,6 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { isHexEqual, unreachable } from "@/utils";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3BorrowV1 } from "./event";
 
@@ -17,8 +16,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 
 		if (isHexEqual(props.event.borrower_address, props.event.on_behalf_of_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="borrowed">Borrow</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 					<span>from</span>
@@ -31,8 +29,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 		// be enforced on or offchain and allows the borrower to access uncollateralized liquidity
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="borrowed">Borrow</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
@@ -49,7 +46,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 
 	if (isHexEqual(props.address, props.event.on_behalf_of_address)) {
 		return (
-			<Description>
+			<Description success={props.event.success}>
 				<Action type="borrowed">Delegate</Action>
 				<span>credit of</span>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -66,8 +63,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 	if (isHexEqual(props.address, AAVE_V3_ETHEREUM_POOL_ADDRESS)) {
 		if (isHexEqual(props.event.borrower_address, props.event.on_behalf_of_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.borrower_address} />
 					<Action type="borrowed">borrows</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -77,8 +73,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.borrower_address} />
 				<Action type="borrowed">borrows</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -93,8 +88,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 	if (isHexEqual(props.address, props.event.token_address)) {
 		if (isHexEqual(props.event.borrower_address, props.event.on_behalf_of_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.borrower_address} />
 					<Action type="borrowed">borrows</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -105,8 +99,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.borrower_address} />
 				<Action type="borrowed">borrows</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />

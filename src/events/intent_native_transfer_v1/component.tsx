@@ -4,7 +4,6 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { isHexEqual, unreachable } from "@/utils";
-import { ExclamationIcon } from "@/components/icons";
 import type { IntentNativeTransferV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -15,8 +14,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 
 	if (isHexEqual(props.address, props.event.from_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="sent">Send</Action>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
@@ -29,8 +27,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 
 	if (isHexEqual(props.address, props.event.to_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="received">Receive</Action>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>

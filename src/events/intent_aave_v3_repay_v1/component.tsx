@@ -5,7 +5,6 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { isHexEqual, unreachable } from "@/utils";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3RepayV1 } from "./event";
 
@@ -20,8 +19,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		if (isHexEqual(props.event.repayer_address, props.event.on_behalf_of_address)) {
 			if (all) {
 				return (
-					<Description>
-						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+					<Description success={props.event.success}>
 						<Action type="repaid">Repay</Action>
 						<span>the entire</span>
 						<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
@@ -32,8 +30,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 			}
 
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<span>Partially</span>
 					<Action type="repaid">repay</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
@@ -45,8 +42,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 
 		if (all) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="repaid">Repay</Action>
 					<span>the entire</span>
 					<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
@@ -59,8 +55,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<span>Partially</span>
 				<Action type="repaid">repay</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
@@ -78,8 +73,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 	if (isHexEqual(props.address, props.event.on_behalf_of_address)) {
 		if (all) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.repayer_address} />
 					<Action type="repaid">repays</Action>
 					<span>our entire</span>
@@ -91,8 +85,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.repayer_address} />
 				<span>partially</span>
 				<Action type="repaid">repay</Action>
@@ -109,8 +102,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		if (isHexEqual(props.event.repayer_address, props.event.on_behalf_of_address)) {
 			if (all) {
 				return (
-					<Description>
-						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+					<Description success={props.event.success}>
 						<Account chain={chain} address={props.event.repayer_address} />
 						<Action type="repaid">repays</Action>
 						<span>their entire</span>
@@ -121,8 +113,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 			}
 
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.repayer_address} />
 					<span>partially</span>
 					<Action type="repaid">repays</Action>
@@ -134,8 +125,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 
 		if (all) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.repayer_address} />
 					<Action type="repaid">repays</Action>
 					<span>the entire</span>
@@ -147,8 +137,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.repayer_address} />
 				<span>partially</span>
 				<Action type="repaid">repays</Action>
@@ -165,8 +154,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		if (isHexEqual(props.event.repayer_address, props.event.on_behalf_of_address)) {
 			if (all) {
 				return (
-					<Description>
-						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+					<Description success={props.event.success}>
 						<Account chain={chain} address={props.event.repayer_address} />
 						<Action type="repaid">repays</Action>
 						<span>their entire</span>
@@ -178,8 +166,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 			}
 
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.repayer_address} />
 					<span>partially</span>
 					<Action type="repaid">repays</Action>
@@ -192,8 +179,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 
 		if (all) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.repayer_address} />
 					<Action type="repaid">repays</Action>
 					<span>the entire</span>
@@ -207,8 +193,7 @@ export function IntentAaveV3RepayV1AccountDescription(props: { event: IntentAave
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.repayer_address} />
 				<span>partially</span>
 				<Action type="repaid">repays</Action>

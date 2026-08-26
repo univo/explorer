@@ -3,7 +3,6 @@ import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { ExclamationIcon } from "@/components/icons";
 import type { IntentUniswapV3SwapV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -13,8 +12,7 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 	if (props.event.swap_type === "exact_input") {
 		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.sender_address} />
 					<Action type="swapped">swapped</Action>
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} at={blockTimestamp} />
@@ -27,8 +25,7 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
 				<Action type="swapped">swapped</Action>
 				<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} at={blockTimestamp} />
@@ -44,8 +41,7 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 
 	if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
 				<Action type="swapped">swapped</Action>
 				<span>up to</span>
@@ -59,8 +55,7 @@ export function IntentUniswapV3SwapV1Description(props: { event: IntentUniswapV3
 	}
 
 	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.sender_address} />
 			<Action type="swapped">swapped</Action>
 			<span>up to</span>
@@ -87,8 +82,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 		if (props.event.swap_type === "exact_input") {
 			if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 				return (
-					<Description>
-						{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+					<Description success={props.event.success}>
 						<Action type="swapped">Swap</Action>
 						<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} at={blockTimestamp} />
 						<span>for at least</span>
@@ -100,8 +94,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 			}
 
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="swapped">Swap</Action>
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.exact_quantity} at={blockTimestamp} />
 					<span>for at least</span>
@@ -116,8 +109,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 
 		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="swapped">Swap</Action>
 					<span>up to</span>
 					<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.limit_quantity} at={blockTimestamp} />
@@ -130,8 +122,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: {
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="swapped">Swap</Action>
 				<span>up to</span>
 				<Erc20 chain={chain} address={props.event.token_in_address} quantity={props.event.limit_quantity} at={blockTimestamp} />

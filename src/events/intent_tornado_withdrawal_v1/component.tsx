@@ -5,7 +5,6 @@ import { Erc20 } from "@/components/erc-20";
 import { getTornadoCashPool } from "./event";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { IntentTornadoWithdrawalV1 } from "./event";
 
@@ -25,8 +24,7 @@ export function IntentTornadoWithdrawalV1Description(props: { event: IntentTorna
 
 	if (isAddressEqual(props.event.from_address, props.event.recipient_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.from_address} />
 				<Action type="received">withdrew</Action>
 				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
@@ -43,8 +41,7 @@ export function IntentTornadoWithdrawalV1Description(props: { event: IntentTorna
 	const quantityAfterFees = BigInt(pool.quantity) - BigInt(props.event.fee);
 
 	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="received">withdrew</Action>
 			<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} at={blockTimestamp} />
@@ -77,8 +74,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 
 		if (isAddressEqual(props.event.from_address, props.event.recipient_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="received">Withdraw</Action>
 					<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
 					<span>from</span>
@@ -92,8 +88,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 		const quantityAfterFees = BigInt(pool.quantity) - BigInt(props.event.fee);
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="received">Receive</Action>
 				<Erc20 chain={chain} address={pool.asset} quantity={quantityAfterFees} at={blockTimestamp} />
 				<span>from</span>
@@ -108,8 +103,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 
 	if (isAddressEqual(props.address, props.event.relayer_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<span>Relay</span>
 				<Action type="sent">withdrawal</Action>
 				<span>of</span>

@@ -1,6 +1,5 @@
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import type { IntentEnsNameRegisteredV1 } from "./event";
 
@@ -18,8 +17,7 @@ export function IntentEnsNameRegisteredV1AccountDescription(props: { event: Inte
 	// (tx.from) sender_address, (tx.to) controller_address, owner_address
 
 	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+		<Description success={props.event.success}>
 			<Action type="registered">Register</Action>
 			<span>{props.event.name}.eth</span>
 			<span>expiring</span>

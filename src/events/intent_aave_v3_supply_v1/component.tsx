@@ -3,7 +3,6 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { isHexEqual, unreachable } from "@/utils";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3SupplyV1 } from "./event";
 
@@ -15,8 +14,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 	if (isHexEqual(props.address, props.event.supplier_address)) {
 		if (isHexEqual(props.event.supplier_address, props.event.on_behalf_of_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="supplied">Supply</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 					<span>collateral with</span>
@@ -26,8 +24,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="supplied">Supply</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>collateral to</span>
@@ -42,8 +39,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 
 	if (isHexEqual(props.address, props.event.on_behalf_of_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.supplier_address} />
 				<Action type="supplied">supplies</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -58,8 +54,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 	if (isHexEqual(props.address, AAVE_V3_ETHEREUM_POOL_ADDRESS)) {
 		if (isHexEqual(props.event.supplier_address, props.event.on_behalf_of_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.supplier_address} />
 					<Action type="supplied">supplies</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -69,8 +64,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.supplier_address} />
 				<Action type="supplied">supplies</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -85,8 +79,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 	if (isHexEqual(props.address, props.event.token_address)) {
 		if (isHexEqual(props.event.supplier_address, props.event.on_behalf_of_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.supplier_address} />
 					<Action type="supplied">supplies</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
@@ -97,8 +90,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.supplier_address} />
 				<Action type="supplied">supplies</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />

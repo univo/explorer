@@ -5,7 +5,6 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v1/event";
 import { getLogFwaNftListedV1ByListingId } from "../log_fwa_nft_listed_v1/event";
@@ -26,8 +25,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 		// amount for a win deducts fees that are returned to the protocol
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
@@ -39,8 +37,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 
 	if (props.event.settlement_type === "relisted") {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
@@ -54,8 +51,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 
 	if (props.event.settlement_type === "accepted_eth") {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
@@ -68,8 +64,7 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 
 	if (props.event.settlement_type === "accepted_fwa") {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="won">won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />

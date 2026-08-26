@@ -5,7 +5,6 @@ import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { isHexEqual, unreachable } from "@/utils";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3WithdrawV1 } from "./event";
 
@@ -19,8 +18,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 	if (isHexEqual(props.address, props.event.withdrawer_address)) {
 		if (isHexEqual(props.event.withdrawer_address, props.event.recipient_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Action type="withdrew">Withdraw</Action>
 					{all ? <span>all</span> : null}
 					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
@@ -31,8 +29,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Action type="withdrew">Withdraw</Action>
 				{all ? <span>all</span> : null}
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
@@ -48,8 +45,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 
 	if (isHexEqual(props.address, props.event.recipient_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.withdrawer_address} />
 				<Action type="withdrew">withdraws</Action>
 				{all ? <span>all</span> : null}
@@ -66,8 +62,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 	if (isHexEqual(props.address, AAVE_V3_ETHEREUM_POOL_ADDRESS)) {
 		if (isHexEqual(props.event.withdrawer_address, props.event.recipient_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.withdrawer_address} />
 					<Action type="withdrew">withdraws</Action>
 					{all ? <span>all</span> : null}
@@ -77,8 +72,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.withdrawer_address} />
 				<Action type="withdrew">withdraws</Action>
 				{all ? <span>all</span> : null}
@@ -94,8 +88,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 	if (isHexEqual(props.address, props.event.token_address)) {
 		if (isHexEqual(props.event.withdrawer_address, props.event.recipient_address)) {
 			return (
-				<Description>
-					{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.withdrawer_address} />
 					<Action type="withdrew">withdraws</Action>
 					{all ? <span>all</span> : null}
@@ -107,8 +100,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		}
 
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.withdrawer_address} />
 				<Action type="withdrew">withdraws</Action>
 				{all ? <span>all</span> : null}
