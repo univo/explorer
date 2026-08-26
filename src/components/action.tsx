@@ -2,6 +2,7 @@ import clsx from "clsx";
 
 type Action =
 	| "won"
+	| "lost"
 	| "sent"
 	| "received"
 	| "sold"
@@ -39,6 +40,7 @@ const colors: Record<Action, Color> = {
 	approved: "green",
 	registered: "green",
 
+	lost: "red",
 	burnt: "red",
 	cancelled: "red",
 	revoked: "red",
