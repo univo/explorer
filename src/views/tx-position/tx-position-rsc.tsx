@@ -15,14 +15,16 @@ import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
 import { EventDescriptionIntent } from "@/components/event-description-intent";
 import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
+import { getBlockByNumber } from "@/state/block";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
-	const [tx, ids] = await Promise.all([
+	const [block, tx, ids] = await Promise.all([
+		getBlockByNumber(props.block),
 		getTxByPosition({ block: props.block, tx: props.tx }), //
 		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
-	const timestamp = new Date(hexToNumber(tx.blockTimestamp) * 1000);
+	const timestamp = new Date(hexToNumber(block.timestamp) * 1000);
 
 	const [events, receipt, price] = await Promise.all([
 		getEventsForIds(ids),
