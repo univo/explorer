@@ -2,11 +2,12 @@ import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Account } from "@/components/account";
-import { TRANSACTION_EVENT } from "@/constants";
 import { EtherscanIcon } from "@/components/icons";
+import { getTokenPrice } from "@/components/erc-20";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
 import { getEventsForIds, type Event } from "@/db/events";
+import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
@@ -23,12 +24,21 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 
 	const timestamp = new Date(hexToNumber(tx.blockTimestamp) * 1000);
 
-	const [events, receipt] = await Promise.all([
+	const [events, receipt, price] = await Promise.all([
 		getEventsForIds(ids),
 		getTxReceiptByHash(tx.hash), //
+		getTokenPrice({ chain: 1, token: ETH_ADDRESS, timestamp }),
 	]);
 
-	const fee = (BigInt(receipt.effectiveGasPrice) * BigInt(receipt.cumulativeGasUsed)) / 1000000000000000000n;
+	if (price === null) {
+		throw new Error("Expected ETH price");
+	}
+
+	const feeEth = (Number(receipt.effectiveGasPrice) * Number(receipt.cumulativeGasUsed)) / 10 ** 18;
+	const formattedFeeEth = formatNumber(feeEth, feeEth < 1 ? { maximumSignificantDigits: 2 } : { maximumFractionDigits: 2 });
+
+	const feeUsd = Number(price.price_usd) * feeEth;
+	const formattedFeeUsd = formatNumber(feeUsd, { style: "currency", currency: "USD", currencyDisplay: "narrowSymbol" });
 
 	const ordered = getOrderedEvents(events, "reverse");
 
@@ -92,7 +102,10 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						<div className="flex items-start justify-between">
 							<p className="min-w-24 text-sm text-gray-700">Fee</p>
 
-							<p className="text-sm text-gray-900">{fee}</p>
+							<div className="text-sm text-gray-900 flex items-center gap-1">
+								<span>{formattedFeeEth} ETH</span>
+								<span className="text-gray-700">({formattedFeeUsd})</span>
+							</div>
 						</div>
 
 						<div className="flex items-start justify-between">
