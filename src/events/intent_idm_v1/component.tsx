@@ -13,7 +13,7 @@ export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; addre
 	if (isHexEqual(props.address, props.event.from_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="sent">Send</Action>
+				<Action type="send">Send</Action>
 				<span>message to</span>
 				<Account chain={chain} address={props.event.to_address} />
 				<span>"{props.event.message}"</span>
@@ -26,7 +26,7 @@ export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; addre
 	if (isHexEqual(props.address, props.event.to_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="sent">Receive</Action>
+				<Action type="send">Receive</Action>
 				<span>message from</span>
 				<Account chain={chain} address={props.event.from_address} />
 				<span>"{props.event.message}"</span>

@@ -22,7 +22,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 			if (isHexEqual(props.event.to_address, zeroAddress)) {
 				return (
 					<Description success={props.event.success}>
-						<Action type="burnt">Burn</Action>
+						<Action type="burn">Burn</Action>
 						<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					</Description>
 				);
@@ -30,7 +30,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 
 			return (
 				<Description success={props.event.success}>
-					<Action type="sent">Send</Action>
+					<Action type="send">Send</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>to</span>
 					<Account chain={chain} address={props.event.to_address} />
@@ -43,7 +43,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 		if (isHexEqual(props.event.to_address, zeroAddress)) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="burnt">Burn</Action>
+					<Action type="burn">Burn</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>owned by</span>
 					<Account chain={chain} address={props.event.from_address} />
@@ -53,7 +53,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="sent">Transfer</Action>
+				<Action type="send">Transfer</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
@@ -73,7 +73,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
-					<Action type="burnt">burns</Action>
+					<Action type="burn">burns</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
 			);
@@ -82,7 +82,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.caller_address} />
-				<Action type="sent">sends</Action>
+				<Action type="send">sends</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
@@ -98,7 +98,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 		if (isHexEqual(props.event.from_address, zeroAddress)) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="received">Receive</Action>
+					<Action type="receive">Receive</Action>
 					<span>freshly minted</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
@@ -107,7 +107,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="received">Receive</Action>
+				<Action type="receive">Receive</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
@@ -127,7 +127,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 				return (
 					<Description success={props.event.success}>
 						<Account chain={chain} address={props.event.from_address} />
-						<Action type="burnt">burns</Action>
+						<Action type="burn">burns</Action>
 						<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					</Description>
 				);
@@ -136,7 +136,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.from_address} />
-					<Action type="sent">sends</Action>
+					<Action type="send">sends</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>to</span>
 					<Account chain={chain} address={props.event.to_address} />
@@ -150,7 +150,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
-					<Action type="burnt">burns</Action>
+					<Action type="burn">burns</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>owned by</span>
 					<Account chain={chain} address={props.event.from_address} />
@@ -162,7 +162,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
-					<Action type="minted">mints</Action>
+					<Action type="mint">mints</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 					<span>to</span>
 					<Account chain={chain} address={props.event.to_address} />
@@ -173,7 +173,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.caller_address} />
-				<Action type="sent">transfers</Action>
+				<Action type="send">transfers</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />

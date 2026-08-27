@@ -17,7 +17,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="swapped">Swap</Action>
+					<Action type="swap">Swap</Action>
 					<Amounts event={props.event} />
 					<span>via</span>
 					<Account chain={chain} address={props.event.router_address} />
@@ -27,7 +27,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="swapped">Swap</Action>
+				<Action type="swap">Swap</Action>
 				<Amounts event={props.event} />
 				<span>with recipient</span>
 				<Account chain={chain} address={props.event.recipient_address} />
@@ -44,7 +44,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="swapped">swaps</Action>
+				<Action type="swap">swaps</Action>
 				<Amounts event={props.event} />
 				<span>via</span>
 				<Account chain={chain} address={props.event.router_address} />
@@ -60,7 +60,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.sender_address} />
-					<Action type="swapped">swaps</Action>
+					<Action type="swap">swaps</Action>
 					<Amounts event={props.event} />
 				</Description>
 			);
@@ -69,7 +69,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="swapped">swaps</Action>
+				<Action type="swap">swaps</Action>
 				<Amounts event={props.event} />
 				<span>with recipient</span>
 				<Account chain={chain} address={props.event.recipient_address} />
@@ -84,7 +84,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 			return (
 				<Description>
 					<Account chain={chain} address={props.event.sender_address} />
-					<Action type="swapped">swaps</Action>
+					<Action type="swap">swaps</Action>
 					<Amounts event={props.event} />
 					<span>via</span>
 					<Account chain={chain} address={props.event.router_address} />
@@ -95,7 +95,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="swapped">swaps</Action>
+				<Action type="swap">swaps</Action>
 				<Amounts event={props.event} />
 				<span>via</span>
 				<Account chain={chain} address={props.event.router_address} />
@@ -112,7 +112,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 			return (
 				<Description>
 					<Account chain={chain} address={props.event.sender_address} />
-					<Action type="swapped">swaps</Action>
+					<Action type="swap">swaps</Action>
 					<Amounts event={props.event} />
 					<span>via</span>
 					<Account chain={chain} address={props.event.router_address} />
@@ -123,7 +123,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="swapped">swaps</Action>
+				<Action type="swap">swaps</Action>
 				<Amounts event={props.event} />
 				<span>via</span>
 				<Account chain={chain} address={props.event.router_address} />

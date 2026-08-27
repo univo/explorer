@@ -22,7 +22,7 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="swapped">swapped</Action>
+				<Action type="swap">swapped</Action>
 				<Erc20 chain={chain} address={swap.tokenIn} quantity={swap.amountIn} at={blockTimestamp} />
 				<span>for</span>
 				<Erc20 chain={chain} address={swap.tokenOut} quantity={swap.amountOut} at={blockTimestamp} />
@@ -35,7 +35,7 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 	return (
 		<Description>
 			<Account chain={chain} address={props.event.sender_address} />
-			<Action type="swapped">swapped</Action>
+			<Action type="swap">swapped</Action>
 			<Erc20 chain={chain} address={swap.tokenIn} quantity={swap.amountIn} at={blockTimestamp} />
 			<span>for</span>
 			<Erc20 chain={chain} address={swap.tokenOut} quantity={swap.amountOut} at={blockTimestamp} />

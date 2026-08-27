@@ -16,7 +16,7 @@ export function LogErc721TransferV1Description(props: { event: LogErc721Transfer
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.to_address} />
-				<Action type="minted">minted</Action>
+				<Action type="mint">minted</Action>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 			</Description>
 		);
@@ -26,7 +26,7 @@ export function LogErc721TransferV1Description(props: { event: LogErc721Transfer
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.from_address} />
-			<Action type="sent">sent</Action>
+			<Action type="send">sent</Action>
 			<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />

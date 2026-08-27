@@ -16,7 +16,7 @@ export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwa
 	if (isHexEqual(props.address, props.event.depositor_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="deposited">Deposit</Action>
+				<Action type="deposit">Deposit</Action>
 				<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
 				<span>into</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
@@ -32,7 +32,7 @@ export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwa
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.depositor_address} />
-				<Action type="deposited">deposits</Action>
+				<Action type="deposit">deposits</Action>
 				<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
 				<span>with a backing of</span>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} at={blockTimestamp} />
@@ -46,7 +46,7 @@ export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwa
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.depositor_address} />
-				<Action type="deposited">deposits</Action>
+				<Action type="deposit">deposits</Action>
 				<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
 				<span>into</span>
 				<Account chain={chain} address={FWA_ADDRESS} />

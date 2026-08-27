@@ -18,7 +18,7 @@ export function IntentEnsNameRegisteredV1AccountDescription(props: { event: Inte
 
 	return (
 		<Description success={props.event.success}>
-			<Action type="registered">Register</Action>
+			<Action type="register">Register</Action>
 			<span>{props.event.name}.eth</span>
 			<span>expiring</span>
 			<span>{expiryFormatted}</span>

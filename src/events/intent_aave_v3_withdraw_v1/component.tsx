@@ -19,7 +19,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		if (isHexEqual(props.event.withdrawer_address, props.event.recipient_address)) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="withdrew">Withdraw</Action>
+					<Action type="withdraw">Withdraw</Action>
 					{all ? <span>all</span> : null}
 					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 					<span>from</span>
@@ -30,7 +30,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="withdrew">Withdraw</Action>
+				<Action type="withdraw">Withdraw</Action>
 				{all ? <span>all</span> : null}
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>from</span>
@@ -47,7 +47,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.withdrawer_address} />
-				<Action type="withdrew">withdraws</Action>
+				<Action type="withdraw">withdraws</Action>
 				{all ? <span>all</span> : null}
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>from</span>
@@ -64,7 +64,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.withdrawer_address} />
-					<Action type="withdrew">withdraws</Action>
+					<Action type="withdraw">withdraws</Action>
 					{all ? <span>all</span> : null}
 					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				</Description>
@@ -74,7 +74,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.withdrawer_address} />
-				<Action type="withdrew">withdraws</Action>
+				<Action type="withdraw">withdraws</Action>
 				{all ? <span>all</span> : null}
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>to</span>
@@ -90,7 +90,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.withdrawer_address} />
-					<Action type="withdrew">withdraws</Action>
+					<Action type="withdraw">withdraws</Action>
 					{all ? <span>all</span> : null}
 					<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 					<span>from</span>
@@ -102,7 +102,7 @@ export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentA
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.withdrawer_address} />
-				<Action type="withdrew">withdraws</Action>
+				<Action type="withdraw">withdraws</Action>
 				{all ? <span>all</span> : null}
 				<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : quantity} at={blockTimestamp} />
 				<span>from</span>

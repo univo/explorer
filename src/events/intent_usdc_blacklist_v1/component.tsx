@@ -18,7 +18,7 @@ export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUs
 	if (isHexEqual(props.address, props.event.account_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="blacklisted">Blacklist</Action>
+				<Action type="blacklist">Blacklist</Action>
 				<span>account from transferring any</span>
 				<Erc20 chain={chain} address={USDC_ADDRESS} at={blockTimestamp} />
 			</Description>
@@ -30,7 +30,7 @@ export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUs
 	if (isHexEqual(props.address, USDC_ADDRESS)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="blacklisted">Blacklist</Action>
+				<Action type="blacklist">Blacklist</Action>
 				<Account chain={chain} address={props.event.account_address} />
 				<span>from transferring any tokens</span>
 			</Description>
@@ -43,7 +43,7 @@ export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUs
 	return (
 		<Description success={props.event.success}>
 			<Account chain={chain} address={USDC_ADDRESS} />
-			<Action type="blacklisted">blacklists</Action>
+			<Action type="blacklist">blacklists</Action>
 			<Account chain={chain} address={props.event.account_address} />
 			<span>from transferring any tokens</span>
 		</Description>

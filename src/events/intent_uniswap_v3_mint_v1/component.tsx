@@ -17,7 +17,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 	if (isHexEqual(props.address, props.event.sender_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="minted">Supply</Action>
+				<Action type="mint">Supply</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -33,7 +33,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="received">supplies</Action>
+				<Action type="receive">supplies</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -48,7 +48,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 	if (isHexEqual(props.address, UNISWAP_V3_POSITION_MANAGER_ADDRESS)) {
 		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 			<Description success={props.event.success}>
-				<Action type="minted">Supply</Action>
+				<Action type="mint">Supply</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -59,7 +59,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="received">supplies</Action>
+				<Action type="receive">supplies</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -75,7 +75,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 	if (isHexEqual(props.address, props.event.token_0_address)) {
 		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 			<Description success={props.event.success}>
-				<Action type="minted">Supply</Action>
+				<Action type="mint">Supply</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -86,7 +86,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="received">supplies</Action>
+				<Action type="receive">supplies</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -102,7 +102,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 	if (isHexEqual(props.address, props.event.token_1_address)) {
 		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 			<Description success={props.event.success}>
-				<Action type="minted">Supply</Action>
+				<Action type="mint">Supply</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>
@@ -113,7 +113,7 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="received">supplies</Action>
+				<Action type="receive">supplies</Action>
 				<span>a minimum liquidity of</span>
 				<MinimumLiquidity event={props.event} />
 				<span>to</span>

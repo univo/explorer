@@ -7,7 +7,7 @@ export function IntentCancelPendingTxV1AccountDescription(props: { event: Intent
 	if (isHexEqual(props.address, props.event.from_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="cancelled">Cancel</Action>
+				<Action type="cancel">Cancel</Action>
 				<span>pending transaction with nonce</span>
 				<span>{formatNumber(BigInt(props.event.nonce))}</span>
 			</Description>

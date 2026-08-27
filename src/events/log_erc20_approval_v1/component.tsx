@@ -19,7 +19,7 @@ export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1
 			<Description>
 				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 				<Account chain={chain} address={props.event.owner_address} />
-				<Action type="revoked">revoked</Action>
+				<Action type="revoke">revoked</Action>
 				<span>approval for</span>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to spend any</span>
@@ -32,7 +32,7 @@ export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1
 		<Description>
 			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
 			<Account chain={chain} address={props.event.owner_address} />
-			<Action type="approved">approved</Action>
+			<Action type="approve">approved</Action>
 			<Account chain={chain} address={props.event.spender_address} />
 			<span>to spend</span>
 			{all === true && <span>all</span>}

@@ -24,7 +24,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 		if (revoked) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="revoked">Revoke</Action>
+					<Action type="revoke">Revoke</Action>
 					<span>approval for</span>
 					<Account chain={chain} address={props.event.spender_address} />
 					<span>to spend any</span>
@@ -35,7 +35,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="approved">Approve</Action>
+				<Action type="approve">Approve</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to spend</span>
 				<span>{all === true ? "all" : "up to"}</span>
@@ -51,7 +51,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.owner_address} />
-					<Action type="revoked">revokes</Action>
+					<Action type="revoke">revokes</Action>
 					<span>approval for</span>
 					<Account chain={chain} address={props.event.spender_address} />
 					<span>to spend any</span>
@@ -63,7 +63,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.owner_address} />
-				<Action type="approved">approves</Action>
+				<Action type="approve">approves</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to spend</span>
 				<span>{all === true ? "all" : "up to"}</span>
@@ -79,7 +79,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.owner_address} />
-					<Action type="revoked">revokes</Action>
+					<Action type="revoke">revokes</Action>
 					<span>approval for this account to spend any</span>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 				</Description>
@@ -89,7 +89,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.owner_address} />
-				<Action type="approved">approves</Action>
+				<Action type="approve">approves</Action>
 				<span>this account to spend</span>
 				<span>{all === true ? "all" : "up to"}</span>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />

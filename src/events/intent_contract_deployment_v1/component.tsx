@@ -13,7 +13,7 @@ export function IntentContractDeploymentV1AccountDescription(props: { event: Int
 	if (isHexEqual(props.address, props.event.deployer_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="deployed">Deploy</Action>
+				<Action type="deploy">Deploy</Action>
 				<span>contract</span>
 				<Account chain={chain} address={props.event.contract_address} />
 			</Description>
@@ -25,7 +25,7 @@ export function IntentContractDeploymentV1AccountDescription(props: { event: Int
 	if (isHexEqual(props.address, props.event.contract_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="deployed">Deploy</Action>
+				<Action type="deploy">Deploy</Action>
 				<span>contract by</span>
 				<Account chain={chain} address={props.event.deployer_address} />
 			</Description>

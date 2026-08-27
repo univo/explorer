@@ -12,7 +12,7 @@ export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsName
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.account_address} />
-				<Action type="revoked">cleared</Action>
+				<Action type="revoke">cleared</Action>
 				<span>their primary ENS name</span>
 			</Description>
 		);
@@ -20,7 +20,7 @@ export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsName
 	return (
 		<Description>
 			<Account chain={chain} address={props.event.account_address} />
-			<Action type="registered">set</Action>
+			<Action type="register">set</Action>
 			<span>their primary ENS name to</span>
 			<span>{props.event.name}</span>
 		</Description>

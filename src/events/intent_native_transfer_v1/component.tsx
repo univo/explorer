@@ -15,7 +15,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 	if (isHexEqual(props.address, props.event.from_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="sent">Send</Action>
+				<Action type="send">Send</Action>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
@@ -28,7 +28,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 	if (isHexEqual(props.address, props.event.to_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="received">Receive</Action>
+				<Action type="receive">Receive</Action>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />

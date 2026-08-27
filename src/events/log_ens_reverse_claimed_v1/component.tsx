@@ -16,7 +16,7 @@ export function LogEnsReverseClaimedV1Description(props: { event: LogEnsReverseC
 	return (
 		<Description>
 			<Account chain={chain} address={props.event.account_address} />
-			<Action type="registered">claimed</Action>
+			<Action type="register">claimed</Action>
 			<span>an ENS reverse record</span>
 		</Description>
 	);

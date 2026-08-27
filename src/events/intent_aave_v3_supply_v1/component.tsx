@@ -15,7 +15,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		if (isHexEqual(props.event.supplier_address, props.event.on_behalf_of_address)) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="supplied">Supply</Action>
+					<Action type="supply">Supply</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 					<span>collateral with</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
@@ -25,7 +25,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="supplied">Supply</Action>
+				<Action type="supply">Supply</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>collateral to</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />
@@ -41,7 +41,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.supplier_address} />
-				<Action type="supplied">supplies</Action>
+				<Action type="supply">supplies</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>collateral to our position with</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
@@ -56,7 +56,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.supplier_address} />
-					<Action type="supplied">supplies</Action>
+					<Action type="supply">supplies</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 					<span>collateral</span>
 				</Description>
@@ -66,7 +66,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.supplier_address} />
-				<Action type="supplied">supplies</Action>
+				<Action type="supply">supplies</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>collateral to</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />
@@ -81,7 +81,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.supplier_address} />
-					<Action type="supplied">supplies</Action>
+					<Action type="supply">supplies</Action>
 					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 					<span>collateral with</span>
 					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
@@ -92,7 +92,7 @@ export function IntentAaveV3SupplyV1AccountDescription(props: { event: IntentAav
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.supplier_address} />
-				<Action type="supplied">supplies</Action>
+				<Action type="supply">supplies</Action>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>collateral to</span>
 				<Account chain={chain} address={props.event.on_behalf_of_address} />

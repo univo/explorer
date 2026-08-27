@@ -25,7 +25,7 @@ export async function IntentFwaWonV1AccountDescription(props: { event: IntentFwa
 	if (isHexEqual(props.address, props.event.purchaser_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="won">Claim</Action>
+				<Action type="win">Claim</Action>
 				<span>winnings of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>from</span>
@@ -40,7 +40,7 @@ export async function IntentFwaWonV1AccountDescription(props: { event: IntentFwa
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
-				<Action type="won">claims</Action>
+				<Action type="win">claims</Action>
 				<span>winnings of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 			</Description>
@@ -52,7 +52,7 @@ export async function IntentFwaWonV1AccountDescription(props: { event: IntentFwa
 	if (isHexEqual(props.address, props.event.depositor_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="lost">Lose</Action>
+				<Action type="lose">Lose</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>deposited into</span>
 				<Account chain={chain} address={FWA_ADDRESS} />

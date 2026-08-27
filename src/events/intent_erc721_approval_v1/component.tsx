@@ -19,7 +19,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 		if (revoked) {
 			return (
 				<Description success={props.event.success}>
-					<Action type="revoked">Revoke</Action>
+					<Action type="revoke">Revoke</Action>
 					<span>approval to transfer</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
@@ -28,7 +28,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 
 		return (
 			<Description success={props.event.success}>
-				<Action type="approved">Approve</Action>
+				<Action type="approve">Approve</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to transfer</span>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
@@ -43,7 +43,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
-					<Action type="revoked">revokes</Action>
+					<Action type="revoke">revokes</Action>
 					<span>approval to transfer</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
@@ -53,7 +53,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.caller_address} />
-				<Action type="approved">approves</Action>
+				<Action type="approve">approves</Action>
 				<Account chain={chain} address={props.event.spender_address} />
 				<span>to transfer</span>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
@@ -68,7 +68,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
-					<Action type="revoked">revokes</Action>
+					<Action type="revoke">revokes</Action>
 					<span>approval to transfer</span>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				</Description>
@@ -78,7 +78,7 @@ export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentE
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.caller_address} />
-				<Action type="approved">approves</Action>
+				<Action type="approve">approves</Action>
 				<span>this account to transfer</span>
 				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 			</Description>
