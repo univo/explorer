@@ -11,7 +11,7 @@ export function LogUniswapV3PoolCreatedV1Description(props: { event: LogUniswapV
 	return (
 		<Description>
 			<Account chain={chain} address={UNISWAP_V3_FACTORY_ADDRESS} />
-			<Action type="deployed">deployed</Action>
+			<Action type="deploy">deployed</Action>
 			<span>a new liquidity pool</span>
 			<Account chain={chain} address={props.event.pool_address} />
 			<span>for tokens</span>

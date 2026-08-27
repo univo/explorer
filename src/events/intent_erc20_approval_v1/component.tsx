@@ -1,88 +1,101 @@
-import { isAddressEqual } from "viem";
+import { zeroAddress } from "viem";
 
 import { parseId } from "@/helpers";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
+import { isHexEqual, unreachable } from "@/utils";
 import type { IntentErc20ApprovalV1 } from "./event";
-import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
-export function IntentErc20ApprovalV1Description(props: { event: IntentErc20ApprovalV1 }) {
-	const all = props.event.quantity.length >= 30;
+export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentErc20ApprovalV1; address: `0x${string}` }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
-	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
-	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
-	const revoked = isZeroQuantity || isSpenderNullAddress;
-
-	if (revoked) {
-		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Account chain={chain} address={props.event.owner_address} />
-				<Action type="revoked">revoked approval</Action>
-				<span>for</span>
-				<Account chain={chain} address={props.event.spender_address} />
-				<span>to spend any</span>
-				<Erc20 chain={chain} address={props.event.token_address} at={blockTimestamp} />
-			</Description>
-		);
-	}
-
-	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Account chain={chain} address={props.event.owner_address} />
-			<Action type="approved">approved</Action>
-			<Account chain={chain} address={props.event.spender_address} />
-			<span>to spend</span>
-			{all === true && <span>all</span>}
-			<Erc20 chain={chain} address={props.event.token_address} quantity={all ? undefined : props.event.quantity} at={blockTimestamp} />
-		</Description>
-	);
-}
-
-export function IntentErc20ApprovalV1AccountDescription(props: {
-	event: IntentErc20ApprovalV1;
-	address: `0x${string}`;
-}) {
 	const all = props.event.quantity.length >= 30;
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
-
 	const isZeroQuantity = BigInt(props.event.quantity) === 0n;
-	const isSpenderNullAddress = props.event.spender_address === "0x0000000000000000000000000000000000000000";
+	const isSpenderNullAddress = isHexEqual(props.event.spender_address, zeroAddress);
+
 	const revoked = isZeroQuantity || isSpenderNullAddress;
-	const type = revoked ? "revoked" : "approved";
 	const quantity = !revoked && !all ? props.event.quantity : undefined;
 
-	if (isAddressEqual(props.address, props.event.owner_address)) {
+	// (tx.from) owner_address
+
+	if (isHexEqual(props.address, props.event.owner_address)) {
+		if (revoked) {
+			return (
+				<Description success={props.event.success}>
+					<Action type="revoke">Revoke</Action>
+					<span>approval for</span>
+					<Account chain={chain} address={props.event.spender_address} />
+					<span>to spend any</span>
+					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
+				</Description>
+			);
+		}
+
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type={revoked ? "revoked" : "approved"}>{revoked ? "Revoked approval" : "Approved"}</Action>
-				{revoked === true && <span>for</span>}
+			<Description success={props.event.success}>
+				<Action type="approve">Approve</Action>
 				<Account chain={chain} address={props.event.spender_address} />
-				<span>{revoked ? "to spend any" : "to spend"}</span>
-				{revoked === false && all === true && <span>all</span>}
+				<span>to spend</span>
+				<span>{all === true ? "all" : "up to"}</span>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 			</Description>
 		);
 	}
 
-	if (isAddressEqual(props.address, props.event.spender_address)) {
+	// (tx.to) token_address
+
+	if (isHexEqual(props.address, props.event.token_address)) {
+		if (revoked) {
+			return (
+				<Description success={props.event.success}>
+					<Account chain={chain} address={props.event.owner_address} />
+					<Action type="revoke">revokes</Action>
+					<span>approval for</span>
+					<Account chain={chain} address={props.event.spender_address} />
+					<span>to spend any</span>
+					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
+				</Description>
+			);
+		}
+
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type={type}>{revoked ? "Approval revoked" : "Received approval"}</Action>
-				<span>{revoked ? "by" : "from"}</span>
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.owner_address} />
-				<span>{revoked ? "to spend any" : "to spend"}</span>
-				{revoked === false && all === true && <span>all</span>}
+				<Action type="approve">approves</Action>
+				<Account chain={chain} address={props.event.spender_address} />
+				<span>to spend</span>
+				<span>{all === true ? "all" : "up to"}</span>
 				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
 			</Description>
 		);
 	}
 
-	return <IntentErc20ApprovalV1Description event={props.event} />;
+	// spender_address
+
+	if (isHexEqual(props.address, props.event.spender_address)) {
+		if (revoked) {
+			return (
+				<Description success={props.event.success}>
+					<Account chain={chain} address={props.event.owner_address} />
+					<Action type="revoke">revokes</Action>
+					<span>approval for this account to spend any</span>
+					<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
+				</Description>
+			);
+		}
+
+		return (
+			<Description success={props.event.success}>
+				<Account chain={chain} address={props.event.owner_address} />
+				<Action type="approve">approves</Action>
+				<span>this account to spend</span>
+				<span>{all === true ? "all" : "up to"}</span>
+				<Erc20 chain={chain} address={props.event.token_address} quantity={quantity} at={blockTimestamp} />
+			</Description>
+		);
+	}
+
+	unreachable();
 }

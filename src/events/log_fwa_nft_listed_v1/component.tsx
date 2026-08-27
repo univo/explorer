@@ -15,7 +15,7 @@ export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1 }
 		<Description>
 			<Account chain={chain} address={props.event.depositor_address} />
 			<Erc721 chain={chain} address={props.event.collection_address} id={props.event.token_id} />
-			<Action type="deposited">listed</Action>
+			<Action type="deposit">listed</Action>
 			<span>on</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
 			<span>for a backing of</span>

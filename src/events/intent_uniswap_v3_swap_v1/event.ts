@@ -51,11 +51,7 @@ const MSG_SENDER = getAddress("0x0000000000000000000000000000000000000001");
 const ADDRESS_THIS = getAddress("0x0000000000000000000000000000000000000002");
 const ZERO_ADDRESS = getAddress("0x0000000000000000000000000000000000000000");
 
-export function decodeUniswapV3Swap(
-	routerAddress: `0x${string}`,
-	senderAddress: `0x${string}`,
-	data: `0x${string}`,
-): DecodedSwap | null {
+export function decodeUniswapV3Swap(routerAddress: `0x${string}`, senderAddress: `0x${string}`, data: `0x${string}`): DecodedSwap | null {
 	const selector = data.slice(0, 10);
 	const router = getAddress(routerAddress);
 	const sender = getAddress(senderAddress);
@@ -67,9 +63,7 @@ export function decodeUniswapV3Swap(
 
 		const decoded = decodeFunctionData({ abi: SWAP_ROUTER_ABI, data });
 
-		const recipient = isAddressEqual(decoded.args[0].recipient, ZERO_ADDRESS)
-			? router
-			: getAddress(decoded.args[0].recipient);
+		const recipient = isAddressEqual(decoded.args[0].recipient, ZERO_ADDRESS) ? router : getAddress(decoded.args[0].recipient);
 
 		if (decoded.functionName === "exactInputSingle") {
 			const params = decoded.args[0];
@@ -258,7 +252,7 @@ export const event = univo.event({
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				return {
 					id,
@@ -366,8 +360,8 @@ export async function getIntentUniswapV3SwapV1(ids: string[]) {
 			limit_quantity: result.limit_quantity,
 			router_address: getAddress(result.router_address),
 			sender_address: getAddress(result.sender_address),
-			recipient_address: getAddress(result.recipient_address),
 			token_in_address: getAddress(result.token_in_address),
+			recipient_address: getAddress(result.recipient_address),
 			token_out_address: getAddress(result.token_out_address),
 		};
 	});

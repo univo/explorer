@@ -1,19 +1,18 @@
 import { parseId } from "@/helpers";
-import type { IntentFwaWonV1 } from "./event";
-import { ETH_ADDRESS } from "@/constants";
-import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import type { IntentFwaWonV1 } from "./event";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import { ExclamationIcon } from "@/components/icons";
+import { isHexEqual, unreachable } from "@/utils";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v1/event";
 import { getLogFwaNftListedV1ByListingId } from "../log_fwa_nft_listed_v1/event";
 
-const FWA_TOKEN_ADDRESS = "0xa0Df17B5aC76ABaBA36E1450E2cbCd18A620C845";
+// Do we want to show the payouts?
+// Can we include the deposited address in the index for relisting the NFT?
 
-export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export async function IntentFwaWonV1AccountDescription(props: { event: IntentFwaWonV1; address: `0x${string}` }) {
+	const { chainId: chain } = parseId(props.event.id);
 
 	const listing = await getLogFwaNftListedV1ByListingId(props.event.listing_id);
 
@@ -21,66 +20,45 @@ export async function IntentFwaWonV1Description(props: { event: IntentFwaWonV1 }
 		throw new Error("Expected listing to be activated if it was included in a position settled event");
 	}
 
-	if (props.event.settlement_type === "kept") {
-		// We define the worth of the NFT as the initial backing provided because the payout
-		// amount for a win deducts fees that are returned to the protocol
+	// (tx.from) purchaser_address: the account claiming that won the deposited NFT
 
+	if (isHexEqual(props.address, props.event.purchaser_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Account chain={chain} address={props.event.purchaser_address} />
-				<Action type="won">won</Action>
+			<Description success={props.event.success}>
+				<Action type="win">Claim</Action>
+				<span>winnings of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
-				<span>worth</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
-			</Description>
-		);
-	}
-
-	if (props.event.settlement_type === "relisted") {
-		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Account chain={chain} address={props.event.purchaser_address} />
-				<Action type="won">won</Action>
-				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
-				<span>worth</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
-				<span>and immediately relisted it back in</span>
+				<span>from</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
 		);
 	}
 
-	if (props.event.settlement_type === "accepted_eth") {
+	// (tx.to) FWA_ADDRESS: the FWA contract
+
+	if (isHexEqual(props.address, FWA_ADDRESS)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
-				<Action type="won">won</Action>
+				<Action type="win">claims</Action>
+				<span>winnings of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
-				<span>but accepted the payout of</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={blockTimestamp} />
-				<span>instead</span>
 			</Description>
 		);
 	}
 
-	if (props.event.settlement_type === "accepted_fwa") {
+	// depositor_address: the account that lost their deposited NFT
+
+	if (isHexEqual(props.address, props.event.depositor_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Account chain={chain} address={props.event.purchaser_address} />
-				<Action type="won">won</Action>
+			<Description success={props.event.success}>
+				<Action type="lose">Lose</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
-				<span>but accepted the payout of</span>
-				<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={blockTimestamp} />
-				<span>instead</span>
+				<span>deposited into</span>
+				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
 		);
 	}
-}
 
-export function IntentFwaWonV1AccountDescription(props: { event: IntentFwaWonV1; address: `0x${string}` }) {
-	return <IntentFwaWonV1Description event={props.event} />;
+	unreachable();
 }

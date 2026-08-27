@@ -95,8 +95,8 @@ export const event = univo.event({
 							success: sql.raw(`excluded.${table.success.name}`),
 							quantity: sql.raw(`excluded.${table.quantity.name}`),
 							token_address: sql.raw(`excluded.${table.token_address.name}`),
-							withdrawer_address: sql.raw(`excluded.${table.withdrawer_address.name}`),
 							recipient_address: sql.raw(`excluded.${table.recipient_address.name}`),
+							withdrawer_address: sql.raw(`excluded.${table.withdrawer_address.name}`),
 						},
 					});
 			}
@@ -129,10 +129,10 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event_id: event.id, account: AAVE_V3_ETHEREUM_POOL_ADDRESS },
 				{ event_id: event.id, account: event.token_address },
-				{ event_id: event.id, account: event.withdrawer_address },
 				{ event_id: event.id, account: event.recipient_address },
+				{ event_id: event.id, account: event.withdrawer_address },
+				{ event_id: event.id, account: AAVE_V3_ETHEREUM_POOL_ADDRESS },
 			];
 		});
 	},

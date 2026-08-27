@@ -1,54 +1,36 @@
-import { isAddressEqual } from "viem";
-
 import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import type { IntentContractDeploymentV1 } from "./event";
-import { ExclamationIcon } from "@/components/icons";
+import { isHexEqual, unreachable } from "@/utils";
 import { Description } from "@/components/description";
+import type { IntentContractDeploymentV1 } from "./event";
 
-export function IntentContractDeploymentV1Description(props: { event: IntentContractDeploymentV1 }) {
+export function IntentContractDeploymentV1AccountDescription(props: { event: IntentContractDeploymentV1; address: `0x${string}` }) {
 	const chain = parseId(props.event.id).chainId;
 
-	return (
-		<Description>
-			{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-			<Account chain={chain} address={props.event.deployer_address} />
-			<Action type="deployed">deployed</Action>
-			<span>contract</span>
-			<Account chain={chain} address={props.event.contract_address} />
-		</Description>
-	);
-}
+	// (tx.from) deployer_address
 
-export function IntentContractDeploymentV1AccountDescription(props: {
-	event: IntentContractDeploymentV1;
-	address: `0x${string}`;
-}) {
-	const chain = parseId(props.event.id).chainId;
-
-	if (isAddressEqual(props.address, props.event.deployer_address)) {
+	if (isHexEqual(props.address, props.event.deployer_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<Action type="deployed">Deployed</Action>
+			<Description success={props.event.success}>
+				<Action type="deploy">Deploy</Action>
 				<span>contract</span>
 				<Account chain={chain} address={props.event.contract_address} />
 			</Description>
 		);
 	}
 
-	if (isAddressEqual(props.address, props.event.contract_address)) {
+	// contract_address
+
+	if (isHexEqual(props.address, props.event.contract_address)) {
 		return (
-			<Description>
-				{props.event.success === false && <ExclamationIcon className="size-4 text-red-500" />}
-				<span>Contract</span>
-				<Action type="deployed">deployed</Action>
-				<span>by</span>
+			<Description success={props.event.success}>
+				<Action type="deploy">Deploy</Action>
+				<span>contract by</span>
 				<Account chain={chain} address={props.event.deployer_address} />
 			</Description>
 		);
 	}
 
-	return <IntentContractDeploymentV1Description event={props.event} />;
+	unreachable();
 }

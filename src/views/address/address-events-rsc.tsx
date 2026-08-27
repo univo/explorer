@@ -8,7 +8,7 @@ import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
-import { EventDescriptionAccount } from "@/components/event-description-account";
+import { EventDescriptionIntent } from "@/components/event-description-intent";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
@@ -69,7 +69,7 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; startCur
 								<div className={clsx(showHeader === false && "not-first:border-t not-first:border-gray-200")}>
 									<EventTableRow id={event.id}>
 										<div className="px-3 py-1.5 overflow-hidden grow">
-											<EventDescriptionAccount address={props.address} event={event} />
+											<EventDescriptionIntent address={props.address} event={event} />
 										</div>
 
 										<div className="px-3 py-1.5 overflow-hidden shrink-0">
@@ -92,11 +92,7 @@ function HeaderTimestamp(props: { timestamp: Date }) {
 	const delta = Date.now() - props.timestamp.getTime();
 
 	if (delta > ONE_DAY) {
-		return (
-			<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">
-				{formatRelativeDate(props.timestamp)}
-			</p>
-		);
+		return <p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">{formatRelativeDate(props.timestamp)}</p>;
 	}
 }
 

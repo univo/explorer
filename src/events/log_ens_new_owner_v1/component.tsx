@@ -13,7 +13,7 @@ export function LogEnsNewOwnerV1Description(props: { event: LogEnsNewOwnerV1 }) 
 	if (revoked) {
 		return (
 			<Description>
-				<Action type="revoked">Revoked</Action>
+				<Action type="revoke">Revoked</Action>
 				<span>ownership of an ENS reverse record</span>
 			</Description>
 		);
@@ -22,7 +22,7 @@ export function LogEnsNewOwnerV1Description(props: { event: LogEnsNewOwnerV1 }) 
 	return (
 		<Description>
 			<Account chain={chain} address={props.event.owner_address} />
-			<Action type="received">received</Action>
+			<Action type="receive">received</Action>
 			<span>ownership of an ENS reverse record</span>
 		</Description>
 	);

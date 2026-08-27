@@ -133,8 +133,8 @@ export const event = univo.event({
 							success: sql.raw(`excluded.${table.success.name}`),
 							quantity: sql.raw(`excluded.${table.quantity.name}`),
 							owner_address: sql.raw(`excluded.${table.owner_address.name}`),
-							spender_address: sql.raw(`excluded.${table.spender_address.name}`),
 							token_address: sql.raw(`excluded.${table.token_address.name}`),
+							spender_address: sql.raw(`excluded.${table.spender_address.name}`),
 						},
 					});
 			}
@@ -168,8 +168,8 @@ univo.event({
 		return event.handler(block).flatMap((event) => {
 			return [
 				{ event_id: event.id, account: event.owner_address },
-				{ event_id: event.id, account: event.spender_address },
 				{ event_id: event.id, account: event.token_address },
+				{ event_id: event.id, account: event.spender_address },
 			];
 		});
 	},

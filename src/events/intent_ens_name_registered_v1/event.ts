@@ -67,10 +67,7 @@ export const event = univo.event({
 					} else {
 						return [];
 					}
-				} else if (
-					isHexEqual(tx.to, ENS_REGISTRAR_CONTROLLER_V3_ADDRESS) &&
-					tx.input.startsWith(toFunctionSelector(V3_REGISTER_ABI))
-				) {
+				} else if (isHexEqual(tx.to, ENS_REGISTRAR_CONTROLLER_V3_ADDRESS) && tx.input.startsWith(toFunctionSelector(V3_REGISTER_ABI))) {
 					abi = V3_REGISTER_ABI;
 				} else {
 					return [];
@@ -96,8 +93,8 @@ export const event = univo.event({
 					owner_address: getAddress(args[1]),
 
 					// Used for indexes
-					controller_address: getAddress(tx.to),
 					sender_address: getAddress(tx.from),
+					controller_address: getAddress(tx.to),
 				};
 			} catch {
 				return [];
@@ -153,9 +150,9 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event_id: event.id, account: event.controller_address },
-				{ event_id: event.id, account: event.sender_address },
 				{ event_id: event.id, account: event.owner_address },
+				{ event_id: event.id, account: event.sender_address },
+				{ event_id: event.id, account: event.controller_address },
 			];
 		});
 	},

@@ -1,27 +1,27 @@
 import clsx from "clsx";
-import type { ReactNode } from "react";
 
 type Action =
-	| "won"
-	| "sent"
-	| "received"
-	| "sold"
-	| "bought"
-	| "approved"
-	| "revoked"
-	| "minted"
-	| "burnt"
-	| "registered"
-	| "bridged"
-	| "deployed"
-	| "deposited"
-	| "supplied"
-	| "withdrew"
-	| "borrowed"
-	| "repaid"
-	| "swapped"
-	| "cancelled"
-	| "blacklisted";
+	| "win"
+	| "lose"
+	| "send"
+	| "receive"
+	| "sell"
+	| "buy"
+	| "approve"
+	| "revoke"
+	| "mint"
+	| "burn"
+	| "register"
+	| "bridge"
+	| "deploy"
+	| "deposit"
+	| "supply"
+	| "withdraw"
+	| "borrow"
+	| "repay"
+	| "swap"
+	| "cancel"
+	| "blacklist";
 
 type Color =
 	| "purple" //
@@ -34,32 +34,33 @@ type Color =
 	| "orange";
 
 const colors: Record<Action, Color> = {
-	sent: "gray",
-	received: "gray",
+	send: "gray",
+	receive: "gray",
 
-	approved: "green",
-	registered: "green",
+	buy: "green",
+	approve: "green",
+	register: "green",
 
-	burnt: "red",
-	cancelled: "red",
-	revoked: "red",
-	blacklisted: "red",
+	lose: "red",
+	burn: "red",
+	cancel: "red",
+	revoke: "red",
+	blacklist: "red",
 
-	won: "gold",
+	win: "gold",
 
-	bought: "purple",
-	minted: "purple",
-	deployed: "purple",
-	deposited: "purple",
-	supplied: "purple",
-	borrowed: "purple",
+	mint: "purple",
+	deploy: "purple",
+	deposit: "purple",
+	supply: "purple",
+	borrow: "purple",
 
-	swapped: "blue",
+	swap: "blue",
 
-	sold: "orange",
-	repaid: "orange",
-	bridged: "orange",
-	withdrew: "orange",
+	sell: "orange",
+	repay: "orange",
+	bridge: "orange",
+	withdraw: "orange",
 };
 
 const classes: Record<Color, string> = {
@@ -73,7 +74,7 @@ const classes: Record<Color, string> = {
 	purple: "bg-purple-100 text-purple-700",
 };
 
-export function Action(props: { type: Action; children: ReactNode }) {
+export function Action(props: { type: Action; children: string }) {
 	const color = colors[props.type];
 	const className = classes[color];
 

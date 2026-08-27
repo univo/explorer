@@ -58,6 +58,8 @@ async function getErc721Metadata(opts: { chain: Chain; address: `0x${string}`; i
 			],
 		});
 
+		// TODO: Probably makes sense to perform this `fetch` on the client
+
 		const res = await fetch(uri);
 
 		if (!res.ok || res.status < 200 || res.status >= 300) {

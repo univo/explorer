@@ -7,22 +7,23 @@ import { EtherscanIcon } from "@/components/icons";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
 import { getEventsForIds, type Event } from "@/db/events";
-import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
+import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
+import { EventDescriptionIntent } from "@/components/event-description-intent";
 import { defined, formatDateTime, formatNumber, isHexEqual, numberToHex, raise } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [tx, ids] = await Promise.all([
-		getTx({ block: props.block, tx: props.tx }),
+		getTx({ block: props.block, tx: props.tx }), //
 		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header tx={tx} />
-			<Events ids={ids} />
+			<Events tx={tx} ids={ids} />
 		</div>
 	);
 }
@@ -56,15 +57,13 @@ function EmptyState() {
 			<div className="flex flex-col gap-1 text-center max-w-xs">
 				<p className="text-gray-900 text-sm font-medium">No events found</p>
 
-				<p className="text-gray-500 text-sm">
-					If this is a mistake, contact the founder and describe the event you expected to see
-				</p>
+				<p className="text-gray-500 text-sm">If this is a mistake, contact the founder and describe the event you expected to see</p>
 			</div>
 		</div>
 	);
 }
 
-async function Events(props: { ids: string[] }) {
+async function Events(props: { tx: Tx; ids: string[] }) {
 	if (props.ids.length === 0) {
 		return <EmptyState />;
 	}
@@ -129,7 +128,7 @@ async function Events(props: { ids: string[] }) {
 
 						{defined(intent) && (
 							<ErrorBoundary fallback={null}>
-								<EventDescription event={intent} />
+								<EventDescriptionIntent event={intent} address={props.tx.from} />
 							</ErrorBoundary>
 						)}
 					</div>
@@ -159,7 +158,7 @@ function Activity(props: { events: Event[] }) {
 						<div className="flex">
 							<span className="text-sm text-gray-700 min-w-12">({formatNumber(logIndex)})</span>
 
-							<EventDescription event={event} />
+							<EventDescriptionLog event={event} />
 						</div>
 					</ErrorBoundary>
 				);
