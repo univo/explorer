@@ -3,9 +3,7 @@ import type { RpcTransaction, RpcTransactionReceipt } from "viem";
 import { rpc } from "@/helpers";
 import { numberToHex } from "@/utils";
 
-export type Tx = RpcTransaction<false> & {
-	blockTimestamp: `0x${string}`;
-};
+export type Tx = RpcTransaction<false>;
 
 export async function getTxByPosition(opts: { block: number; tx: number }) {
 	const tx = await rpc({
