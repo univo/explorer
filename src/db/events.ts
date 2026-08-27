@@ -34,6 +34,10 @@ import { getLogEnsNameForAddrChangedV1 } from "@/events/log_ens_name_for_addr_ch
 export type Event = Awaited<ReturnType<typeof getEventsForIds>>[number];
 
 export async function getEventsForIds(ids: string[]) {
+	if (ids.length === 0) {
+		return [];
+	}
+
 	const start = Date.now();
 
 	const events = await Promise.all([

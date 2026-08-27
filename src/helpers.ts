@@ -12,7 +12,9 @@ export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	// We have to use the `in` syntax here to prevent univo returning an 'incomplete_error'. This occurs
 	// because we attempt to read a property on an object that doesn't exist. Which the impl detail of univo
 	// uses to determine if new properties of the block are being accessed during historical indexes.
-	if ("status" in receipt) return receipt.status === "0x1";
+	if ("status" in receipt) {
+		return receipt.status === "0x1";
+	}
 
 	// At the moment we default to this being true. This could be misleading for events before the upgrade if
 	// they actually did fail (there might be a different way to detect this?). The reasoning is that data
@@ -32,7 +34,9 @@ export function getTxReceiptForLog(receipts: RpcTransactionReceipt[], log: RpcTr
 
 	const receipt = receipts.find((receipt) => receipt.transactionIndex === log.transactionIndex);
 
-	if (receipt === undefined) throw new Error("Expected receipt to be defined");
+	if (receipt === undefined) {
+		throw new Error("Expected receipt to be defined");
+	}
 
 	return receipt;
 }
@@ -125,7 +129,10 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
  */
 export function getInternalChain(external_chain: `0x${string}` | keyof typeof CHAINS) {
 	if (typeof external_chain === "string") {
-		return CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] || raise(`Unsupported chain id ${hexToNumber(external_chain)}`);
+		return (
+			CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] || //
+			raise(`Unsupported chain id ${hexToNumber(external_chain)}`)
+		);
 	}
 
 	return CHAINS[external_chain];
@@ -160,8 +167,17 @@ export async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; pa
 		headers: { "Content-Type": "application/json" },
 	});
 
-	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");
-	const json: any = await res.json().catch((cause) => raise("Unable to parse json response", { cause }));
+	if (!res.ok || res.status < 200 || res.status >= 300) {
+		throw new Error("Failed to get response from ETHEREUM_URL");
+	}
+
+	const json: any = await res.json().catch((cause) => {
+		throw new Error("Unable to parse json response", { cause });
+	});
+
+	if (json.error) {
+		throw new Error(json.error.message);
+	}
 
 	return json.result;
 }

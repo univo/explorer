@@ -1,155 +1,156 @@
 import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { getTx, type Tx } from "@/state/tx";
-import { TRANSACTION_EVENT } from "@/constants";
+import { Account } from "@/components/account";
 import { EtherscanIcon } from "@/components/icons";
+import { getTokenPrice } from "@/components/erc-20";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
 import { getEventsForIds, type Event } from "@/db/events";
+import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
+import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
 import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
 import { EventDescriptionIntent } from "@/components/event-description-intent";
-import { defined, formatDateTime, formatNumber, isHexEqual, numberToHex, raise } from "@/utils";
+import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [tx, ids] = await Promise.all([
-		getTx({ block: props.block, tx: props.tx }), //
+		getTxByPosition({ block: props.block, tx: props.tx }), //
 		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
-	return (
-		<div className="h-full flex flex-col bg-white">
-			<Header tx={tx} />
-			<Events tx={tx} ids={ids} />
-		</div>
-	);
-}
+	const timestamp = new Date(hexToNumber(tx.blockTimestamp) * 1000);
 
-function Header(props: { tx: Tx }) {
-	return (
-		<div>
-			<div className="bg-white p-3 flex items-center justify-between gap-3">
-				<div className="flex items-center gap-2 overflow-hidden">
-					<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
-					<p className="text-gray-500 text-base select-all truncate">{props.tx.hash}</p>
-				</div>
+	const [events, receipt, price] = await Promise.all([
+		getEventsForIds(ids),
+		getTxReceiptByHash(tx.hash), //
+		getTokenPrice({ chain: 1, token: ETH_ADDRESS, timestamp }),
+	]);
 
-				<div className="flex items-center gap-2">
-					<IconButton href={`https://etherscan.io/tx/${props.tx.hash}`}>
-						<EtherscanIcon className="shrink-0 size-4" />
-					</IconButton>
-
-					<CloseViewButton />
-				</div>
-			</div>
-		</div>
-	);
-}
-
-// Note that border-t on this element ensures that when no events show the header has a bottom border
-
-function EmptyState() {
-	return (
-		<div className="border-t flex items-center justify-center h-128">
-			<div className="flex flex-col gap-1 text-center max-w-xs">
-				<p className="text-gray-900 text-sm font-medium">No events found</p>
-
-				<p className="text-gray-500 text-sm">If this is a mistake, contact the founder and describe the event you expected to see</p>
-			</div>
-		</div>
-	);
-}
-
-async function Events(props: { tx: Tx; ids: string[] }) {
-	if (props.ids.length === 0) {
-		return <EmptyState />;
+	if (price === null) {
+		throw new Error("Expected ETH price");
 	}
 
-	const events = await getEventsForIds(props.ids);
+	const feeEth = (Number(receipt.effectiveGasPrice) * Number(receipt.cumulativeGasUsed)) / 10 ** 18;
+	const formattedFeeEth = formatNumber(feeEth, feeEth < 1 ? { maximumSignificantDigits: 2 } : { maximumFractionDigits: 2 });
+
+	const feeUsd = Number(price.price_usd) * feeEth;
+	const formattedFeeUsd = formatNumber(feeUsd, { style: "currency", currency: "USD", currencyDisplay: "narrowSymbol" });
 
 	const ordered = getOrderedEvents(events, "reverse");
 
-	const event = events[0] || raise("Expected at least one event");
-	const parsed = parseId(event.id);
-
-	const timestamp = new Date(parsed.blockTimestamp * 1000);
-
 	const intent = events.find((event) => {
-		const { logIndex } = parseId(event.id);
-		return isHexEqual(numberToHex(logIndex), TRANSACTION_EVENT);
+		return isHexEqual(numberToHex(parseId(event.id).logIndex), TRANSACTION_EVENT);
 	});
 
 	return (
-		<div className="relative overflow-scroll">
-			<div className="px-3 pb-3">
-				<div className="flex flex-col items-start gap-1">
-					<div className="flex items-start justify-between">
-						<p className="min-w-24 text-sm text-gray-700">Status</p>
-
-						<p className={clsx("text-sm capitalize", event.success ? "text-green-500" : "text-red-500")}>
-							{event.success ? "Success" : "Failed"}
-						</p>
+		<div className="h-full flex flex-col bg-white">
+			<div>
+				<div className="bg-white p-3 flex items-center justify-between gap-3">
+					<div className="flex items-center gap-2 overflow-hidden">
+						<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
+						<p className="text-gray-500 text-base select-all truncate">{tx.hash}</p>
 					</div>
 
-					<div className="flex items-start justify-between">
-						<p className="min-w-24 text-sm text-gray-700">Timestamp</p>
+					<div className="flex items-center gap-2">
+						<IconButton href={`https://etherscan.io/tx/${tx.hash}`}>
+							<EtherscanIcon className="shrink-0 size-4" />
+						</IconButton>
 
-						<div className="flex items-center space-x-1 text-sm text-gray-900">
-							<p className="flex-none">{formatDateTime(timestamp)}</p>
-
-							<p className="flex-initial truncate">
-								(<RelativeTimestamp timestamp={timestamp} />)
-							</p>
-						</div>
-					</div>
-
-					<div className="flex items-start justify-between">
-						<p className="min-w-24 text-sm text-gray-700">Block #</p>
-
-						<AddViewButton
-							view={String(parsed.blockNumber)}
-							className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-200 data-[hovered=true]:bg-gray-200 select-none"
-						>
-							{formatNumber(parsed.blockNumber)}
-						</AddViewButton>
-					</div>
-
-					<div className="flex items-start justify-between">
-						<p className="min-w-24 text-sm text-gray-700">Tx Index</p>
-
-						<p className="text-sm text-gray-900">{formatNumber(parsed.txIndex)}</p>
-					</div>
-
-					<div className="flex items-start justify-between">
-						<p className="min-w-24 text-sm text-gray-700">Action</p>
-
-						{defined(intent) && (
-							<ErrorBoundary fallback={null}>
-								<EventDescriptionIntent event={intent} address={props.tx.from} />
-							</ErrorBoundary>
-						)}
+						<CloseViewButton />
 					</div>
 				</div>
 			</div>
 
-			<div className="sticky top-0 border-t pb-3"></div>
+			<div className="relative overflow-scroll">
+				<div className="px-3 pb-3">
+					<div className="flex flex-col items-start gap-1">
+						<div className="flex items-start justify-between">
+							<p className="min-w-24 text-sm text-gray-700">Status</p>
 
-			<Activity events={ordered} />
+							<p className={clsx("text-sm capitalize", receipt.status === "0x1" ? "text-green-500" : "text-red-500")}>
+								{receipt.status === "0x1" ? "Success" : "Failed"}
+							</p>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<p className="min-w-24 text-sm text-gray-700">Timestamp</p>
+
+							<div className="flex items-center space-x-1 text-sm text-gray-900">
+								<p className="flex-none">{formatDateTime(timestamp)}</p>
+
+								<p className="flex-initial truncate">
+									(<RelativeTimestamp timestamp={timestamp} />)
+								</p>
+							</div>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<p className="min-w-24 text-sm text-gray-700">Block #</p>
+
+							<AddViewButton
+								view={String(hexToNumber(tx.blockNumber))}
+								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-200 data-[hovered=true]:bg-gray-200 select-none"
+							>
+								{formatNumber(hexToNumber(tx.blockNumber))}
+							</AddViewButton>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<p className="min-w-24 text-sm text-gray-700">Tx Fee</p>
+
+							<div className="text-sm text-gray-900 flex items-center gap-1">
+								<span>{formattedFeeEth} ETH</span>
+								<span className="text-gray-700">({formattedFeeUsd})</span>
+							</div>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<p className="min-w-24 text-sm text-gray-700">By</p>
+
+							<p className="text-sm text-gray-900">
+								<Account chain={1} address={tx.from} />
+							</p>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<p className="min-w-24 text-sm text-gray-700">Intent</p>
+
+							{defined(intent) && (
+								<ErrorBoundary fallback={null}>
+									<EventDescriptionIntent event={intent} address={tx.from} />
+								</ErrorBoundary>
+							)}
+						</div>
+					</div>
+				</div>
+
+				<div className="sticky top-0 border-t"></div>
+
+				<Events events={ordered} />
+			</div>
 		</div>
 	);
 }
 
-function Activity(props: { events: Event[] }) {
+function Events(props: { events: Event[] }) {
+	if (props.events.length === 0) {
+		return (
+			<div className="p-3 flex items-center justify-center">
+				<p className="text-gray-900 text-sm font-medium">No events found</p>
+			</div>
+		);
+	}
+
 	const logs = props.events.filter((event) => {
-		const { logIndex } = parseId(event.id);
-		return !isHexEqual(numberToHex(logIndex), TRANSACTION_EVENT);
+		return !isHexEqual(numberToHex(parseId(event.id).logIndex), TRANSACTION_EVENT);
 	});
 
 	return (
-		<div className="px-3 pb-3 flex flex-col gap-1">
+		<div className="p-3 flex flex-col gap-1">
 			{logs.map((event) => {
 				const { logIndex } = parseId(event.id);
 

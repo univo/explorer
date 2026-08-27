@@ -165,7 +165,7 @@ interface TokenPriceRow extends Record<string, unknown> {
 
 type TokenPriceInput = { chain: Chain; token: `0x${string}`; timestamp: Date };
 
-const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInput[]) => {
+export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInput[]) => {
 	if (inputs.length === 0) {
 		return [];
 	}
