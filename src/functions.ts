@@ -2,7 +2,6 @@ import * as v from "valibot";
 import { createServerFn } from "@tanstack/react-start";
 
 import { rpc } from "./helpers";
-import { getTx } from "./state/tx";
 import { hexToNumber } from "./utils";
 import { TxHashSchema } from "./schema";
 
@@ -12,14 +11,6 @@ import { TxHashSchema } from "./schema";
 // check or moved to a static API route.
 
 // https://tanstack.com/start/v0/docs/framework/react/guide/server-functions#function-id-generation-for-production-build
-
-export const sf_getTxHash = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ block_number: v.number(), tx_index: v.number() }))
-	.handler(async ({ data }) => {
-		const tx = await getTx({ block: data.block_number, tx: data.tx_index });
-
-		return tx.hash;
-	});
 
 export const sf_getTxPosition = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ tx_hash: TxHashSchema }))

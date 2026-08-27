@@ -3,8 +3,9 @@ import { env } from "cloudflare:workers";
 import { Storage } from "@storagesdk/core";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
+import { rpc } from "@/helpers";
+import { retry } from "@/utils";
 import { r2 } from "./storagesdk";
-import { raise, retry } from "@/utils";
 
 const metadataStorage = new Storage({
 	adapter: r2({
@@ -33,17 +34,4 @@ async function getBlock(block: { chain: `0x${string}`; number: string }) {
 		eth_getBlockByNumber: eth_getBlockByNumber as RpcBlock<"latest", true>,
 		eth_getBlockReceipts: eth_getBlockReceipts as RpcTransactionReceipt[],
 	};
-}
-
-async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; params: any[] }) {
-	const res = await fetch(process.env.ETHEREUM_URL, {
-		method: "POST",
-		body: JSON.stringify(opts),
-		headers: { "Content-Type": "application/json" },
-	});
-
-	if (!res.ok) throw new Error("Failed to get response from ETHEREUM_URL");
-	const json: any = await res.json().catch((cause) => raise("Unable to parse json response", { cause }));
-
-	return json.result;
 }
