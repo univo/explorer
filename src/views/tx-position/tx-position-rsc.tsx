@@ -100,7 +100,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">Fee</p>
+							<p className="min-w-24 text-sm text-gray-700">Tx Fee</p>
 
 							<div className="text-sm text-gray-900 flex items-center gap-1">
 								<span>{formattedFeeEth} ETH</span>

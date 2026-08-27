@@ -44,7 +44,7 @@ function Header() {
 					<p>Status</p>
 					<p>Timestamp</p>
 					<p>Block #</p>
-					<p>Fee</p>
+					<p>Tx Fee</p>
 					<p>By</p>
 					<p>Intent</p>
 				</div>
