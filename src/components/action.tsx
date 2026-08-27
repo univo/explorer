@@ -1,5 +1,7 @@
 import clsx from "clsx";
 
+// TODO: Fix verbs
+
 type Action =
 	| "won"
 	| "lost"
@@ -37,6 +39,7 @@ const colors: Record<Action, Color> = {
 	sent: "gray",
 	received: "gray",
 
+	bought: "green",
 	approved: "green",
 	registered: "green",
 
@@ -48,7 +51,6 @@ const colors: Record<Action, Color> = {
 
 	won: "gold",
 
-	bought: "purple",
 	minted: "purple",
 	deployed: "purple",
 	deposited: "purple",
