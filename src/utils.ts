@@ -158,16 +158,18 @@ export function numberToHex(number: number | bigint) {
 	return `0x${number.toString(16)}` as const;
 }
 
-export function isHexEqual(a: `0x${string}` | undefined, b: `0x${string}` | undefined) {
-	if (a === undefined) {
+export function isHexEqual(...values: (`0x${string}` | undefined)[]) {
+	if (values.length < 2) {
 		return false;
 	}
 
-	if (b === undefined) {
-		return false;
+	if (values.some((value) => value === undefined)) {
+		return false; // Handles the isHexEqual(undefined, undefined)
 	}
 
-	return a.toLowerCase() === b.toLowerCase();
+	const first = values[0]?.toLowerCase();
+
+	return values.every((value) => value?.toLowerCase() === first);
 }
 
 export type MakeNonNullable<T, K extends keyof T> = Omit<T, K> & {
