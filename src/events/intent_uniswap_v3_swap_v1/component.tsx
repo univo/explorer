@@ -112,7 +112,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 			return (
 				<Description>
 					<Account chain={chain} address={props.event.sender_address} />
-					<Action type="sold">swaps</Action>
+					<Action type="swapped">swaps</Action>
 					<Amounts event={props.event} />
 					<span>via</span>
 					<Account chain={chain} address={props.event.router_address} />
@@ -123,7 +123,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="sold">swaps</Action>
+				<Action type="swapped">swaps</Action>
 				<Amounts event={props.event} />
 				<span>via</span>
 				<Account chain={chain} address={props.event.router_address} />
