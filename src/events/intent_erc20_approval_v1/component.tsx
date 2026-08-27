@@ -51,7 +51,7 @@ export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentEr
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.owner_address} />
-					<Action type="approved">revokes</Action>
+					<Action type="revoked">revokes</Action>
 					<span>approval for</span>
 					<Account chain={chain} address={props.event.spender_address} />
 					<span>to spend any</span>
