@@ -1,6 +1,6 @@
-import { isAddressEqual, zeroAddress } from "viem";
-
 import { parseId } from "@/helpers";
+import { isHexEqual } from "@/utils";
+import { ZERO_ADDRESS } from "@/constants";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import type { LogEnsNewOwnerV1 } from "./event";
@@ -8,7 +8,7 @@ import { Description } from "@/components/description";
 
 export function LogEnsNewOwnerV1Description(props: { event: LogEnsNewOwnerV1 }) {
 	const chain = parseId(props.event.id).chainId;
-	const revoked = isAddressEqual(props.event.owner_address, zeroAddress);
+	const revoked = isHexEqual(props.event.owner_address, ZERO_ADDRESS);
 
 	if (revoked) {
 		return (
