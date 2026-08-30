@@ -13,19 +13,20 @@ export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 		getEnsNameForAccount({ chain: props.chain, address: props.address }),
 	]);
 
+	const address = getAddress(props.address);
 	const name = account ? getAccountName(account) : ens;
 	const showAddress = account === null && ens === null;
 
 	return (
-		<Hoverable id={`${props.chain}:${props.address}`}>
+		<Hoverable id={`${props.chain}:${address}`}>
 			<AddViewButton
-				view={props.address}
+				view={address}
 				className={clsx(
 					"select-none cursor-pointer truncate", //
 					showAddress && "inline-block align-top w-18 lg:w-24",
 				)}
 			>
-				{showAddress ? getAddress(props.address) : name}
+				{showAddress ? address : name}
 			</AddViewButton>
 		</Hoverable>
 	);
