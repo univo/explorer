@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Account } from "@/components/account";
+import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
 import { getTokenPrice } from "@/components/erc-20";
 import { getOrderedEvents, parseId } from "@/helpers";
@@ -15,7 +16,6 @@ import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
 import { EventDescriptionIntent } from "@/components/event-description-intent";
 import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
-import { getBlockByNumber } from "@/state/block";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
@@ -81,12 +81,12 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						<div className="flex items-start justify-between">
 							<p className="min-w-24 text-sm text-gray-700">Timestamp</p>
 
-							<div className="flex items-center space-x-1 text-sm text-gray-900">
-								<p className="flex-none">{formatDateTime(timestamp)}</p>
+							<div className="flex items-center gap-1 text-sm text-gray-900">
+								<span className="flex-none">{formatDateTime(timestamp)}</span>
 
-								<p className="flex-initial truncate">
+								<span className="flex-initial truncate text-gray-500">
 									(<RelativeTimestamp timestamp={timestamp} />)
-								</p>
+								</span>
 							</div>
 						</div>
 
@@ -106,7 +106,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 
 							<div className="text-sm text-gray-900 flex items-center gap-1">
 								<span>{formattedFeeEth} ETH</span>
-								<span className="text-gray-700">({formattedFeeUsd})</span>
+								<span className="text-gray-500">({formattedFeeUsd})</span>
 							</div>
 						</div>
 
