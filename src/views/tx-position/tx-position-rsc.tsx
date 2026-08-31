@@ -36,7 +36,8 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 		throw new Error("Expected ETH price");
 	}
 
-	const feeEth = (Number(receipt.effectiveGasPrice) * Number(receipt.cumulativeGasUsed)) / 10 ** 18;
+	const feeWei = BigInt(receipt.effectiveGasPrice) * BigInt(receipt.gasUsed);
+	const feeEth = Number(feeWei) / 10 ** 18;
 	const formattedFeeEth = formatNumber(feeEth, feeEth < 1 ? { maximumSignificantDigits: 2 } : { maximumFractionDigits: 2 });
 
 	const feeUsd = Number(price.price_usd) * feeEth;
