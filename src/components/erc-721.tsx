@@ -62,7 +62,10 @@ async function getErc721Metadata(opts: { chain: Chain; address: `0x${string}`; i
 			],
 		});
 
-		// TODO: Probably makes sense to perform this `fetch` on the client
+		// TODO
+		// Probably makes sense to perform this `fetch` on the client. This would allow us to show UI faster
+		// and let the browser handle caching. The only issue preventing this is CORS. Eventually we should
+		// implement image transformations with our own endpoint so CORS won't be an issue
 
 		const res = await fetch(uri);
 
