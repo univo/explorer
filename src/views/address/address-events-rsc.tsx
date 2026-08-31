@@ -6,9 +6,9 @@ import { getEventsForIds } from "@/db/events";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForAccount } from "@/indexes/account-v3";
+import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
-import { EventDescriptionAccount } from "@/components/event-description-account";
 import { StopCursorContainer, VirtualisationContainer } from "@/views/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
@@ -69,7 +69,7 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; startCur
 								<div className={clsx(showHeader === false && "not-first:border-t not-first:border-gray-200")}>
 									<EventTableRow id={event.id}>
 										<div className="px-3 py-1.5 overflow-hidden grow">
-											<EventDescriptionAccount address={props.address} event={event} />
+											<EventDescription event={event} address={props.address} />
 										</div>
 
 										<div className="px-3 py-1.5 overflow-hidden shrink-0">

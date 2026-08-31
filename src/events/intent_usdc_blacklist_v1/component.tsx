@@ -10,7 +10,7 @@ import { Description } from "@/components/description";
 
 const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
-export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUsdcBlacklistV1; address: `0x${string}` }) {
+export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUsdcBlacklistV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// (tx.from) not actually covered in this event and should be added

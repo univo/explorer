@@ -6,7 +6,7 @@ import type { LogErc20ApprovalV1 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
-export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1 }) {
+export function LogErc20ApprovalV1Description(props: { event: LogErc20ApprovalV1; address: `0x${string}` | undefined }) {
 	const all = props.event.quantity.length >= 30;
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 

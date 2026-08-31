@@ -5,7 +5,10 @@ import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import type { IntentContractDeploymentV1 } from "./event";
 
-export function IntentContractDeploymentV1AccountDescription(props: { event: IntentContractDeploymentV1; address: `0x${string}` }) {
+export function IntentContractDeploymentV1AccountDescription(props: {
+	event: IntentContractDeploymentV1;
+	address: `0x${string}` | undefined;
+}) {
 	const chain = parseId(props.event.id).chainId;
 
 	// (tx.from) deployer_address

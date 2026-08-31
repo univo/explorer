@@ -1,4 +1,17 @@
 import type { Event } from "@/db/events";
+
+import { LogEnsNewOwnerV1Description } from "@/events/log_ens_new_owner_v1/component";
+import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
+import { LogErc20TransferV1Description } from "@/events/log_erc20_transfer_v1/component";
+import { LogErc20ApprovalV1Description } from "@/events/log_erc20_approval_v1/component";
+import { LogUniswapV3SwapV1Description } from "@/events/log_uniswap_v3_swap_v1/component";
+import { LogErc721TransferV1Description } from "@/events/log_erc721_transfer_v1/component";
+import { LogErc721ApprovalV1Description } from "@/events/log_erc721_approval_v1/component";
+import { LogFwaNftAllocatedV1Description } from "@/events/log_fwa_nft_allocated_v1/component";
+import { LogEnsReverseClaimedV1Description } from "@/events/log_ens_reverse_claimed_v1/component";
+import { LogUniswapV3PoolCreatedV1Description } from "@/events/log_uniswap_v3_pool_created_v1/component";
+import { LogEnsNameForAddrChangedV1Description } from "@/events/log_ens_name_for_addr_changed_v1/component";
+
 import { IntentIdmV1AccountDescription } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1AccountDescription } from "@/events/intent_fwa_won_v1/component";
 import { IntentFwaWonV2AccountDescription } from "@/events/intent_fwa_won_v2/component";
@@ -20,14 +33,9 @@ import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tor
 import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
-// THINKING
+export function EventDescription(props: { event: Event; address: `0x${string}` | undefined }) {
+	// Intents
 
-// This distinction between account description and objective description doesn't make sense anymore. It
-// should be a single component that accepts an event and an optional address. There is always an
-// object description regardless if it's a log or an intent. We just supply an address as a hint
-// to the perspective we are viewing a given event
-
-export function EventDescriptionAccount(props: { event: Event; address: `0x${string}` }) {
 	if (props.event.tag === "intent_native_transfer_v1") {
 		return <IntentNativeTransferV1AccountDescription event={props.event} address={props.address} />;
 	}
@@ -106,5 +114,51 @@ export function EventDescriptionAccount(props: { event: Event; address: `0x${str
 
 	if (props.event.tag === "intent_uniswap_v3_mint_v1") {
 		return <IntentUniswapV3MintV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	// Log events
+
+	if (props.event.tag === "log_ens_new_owner_v1") {
+		return <LogEnsNewOwnerV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_ens_reverse_claimed_v1") {
+		return <LogEnsReverseClaimedV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_ens_name_for_addr_changed_v1") {
+		return <LogEnsNameForAddrChangedV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_erc20_approval_v1") {
+		return <LogErc20ApprovalV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_erc20_transfer_v1") {
+		return <LogErc20TransferV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_erc721_transfer_v1") {
+		return <LogErc721TransferV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_erc721_approval_v1") {
+		return <LogErc721ApprovalV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_fwa_nft_listed_v1") {
+		return <LogFwaNftListedV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_fwa_nft_allocated_v1") {
+		return <LogFwaNftAllocatedV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_uniswap_v3_pool_created_v1") {
+		return <LogUniswapV3PoolCreatedV1Description event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "log_uniswap_v3_swap_v1") {
+		return <LogUniswapV3SwapV1Description event={props.event} address={props.address} />;
 	}
 }

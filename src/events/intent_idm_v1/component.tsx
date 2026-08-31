@@ -5,7 +5,7 @@ import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 
-export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; address: `0x${string}` }) {
+export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 
 	// (tx.from) from_address

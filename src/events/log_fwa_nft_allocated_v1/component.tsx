@@ -7,7 +7,7 @@ import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v1/event";
 import { getFwaListingById } from "@/events/log_fwa_nft_listed_v1/event";
 
-export async function LogFwaNftAllocatedV1Description(props: { event: LogFwaNftAllocatedV1 }) {
+export async function LogFwaNftAllocatedV1Description(props: { event: LogFwaNftAllocatedV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain } = parseId(props.event.id);
 
 	const listing = await getFwaListingById(props.event.listing_id);

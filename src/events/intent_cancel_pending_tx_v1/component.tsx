@@ -5,7 +5,7 @@ import { formatNumber, isHexEqual } from "@/utils";
 import { Description } from "@/components/description";
 import type { IntentCancelPendingTxV1 } from "./event";
 
-export function IntentCancelPendingTxV1AccountDescription(props: { event: IntentCancelPendingTxV1; address: `0x${string}` }) {
+export function IntentCancelPendingTxV1AccountDescription(props: { event: IntentCancelPendingTxV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain } = parseId(props.event.id);
 
 	// from_address: account cancelling the transaction

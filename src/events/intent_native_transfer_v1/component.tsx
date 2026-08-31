@@ -7,7 +7,7 @@ import { Account } from "@/components/account";
 import type { IntentNativeTransferV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentNativeTransferV1AccountDescription(props: { event: IntentNativeTransferV1; address: `0x${string}` }) {
+export function IntentNativeTransferV1AccountDescription(props: { event: IntentNativeTransferV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// (tx.from) from_address

@@ -8,7 +8,7 @@ import type { LogFwaNftListedV1 } from "./event";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v1/event";
 
-export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1 }) {
+export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	return (

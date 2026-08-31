@@ -7,7 +7,7 @@ import { Account } from "@/components/account";
 import type { IntentErc20ApprovalV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentErc20ApprovalV1; address: `0x${string}` }) {
+export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentErc20ApprovalV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	const all = props.event.quantity.length >= 30;

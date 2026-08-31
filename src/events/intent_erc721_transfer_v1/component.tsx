@@ -7,7 +7,7 @@ import { Account } from "@/components/account";
 import type { IntentErc721TransferV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentErc721TransferV1AccountDescription(props: { event: IntentErc721TransferV1; address: `0x${string}` }) {
+export function IntentErc721TransferV1AccountDescription(props: { event: IntentErc721TransferV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 
 	// (tx.from) caller_address: the account that initiated the transfer

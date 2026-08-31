@@ -8,7 +8,7 @@ import { isHexEqual } from "@/utils";
 import type { IntentUniswapV3SwapV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUniswapV3SwapV1; address: `0x${string}` }) {
+export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUniswapV3SwapV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain } = parseId(props.event.id);
 
 	// (tx.from) sender_address: the account performing the swap

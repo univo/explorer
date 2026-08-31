@@ -6,7 +6,7 @@ import { Account } from "@/components/account";
 import type { IntentErc20TransferV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentErc20TransferV1AccountDescription(props: { event: IntentErc20TransferV1; address: `0x${string}` }) {
+export function IntentErc20TransferV1AccountDescription(props: { event: IntentErc20TransferV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// (tx.from) from_address

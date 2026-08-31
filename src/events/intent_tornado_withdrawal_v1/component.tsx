@@ -7,7 +7,10 @@ import { isHexEqual } from "@/utils";
 import { Description } from "@/components/description";
 import type { IntentTornadoWithdrawalV1 } from "./event";
 
-export function IntentTornadoWithdrawalV1AccountDescription(props: { event: IntentTornadoWithdrawalV1; address: `0x${string}` }) {
+export function IntentTornadoWithdrawalV1AccountDescription(props: {
+	event: IntentTornadoWithdrawalV1;
+	address: `0x${string}` | undefined;
+}) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	const pool = getTornadoCashPool(props.event.pool_address);

@@ -8,7 +8,7 @@ import type { LogErc20TransferV1 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
-export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1 }) {
+export function LogErc20TransferV1Description(props: { event: LogErc20TransferV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
