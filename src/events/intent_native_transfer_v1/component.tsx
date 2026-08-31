@@ -1,9 +1,9 @@
 import { parseId } from "@/helpers";
+import { isHexEqual } from "@/utils";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { isHexEqual, unreachable } from "@/utils";
 import type { IntentNativeTransferV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -36,5 +36,13 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 		);
 	}
 
-	unreachable();
+	return (
+		<Description success={props.event.success}>
+			<Account chain={chain} address={props.event.from_address} />
+			<Action type="send">sends</Action>
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
+			<span>to</span>
+			<Account chain={chain} address={props.event.to_address} />
+		</Description>
+	);
 }

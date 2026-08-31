@@ -13,14 +13,16 @@ const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUsdcBlacklistV1; address: `0x${string}` }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
+	// (tx.from) not actually covered in this event and should be added
+
 	// account_address
 
 	if (isHexEqual(props.address, props.event.account_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="blacklist">Blacklist</Action>
-				<span>account from transferring any</span>
 				<Erc20 chain={chain} address={USDC_ADDRESS} at={blockTimestamp} />
+				<Action type="blacklist">blacklists</Action>
+				<span>this account from transferring any tokens</span>
 			</Description>
 		);
 	}
@@ -37,12 +39,9 @@ export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUs
 		);
 	}
 
-	// (tx.from) not actually supported at the event level, usually some authorized EOA, we should
-	// probably have included this in the event data.
-
 	return (
 		<Description success={props.event.success}>
-			<Account chain={chain} address={USDC_ADDRESS} />
+			<Erc20 chain={chain} address={USDC_ADDRESS} at={blockTimestamp} />
 			<Action type="blacklist">blacklists</Action>
 			<Account chain={chain} address={props.event.account_address} />
 			<span>from transferring any tokens</span>

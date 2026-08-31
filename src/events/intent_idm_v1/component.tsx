@@ -1,8 +1,8 @@
 import { parseId } from "@/helpers";
+import { isHexEqual } from "@/utils";
 import type { IntentIdmV1 } from "./event";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { isHexEqual, unreachable } from "@/utils";
 import { Description } from "@/components/description";
 
 export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; address: `0x${string}` }) {
@@ -34,5 +34,14 @@ export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; addre
 		);
 	}
 
-	unreachable();
+	return (
+		<Description success={props.event.success}>
+			<Action type="send">Send</Action>
+			<span>message from</span>
+			<Account chain={chain} address={props.event.from_address} />
+			<span>to</span>
+			<Account chain={chain} address={props.event.to_address} />
+			<span>"{props.event.message}"</span>
+		</Description>
+	);
 }

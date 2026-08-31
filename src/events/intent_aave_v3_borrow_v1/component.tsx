@@ -1,8 +1,8 @@
 import { parseId } from "@/helpers";
+import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { isHexEqual, unreachable } from "@/utils";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3BorrowV1 } from "./event";
 
@@ -26,7 +26,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 		}
 
 		// However, it's also possible to borrow against somebody else's position. The agreement can
-		// be enforced on or offchain and allows the borrower to access uncollateralized liquidity
+		// be enforced onchain or offchain and allows the borrower to access uncollateralized liquidity
 
 		return (
 			<Description success={props.event.success}>
@@ -83,21 +83,7 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 		);
 	}
 
-	// token_address: the asset borrowed/lent
-
-	if (isHexEqual(props.address, props.event.token_address)) {
-		if (isHexEqual(props.event.borrower_address, props.event.on_behalf_of_address)) {
-			return (
-				<Description success={props.event.success}>
-					<Account chain={chain} address={props.event.borrower_address} />
-					<Action type="borrow">borrows</Action>
-					<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
-					<span>from</span>
-					<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
-				</Description>
-			);
-		}
-
+	if (isHexEqual(props.event.borrower_address, props.event.on_behalf_of_address)) {
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.borrower_address} />
@@ -105,11 +91,19 @@ export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAav
 				<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
 				<span>from</span>
 				<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
-				<span>against the debt position owned by</span>
-				<Account chain={chain} address={props.event.on_behalf_of_address} />
 			</Description>
 		);
 	}
 
-	unreachable();
+	return (
+		<Description success={props.event.success}>
+			<Account chain={chain} address={props.event.borrower_address} />
+			<Action type="borrow">borrows</Action>
+			<Erc20 chain={chain} address={props.event.token_address} quantity={props.event.quantity} at={blockTimestamp} />
+			<span>from</span>
+			<Account chain={chain} address={AAVE_V3_ETHEREUM_POOL_ADDRESS} />
+			<span>against the debt position owned by</span>
+			<Account chain={chain} address={props.event.on_behalf_of_address} />
+		</Description>
+	);
 }
