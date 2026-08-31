@@ -155,7 +155,7 @@ export async function getLogFwaNftListedV1(ids: string[]) {
 	});
 }
 
-export const getLogFwaNftListedV1ByListingId = defineLoader(async (ids: readonly `0x${string}`[]) => {
+export const getFwaListingById = defineLoader(async (ids: readonly `0x${string}`[]) => {
 	if (ids.length === 0) {
 		return [];
 	}

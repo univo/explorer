@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
 import { test_client, test_getBlock } from "@/tests/utils";
-import { event, getLogFwaNftListedV1, getLogFwaNftListedV1ByListingId } from "./event";
+import { event, getLogFwaNftListedV1, getFwaListingById } from "./event";
 
 test.concurrent("log_fwa_nft_listed_v1 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25643505 });
@@ -168,7 +168,7 @@ test.concurrent("log_fwa_nft_listed_v1 deletes, writes, and reads from storage",
 		]
 	`);
 
-	const listing = await getLogFwaNftListedV1ByListingId("0x017cb6");
+	const listing = await getFwaListingById("0x017cb6");
 
 	expect(listing).toMatchObject({
 		backing_eth: "0x02b4c77783338000",
