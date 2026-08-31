@@ -2,6 +2,7 @@ import { logger } from "@/utils";
 import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
 import { getIntentFwaWonV1 } from "@/events/intent_fwa_won_v1/event";
 import { getIntentFwaWonV2 } from "@/events/intent_fwa_won_v2/event";
+import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
 import { getLogEnsNewOwnerV1 } from "@/events/log_ens_new_owner_v1/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getLogFwaNftAllocatedV1 } from "@/events/log_fwa_nft_allocated_v1/event";
@@ -58,6 +59,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentIdmV1(ids),
 		getIntentFwaWonV1(ids),
 		getIntentFwaWonV2(ids),
+		getIntentFwaAcquireV1(ids),
 		getIntentAaveV3RepayV1(ids),
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV1(ids),

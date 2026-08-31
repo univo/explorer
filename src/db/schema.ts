@@ -20,6 +20,7 @@ export { table as log_ens_name_for_addr_changed_v1 } from "@/events/log_ens_name
 export { table as intent_idm_v1 } from "@/events/intent_idm_v1/table";
 export { table as intent_fwa_won_v1 } from "@/events/intent_fwa_won_v1/table";
 export { table as intent_fwa_won_v2 } from "@/events/intent_fwa_won_v2/table";
+export { table as intent_fwa_acquire_v1 } from "@/events/intent_fwa_acquire_v1/table";
 export { table as intent_fwa_deposited_v1 } from "@/events/intent_fwa_deposited_v1/table";
 export { table as intent_aave_v3_repay_v1 } from "@/events/intent_aave_v3_repay_v1/table";
 export { table as intent_usdc_blacklist_v1 } from "@/events/intent_usdc_blacklist_v1/table";

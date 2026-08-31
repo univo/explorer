@@ -68,6 +68,7 @@ export const TABLES = {
 	intent_erc721_approval_v1: 48,
 	intent_fwa_won_v2: 49,
 	log_fwa_nft_allocated_v1: 50,
+	intent_fwa_acquire_v1: 51,
 };
 
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
