@@ -1,0 +1,1984 @@
+{
+  "id": "69c85c42-4eec-486b-8f33-ba2c5ccdb411",
+  "prevId": "8f9521b7-3f7c-4d07-8f92-690015371f5d",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.cache_ens": {
+      "name": "cache_ens",
+      "schema": "",
+      "columns": {
+        "chain": {
+          "name": "chain",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ens": {
+          "name": "ens",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "cache_ens_chain_address_pk": {
+          "name": "cache_ens_chain_address_pk",
+          "columns": [
+            "chain",
+            "address"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.index_account_v3": {
+      "name": "index_account_v3",
+      "schema": "",
+      "columns": {
+        "account": {
+          "name": "account",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "index_account_v3_account_event_id_pk": {
+          "name": "index_account_v3_account_event_id_pk",
+          "columns": [
+            "account",
+            "event_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.index_block_number_tx_index_v4": {
+      "name": "index_block_number_tx_index_v4",
+      "schema": "",
+      "columns": {
+        "chain": {
+          "name": "chain",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tx_index": {
+          "name": "tx_index",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "log_index": {
+          "name": "log_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "table_id": {
+          "name": "table_id",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_number": {
+          "name": "block_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_timestamp": {
+          "name": "block_timestamp",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "index_block_number_tx_index_v4_chain_block_number_tx_index_log_index_table_id_pk": {
+          "name": "index_block_number_tx_index_v4_chain_block_number_tx_index_log_index_table_id_pk",
+          "columns": [
+            "chain",
+            "block_number",
+            "tx_index",
+            "log_index",
+            "table_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_aave_v3_borrow_v1": {
+      "name": "intent_aave_v3_borrow_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "referral_code": {
+          "name": "referral_code",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "borrower_address": {
+          "name": "borrower_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "interest_rate_mode": {
+          "name": "interest_rate_mode",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "on_behalf_of_address": {
+          "name": "on_behalf_of_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_aave_v3_repay_v1": {
+      "name": "intent_aave_v3_repay_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "repayer_address": {
+          "name": "repayer_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "on_behalf_of_address": {
+          "name": "on_behalf_of_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_aave_v3_supply_v1": {
+      "name": "intent_aave_v3_supply_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "referral_code": {
+          "name": "referral_code",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "supplier_address": {
+          "name": "supplier_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "on_behalf_of_address": {
+          "name": "on_behalf_of_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_aave_v3_withdraw_v1": {
+      "name": "intent_aave_v3_withdraw_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_address": {
+          "name": "recipient_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "withdrawer_address": {
+          "name": "withdrawer_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_cancel_pending_tx_v1": {
+      "name": "intent_cancel_pending_tx_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nonce": {
+          "name": "nonce",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_contract_deployment_v1": {
+      "name": "intent_contract_deployment_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contract_address": {
+          "name": "contract_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deployer_address": {
+          "name": "deployer_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_ens_name_registered_v1": {
+      "name": "intent_ens_name_registered_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_address": {
+          "name": "owner_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_erc20_approval_v1": {
+      "name": "intent_erc20_approval_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_address": {
+          "name": "owner_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spender_address": {
+          "name": "spender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_erc20_transfer_v1": {
+      "name": "intent_erc20_transfer_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_erc721_approval_v1": {
+      "name": "intent_erc721_approval_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "caller_address": {
+          "name": "caller_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spender_address": {
+          "name": "spender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_erc721_transfer_v1": {
+      "name": "intent_erc721_transfer_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "caller_address": {
+          "name": "caller_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_fwa_acquire_v1": {
+      "name": "intent_fwa_acquire_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "submitted_eth": {
+          "name": "submitted_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acquisition_count": {
+          "name": "acquisition_count",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "purchaser_address": {
+          "name": "purchaser_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_fwa_deposited_v1": {
+      "name": "intent_fwa_deposited_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "backing_eth": {
+          "name": "backing_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "depositor_address": {
+          "name": "depositor_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collection_address": {
+          "name": "collection_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_fwa_won_v1": {
+      "name": "intent_fwa_won_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_out": {
+          "name": "token_out",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "listing_id": {
+          "name": "listing_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payout_eth": {
+          "name": "payout_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "retained_eth": {
+          "name": "retained_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "settlement_type": {
+          "name": "settlement_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "purchaser_address": {
+          "name": "purchaser_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "depositor_address": {
+          "name": "depositor_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_fwa_won_v2": {
+      "name": "intent_fwa_won_v2",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_out": {
+          "name": "token_out",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "listing_id": {
+          "name": "listing_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payout_eth": {
+          "name": "payout_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "retained_eth": {
+          "name": "retained_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "settlement_type": {
+          "name": "settlement_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "purchaser_address": {
+          "name": "purchaser_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_idm_v1": {
+      "name": "intent_idm_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_native_transfer_v1": {
+      "name": "intent_native_transfer_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_tornado_withdrawal_v1": {
+      "name": "intent_tornado_withdrawal_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "fee": {
+          "name": "fee",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool_address": {
+          "name": "pool_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relayer_address": {
+          "name": "relayer_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_address": {
+          "name": "recipient_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_uniswap_v3_mint_v1": {
+      "name": "intent_uniswap_v3_mint_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee": {
+          "name": "fee",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sender_address": {
+          "name": "sender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool_address": {
+          "name": "pool_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_0_address": {
+          "name": "token_0_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_1_address": {
+          "name": "token_1_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_address": {
+          "name": "recipient_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_0_desired_quantity": {
+          "name": "token_0_desired_quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_1_desired_quantity": {
+          "name": "token_1_desired_quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_0_minimum_quantity": {
+          "name": "token_0_minimum_quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_1_minimum_quantity": {
+          "name": "token_1_minimum_quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_uniswap_v3_swap_v1": {
+      "name": "intent_uniswap_v3_swap_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "swap_type": {
+          "name": "swap_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exact_quantity": {
+          "name": "exact_quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "limit_quantity": {
+          "name": "limit_quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router_address": {
+          "name": "router_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sender_address": {
+          "name": "sender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_address": {
+          "name": "recipient_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_in_address": {
+          "name": "token_in_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_out_address": {
+          "name": "token_out_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.intent_usdc_blacklist_v1": {
+      "name": "intent_usdc_blacklist_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_address": {
+          "name": "account_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_ens_name_for_addr_changed_v1": {
+      "name": "log_ens_name_for_addr_changed_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_address": {
+          "name": "account_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_ens_new_owner_v1": {
+      "name": "log_ens_new_owner_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_address": {
+          "name": "owner_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "log_ens_new_owner_v1_label_idx": {
+          "name": "log_ens_new_owner_v1_label_idx",
+          "columns": [
+            {
+              "expression": "label",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_ens_reverse_claimed_v1": {
+      "name": "log_ens_reverse_claimed_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "node": {
+          "name": "node",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_address": {
+          "name": "account_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_erc20_approval_v1": {
+      "name": "log_erc20_approval_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_address": {
+          "name": "owner_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spender_address": {
+          "name": "spender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_erc20_transfer_v1": {
+      "name": "log_erc20_transfer_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_erc721_approval_v1": {
+      "name": "log_erc721_approval_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_address": {
+          "name": "owner_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spender_address": {
+          "name": "spender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_erc721_transfer_v1": {
+      "name": "log_erc721_transfer_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_address": {
+          "name": "to_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_address": {
+          "name": "from_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_address": {
+          "name": "token_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_fwa_nft_allocated_v1": {
+      "name": "log_fwa_nft_allocated_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "listing_id": {
+          "name": "listing_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "backing_eth": {
+          "name": "backing_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "purchaser_address": {
+          "name": "purchaser_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "depositor_address": {
+          "name": "depositor_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_fwa_nft_listed_v1": {
+      "name": "log_fwa_nft_listed_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "slot": {
+          "name": "slot",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weight": {
+          "name": "weight",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "listing_id": {
+          "name": "listing_id",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "backing_eth": {
+          "name": "backing_eth",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "depositor_address": {
+          "name": "depositor_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collection_address": {
+          "name": "collection_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "log_fwa_nft_listed_v1_listing_id_idx": {
+          "name": "log_fwa_nft_listed_v1_listing_id_idx",
+          "columns": [
+            {
+              "expression": "listing_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_uniswap_v3_pool_created_v1": {
+      "name": "log_uniswap_v3_pool_created_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "fee": {
+          "name": "fee",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool_address": {
+          "name": "pool_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_0_address": {
+          "name": "token_0_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_1_address": {
+          "name": "token_1_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tick_spacing": {
+          "name": "tick_spacing",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "log_uniswap_v3_pool_created_v1_pool_address_idx": {
+          "name": "log_uniswap_v3_pool_created_v1_pool_address_idx",
+          "columns": [
+            {
+              "expression": "pool_address",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "log_uniswap_v3_pool_created_v1_token_0_address_idx": {
+          "name": "log_uniswap_v3_pool_created_v1_token_0_address_idx",
+          "columns": [
+            {
+              "expression": "token_0_address",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "log_uniswap_v3_pool_created_v1_token_1_address_idx": {
+          "name": "log_uniswap_v3_pool_created_v1_token_1_address_idx",
+          "columns": [
+            {
+              "expression": "token_1_address",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.log_uniswap_v3_swap_v1": {
+      "name": "log_uniswap_v3_swap_v1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bytea",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tick": {
+          "name": "tick",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool_address": {
+          "name": "pool_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sender_address": {
+          "name": "sender_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_address": {
+          "name": "recipient_address",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount_0": {
+          "name": "amount_0",
+          "type": "numeric(78, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount_1": {
+          "name": "amount_1",
+          "type": "numeric(78, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liquidity": {
+          "name": "liquidity",
+          "type": "numeric(39, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sqrt_price_x96": {
+          "name": "sqrt_price_x96",
+          "type": "numeric(49, 0)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "log_uniswap_v3_swap_v1_pool_address_idx": {
+          "name": "log_uniswap_v3_swap_v1_pool_address_idx",
+          "columns": [
+            {
+              "expression": "pool_address",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.state_accounts_v3": {
+      "name": "state_accounts_v3",
+      "schema": "",
+      "columns": {
+        "chain": {
+          "name": "chain",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_contract": {
+          "name": "is_contract",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "owner_project": {
+          "name": "owner_project",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contract_name": {
+          "name": "contract_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "code_compiler": {
+          "name": "code_compiler",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "code_language": {
+          "name": "code_language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deployment_tx": {
+          "name": "deployment_tx",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deployer_block": {
+          "name": "deployer_block",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usage_category": {
+          "name": "usage_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deployer_address": {
+          "name": "deployer_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source_code_verified": {
+          "name": "source_code_verified",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc_type": {
+          "name": "erc_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc721.name": {
+          "name": "erc721.name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc721.symbol": {
+          "name": "erc721.symbol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc20.name": {
+          "name": "erc20.name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc20.image": {
+          "name": "erc20.image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc20.symbol": {
+          "name": "erc20.symbol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erc20.decimals": {
+          "name": "erc20.decimals",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "state_accounts_v3_chain_address_pk": {
+          "name": "state_accounts_v3_chain_address_pk",
+          "columns": [
+            "chain",
+            "address"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
