@@ -7,8 +7,11 @@ import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { index_account_v3 } from "@/indexes/account-v3";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v1/event";
+
+// TODO: Remove request_id and random_word
 
 export interface LogFwaNftAllocatedV1 {
 	tag: "log_fwa_nft_allocated_v1";
@@ -64,9 +67,9 @@ export const event = univo.event({
 
 					return {
 						id,
+						backing_eth: numberToHex(args.value),
 						request_id: numberToHex(args.requestId),
 						listing_id: numberToHex(args.listingId),
-						backing_eth: numberToHex(args.value),
 						random_word: numberToHex(args.randomWord),
 						purchaser_address: getAddress(args.purchaser),
 						depositor_address: getAddress(args.depositor),
@@ -119,6 +122,27 @@ univo.event({
 	storage: index_block_number_tx_index_v4,
 	id: "log_fwa_nft_allocated_v1_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
+});
+
+// We do something slightly unique with this log event. FWA is designed in a way that it doesn't directly
+// react to external events, and rather runs at its own pace. This is correct and good system design, but
+// slightly complicates indexing. Users submit their intent to win (acquire) a deposit. The result of this
+// bet isn't actually fulfilled until a later transaction where FWA processes those acquisitions as capacity
+// from Chainlink's VRF becomes available. We want this result to show for both the winner (purchaser_address)
+// and the loser (depositor_address). This is why we also add the log event to our account index.
+
+univo.event({
+	filters: event.filters,
+	storage: index_account_v3,
+	id: "log_fwa_nft_allocated_v1_index_account_v3",
+	handler: (block) => {
+		return event.handler(block).flatMap((event) => {
+			return [
+				{ event_id: event.id, account: event.depositor_address },
+				{ event_id: event.id, account: event.purchaser_address },
+			];
+		});
+	},
 });
 
 export async function getLogFwaNftAllocatedV1(ids: string[]) {
