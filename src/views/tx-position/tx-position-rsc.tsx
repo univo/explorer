@@ -14,7 +14,7 @@ import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
 import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
-import { EventDescriptionIntent } from "@/components/event-description-intent";
+import { EventDescriptionAccount } from "@/components/event-description-account";
 import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
@@ -123,7 +123,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 
 							{defined(intent) && (
 								<ErrorBoundary fallback={null}>
-									<EventDescriptionIntent event={intent} address={tx.from} />
+									<EventDescriptionAccount event={intent} address={tx.from} />
 								</ErrorBoundary>
 							)}
 						</div>
