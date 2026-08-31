@@ -4,7 +4,7 @@ import { parseId } from "@/helpers";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
-import { isHexEqual, unreachable } from "@/utils";
+import { isHexEqual } from "@/utils";
 import type { IntentUniswapV3SwapV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -77,21 +77,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 		);
 	}
 
-	// token_in_address
-
-	if (isHexEqual(props.address, props.event.token_in_address)) {
-		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
-			return (
-				<Description>
-					<Account chain={chain} address={props.event.sender_address} />
-					<Action type="swap">swaps</Action>
-					<Amounts event={props.event} />
-					<span>via</span>
-					<Account chain={chain} address={props.event.router_address} />
-				</Description>
-			);
-		}
-
+	if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 		return (
 			<Description>
 				<Account chain={chain} address={props.event.sender_address} />
@@ -99,41 +85,21 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 				<Amounts event={props.event} />
 				<span>via</span>
 				<Account chain={chain} address={props.event.router_address} />
-				<span>with recipient</span>
-				<Account chain={chain} address={props.event.recipient_address} />
 			</Description>
 		);
 	}
 
-	// token_out_address
-
-	if (isHexEqual(props.address, props.event.token_out_address)) {
-		if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
-			return (
-				<Description>
-					<Account chain={chain} address={props.event.sender_address} />
-					<Action type="swap">swaps</Action>
-					<Amounts event={props.event} />
-					<span>via</span>
-					<Account chain={chain} address={props.event.router_address} />
-				</Description>
-			);
-		}
-
-		return (
-			<Description>
-				<Account chain={chain} address={props.event.sender_address} />
-				<Action type="swap">swaps</Action>
-				<Amounts event={props.event} />
-				<span>via</span>
-				<Account chain={chain} address={props.event.router_address} />
-				<span>with recipient</span>
-				<Account chain={chain} address={props.event.recipient_address} />
-			</Description>
-		);
-	}
-
-	unreachable();
+	return (
+		<Description>
+			<Account chain={chain} address={props.event.sender_address} />
+			<Action type="swap">swaps</Action>
+			<Amounts event={props.event} />
+			<span>via</span>
+			<Account chain={chain} address={props.event.router_address} />
+			<span>with recipient</span>
+			<Account chain={chain} address={props.event.recipient_address} />
+		</Description>
+	);
 }
 
 function Amounts(props: { event: IntentUniswapV3SwapV1 }) {

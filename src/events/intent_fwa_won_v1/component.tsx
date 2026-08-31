@@ -1,15 +1,12 @@
 import { parseId } from "@/helpers";
+import { isHexEqual } from "@/utils";
 import { Action } from "@/components/action";
 import type { IntentFwaWonV1 } from "./event";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import { isHexEqual, unreachable } from "@/utils";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v1/event";
 import { getLogFwaNftListedV1ByListingId } from "../log_fwa_nft_listed_v1/event";
-
-// Do we want to show the payouts?
-// Can we include the deposited address in the index for relisting the NFT?
 
 export async function IntentFwaWonV1AccountDescription(props: { event: IntentFwaWonV1; address: `0x${string}` }) {
 	const { chainId: chain } = parseId(props.event.id);
@@ -60,5 +57,14 @@ export async function IntentFwaWonV1AccountDescription(props: { event: IntentFwa
 		);
 	}
 
-	unreachable();
+	return (
+		<Description success={props.event.success}>
+			<Account chain={chain} address={props.event.purchaser_address} />
+			<Action type="win">claims</Action>
+			<span>winnings of</span>
+			<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
+			<span>from</span>
+			<Account chain={chain} address={FWA_ADDRESS} />
+		</Description>
+	);
 }

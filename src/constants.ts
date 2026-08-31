@@ -1,5 +1,3 @@
-import { getAddress } from "viem";
-
 export type Chain = 1;
 
 // Responsible for mapping the full set of supported chain ids with our internal chain id representation.
@@ -84,4 +82,4 @@ export const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 // Null address utility
 
-export const ZERO_ADDRESS = getAddress("0x0000000000000000000000000000000000000000");
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";

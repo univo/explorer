@@ -1,10 +1,9 @@
-import { zeroAddress } from "viem";
-
 import { parseId } from "@/helpers";
+import { isHexEqual } from "@/utils";
+import { ZERO_ADDRESS } from "@/constants";
 import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import { isHexEqual, unreachable } from "@/utils";
 import type { IntentErc721TransferV1 } from "./event";
 import { Description } from "@/components/description";
 
@@ -19,7 +18,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 		if (isHexEqual(props.event.caller_address, props.event.from_address)) {
 			// Owner is burning the NFT if sending it to the null address
 
-			if (isHexEqual(props.event.to_address, zeroAddress)) {
+			if (isHexEqual(props.event.to_address, ZERO_ADDRESS)) {
 				return (
 					<Description success={props.event.success}>
 						<Action type="burn">Burn</Action>
@@ -40,7 +39,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 
 		// Caller is not the owner but initiated the transfer
 
-		if (isHexEqual(props.event.to_address, zeroAddress)) {
+		if (isHexEqual(props.event.to_address, ZERO_ADDRESS)) {
 			return (
 				<Description success={props.event.success}>
 					<Action type="burn">Burn</Action>
@@ -69,7 +68,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 	if (isHexEqual(props.address, props.event.from_address)) {
 		// We are burning the NFT if sending it to the null address
 
-		if (isHexEqual(props.event.to_address, zeroAddress)) {
+		if (isHexEqual(props.event.to_address, ZERO_ADDRESS)) {
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.caller_address} />
@@ -95,7 +94,7 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 	if (isHexEqual(props.address, props.event.to_address)) {
 		// When minting a fresh NFT it received from the null address
 
-		if (isHexEqual(props.event.from_address, zeroAddress)) {
+		if (isHexEqual(props.event.from_address, ZERO_ADDRESS)) {
 			return (
 				<Description success={props.event.success}>
 					<Action type="receive">Receive</Action>
@@ -117,71 +116,67 @@ export function IntentErc721TransferV1AccountDescription(props: { event: IntentE
 
 	// (tx.to) token_address: the NFT contract interacted with
 
-	if (isHexEqual(props.address, props.event.token_address)) {
-		// Caller is the owner
+	// Caller is the owner
 
-		if (isHexEqual(props.event.caller_address, props.event.from_address)) {
-			// Owner is burning the NFT is sending to the null address
+	if (isHexEqual(props.event.caller_address, props.event.from_address)) {
+		// Owner is burning the NFT is sending to the null address
 
-			if (isHexEqual(props.event.to_address, zeroAddress)) {
-				return (
-					<Description success={props.event.success}>
-						<Account chain={chain} address={props.event.from_address} />
-						<Action type="burn">burns</Action>
-						<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
-					</Description>
-				);
-			}
-
+		if (isHexEqual(props.event.to_address, ZERO_ADDRESS)) {
 			return (
 				<Description success={props.event.success}>
 					<Account chain={chain} address={props.event.from_address} />
-					<Action type="send">sends</Action>
-					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
-					<span>to</span>
-					<Account chain={chain} address={props.event.to_address} />
-				</Description>
-			);
-		}
-
-		// Caller is not the owner but initiated the transfer
-
-		if (isHexEqual(props.event.to_address, zeroAddress)) {
-			return (
-				<Description success={props.event.success}>
-					<Account chain={chain} address={props.event.caller_address} />
 					<Action type="burn">burns</Action>
 					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
-					<span>owned by</span>
-					<Account chain={chain} address={props.event.from_address} />
-				</Description>
-			);
-		}
-
-		if (isHexEqual(props.event.from_address, zeroAddress)) {
-			return (
-				<Description success={props.event.success}>
-					<Account chain={chain} address={props.event.caller_address} />
-					<Action type="mint">mints</Action>
-					<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
-					<span>to</span>
-					<Account chain={chain} address={props.event.to_address} />
 				</Description>
 			);
 		}
 
 		return (
 			<Description success={props.event.success}>
-				<Account chain={chain} address={props.event.caller_address} />
-				<Action type="send">transfers</Action>
-				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
-				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
+				<Action type="send">sends</Action>
+				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
 		);
 	}
 
-	unreachable();
+	// Caller is not the owner but initiated the transfer
+
+	if (isHexEqual(props.event.to_address, ZERO_ADDRESS)) {
+		return (
+			<Description success={props.event.success}>
+				<Account chain={chain} address={props.event.caller_address} />
+				<Action type="burn">burns</Action>
+				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
+				<span>owned by</span>
+				<Account chain={chain} address={props.event.from_address} />
+			</Description>
+		);
+	}
+
+	if (isHexEqual(props.event.from_address, ZERO_ADDRESS)) {
+		return (
+			<Description success={props.event.success}>
+				<Account chain={chain} address={props.event.caller_address} />
+				<Action type="mint">mints</Action>
+				<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
+				<span>to</span>
+				<Account chain={chain} address={props.event.to_address} />
+			</Description>
+		);
+	}
+
+	return (
+		<Description success={props.event.success}>
+			<Account chain={chain} address={props.event.caller_address} />
+			<Action type="send">transfers</Action>
+			<Erc721 chain={chain} address={props.event.token_address} id={props.event.token_id} />
+			<span>from</span>
+			<Account chain={chain} address={props.event.from_address} />
+			<span>to</span>
+			<Account chain={chain} address={props.event.to_address} />
+		</Description>
+	);
 }
