@@ -13,6 +13,7 @@ import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
+import { CopyButton } from "@/components/copy-button";
 
 export function AddressClient(props: { address: `0x${string}` }) {
 	return (
@@ -40,6 +41,8 @@ function HeaderFallback(props: { address: `0x${string}` }) {
 	return (
 		<div className="bg-white px-3 py-3 flex items-center justify-end border-b border-gray-200">
 			<div className="flex items-center gap-2">
+				<CopyButton value={props.address} />
+
 				<IconButton href={`https://etherscan.io/address/${props.address}`}>
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>

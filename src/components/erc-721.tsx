@@ -1,3 +1,5 @@
+import { getAddress } from "viem";
+
 import { Img } from "./img";
 import { Account } from "./account";
 import { getClient } from "@/clients";
@@ -9,18 +11,20 @@ import { Description } from "./description";
 import { getErc721Account } from "@/state/account";
 
 export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: `0x${string}` }) {
+	const address = getAddress(props.address);
+
 	const [account, metadata] = await Promise.all([
-		getErc721Account({ chain: props.chain, address: props.address }), //
-		getErc721Metadata({ chain: props.chain, address: props.address, id: props.id }),
+		getErc721Account({ chain: props.chain, address }), //
+		getErc721Metadata({ chain: props.chain, address, id: props.id }),
 	]);
 
 	if (account === null) {
-		return <Account chain={props.chain} address={props.address} />;
+		return <Account chain={props.chain} address={address} />;
 	}
 
 	return (
-		<AddViewButton view={props.address} className="select-none touch-none cursor-pointer">
-			<Hoverable id={`${props.chain}:${props.address}:${props.id}`}>
+		<AddViewButton view={address} className="select-none touch-none cursor-pointer">
+			<Hoverable id={`${props.chain}:${address}:${props.id}`}>
 				<Description>
 					{defined(metadata) && <Image src={metadata.image} />}
 					<span>{account["erc721.name"]}</span>
