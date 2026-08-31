@@ -1,6 +1,7 @@
 import type { Event } from "@/db/events";
 import { IntentIdmV1AccountDescription } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1AccountDescription } from "@/events/intent_fwa_won_v1/component";
+import { IntentFwaWonV2AccountDescription } from "@/events/intent_fwa_won_v2/component";
 import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
@@ -70,6 +71,10 @@ export function EventDescriptionIntent(props: { address: `0x${string}`; event: E
 
 	if (props.event.tag === "intent_fwa_won_v1") {
 		return <IntentFwaWonV1AccountDescription event={props.event} address={props.address} />;
+	}
+
+	if (props.event.tag === "intent_fwa_won_v2") {
+		return <IntentFwaWonV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_aave_v3_supply_v1") {
