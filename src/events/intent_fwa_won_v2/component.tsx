@@ -8,6 +8,8 @@ import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v1/event";
 import { getFwaListingById } from "../log_fwa_nft_listed_v1/event";
 
+// TODO: Show settlement type
+
 export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwaWonV2; address: `0x${string}` | undefined }) {
 	const { chainId: chain } = parseId(props.event.id);
 
@@ -23,9 +25,8 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 		return (
 			<Description success={props.event.success}>
 				<Action type="win">Claim</Action>
-				<span>winnings of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
-				<span>from</span>
+				<span>won on</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
 		);
@@ -38,7 +39,6 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="win">claims</Action>
-				<span>winnings of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 			</Description>
 		);
@@ -48,9 +48,8 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.purchaser_address} />
 			<Action type="win">claims</Action>
-			<span>winnings of</span>
 			<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
-			<span>from</span>
+			<span>won from</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
 		</Description>
 	);
