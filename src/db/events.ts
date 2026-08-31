@@ -4,6 +4,7 @@ import { getIntentFwaWonV1 } from "@/events/intent_fwa_won_v1/event";
 import { getIntentFwaWonV2 } from "@/events/intent_fwa_won_v2/event";
 import { getLogEnsNewOwnerV1 } from "@/events/log_ens_new_owner_v1/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
+import { getLogFwaNftAllocatedV1 } from "@/events/log_fwa_nft_allocated_v1/event";
 import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
 import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
 import { getLogUniswapV3SwapV1 } from "@/events/log_uniswap_v3_swap_v1/event";
@@ -49,6 +50,7 @@ export async function getEventsForIds(ids: string[]) {
 		getLogUniswapV3SwapV1(ids),
 		getLogErc721ApprovalV1(ids),
 		getLogErc721TransferV1(ids),
+		getLogFwaNftAllocatedV1(ids),
 		getLogEnsReverseClaimedV1(ids),
 		getLogUniswapV3PoolCreatedV1(ids),
 		getLogEnsNameForAddrChangedV1(ids),

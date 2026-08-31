@@ -1,5 +1,4 @@
 import type { Event } from "@/db/events";
-import { EventDescriptionLog } from "./event-description-log";
 import { IntentIdmV1AccountDescription } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV1AccountDescription } from "@/events/intent_fwa_won_v1/component";
 import { IntentFwaWonV2AccountDescription } from "@/events/intent_fwa_won_v2/component";
@@ -21,7 +20,14 @@ import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tor
 import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
 import { IntentContractDeploymentV1AccountDescription } from "@/events/intent_contract_deployment_v1/component";
 
-export function EventDescriptionAccount(props: { address: `0x${string}`; event: Event }) {
+// THINKING
+
+// This distinction between account description and objective description doesn't make sense anymore. It
+// should be a single component that accepts an event and an optional address. There is always an
+// object description regardless if it's a log or an intent. We just supply an address as a hint
+// to the perspective we are viewing a given event
+
+export function EventDescriptionAccount(props: { event: Event; address: `0x${string}` }) {
 	if (props.event.tag === "intent_native_transfer_v1") {
 		return <IntentNativeTransferV1AccountDescription event={props.event} address={props.address} />;
 	}
@@ -101,10 +107,4 @@ export function EventDescriptionAccount(props: { address: `0x${string}`; event: 
 	if (props.event.tag === "intent_uniswap_v3_mint_v1") {
 		return <IntentUniswapV3MintV1AccountDescription event={props.event} address={props.address} />;
 	}
-
-	// Although rare, it is sometimes possible that we define an account index for a log event. When this
-	// happens we fall back to rendering the log description. This is safe to do because the log description
-	// is always written in an object view and will make sense from any account perspective.
-
-	return <EventDescriptionLog event={props.event} />;
 }

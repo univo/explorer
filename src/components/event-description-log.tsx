@@ -1,6 +1,7 @@
 import type { Event } from "@/db/events";
 import { LogEnsNewOwnerV1Description } from "@/events/log_ens_new_owner_v1/component";
 import { LogFwaNftListedV1Description } from "@/events/log_fwa_nft_listed_v1/component";
+import { LogFwaNftAllocatedV1Description } from "@/events/log_fwa_nft_allocated_v1/component";
 import { LogErc20TransferV1Description } from "@/events/log_erc20_transfer_v1/component";
 import { LogErc20ApprovalV1Description } from "@/events/log_erc20_approval_v1/component";
 import { LogUniswapV3SwapV1Description } from "@/events/log_uniswap_v3_swap_v1/component";
@@ -41,6 +42,10 @@ export function EventDescriptionLog(props: { event: Event }) {
 
 	if (props.event.tag === "log_fwa_nft_listed_v1") {
 		return <LogFwaNftListedV1Description event={props.event} />;
+	}
+
+	if (props.event.tag === "log_fwa_nft_allocated_v1") {
+		return <LogFwaNftAllocatedV1Description event={props.event} />;
 	}
 
 	if (props.event.tag === "log_uniswap_v3_pool_created_v1") {
