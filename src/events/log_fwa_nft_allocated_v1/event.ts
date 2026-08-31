@@ -11,16 +11,12 @@ import { index_account_v3 } from "@/indexes/account-v3";
 import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v1/event";
 
-// TODO: Remove request_id and random_word
-
 export interface LogFwaNftAllocatedV1 {
 	tag: "log_fwa_nft_allocated_v1";
 	id: string;
 	success: true;
-	request_id: `0x${string}`;
 	listing_id: `0x${string}`;
 	backing_eth: `0x${string}`;
-	random_word: `0x${string}`;
 	purchaser_address: `0x${string}`;
 	depositor_address: `0x${string}`;
 }
@@ -68,9 +64,7 @@ export const event = univo.event({
 					return {
 						id,
 						backing_eth: numberToHex(args.value),
-						request_id: numberToHex(args.requestId),
 						listing_id: numberToHex(args.listingId),
-						random_word: numberToHex(args.randomWord),
 						purchaser_address: getAddress(args.purchaser),
 						depositor_address: getAddress(args.depositor),
 					};
@@ -93,10 +87,8 @@ export const event = univo.event({
 					.onConflictDoUpdate({
 						target: table.id,
 						set: {
-							request_id: sql.raw(`excluded.${table.request_id.name}`),
 							listing_id: sql.raw(`excluded.${table.listing_id.name}`),
 							backing_eth: sql.raw(`excluded.${table.backing_eth.name}`),
-							random_word: sql.raw(`excluded.${table.random_word.name}`),
 							purchaser_address: sql.raw(`excluded.${table.purchaser_address.name}`),
 							depositor_address: sql.raw(`excluded.${table.depositor_address.name}`),
 						},
@@ -165,10 +157,8 @@ export async function getLogFwaNftAllocatedV1(ids: string[]) {
 			tag: "log_fwa_nft_allocated_v1",
 			id: result.id,
 			success: true,
-			request_id: result.request_id,
 			listing_id: result.listing_id,
 			backing_eth: result.backing_eth,
-			random_word: result.random_word,
 			purchaser_address: getAddress(result.purchaser_address),
 			depositor_address: getAddress(result.depositor_address),
 		};
