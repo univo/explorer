@@ -4,6 +4,7 @@ import { getAddress } from "viem";
 import { EtherscanIcon } from "@/components/icons";
 import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
+import { CopyButton } from "@/components/copy-button";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
 import { getAccount, getAccountName } from "@/state/account";
 
@@ -30,6 +31,8 @@ export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 			</div>
 
 			<div className="flex items-center gap-2">
+				{showAddress === false && <CopyButton value={props.address} />}
+
 				<IconButton href={`https://etherscan.io/address/${props.address}`}>
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
