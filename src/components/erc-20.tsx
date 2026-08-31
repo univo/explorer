@@ -15,16 +15,17 @@ import { defineLoader, formatNumber, isHexEqual } from "@/utils";
 const WETH_ADDRESS = getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
 
 export async function Erc20(props: { chain: Chain; address: `0x${string}`; quantity?: `0x${string}` | bigint; at: number }) {
+	const address = getAddress(props.address);
 	const timestamp = new Date(props.at * 1000);
 
-	if (props.chain === 1 && isAddressEqual(props.address, ETH_ADDRESS)) {
-		const price = await getTokenPrice({ chain: props.chain, token: props.address, timestamp });
+	if (props.chain === 1 && isAddressEqual(address, ETH_ADDRESS)) {
+		const price = await getTokenPrice({ chain: props.chain, token: address, timestamp });
 
 		return (
 			<Fragment>
 				<Quantity quantity={props.quantity} decimals={18} />
 
-				<Hoverable id={`${props.chain}:${props.address}`}>
+				<Hoverable id={`${props.chain}:${address}`}>
 					<Description>
 						<Image src="https://etherscan.io/token/images/ether.png" />
 						<span>Ether</span>
@@ -38,20 +39,20 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 	}
 
 	const [account, price] = await Promise.all([
-		getErc20Account({ chain: props.chain, address: props.address }),
-		getTokenPrice({ chain: props.chain, token: props.address, timestamp }),
+		getErc20Account({ chain: props.chain, address }),
+		getTokenPrice({ chain: props.chain, token: address, timestamp }),
 	]);
 
 	if (account === null) {
-		return <Account chain={props.chain} address={props.address} />;
+		return <Account chain={props.chain} address={address} />;
 	}
 
 	return (
 		<Fragment>
 			<Quantity quantity={props.quantity} decimals={account["erc20.decimals"]} />
 
-			<AddViewButton view={props.address} className="select-none cursor-pointer touch-none">
-				<Hoverable id={`${props.chain}:${props.address}`}>
+			<AddViewButton view={address} className="select-none cursor-pointer touch-none">
+				<Hoverable id={`${props.chain}:${address}`}>
 					<Description>
 						<Image src={account["erc20.image"]} />
 						<span>{account["erc20.name"]}</span>
