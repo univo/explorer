@@ -6,7 +6,7 @@ import { Account } from "@/components/account";
 import type { LogEnsNewOwnerV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function LogEnsNewOwnerV1Description(props: { event: LogEnsNewOwnerV1 }) {
+export function LogEnsNewOwnerV1Description(props: { event: LogEnsNewOwnerV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 	const revoked = isHexEqual(props.event.owner_address, ZERO_ADDRESS);
 

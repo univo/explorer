@@ -8,7 +8,7 @@ import { Account } from "@/components/account";
 import type { IntentUniswapV3MintV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUniswapV3MintV1; address: `0x${string}` }) {
+export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUniswapV3MintV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain } = parseId(props.event.id);
 
 	// (tx.from) sender_address: supplier of liquidity

@@ -1,8 +1,11 @@
 import { logger } from "@/utils";
 import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
 import { getIntentFwaWonV1 } from "@/events/intent_fwa_won_v1/event";
+import { getIntentFwaWonV2 } from "@/events/intent_fwa_won_v2/event";
+import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
 import { getLogEnsNewOwnerV1 } from "@/events/log_ens_new_owner_v1/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
+import { getLogFwaNftAllocatedV1 } from "@/events/log_fwa_nft_allocated_v1/event";
 import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
 import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
 import { getLogUniswapV3SwapV1 } from "@/events/log_uniswap_v3_swap_v1/event";
@@ -41,30 +44,33 @@ export async function getEventsForIds(ids: string[]) {
 	const start = Date.now();
 
 	const events = await Promise.all([
+		getLogEnsNewOwnerV1(ids),
 		getLogFwaNftListedV1(ids),
 		getLogErc20ApprovalV1(ids),
 		getLogErc20TransferV1(ids),
 		getLogUniswapV3SwapV1(ids),
 		getLogErc721ApprovalV1(ids),
 		getLogErc721TransferV1(ids),
+		getLogFwaNftAllocatedV1(ids),
 		getLogEnsReverseClaimedV1(ids),
-		getLogEnsNewOwnerV1(ids),
 		getLogUniswapV3PoolCreatedV1(ids),
 		getLogEnsNameForAddrChangedV1(ids),
 
 		getIntentIdmV1(ids),
 		getIntentFwaWonV1(ids),
+		getIntentFwaWonV2(ids),
+		getIntentFwaAcquireV1(ids),
 		getIntentAaveV3RepayV1(ids),
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV1(ids),
 		getIntentAaveV3BorrowV1(ids),
 		getIntentErc20ApprovalV1(ids),
 		getIntentErc20TransferV1(ids),
-		getIntentErc721ApprovalV1(ids),
-		getIntentErc721TransferV1(ids),
 		getIntentUsdcBlacklistV1(ids),
 		getIntentUniswapV3SwapV1(ids),
 		getIntentUniswapV3MintV1(ids),
+		getIntentErc721ApprovalV1(ids),
+		getIntentErc721TransferV1(ids),
 		getIntentAaveV3WithdrawV1(ids),
 		getIntentNativeTransferV1(ids),
 		getIntentCancelPendingTxV1(ids),

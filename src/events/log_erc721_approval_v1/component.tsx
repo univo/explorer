@@ -6,7 +6,7 @@ import type { LogErc721ApprovalV1 } from "./event";
 import { ExclamationIcon } from "@/components/icons";
 import { Description } from "@/components/description";
 
-export function LogErc721ApprovalV1Description(props: { event: LogErc721ApprovalV1 }) {
+export function LogErc721ApprovalV1Description(props: { event: LogErc721ApprovalV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 	const revoked = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 

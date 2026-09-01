@@ -7,7 +7,7 @@ import type { LogUniswapV3SwapV1 } from "./event";
 import { Description } from "@/components/description";
 import { getPoolByAddress, type LogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
 
-export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3SwapV1 }) {
+export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3SwapV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	const pool = await getPoolByAddress(props.event.pool_address);

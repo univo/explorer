@@ -4,7 +4,7 @@ import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import type { LogEnsNameForAddrChangedV1 } from "./event";
 
-export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsNameForAddrChangedV1 }) {
+export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsNameForAddrChangedV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 	const isRevoked = props.event.name === "";
 

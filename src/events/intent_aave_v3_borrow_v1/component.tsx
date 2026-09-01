@@ -6,7 +6,7 @@ import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3BorrowV1 } from "./event";
 
-export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAaveV3BorrowV1; address: `0x${string}` }) {
+export function IntentAaveV3BorrowV1AccountDescription(props: { event: IntentAaveV3BorrowV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// (tx.from) borrower_address: doing the borrowing

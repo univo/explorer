@@ -8,7 +8,7 @@ import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3WithdrawV1 } from "./event";
 
-export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentAaveV3WithdrawV1; address: `0x${string}` }) {
+export function IntentAaveV3WithdrawV1AccountDescription(props: { event: IntentAaveV3WithdrawV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 	const quantity = BigInt(props.event.quantity);
 	const all = quantity === maxUint256;

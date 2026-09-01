@@ -7,7 +7,7 @@ import { Account } from "@/components/account";
 import type { IntentErc721ApprovalV1 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentErc721ApprovalV1; address: `0x${string}` }) {
+export function IntentErc721ApprovalV1AccountDescription(props: { event: IntentErc721ApprovalV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 
 	// (tx.from) caller_address

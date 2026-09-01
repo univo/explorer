@@ -10,11 +10,10 @@ import { IconButton } from "@/components/icon-button";
 import { getEventsForIds, type Event } from "@/db/events";
 import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
+import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddViewButton, CloseViewButton } from "@/components/views";
-import { EventDescriptionLog } from "@/components/event-description-log";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
-import { EventDescriptionIntent } from "@/components/event-description-intent";
 import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
@@ -124,7 +123,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 
 							{defined(intent) && (
 								<ErrorBoundary fallback={null}>
-									<EventDescriptionIntent event={intent} address={tx.from} />
+									<EventDescription event={intent} address={tx.from} />
 								</ErrorBoundary>
 							)}
 						</div>
@@ -162,7 +161,7 @@ function Events(props: { events: Event[] }) {
 						<div className="flex">
 							<span className="text-sm text-gray-700 min-w-12">({formatNumber(logIndex)})</span>
 
-							<EventDescriptionLog event={event} />
+							<EventDescription event={event} address={undefined} />
 						</div>
 					</ErrorBoundary>
 				);

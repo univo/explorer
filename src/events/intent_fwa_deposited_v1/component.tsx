@@ -8,7 +8,7 @@ import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS, type IntentFwaDepositedV1 } from "./event";
 
-export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwaDepositedV1; address: `0x${string}` }) {
+export function IntentFwaDepositedV1AccountDescription(props: { event: IntentFwaDepositedV1; address: `0x${string}` | undefined }) {
 	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
 
 	// (tx.from) depositer_address: the account performing the deposit

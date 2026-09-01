@@ -3,7 +3,10 @@ import { Action } from "@/components/action";
 import { Description } from "@/components/description";
 import type { IntentEnsNameRegisteredV1 } from "./event";
 
-export function IntentEnsNameRegisteredV1AccountDescription(props: { event: IntentEnsNameRegisteredV1; address: `0x${string}` }) {
+export function IntentEnsNameRegisteredV1AccountDescription(props: {
+	event: IntentEnsNameRegisteredV1;
+	address: `0x${string}` | undefined;
+}) {
 	const { blockTimestamp } = parseId(props.event.id);
 
 	const expiry = BigInt(blockTimestamp) + BigInt(props.event.duration);

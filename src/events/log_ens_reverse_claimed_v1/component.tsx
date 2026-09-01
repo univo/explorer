@@ -10,7 +10,7 @@ import { Description } from "@/components/description";
 // data that would allow us to perform a JOIN here and get back to the original ENS name but
 // I've decided it's not really worth it for a legacy event
 
-export function LogEnsReverseClaimedV1Description(props: { event: LogEnsReverseClaimedV1 }) {
+export function LogEnsReverseClaimedV1Description(props: { event: LogEnsReverseClaimedV1; address: `0x${string}` | undefined }) {
 	const chain = parseId(props.event.id).chainId;
 
 	return (
