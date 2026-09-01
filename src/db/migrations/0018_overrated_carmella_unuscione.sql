@@ -1,0 +1,1 @@
+DROP TABLE "intent_fwa_won_v1" CASCADE;
