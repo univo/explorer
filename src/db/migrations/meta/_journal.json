@@ -127,6 +127,13 @@
       "when": 1788221037032,
       "tag": "0017_friendly_omega_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1788221797109,
+      "tag": "0018_overrated_carmella_unuscione",
+      "breakpoints": true
     }
   ]
 }
