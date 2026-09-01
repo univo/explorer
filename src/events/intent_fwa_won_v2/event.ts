@@ -18,7 +18,6 @@ export interface IntentFwaWonV2 {
 	token_out: `0x${string}`;
 	listing_id: `0x${string}`;
 	payout_eth: `0x${string}`;
-	retained_eth: `0x${string}`;
 	purchaser_address: `0x${string}`;
 	settlement_type: "kept" | "relisted" | "accepted_eth" | "accepted_fwa";
 }
@@ -91,7 +90,6 @@ export const event = univo.event({
 				let tokenOut: `0x${string}` = ZERO_VALUE;
 				let payoutEth: `0x${string}` = ZERO_VALUE;
 				let purchaserAddress = getAddress(tx.from);
-				let retainedEth: `0x${string}` = ZERO_VALUE;
 
 				if (success) {
 					if (settlementType === "kept") {
@@ -146,7 +144,6 @@ export const event = univo.event({
 						});
 
 						payoutEth = numberToHex(args.payout);
-						retainedEth = numberToHex(args.retained);
 						purchaserAddress = getAddress(args.purchaser);
 					} else {
 						const log = receipt?.logs.find(
@@ -166,7 +163,6 @@ export const event = univo.event({
 
 						tokenOut = numberToHex(args.tokenOut);
 						payoutEth = numberToHex(args.ethPayout);
-						retainedEth = numberToHex(args.retained);
 						purchaserAddress = getAddress(args.purchaser);
 					}
 				}
@@ -185,7 +181,6 @@ export const event = univo.event({
 					success,
 					token_out: tokenOut,
 					payout_eth: payoutEth,
-					retained_eth: retainedEth,
 					settlement_type: settlementType,
 					listing_id: numberToHex(listingId),
 					purchaser_address: purchaserAddress,
@@ -212,7 +207,6 @@ export const event = univo.event({
 							token_out: sql.raw(`excluded.${table.token_out.name}`),
 							listing_id: sql.raw(`excluded.${table.listing_id.name}`),
 							payout_eth: sql.raw(`excluded.${table.payout_eth.name}`),
-							retained_eth: sql.raw(`excluded.${table.retained_eth.name}`),
 							settlement_type: sql.raw(`excluded.${table.settlement_type.name}`),
 							purchaser_address: sql.raw(`excluded.${table.purchaser_address.name}`),
 						},
@@ -277,7 +271,6 @@ export async function getIntentFwaWonV2(ids: string[]) {
 			token_out: result.token_out,
 			listing_id: result.listing_id,
 			payout_eth: result.payout_eth,
-			retained_eth: result.retained_eth,
 			purchaser_address: getAddress(result.purchaser_address),
 			settlement_type: result.settlement_type as "kept" | "relisted" | "accepted_eth" | "accepted_fwa",
 		};
