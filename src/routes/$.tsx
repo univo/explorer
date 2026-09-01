@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Kbd } from "@/components/kbd";
 import { SearchIcon } from "@/components/icons";
 import { OpenSearchButton } from "@/components/open-search-button";
-import { useViews, View, ViewContainer, ViewsContainer } from "@/components/views";
+import { useFrames, Frame, FrameContainer, FramesContainer } from "@/components/frames";
 
 export const Route = createFileRoute("/$")({
 	component: Component,
@@ -11,32 +11,32 @@ export const Route = createFileRoute("/$")({
 });
 
 function Component() {
-	const views = useViews();
+	const frames = useFrames();
 
-	if (views.value.length === 0) {
+	if (frames.value.length === 0) {
 		return (
-			<ViewsContainer>
-				<ViewContainer>
-					<IndexView />
-				</ViewContainer>
-			</ViewsContainer>
+			<FramesContainer>
+				<FrameContainer>
+					<IndexFrame />
+				</FrameContainer>
+			</FramesContainer>
 		);
 	}
 
 	return (
-		<ViewsContainer>
-			{views.value.map((view, index) => {
+		<FramesContainer>
+			{frames.value.map((frame, index) => {
 				return (
-					<ViewContainer key={view}>
-						<View view={view} index={index} />
-					</ViewContainer>
+					<FrameContainer key={frame}>
+						<Frame frame={frame} index={index} />
+					</FrameContainer>
 				);
 			})}
-		</ViewsContainer>
+		</FramesContainer>
 	);
 }
 
-function IndexView() {
+function IndexFrame() {
 	return (
 		<div className="relative h-full">
 			<div
@@ -49,11 +49,7 @@ function IndexView() {
 			<div className="relative w-full h-full flex flex-col justify-between">
 				<div className="px-4">
 					<div className="mt-40 h-7 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5">
-						<img
-							alt="Ethereum logo"
-							className="rounded-full overflow-hidden size-4"
-							src="https://etherscan.io/token/images/ether.png"
-						/>
+						<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
 
 						<span className="text-gray-900 text-sm">Ethereum</span>
 					</div>

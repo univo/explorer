@@ -5,7 +5,7 @@ import { getAddress, isAddressEqual } from "viem";
 import { Img } from "./img";
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
-import { AddViewButton } from "./views";
+import { AddFrameButton } from "./frames";
 import { Description } from "./description";
 import { getErc20Account } from "@/state/account";
 import { createPostgresClient } from "@/db/client";
@@ -51,7 +51,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 		<Fragment>
 			<Quantity quantity={props.quantity} decimals={account["erc20.decimals"]} />
 
-			<AddViewButton view={address} className="select-none cursor-pointer touch-none">
+			<AddFrameButton frame={address} className="select-none cursor-pointer touch-none">
 				<Hoverable id={`${props.chain}:${address}`}>
 					<Description>
 						<Image src={account["erc20.image"]} />
@@ -59,7 +59,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 						<span className="text-gray-500 select-all">({account["erc20.symbol"]})</span>
 					</Description>
 				</Hoverable>
-			</AddViewButton>
+			</AddFrameButton>
 
 			<Value quantity={props.quantity} decimals={account["erc20.decimals"]} price={price} />
 		</Fragment>

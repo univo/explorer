@@ -12,7 +12,7 @@ import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
-import { AddViewButton, CloseViewButton } from "@/components/views";
+import { AddFrameButton, CloseFrameButton } from "@/components/frames";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
 import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
@@ -59,7 +59,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 							<EtherscanIcon className="shrink-0 size-4" />
 						</IconButton>
 
-						<CloseViewButton />
+						<CloseFrameButton />
 					</div>
 				</div>
 			</div>
@@ -90,12 +90,12 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						<div className="flex items-start justify-between">
 							<p className="min-w-24 text-sm text-gray-700">Block #</p>
 
-							<AddViewButton
-								view={String(hexToNumber(tx.blockNumber))}
+							<AddFrameButton
+								frame={String(hexToNumber(tx.blockNumber))}
 								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-200 data-[hovered=true]:bg-gray-200 select-none"
 							>
 								{formatNumber(hexToNumber(tx.blockNumber))}
-							</AddViewButton>
+							</AddFrameButton>
 						</div>
 
 						<div className="flex items-start justify-between">

@@ -9,7 +9,7 @@ import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { formatDay, formatRelativeDate, formatTime } from "@/utils";
-import { StopCursorContainer, VirtualisationContainer } from "@/views/address/address-client";
+import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {

@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { BlockNumberSchema, TxIndexSchema } from "@/schema";
-import { TxPositionRsc } from "@/views/tx-position/tx-position-rsc";
+import { TxPositionRsc } from "@/frames/tx-position/tx-position-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ block: BlockNumberSchema, tx: TxIndexSchema }))
