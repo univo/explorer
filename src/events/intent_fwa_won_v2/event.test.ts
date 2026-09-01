@@ -35,7 +35,7 @@ test.concurrent("intent_fwa_won_v2 deletes, writes, and reads from storage", asy
 	expect(final).toMatchInlineSnapshot(`
 		[
 		  {
-		    "id": "6a6a948f018743de0045ffffff00010015",
+		    "id": "6a6a948f018743de0045ffffff00010031",
 		    "listing_id": "0xf8ac",
 		    "payout_eth": "0x0fccc3b7ccc84000",
 		    "purchaser_address": "0x5984bb82F11171cb1DC2287E2A6935c44D491538",
@@ -54,7 +54,7 @@ test.concurrent("intent_fwa_won_v2 handles all settlement types", async ({ expec
 	expect(event.handler(b25641950)).toMatchInlineSnapshot(`
 		[
 		  {
-		    "id": "6a6a948f018743de0045ffffff00010015",
+		    "id": "6a6a948f018743de0045ffffff00010031",
 		    "listing_id": "0xf8ac",
 		    "payout_eth": "0xfccc3b7ccc84000",
 		    "purchaser_address": "0x5984bb82F11171cb1DC2287E2A6935c44D491538",
@@ -70,7 +70,7 @@ test.concurrent("intent_fwa_won_v2 handles all settlement types", async ({ expec
 	expect(event.handler(b25642834)).toMatchInlineSnapshot(`
 		[
 		  {
-		    "id": "6a6abe1701874752005cffffff00010015",
+		    "id": "6a6abe1701874752005cffffff00010031",
 		    "listing_id": "0x176bb",
 		    "payout_eth": "0x14c2dc12e7fc000",
 		    "purchaser_address": "0x501435fE524e8515fA6B7E0FCD31FBA6dacB6fC7",
@@ -79,7 +79,7 @@ test.concurrent("intent_fwa_won_v2 handles all settlement types", async ({ expec
 		    "token_out": "0x220f47b1e0e4976daac",
 		  },
 		  {
-		    "id": "6a6abe17018747520062ffffff00010015",
+		    "id": "6a6abe17018747520062ffffff00010031",
 		    "listing_id": "0x16f9b",
 		    "payout_eth": "0x93b8ca29c2c000",
 		    "purchaser_address": "0xa89C876BE69223295A0925D7A62Cb6868dEc4ac8",
@@ -95,7 +95,7 @@ test.concurrent("intent_fwa_won_v2 handles all settlement types", async ({ expec
 	expect(event.handler(b25641960)).toMatchInlineSnapshot(`
 		[
 		  {
-		    "id": "6a6a9507018743e80030ffffff00010015",
+		    "id": "6a6a9507018743e80030ffffff00010031",
 		    "listing_id": "0x167bd",
 		    "payout_eth": "0xe8866da08ca000",
 		    "purchaser_address": "0xdA3e728C236ed008D00e65370895429087d02B06",
@@ -113,7 +113,7 @@ test.concurrent("intent_fwa_won_v2 uses sentinels for failed settlements", async
 	expect(event.handler(block)).toMatchInlineSnapshot(`
 		[
 		  {
-		    "id": "6a6ab1030187463b0079ffffff00010015",
+		    "id": "6a6ab1030187463b0079ffffff00010031",
 		    "listing_id": "0x17804",
 		    "payout_eth": "0x0",
 		    "purchaser_address": "0x9ef02557bB81557d5FCE437b4FE59b08C724a5D2",
