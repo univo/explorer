@@ -31,16 +31,13 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 		getTokenPrice({ chain: 1, token: ETH_ADDRESS, timestamp }),
 	]);
 
-	if (price === null) {
-		throw new Error("Expected ETH price");
-	}
-
 	const feeWei = BigInt(receipt.effectiveGasPrice) * BigInt(receipt.gasUsed);
 	const feeEth = Number(feeWei) / 10 ** 18;
 	const formattedFeeEth = formatNumber(feeEth, feeEth < 1 ? { maximumSignificantDigits: 2 } : { maximumFractionDigits: 2 });
 
-	const feeUsd = Number(price.price_usd) * feeEth;
-	const formattedFeeUsd = formatNumber(feeUsd, { style: "currency", currency: "USD", currencyDisplay: "narrowSymbol" });
+	const feeUsd = price === null ? null : Number(price.price_usd) * feeEth;
+	const options = { style: "currency", currency: "USD", currencyDisplay: "narrowSymbol" } as const;
+	const formattedFeeUsd = feeUsd === null ? null : formatNumber(feeUsd, options);
 
 	const ordered = getOrderedEvents(events, "reverse");
 
@@ -106,7 +103,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 
 							<div className="text-sm text-gray-900 flex items-center gap-1">
 								<span>{formattedFeeEth} ETH</span>
-								<span className="text-gray-500">({formattedFeeUsd})</span>
+								{formattedFeeUsd === null ? null : <span className="text-gray-500">({formattedFeeUsd})</span>}
 							</div>
 						</div>
 
