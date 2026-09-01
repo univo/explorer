@@ -2,7 +2,7 @@
 
 import type { ReactNode, MouseEvent } from "react";
 
-import { useViewIndex, useViews } from "./views";
+import { useFrameIndex, useFrames } from "./frames";
 
 function hasClickableParentElement(element: HTMLElement) {
 	let currentElement: HTMLElement = element;
@@ -27,15 +27,15 @@ function hasClickableParentElement(element: HTMLElement) {
 }
 
 export function EventTableRow(props: { id: string; children: ReactNode }) {
-	const views = useViews();
-	const index = useViewIndex();
+	const frames = useFrames();
+	const index = useFrameIndex();
 
 	function handleClick(event: MouseEvent) {
 		if (hasClickableParentElement(event.target as HTMLElement)) {
 			return;
 		}
 
-		views.push(props.id, index);
+		frames.push(props.id, index);
 	}
 
 	return (

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-	--view-width: 608px;
+	--frame-width: 608px;
 	--header-height: 44px;
 }
 

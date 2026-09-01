@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { getAddress } from "viem";
 
 import { EtherscanIcon } from "@/components/icons";
-import { CloseViewButton } from "@/components/views";
+import { CloseFrameButton } from "@/components/frames";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
@@ -37,7 +37,7 @@ export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton />
+				<CloseFrameButton />
 			</div>
 		</div>
 	);

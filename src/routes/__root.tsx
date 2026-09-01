@@ -3,8 +3,8 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-r
 import css from "@/styles/tailwind.css?url";
 import { Devtools } from "@/components/devtools";
 import { Navigation } from "@/components/navigation";
-import { ViewContextProvider } from "@/components/views";
 import { SearchDialog } from "@/components/search-dialog";
+import { FrameContextProvider } from "@/components/frames";
 import { GlobalLoading } from "@/components/global-loading";
 import { QueryClientProvider } from "@/components/query-client-provider";
 
@@ -37,7 +37,7 @@ function Root() {
 
 			<body className="bg-gray-50 h-svh flex flex-col">
 				<QueryClientProvider>
-					<ViewContextProvider>
+					<FrameContextProvider>
 						<Navigation />
 						<SearchDialog />
 						<GlobalLoading />
@@ -46,7 +46,7 @@ function Root() {
 
 						<Devtools />
 						<Scripts />
-					</ViewContextProvider>
+					</FrameContextProvider>
 				</QueryClientProvider>
 			</body>
 		</html>

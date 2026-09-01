@@ -3,7 +3,7 @@ import { useState } from "react";
 import { getAddress } from "viem";
 import { Command, useCommandState } from "cmdk";
 
-import { getView, useViews } from "./views";
+import { getFrame, useFrames } from "./frames";
 import { SearchIcon, XIcon } from "./icons";
 
 // TODO
@@ -15,15 +15,15 @@ interface SearchProps {
 }
 
 export function Search(props: SearchProps) {
-	const views = useViews();
+	const frames = useFrames();
 	const [search, setSearch] = useState("");
 
 	async function onPaste() {
 		const search = await navigator.clipboard.readText();
 
-		const view = getView(search); // Determine if search satisfies a known view
+		const frame = getFrame(search); // Determine if search satisfies a known frame
 
-		if (!view) {
+		if (!frame) {
 			return;
 		}
 
@@ -31,7 +31,7 @@ export function Search(props: SearchProps) {
 			props.onClose();
 		}
 
-		views.push(view.raw, null);
+		frames.push(frame.raw, null);
 	}
 
 	return (
@@ -186,13 +186,13 @@ const tokens = [
 ];
 
 function Tokens(props: { onClose?: () => void }) {
-	const views = useViews();
+	const frames = useFrames();
 
 	return (
 		<Command.Group className="p-2" heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}>
 			{tokens.map((token) => {
 				async function onSelect() {
-					await views.push(getAddress(token.address), null);
+					await frames.push(getAddress(token.address), null);
 
 					if (props.onClose) {
 						props.onClose();

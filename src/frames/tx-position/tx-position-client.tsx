@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
-import { CloseViewButton } from "@/components/views";
+import { CloseFrameButton } from "@/components/frames";
 
 export function TxPositionClient(props: { block: number; tx: number }) {
 	const query = useQuery({
@@ -35,7 +35,7 @@ function Header() {
 				</div>
 
 				<div className="flex items-center gap-2">
-					<CloseViewButton />
+					<CloseFrameButton />
 				</div>
 			</div>
 

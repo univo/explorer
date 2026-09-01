@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { Logo } from "./logo";
 import { SearchIcon } from "./icons";
 import { Container } from "./container";
-import { ClearViewsButton } from "./views";
+import { ClearFramesButton } from "./frames";
 import { setSearchOpen, useSearchOpen } from "./search-dialog";
 
 export function Navigation() {
@@ -15,9 +15,9 @@ export function Navigation() {
 				<div className="h-(--header-height) flex items-center">
 					<div className="grid grid-cols-12 gap-4 w-full">
 						<div className="flex items-center col-span-4">
-							<ClearViewsButton>
+							<ClearFramesButton>
 								<Logo className="w-auto h-6" />
-							</ClearViewsButton>
+							</ClearFramesButton>
 						</div>
 
 						<div className="col-span-8 flex items-center justify-end">

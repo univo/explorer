@@ -11,7 +11,7 @@ import { raise } from "@/utils";
 import { createId } from "@/helpers";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
-import { CloseViewButton } from "@/components/views";
+import { CloseFrameButton } from "@/components/frames";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
 
@@ -47,7 +47,7 @@ function HeaderFallback(props: { address: `0x${string}` }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton />
+				<CloseFrameButton />
 			</div>
 		</div>
 	);
@@ -167,11 +167,11 @@ export function VirtualisationContainer(props: { children: ReactNode }) {
 	const { ref } = useInView({
 		// We could probably add margin here to prevent the flash as hidden blocks return. Also note that this
 		// virtualisation happens according to the document as the root, which means it applies to horizontal
-		// scrolling too when we have a large number of horizontal views
+		// scrolling too when we have a large number of horizontal frames
 		rootMargin: "0px 608px 0px 608px",
 
 		// This is pretty safe because our app never sees a lot of browser resizing. On desktop the width of each
-		// view is static. On mobile the only way to resize is to adjust the orientation.
+		// frame is static. On mobile the only way to resize is to adjust the orientation.
 		onChange: (inView, entry) => setHeight(inView ? null : entry.boundingClientRect.height),
 	});
 

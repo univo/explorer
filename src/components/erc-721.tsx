@@ -3,9 +3,9 @@ import { getAddress } from "viem";
 import { Img } from "./img";
 import { Account } from "./account";
 import { getClient } from "@/clients";
-import { AddViewButton } from "./views";
 import { Hoverable } from "./hoverable";
 import type { Chain } from "@/constants";
+import { AddFrameButton } from "./frames";
 import { defined, logger } from "@/utils";
 import { Description } from "./description";
 import { getErc721Account } from "@/state/account";
@@ -23,7 +23,7 @@ export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: 
 	}
 
 	return (
-		<AddViewButton view={address} className="select-none touch-none cursor-pointer">
+		<AddFrameButton frame={address} className="select-none touch-none cursor-pointer">
 			<Hoverable id={`${props.chain}:${address}:${props.id}`}>
 				<Description>
 					{defined(metadata) && <Image src={metadata.image} />}
@@ -32,7 +32,7 @@ export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: 
 					<span className="truncate max-w-18 lg:max-w-24">#{BigInt(props.id)}</span>
 				</Description>
 			</Hoverable>
-		</AddViewButton>
+		</AddFrameButton>
 	);
 }
 
