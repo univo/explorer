@@ -18,7 +18,8 @@ export function IntentFwaAcquireV1AccountDescription(props: { event: IntentFwaAc
 	if (isHexEqual(props.address, props.event.purchaser_address)) {
 		return (
 			<Description success={props.event.success}>
-				<Action type="buy">Acquire</Action>
+				<span>Submits intent to</span>
+				<Action type="send">acquire</Action>
 				<span>{count === 1 ? "a deposit" : `${count} deposits`}</span>
 				<span>from</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
@@ -34,7 +35,8 @@ export function IntentFwaAcquireV1AccountDescription(props: { event: IntentFwaAc
 		return (
 			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.purchaser_address} />
-				<Action type="buy">acquires</Action>
+				<span>submits intent to</span>
+				<Action type="send">acquire</Action>
 				<span>{count === 1 ? "a deposit" : `${count} deposits`}</span>
 				<span>for</span>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.submitted_eth} at={blockTimestamp} />
@@ -45,7 +47,8 @@ export function IntentFwaAcquireV1AccountDescription(props: { event: IntentFwaAc
 	return (
 		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.purchaser_address} />
-			<Action type="buy">acquires</Action>
+			<span>submits intent to</span>
+			<Action type="send">acquire</Action>
 			<span>{count === 1 ? "a deposit" : `${count} deposits`}</span>
 			<span>from</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
