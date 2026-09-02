@@ -13,7 +13,7 @@ import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
 import { AddressClient } from "@/frames/address/address-client";
 import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
-import { BlockNumberClient } from "@/views/block-number/block-number-client";
+import { BlockNumberClient } from "@/frames/block-number/block-number-client";
 import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/context";
 import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 

@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { BlockNumberSchema } from "@/schema";
-import { BlockNumberRsc } from "@/views/block-number/block-number-rsc";
+import { BlockNumberRsc } from "@/frames/block-number/block-number-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ number: BlockNumberSchema }))

@@ -1,19 +1,20 @@
 import { ErrorBoundary } from "react-error-boundary";
 
+import type { Block } from "@/state/block";
 import { getEventsForIds } from "@/db/events";
+import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
-import { getBlock, type Block } from "@/state/block";
-import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
 import { getOrderedEvents, parseId } from "@/helpers";
+import { CloseFrameButton } from "@/components/frames";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
-import { formatDay, formatNumber, formatRelativeDate, raise } from "@/utils";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
+import { formatDay, formatNumber, formatRelativeDate, hexToNumber, raise } from "@/utils";
 
 export async function BlockNumberRsc(props: { number: number }) {
 	const [block, ids] = await Promise.all([
-		getBlock(props.number), //
+		getBlockByNumber(props.number), //
 		getEventIdsForBlockNumber(1, props.number),
 	]);
 
@@ -30,7 +31,7 @@ function Header(props: { block: Block }) {
 		<div className="border-b border-gray-200 bg-white px-3 py-3 flex items-center justify-between">
 			<div className="flex items-center gap-2 overflow-hidden">
 				<p className="text-gray-900 font-semibold text-base select-all">Block</p>
-				<p className="text-gray-500 text-base select-all truncate">{formatNumber(props.block.number)}</p>
+				<p className="text-gray-500 text-base select-all truncate">{formatNumber(hexToNumber(props.block.number as string))}</p>
 			</div>
 
 			<div className="flex items-center gap-2">
@@ -38,7 +39,7 @@ function Header(props: { block: Block }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton />
+				<CloseFrameButton />
 			</div>
 		</div>
 	);
@@ -51,9 +52,7 @@ async function EventsTable(props: { ids: string[] }) {
 				<div className="flex flex-col gap-1 text-center max-w-xs">
 					<p className="text-gray-900 text-sm font-medium">No events found</p>
 
-					<p className="text-gray-500 text-sm">
-						If this is a mistake, contact the founder and describe the event you expected to see
-					</p>
+					<p className="text-gray-500 text-sm">If this is a mistake, contact the founder and describe the event you expected to see</p>
 				</div>
 			</div>
 		);
@@ -70,9 +69,7 @@ async function EventsTable(props: { ids: string[] }) {
 				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{formatDay(date)}</p>
 
 				{Date.now() - date.getTime() > 24 * 60 * 60 * 1000 && (
-					<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">
-						{formatRelativeDate(date)}
-					</p>
+					<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">{formatRelativeDate(date)}</p>
 				)}
 			</div>
 
@@ -82,7 +79,7 @@ async function EventsTable(props: { ids: string[] }) {
 						<div className="border-b border-gray-200">
 							<EventTableRow id={event.id}>
 								<div className="px-3 py-1.5 overflow-hidden grow">
-									<EventDescription event={event} />
+									<EventDescription event={event} address={undefined} />
 								</div>
 							</EventTableRow>
 						</div>

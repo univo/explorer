@@ -5,8 +5,8 @@ import { createFromFetch } from "@tanstack/react-start/rsc";
 import { formatNumber } from "@/utils";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
-import { CloseViewButton } from "@/components/views";
 import { IconButton } from "@/components/icon-button";
+import { CloseFrameButton } from "@/components/frames";
 
 export function BlockNumberClient(props: { number: number }) {
 	const query = useQuery({
@@ -43,7 +43,7 @@ function Header(props: { number: number }) {
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 
-				<CloseViewButton />
+				<CloseFrameButton />
 			</div>
 		</div>
 	);
