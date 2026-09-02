@@ -11,6 +11,8 @@ export function defineLoader<K, V>(fn: BatchLoadFn<K, V>) {
 		cacheKeyFn: (key) => JSON.stringify(key),
 	});
 
+	// TODO: Should probably update the batch window to 10ms
+
 	return (id: K) => loader.load(id);
 }
 

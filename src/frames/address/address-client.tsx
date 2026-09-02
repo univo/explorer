@@ -1,19 +1,22 @@
 "use client";
 
-import { numberToHex } from "viem";
+import clsx from "clsx";
 import type { ReactNode } from "react";
+import { getAddress, numberToHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 import { createContext, Suspense, useContext, useEffect, useState } from "react";
 
-import { raise } from "@/utils";
-import { createId } from "@/helpers";
+import { iife, raise } from "@/utils";
+import { createId, parseId } from "@/helpers";
 import { Spinner } from "@/components/spinner";
-import { EtherscanIcon } from "@/components/icons";
-import { CloseFrameButton } from "@/components/frames";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
+import { CloseFrameButton } from "@/components/frames";
+import { sf_getLatestEventForAccount } from "@/functions";
+import { ArrowUpIcon, EtherscanIcon } from "@/components/icons";
 
 export function AddressClient(props: { address: `0x${string}` }) {
 	return (
@@ -55,11 +58,14 @@ function HeaderFallback(props: { address: `0x${string}` }) {
 
 type CursorContextValue = {
 	cursors: Map<string, string | null | undefined>;
+	refreshCursors: () => void;
 	insertNextCursor: (startCursor: string) => void;
 	insertStopCursor: (startCursor: string, stopCursor: string | null) => void;
 };
 
 const CursorContext = createContext<CursorContextValue | null>(null);
+
+const useCursorContext = () => useContext(CursorContext) ?? raise("Missing CursorContext provider");
 
 function Events(props: { address: `0x${string}` }) {
 	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
@@ -68,7 +74,7 @@ function Events(props: { address: `0x${string}` }) {
 		const initialCursor = createId({
 			blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
 			tableId: 0, // Irrelevant
-			chainId: "0x1", // Irrelvant but must specify a known chain id
+			chainId: "0x1", // Irrelevant but must specify a known chain id
 			txIndex: "0x0", // Irrelevant
 			logIndex: "0x0", // Irrelevant
 			blockNumber: "0x0", // Irrelevant
@@ -76,6 +82,21 @@ function Events(props: { address: `0x${string}` }) {
 
 		return new Map().set(initialCursor, undefined);
 	});
+
+	function refreshCursors() {
+		setCursors(() => {
+			const initialCursor = createId({
+				blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
+				tableId: 0, // Irrelevant
+				chainId: "0x1", // Irrelevant but must specify a known chain id
+				txIndex: "0x0", // Irrelevant
+				logIndex: "0x0", // Irrelevant
+				blockNumber: "0x0", // Irrelevant
+			});
+
+			return new Map().set(initialCursor, undefined);
+		});
+	}
 
 	function insertNextCursor(startCursor: string) {
 		setCursors((cursors) => {
@@ -96,19 +117,25 @@ function Events(props: { address: `0x${string}` }) {
 	const nextCursor = getNextCursor(cursors);
 
 	return (
-		<CursorContext value={{ cursors, insertNextCursor, insertStopCursor }}>
+		<CursorContext value={{ cursors, refreshCursors, insertNextCursor, insertStopCursor }}>
 			<div className="relative grow overflow-scroll isolate">
-				{Array.from(cursors).map(([startCursor]) => {
-					return (
-						<EventsContainer
-							key={startCursor} //
-							address={props.address}
-							startCursor={startCursor}
-						/>
-					);
-				})}
+				<div className="sticky top-0 h-0">
+					<Banner address={props.address} />
+				</div>
 
-				{nextCursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(nextCursor)} />}
+				<div>
+					{Array.from(cursors).map(([startCursor]) => {
+						return (
+							<EventsContainer
+								key={startCursor} //
+								address={props.address}
+								startCursor={startCursor}
+							/>
+						);
+					})}
+
+					{nextCursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(nextCursor)} />}
+				</div>
 			</div>
 		</CursorContext>
 	);
@@ -118,8 +145,14 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 	let final_cursor: string | undefined;
 
 	for (const [key, value] of cursors) {
-		if (value === null) return null;
-		if (value === undefined) return key;
+		if (value === null) {
+			return null;
+		}
+
+		if (value === undefined) {
+			return key;
+		}
+
 		final_cursor = value;
 	}
 
@@ -128,6 +161,61 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 	}
 
 	return final_cursor;
+}
+
+// The plan is that we load on demand. We click the banner, it turns into a loading indicator that fetches the start
+// cursor for the previous 50 events. We then render that start cursor, scroll to it, and hide the banner
+
+function Banner(props: { address: `0x${string}` }) {
+	const context = useCursorContext();
+
+	const address = getAddress(props.address);
+
+	const timestamp = iife(() => {
+		const firstBatch = Array.from(context.cursors)[0];
+
+		if (firstBatch === undefined) {
+			throw new Error("Expected atleast the initial cursor");
+		}
+
+		const key = firstBatch[0];
+
+		if (key === undefined) {
+			throw new Error("Expected atleast the initial cursor");
+		}
+
+		return parseId(key).blockTimestamp;
+	});
+
+	const getLatestEventForAccount = useServerFn(sf_getLatestEventForAccount);
+
+	const query = useQuery({
+		refetchOnMount: false,
+		refetchOnReconnect: "always",
+		refetchOnWindowFocus: "always",
+		queryKey: ["latest-event", address],
+		queryFn: () => getLatestEventForAccount({ data: { address } }),
+	});
+
+	const show = query.status === "success" && typeof query.data === "string" && parseId(query.data).blockTimestamp > timestamp;
+
+	return (
+		<div className="flex justify-center pt-4 pointer-events-none">
+			<button
+				type="button"
+				onMouseDown={() => context.refreshCursors()}
+				className={clsx(
+					"transform-gpu",
+					show === true && "translate-y-0 scale-100 ease-[cubic-bezier(0,0,0,1.1)] duration-250",
+					show === false && "-translate-y-15 scale-75 ease-[cubic-bezier(0,0,0,0.9)] duration-200",
+					"cursor-pointer pointer-events-auto w-29 h-7 flex items-center justify-center gap-1.5 rounded-full bg-primary-500 shadow-md",
+				)}
+			>
+				<ArrowUpIcon className="text-white shrink-0 size-3.5" />
+				<span className="text-white text-sm">New events</span>
+			</button>
+		</div>
+	);
 }
 
 function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
@@ -150,7 +238,7 @@ function EventsContainer(props: { address: `0x${string}`; startCursor: string })
 // The component allows the server to provide cursor related information back to the client
 
 export function StopCursorContainer(props: { startCursor: string; stopCursor: string | null; children?: ReactNode }) {
-	const context = useContext(CursorContext) ?? raise("Missing CursorContext provider");
+	const context = useCursorContext();
 
 	useEffect(() => {
 		if (getNextCursor(context.cursors) === props.startCursor) {

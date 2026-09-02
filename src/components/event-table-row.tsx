@@ -2,7 +2,7 @@
 
 import type { ReactNode, MouseEvent } from "react";
 
-import { useFrameIndex, useFrames } from "./frames";
+import { useFrameIndex, useFrames } from "@/frames/context";
 
 function hasClickableParentElement(element: HTMLElement) {
 	let currentElement: HTMLElement = element;

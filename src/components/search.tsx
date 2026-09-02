@@ -3,8 +3,9 @@ import { useState } from "react";
 import { getAddress } from "viem";
 import { Command, useCommandState } from "cmdk";
 
-import { getFrame, useFrames } from "./frames";
+import { getFrame } from "./frames";
 import { SearchIcon, XIcon } from "./icons";
+import { useFrames } from "@/frames/context";
 
 // TODO
 // Probably need to add a dropdown for the supported chains, this makes it explictly clear when pasting

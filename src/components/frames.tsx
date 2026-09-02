@@ -2,34 +2,25 @@
 
 import * as v from "valibot";
 import { create } from "zustand";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import type { ComponentProps, ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { createContext, useContext, useRef, useState } from "react";
 
 import { XIcon } from "./icons";
-import { raise } from "@/utils";
 import { parseId } from "@/helpers";
 import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
 import { AddressClient } from "@/frames/address/address-client";
 import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
 import { AddressSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
+import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/context";
 
 export type Frame =
 	| { type: "event"; data: string; raw: string }
 	| { type: "address"; data: `0x${string}`; raw: string }
 	| { type: "transaction-hash"; data: `0x${string}`; raw: string }
 	| { type: "transaction-position"; data: { block: number; tx: number }; raw: string };
-
-type FrameContextValue = {
-	value: string[];
-	clear(): Promise<void>;
-	remove(index: number | null): Promise<void>;
-	push(frame: string, index: number | null): Promise<void>;
-};
-
-const FrameContext = createContext<FrameContextValue | null>(null);
 
 export function FrameContextProvider(props: { children?: ReactNode }) {
 	const navigate = useNavigate();
@@ -122,10 +113,6 @@ export function FrameContextProvider(props: { children?: ReactNode }) {
 	return <FrameContext value={value}>{props.children}</FrameContext>;
 }
 
-export function useFrames() {
-	return useContext(FrameContext) ?? raise("Missing FrameContextProvider");
-}
-
 export function getFrame(frame: string): Frame | null {
 	// Defaults to Ethereum mainnet. We will need some way to specify chain
 
@@ -184,10 +171,6 @@ export function FrameContainer(props: { children: ReactNode }) {
 function EmptyFrame() {
 	return <div className="w-full h-full bg-white" />;
 }
-
-const FrameIndexContext = createContext<number | null>(null);
-
-export const useFrameIndex = () => useContext(FrameIndexContext);
 
 export function Frame(props: { frame: string; index: number }) {
 	const frame = getFrame(props.frame);
