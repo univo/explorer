@@ -45,7 +45,8 @@ export async function LogFwaNftAllocatedV1Description(props: { event: LogFwaNftA
 	if (isHexEqual(props.address, props.event.depositor_address)) {
 		return (
 			<Description>
-				<Action type="lose">Lost deposit of</Action>
+				<Action type="lose">Lost</Action>
+				<span>deposit of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth</span>
 				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.backing_eth} at={blockTimestamp} />
