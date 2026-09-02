@@ -90,6 +90,10 @@ function EmptyState() {
 		return null;
 	}
 
+	if (isBlockNumber(search)) {
+		return null;
+	}
+
 	return (
 		<Command.Empty className="p-8">
 			<p className="text-sm text-center text-gray-900">No results found. Please try again.</p>
@@ -103,6 +107,23 @@ function isAccount(search: string) {
 
 function isTxHash(search: string) {
 	return search.length === 66 && search.startsWith("0x");
+}
+
+function isBlockNumber(search: string) {
+	try {
+		if (search.startsWith("0x")) {
+			return false;
+		}
+
+		const number = Number.parseInt(search);
+
+		if (Number.isNaN(number)) {
+			return false;
+		}
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 const tokens = [

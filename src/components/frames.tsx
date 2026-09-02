@@ -13,11 +13,13 @@ import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
 import { AddressClient } from "@/frames/address/address-client";
 import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
-import { AddressSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
+import { BlockNumberClient } from "@/frames/block-number/block-number-client";
 import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/context";
+import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type Frame =
 	| { type: "event"; data: string; raw: string }
+	| { type: "block-number"; data: number; raw: string }
 	| { type: "address"; data: `0x${string}`; raw: string }
 	| { type: "transaction-hash"; data: `0x${string}`; raw: string }
 	| { type: "transaction-position"; data: { block: number; tx: number }; raw: string };
@@ -125,6 +127,9 @@ export function getFrame(frame: string): Frame | null {
 	const tx_position = v.safeParse(TxPositionSchema, frame);
 	if (tx_position.success) return { type: "transaction-position", data: tx_position.output, raw: frame };
 
+	const block_number = v.safeParse(BlockNumberSchema, frame);
+	if (block_number.success) return { type: "block-number", data: block_number.output, raw: frame };
+
 	const event = v.safeParse(EventSchema, frame);
 	if (event.success) return { type: "event", data: event.output, raw: frame };
 
@@ -180,6 +185,8 @@ export function Frame(props: { frame: string; index: number }) {
 			{frame === null && <EmptyFrame />}
 
 			{frame !== null && frame.type === "address" && <AddressClient address={frame.data} />}
+
+			{frame !== null && frame.type === "block-number" && <BlockNumberClient number={frame.data} />}
 
 			{frame !== null && frame.type === "transaction-position" && <TxPositionClient block={frame.data.block} tx={frame.data.tx} />}
 		</FrameIndexContext>
