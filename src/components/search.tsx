@@ -186,31 +186,10 @@ const tokens = [
 	},
 	{
 		chain: 1,
-		symbol: "WLFI",
-		name: "World Liberty Financial",
-		address: "0xda5e1988097297dcdc1f90d4dfe7909e847cbef6",
-		image: "https://etherscan.io/token/images/worldlibertyfinancial_32.png",
-	},
-	{
-		chain: 1,
 		symbol: "WBTC",
 		name: "Wrapped BTC",
 		address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
 		image: "https://etherscan.io/token/images/wrappedbtc_ofc_32.svg",
-	},
-	{
-		chain: 1,
-		symbol: "wstETH",
-		name: "Wrapped Liquid Staked Ether 2.0",
-		address: "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
-		image: "https://etherscan.io/token/images/wsteth3_32.png",
-	},
-	{
-		chain: 1,
-		symbol: "USDS",
-		name: "USDS Stablecoin",
-		address: "0xdc035d45d973e3ec169d2276ddab16f1e407384f",
-		image: "https://etherscan.io/token/images/skyusds_32.svg?v=2",
 	},
 	{
 		chain: 1,
@@ -221,60 +200,10 @@ const tokens = [
 	},
 	{
 		chain: 1,
-		symbol: "weETH",
-		name: "Wrapped eETH",
-		address: "0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee",
-		image: "https://etherscan.io/token/images/etherfiweeth_32.png?v=2",
-	},
-	{
-		chain: 1,
-		symbol: "USDE",
-		name: "Ethena USDe",
-		address: "0x4c9edd5852cd905f086c759e8383e09bff1e68b3",
-		image: "https://etherscan.io/token/images/ethenausde_32.svg",
-	},
-	{
-		chain: 1,
-		symbol: "sUSD",
-		name: "Savings USDS",
-		address: "0xa3931d71877c0e7a3148cb7eb4463524fec27fbd",
-		image: "https://etherscan.io/token/images/susds_32.svg",
-	},
-	{
-		chain: 1,
-		symbol: "sUSDe",
-		name: "Ethena Staked USDe",
-		address: "0x9d39a5de30e57443bff2a8307a4256c8797a3497",
-		image: "https://etherscan.io/token/images/stakedusde_32.png",
-	},
-	{
-		chain: 1,
 		symbol: "PYUSD",
 		name: "PayPal USD",
 		address: "0x6c3ea9036406852006290770bedfcaba0e23a0e8",
 		image: "https://etherscan.io/token/images/paypalusd_32.png",
-	},
-	{
-		chain: 1,
-		symbol: "CRO",
-		name: "Cronos Coin",
-		address: "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
-		image: "https://etherscan.io/token/images/cronos_ofc_32.svg",
-	},
-	{
-		chain: 1,
-		symbol: "cbBTC",
-		name: "Coinbase Wrapped BTC",
-		address: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
-		image: "https://etherscan.io/token/images/cbbtc_32.png?v=2",
-	},
-
-	{
-		chain: 1,
-		symbol: "MNT",
-		name: "Mantle",
-		address: "0x3c3a81e81dc49a522a592e7622a7e711c06bf354",
-		image: "https://etherscan.io/token/images/mantle_32.svg",
 	},
 ];
 
