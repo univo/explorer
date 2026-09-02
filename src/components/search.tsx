@@ -114,6 +114,7 @@ function isBlockNumber(search: string) {
 		if (search.startsWith("0x")) {
 			return false;
 		}
+
 		const number = Number.parseInt(search);
 
 		if (Number.isNaN(number)) {
@@ -281,10 +282,7 @@ function Tokens(props: { onClose?: () => void }) {
 	const frames = useFrames();
 
 	return (
-		<Command.Group
-			className="p-2"
-			heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}
-		>
+		<Command.Group className="p-2" heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}>
 			{tokens.map((token) => {
 				async function onSelect() {
 					await frames.push(getAddress(token.address), null);
