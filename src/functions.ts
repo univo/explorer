@@ -40,7 +40,7 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
  * Returns the latest event id for a given account
  */
 export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: hashstring(), cursor: v.string() }))
+	.inputValidator(v.object({ address: hashstring() }))
 	.handler(async ({ data }) => {
 		const [id] = await getEventIdsForAccount(data.address, {
 			limit: 1,

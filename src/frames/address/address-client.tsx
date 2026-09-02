@@ -170,7 +170,7 @@ function Banner(props: { address: `0x${string}` }) {
 
 	const address = getAddress(props.address);
 
-	const cursor = iife(() => {
+	const timestamp = iife(() => {
 		const firstBatch = Array.from(context.cursors)[0];
 
 		if (firstBatch === undefined) {
@@ -183,20 +183,17 @@ function Banner(props: { address: `0x${string}` }) {
 			throw new Error("Expected atleast the initial cursor");
 		}
 
-		return key;
+		return parseId(key).blockTimestamp;
 	});
 
 	const getLatestEventForAccount = useServerFn(sf_getLatestEventForAccount);
 
 	const query = useQuery({
-		staleTime: 12 * 1000,
-
 		refetchOnMount: false,
-		refetchOnReconnect: true,
-		refetchOnWindowFocus: true,
-
-		queryKey: [address, cursor],
-		queryFn: () => getLatestEventForAccount({ data: { address, cursor } }),
+		refetchOnReconnect: "always",
+		refetchOnWindowFocus: "always",
+		queryKey: ["latest-event", address],
+		queryFn: () => getLatestEventForAccount({ data: { address } }),
 	});
 
 	if (query.status === "pending" || query.status === "error") {
@@ -207,7 +204,7 @@ function Banner(props: { address: `0x${string}` }) {
 		return;
 	}
 
-	if (parseId(query.data).blockTimestamp > parseId(cursor).blockTimestamp) {
+	if (parseId(query.data).blockTimestamp > timestamp) {
 		return (
 			<div className="flex justify-center pt-4">
 				<button
