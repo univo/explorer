@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import type { ReactNode } from "react";
 import { getAddress, numberToHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
@@ -196,28 +197,24 @@ function Banner(props: { address: `0x${string}` }) {
 		queryFn: () => getLatestEventForAccount({ data: { address } }),
 	});
 
-	if (query.status === "pending" || query.status === "error") {
-		return;
-	}
+	const show = query.status === "success" && typeof query.data === "string" && parseId(query.data).blockTimestamp > timestamp;
 
-	if (query.data === null) {
-		return;
-	}
-
-	if (parseId(query.data).blockTimestamp > timestamp) {
-		return (
-			<div className="flex justify-center pt-4">
-				<button
-					type="button"
-					onMouseDown={() => context.refreshCursors()}
-					className="cursor-pointer px-2.5 py-1 flex items-center justify-center gap-1.5 rounded-full bg-primary-500 shadow-md"
-				>
-					<ArrowUpIcon className="text-white shrink-0 size-3.5" />
-					<span className="text-white text-sm">New events</span>
-				</button>
-			</div>
-		);
-	}
+	return (
+		<div className="flex justify-center pt-4">
+			<button
+				type="button"
+				onMouseDown={() => context.refreshCursors()}
+				className={clsx(
+					"transform-gpu ease-[cubic-bezier(0,0,0,1.1)]",
+					show ? "translate-y-0 scale-100 duration-250" : "-translate-y-15 scale-75 duration-150",
+					"cursor-pointer w-29 h-7 flex items-center justify-center gap-1.5 rounded-full bg-primary-500 shadow-md",
+				)}
+			>
+				<ArrowUpIcon className="text-white shrink-0 size-3.5" />
+				<span className="text-white text-sm">New events</span>
+			</button>
+		</div>
+	);
 }
 
 function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
