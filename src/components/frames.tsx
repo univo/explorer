@@ -13,9 +13,9 @@ import { IconButton } from "./icon-button";
 import { sf_getTxPosition } from "@/functions";
 import { AddressClient } from "@/frames/address/address-client";
 import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
-import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
-import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/context";
 import { BlockNumberClient } from "@/views/block-number/block-number-client";
+import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/context";
+import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type Frame =
 	| { type: "event"; data: string; raw: string }
