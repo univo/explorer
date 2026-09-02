@@ -68,15 +68,15 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 				<div className="px-3 pb-3">
 					<div className="flex flex-col items-start gap-1">
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">Status</p>
+							<span className="min-w-24 text-sm text-gray-700">Status</span>
 
-							<p className={clsx("text-sm capitalize", receipt.status === "0x1" ? "text-green-500" : "text-red-500")}>
+							<span className={clsx("text-sm capitalize", receipt.status === "0x1" ? "text-green-500" : "text-red-500")}>
 								{receipt.status === "0x1" ? "Success" : "Failed"}
-							</p>
+							</span>
 						</div>
 
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">Timestamp</p>
+							<span className="min-w-24 text-sm text-gray-700">Timestamp</span>
 
 							<div className="flex items-center gap-1 text-sm text-gray-900">
 								<span className="flex-none">{formatDateTime(timestamp)}</span>
@@ -88,7 +88,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">Block #</p>
+							<span className="min-w-24 text-sm text-gray-700">Block #</span>
 
 							<AddFrameButton
 								frame={String(hexToNumber(tx.blockNumber))}
@@ -99,7 +99,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">Tx Fee</p>
+							<span className="min-w-24 text-sm text-gray-700">Tx Fee</span>
 
 							<div className="text-sm text-gray-900 flex items-center gap-1">
 								<span>{formattedFeeEth} ETH</span>
@@ -108,15 +108,15 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">By</p>
+							<span className="min-w-24 text-sm text-gray-700">By</span>
 
-							<p className="text-sm text-gray-900">
+							<span className="text-sm text-gray-900">
 								<Account chain={1} address={tx.from} />
-							</p>
+							</span>
 						</div>
 
 						<div className="flex items-start justify-between">
-							<p className="min-w-24 text-sm text-gray-700">Intent</p>
+							<span className="min-w-24 text-sm text-gray-700">Intent</span>
 
 							{defined(intent) && (
 								<ErrorBoundary fallback={null}>
