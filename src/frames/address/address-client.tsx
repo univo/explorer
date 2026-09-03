@@ -246,6 +246,10 @@ export function StopCursorContainer(props: { startCursor: string; stopCursor: st
 	return props.children;
 }
 
+// TODO
+// This virtualisation strategy breaks our position sticky separators. This creates a child-div
+// that only allows the header to be sticky while this child div is visible.
+
 export function VirtualisationContainer(props: { children: ReactNode }) {
 	const [height, setHeight] = useState<number | null>(null);
 
