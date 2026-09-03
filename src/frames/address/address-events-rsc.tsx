@@ -3,12 +3,12 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { raise } from "@/utils";
 import { getEventsForIds } from "@/db/events";
+import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
 import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
-import { formatDay, formatRelativeDate, formatTime } from "@/utils";
 import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
@@ -35,8 +35,8 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; startCur
 	const firstEvent = ordered[0] || raise("Expected at least one event");
 	const firstEventDate = new Date(parseId(firstEvent.id).blockTimestamp * 1000);
 	const previousBatchLastEventDate = new Date(parseId(props.startCursor).blockTimestamp * 1000);
-	const firstEventDay = formatDay(firstEventDate);
-	const previousBatchLastEventDay = formatDay(previousBatchLastEventDate);
+	const firstEventDay = firstEventDate.toLocaleDateString("en", { day: "numeric" });
+	const previousBatchLastEventDay = previousBatchLastEventDate.toLocaleDateString("en", { day: "numeric" });
 	const startsWithHeader = previousBatchLastEventDay !== firstEventDay;
 
 	const stopCursor = ids.length < 100 ? null : ordered[ordered.length - 1].id;
@@ -52,16 +52,18 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; startCur
 						const eventDate = new Date(parseId(event.id).blockTimestamp * 1000);
 						const previousDate = new Date(parseId(previousId).blockTimestamp * 1000);
 
-						const eventString = formatDay(eventDate);
-						const previousString = formatDay(previousDate);
-
+						const eventString = eventDate.toLocaleDateString("en", { day: "numeric" });
+						const previousString = previousDate.toLocaleDateString("en", { day: "numeric" });
 						const showHeader = eventString !== previousString;
 
 						return (
 							<ErrorBoundary key={event.id} fallback={null}>
 								{showHeader && (
 									<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
-										<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{eventString}</p>
+										<p className="text-sm text-gray-500 font-normal text-nowrap select-all">
+											<Timestamp date utc={eventDate} />
+										</p>
+
 										<HeaderTimestamp timestamp={eventDate} />
 									</div>
 								)}
@@ -73,7 +75,7 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; startCur
 										</div>
 
 										<div className="px-3 py-1.5 overflow-hidden shrink-0">
-											<EventTimestamp timestamp={new Date(parseId(event.id).blockTimestamp * 1000)} />
+											<EventTimestamp timestamp={eventDate} />
 										</div>
 									</EventTableRow>
 								</div>
@@ -92,7 +94,11 @@ function HeaderTimestamp(props: { timestamp: Date }) {
 	const delta = Date.now() - props.timestamp.getTime();
 
 	if (delta > ONE_DAY) {
-		return <p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">{formatRelativeDate(props.timestamp)}</p>;
+		return (
+			<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">
+				<RelativeTimestamp utc={props.timestamp} />
+			</p>
+		);
 	}
 }
 
@@ -100,15 +106,18 @@ function EventTimestamp(props: { timestamp: Date }) {
 	const delta = Date.now() - props.timestamp.getTime();
 
 	if (delta > ONE_DAY) {
-		// TODO: This is currently in UTC and should be localised
-		return <p className="text-sm text-gray-500 text-right text-nowrap select-all">{formatTime(props.timestamp)}</p>;
+		return (
+			<p className="text-sm text-gray-500 text-right text-nowrap select-all">
+				<Timestamp time utc={props.timestamp} />
+			</p>
+		);
 	}
 
 	// Relative timestamps update change width over time so we force a width here
 
 	return (
 		<p className="text-sm text-gray-500 text-right text-nowrap select-all min-w-8">
-			<RelativeTimestamp timestamp={props.timestamp} />
+			<RelativeTimestamp utc={props.timestamp} />
 		</p>
 	);
 }

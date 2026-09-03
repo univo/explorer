@@ -38,62 +38,8 @@ export function defined<TData>(data: TData): data is NonNullable<typeof data> {
 	return !isNull && !isUndefined;
 }
 
-const dtf = new Intl.DateTimeFormat("en-GB", {
-	hour12: true,
-	hour: "numeric",
-	minute: "2-digit",
-	weekday: "short",
-	month: "short",
-	day: "numeric",
-	year: "2-digit",
-	timeZone: "UTC",
-});
-
-export function formatDateTime(date: Date) {
-	return dtf.format(date);
-}
-
-const tf = new Intl.DateTimeFormat("en-GB", {
-	hour12: true,
-	hour: "numeric",
-	minute: "2-digit",
-	timeZone: "UTC",
-});
-
-export function formatTime(date: Date) {
-	return tf.format(date);
-}
-
-const unit_strings = ["s", "m", "hr", "d", "w", "mo", "yr"] as const;
-const units_seconds = [60, 3600, 86400, 86400 * 7, 86400 * 30, 86400 * 365, Number.POSITIVE_INFINITY];
-
-export function formatRelativeDate(date: Date) {
-	const delta_seconds = Math.round((date.getTime() - Date.now()) / 1000);
-	const unit_index = units_seconds.findIndex((cutoff) => cutoff > Math.abs(delta_seconds));
-	const divisor = unit_index ? units_seconds[unit_index - 1]! : 1;
-	return `${Math.abs(Math.round(delta_seconds / divisor))}${unit_strings[unit_index]}`;
-}
-
 export function formatNumber(number: number | bigint, options: Parameters<typeof Intl.NumberFormat>[1] = {}) {
 	return new Intl.NumberFormat("en-GB", options).format(number);
-}
-
-export function formatDate(date: Date) {
-	return date.toLocaleDateString("en", {
-		month: "numeric",
-		day: "numeric",
-		year: "2-digit",
-		timeZone: "UTC",
-	});
-}
-
-export function formatDay(date: Date) {
-	return date.toLocaleDateString("en", {
-		month: "short",
-		day: "numeric",
-		year: "numeric",
-		timeZone: "UTC",
-	});
 }
 
 export function iife<T>(fn: () => T): T {

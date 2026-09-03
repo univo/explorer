@@ -4,6 +4,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Account } from "@/components/account";
 import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
+import { Timestamp } from "@/components/timestamp";
 import { getTokenPrice } from "@/components/erc-20";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
@@ -14,7 +15,7 @@ import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddFrameButton, CloseFrameButton } from "@/components/frames";
 import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
-import { defined, formatDateTime, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
+import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
@@ -79,10 +80,12 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 							<span className="min-w-24 text-sm text-gray-700">Timestamp</span>
 
 							<div className="flex items-center gap-1 text-sm text-gray-900">
-								<span className="flex-none">{formatDateTime(timestamp)}</span>
+								<span className="flex-none">
+									<Timestamp date time utc={timestamp} />
+								</span>
 
 								<span className="flex-initial truncate text-gray-500">
-									(<RelativeTimestamp timestamp={timestamp} />)
+									(<RelativeTimestamp utc={timestamp} />)
 								</span>
 							</div>
 						</div>

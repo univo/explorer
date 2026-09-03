@@ -163,8 +163,7 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 	return final_cursor;
 }
 
-// The plan is that we load on demand. We click the banner, it turns into a loading indicator that fetches the start
-// cursor for the previous 50 events. We then render that start cursor, scroll to it, and hide the banner
+// TODO: Fix banner hiding behind the day separator
 
 function Banner(props: { address: `0x${string}` }) {
 	const context = useCursorContext();
