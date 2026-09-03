@@ -119,7 +119,7 @@ function Events(props: { address: `0x${string}` }) {
 	return (
 		<CursorContext value={{ cursors, refreshCursors, insertNextCursor, insertStopCursor }}>
 			<div className="relative grow overflow-scroll isolate">
-				<div className="sticky top-0 h-0">
+				<div className="sticky top-0 h-0 z-20">
 					<Banner address={props.address} />
 				</div>
 
@@ -162,8 +162,6 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 
 	return final_cursor;
 }
-
-// TODO: Fix banner hiding behind the day separator
 
 function Banner(props: { address: `0x${string}` }) {
 	const context = useCursorContext();
