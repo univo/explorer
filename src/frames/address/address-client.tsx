@@ -119,7 +119,7 @@ function Events(props: { address: `0x${string}` }) {
 	return (
 		<CursorContext value={{ cursors, refreshCursors, insertNextCursor, insertStopCursor }}>
 			<div className="relative grow overflow-y-scroll overscroll-y-none isolate">
-				<div className="sticky top-0 h-0">
+				<div className="sticky top-0 h-0 z-20">
 					<Banner address={props.address} />
 				</div>
 
@@ -162,9 +162,6 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 
 	return final_cursor;
 }
-
-// The plan is that we load on demand. We click the banner, it turns into a loading indicator that fetches the start
-// cursor for the previous 50 events. We then render that start cursor, scroll to it, and hide the banner
 
 function Banner(props: { address: `0x${string}` }) {
 	const context = useCursorContext();
@@ -248,6 +245,11 @@ export function StopCursorContainer(props: { startCursor: string; stopCursor: st
 
 	return props.children;
 }
+
+// TODO
+// This virtualisation strategy breaks our position sticky separators. This creates a child-div
+// that only allows the header to be sticky while this child div is visible. It also means that
+// between sections there isn't a border when there should be one.
 
 export function VirtualisationContainer(props: { children: ReactNode }) {
 	const [height, setHeight] = useState<number | null>(null);

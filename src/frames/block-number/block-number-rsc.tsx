@@ -1,16 +1,18 @@
 import { ErrorBoundary } from "react-error-boundary";
 
 import type { Block } from "@/state/block";
+import { getOrderedEvents } from "@/helpers";
 import { getEventsForIds } from "@/db/events";
 import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
+import { formatNumber, hexToNumber } from "@/utils";
 import { IconButton } from "@/components/icon-button";
-import { getOrderedEvents, parseId } from "@/helpers";
 import { CloseFrameButton } from "@/components/frames";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
 import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
-import { formatDay, formatNumber, formatRelativeDate, hexToNumber, raise } from "@/utils";
+
+// TODO: Add timestamp to header and include other block info
 
 export async function BlockNumberRsc(props: { number: number }) {
 	const [block, ids] = await Promise.all([
@@ -60,24 +62,14 @@ async function EventsTable(props: { ids: string[] }) {
 
 	const events = await getEventsForIds(props.ids);
 	const ordered = getOrderedEvents(events, "latest");
-	const first = ordered[0] || raise("Expected at least one event");
-	const date = new Date(parseId(first.id).blockTimestamp * 1000);
 
 	return (
 		<div className="relative grow overflow-scroll isolate">
-			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
-				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">{formatDay(date)}</p>
-
-				{Date.now() - date.getTime() > 24 * 60 * 60 * 1000 && (
-					<p className="text-sm text-gray-500 font-normal text-nowrap select-all text-right">{formatRelativeDate(date)}</p>
-				)}
-			</div>
-
 			{ordered.map((event) => {
 				return (
 					<ErrorBoundary key={event.id} fallback={null}>
 						<div className="border-b border-gray-200">
-							<EventTableRow id={event.id}>
+							<EventTableRow id={event.id} previousId={event.id}>
 								<div className="px-3 py-1.5 overflow-hidden grow">
 									<EventDescription event={event} address={undefined} />
 								</div>
