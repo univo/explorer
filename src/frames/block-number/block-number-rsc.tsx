@@ -69,7 +69,7 @@ async function EventsTable(props: { ids: string[] }) {
 				return (
 					<ErrorBoundary key={event.id} fallback={null}>
 						<div className="border-b border-gray-200">
-							<EventTableRow id={event.id}>
+							<EventTableRow id={event.id} previousId={event.id}>
 								<div className="px-3 py-1.5 overflow-hidden grow">
 									<EventDescription event={event} address={undefined} />
 								</div>
