@@ -1,29 +1,22 @@
 import { getAddress } from "viem";
-import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 import { and, asc, desc, eq, gt, lt } from "drizzle-orm";
+import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
 import { logger } from "@/utils";
 import { inTuple, hex } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
 
-// Account indexes do not include a chain intentionally. For now, it is preferred that the list of events returned for
-// a given account should be multichain by default. This allows us to easily see the actions of specific accounts across
-// chains within a similar time-frame.
-
 // This table uses indexes slightly differently than others. Noticably, we use a normal index over both columns as opposed
 // to a primary key. This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct
-// in our query to compensate for those duplicates.
+// in our query to compensate for those duplicates. We do this to reduce the index size. After partitioning by timestamp,
+// we reduce the search space so significantly that the any values after that in the index aren't worth including. This
+// increases CPU and memory caused by the scan but is a good tradeoff.
 
-// The reason our indexes are designed like this is a tradeoff to maximise backfill performance. This table is the most
-// expensive to write to by a substantial margin, primarily because every insert can cause an update at any point in the
-// B-Tree index. This causes a higher number of page splits as Postgres attempts to balance the B-Tree, massively reducing
-// throughput on the table. This article https://planetscale.com/blog/the-problem-with-using-a-uuid-primary-key-in-mysql
-// explains what's going on. All the other tables use some type of timestamp as the primary key and don't suffer from this
-// issue. Long-term the solution is to partition based on the account and use the event_id as the sort key. This would allow
-// us to achieve the same performance as the other tables, but right now Postgres isn't great at this.
-
-// When backfilling all the data for this table the first time, it is advised to delete the index first. This maximises
-// insert performance. After the backfill is complete, manually create the index.
+// The ordering of the index is very intentional. Interesting when querying this table we always know all four of the indexed
+// columns: timestamp (basically a cursor, defaults to current timestamp), account, chain (statically defined), and the table
+// id (also statically defined). The most basic query has a timestamp and account, and just uses all chains and all table ids.
+// You can the filter for specific events, and on specific chains. We place the timestamp first to maximise inserts because
+// timestamps effectively operate as increasing integers which work well with the B-Tree index.
 
 type Index = {
 	account: `0x${string}`;
@@ -35,17 +28,17 @@ export const table = pgTable(
 	{
 		// Indexed columns
 		account: hex().notNull(),
+		chain: smallint().notNull(),
 		table_id: smallint().notNull(),
 		block_timestamp: integer().notNull(),
 
 		// Non-indexed columns
-		chain: smallint().notNull(),
 		tx_index: smallint().notNull(),
 		log_index: integer().notNull(),
 		block_number: integer().notNull(),
 	},
 	(table) => [
-		index("index_account_v4_account_block_timestamp_table_id_idx").on(table.account, table.table_id, table.block_timestamp), //
+		index("index_account_v4_account_block_timestamp_table_id_idx").on(table.block_timestamp, table.account, table.chain, table.table_id), //
 	],
 );
 
