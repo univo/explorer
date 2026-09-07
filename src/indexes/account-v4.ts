@@ -33,17 +33,19 @@ type Index = {
 export const table = pgTable(
 	"index_account_v4",
 	{
+		// Indexed columns
 		account: hex().notNull(),
-		block_timestamp: integer().notNull(),
 		table_id: smallint().notNull(),
+		block_timestamp: integer().notNull(),
 
+		// Non-indexed columns
 		chain: smallint().notNull(),
-		block_number: integer().notNull(),
 		tx_index: smallint().notNull(),
 		log_index: integer().notNull(),
+		block_number: integer().notNull(),
 	},
 	(table) => [
-		index("index_account_v4_account_block_timestamp_table_id_idx").on(table.account, table.block_timestamp, table.table_id), //
+		index("index_account_v4_account_block_timestamp_table_id_idx").on(table.account, table.table_id, table.block_timestamp), //
 	],
 );
 
@@ -90,17 +92,15 @@ export const index_account_v4 = {
 
 // The index aims to support a few primary query patterns:
 //
-// 1. Filter events by account: this is the main one. We index billions of events and we offer a basic
-//    view to search for events for a given account.
+// 1. Filter events by account, event, and timestamp: if we are looking for an account performing
+//    specific events we can filter based on the table id, and provide a timestamp to search within
+//    a given time range.
 //
-// 2. Filter events by account and timestamp: able to search the events related to an account over a
-//    given time frame.
-//
-// 3. Filter events by account, timestamp, and specific events: if we are looking for an account performing
-//    specific actions we can filter based on the table id (type of event).
+// 2. Filter events by account, and event: allows us to get a list of events performed by a given
+//	  account using the table id.
 //
 // All of these query are essentially taking the entire list of events and allow us to filter them for something
-// more specific: per account, per timestamp, and per event type. All query patterns should support pagination too.
+// more specific: per account, per event type, and per timestamp. All query patterns should support pagination too.
 // We do not support the ability to filter for other addresses, e.g. to answer the a query "has this account interacted
 // with this uniswap router", instead we query for the specific events that would involve that contract. This massively
 // reduces the search space and cost while achieving a similar outcome
