@@ -41,6 +41,8 @@ export const table = pgTable(
 	],
 );
 
+// TODO: To include all chains and all tables, we can do "not in empty array"?
+
 export const index_account_v4 = {
 	async upsert(indexes: Index[]) {
 		const unique: Record<string, true> = {};
