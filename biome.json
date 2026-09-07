@@ -17,7 +17,8 @@
       },
       "a11y": {
         "noSvgWithoutTitle": "off",
-        "useKeyWithClickEvents": "off"
+        "useKeyWithClickEvents": "off",
+        "noLabelWithoutControl": "off"
       },
       "style": {
         "useImportType": "off",
