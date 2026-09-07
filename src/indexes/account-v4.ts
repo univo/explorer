@@ -12,12 +12,6 @@ import { createPostgresClient } from "@/db/client";
 // we reduce the search space so significantly that the any values after that in the index aren't worth including. This
 // increases CPU and memory caused by the scan but is a good tradeoff.
 
-// The ordering of the index is very intentional. Interesting when querying this table we always know all four of the indexed
-// columns: timestamp (basically a cursor, defaults to current timestamp), account, chain (statically defined), and the table
-// id (also statically defined). The most basic query has a timestamp and account, and just uses all chains and all table ids.
-// You can the filter for specific events, and on specific chains. We place the timestamp first to maximise inserts because
-// timestamps effectively operate as increasing integers which work well with the B-Tree index.
-
 type Index = {
 	account: `0x${string}`;
 	event_id: string;
@@ -38,7 +32,12 @@ export const table = pgTable(
 		block_number: integer().notNull(),
 	},
 	(table) => [
-		index("index_account_v4_account_block_timestamp_table_id_idx").on(table.block_timestamp, table.account, table.chain, table.table_id), //
+		index("index_account_v4_account_chain_table_id_block_timestamp_idx").on(
+			table.account,
+			table.chain,
+			table.table_id,
+			table.block_timestamp,
+		), //
 	],
 );
 
