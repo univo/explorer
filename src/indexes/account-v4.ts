@@ -37,7 +37,7 @@ export const table = pgTable(
 			table.chain,
 			table.table_id,
 			table.block_timestamp,
-		), //
+		),
 	],
 );
 
