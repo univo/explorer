@@ -36,6 +36,8 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
 		};
 	});
 
+// TODO: Checking for new events should allow accepting a filters, e.g. for a specific table id, and not just by account
+
 /**
  * Returns the latest event id for a given account
  */
