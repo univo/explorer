@@ -71,6 +71,8 @@ export const TABLES = {
 	intent_fwa_acquire_v1: 51,
 };
 
+export type Table = keyof typeof TABLES;
+
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
 // tx as a whole. When this happens it's important to use the `TRANSACTION_EVENT` constant as the provided
 // logIndex for those event identifiers. This ensures that any log level events that actually do need to specify
