@@ -1,16 +1,17 @@
 import { getAddress } from "viem";
-import { and, asc, desc, eq, gt, inArray, lt } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
+import { TABLES } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { logger, numberToHex } from "@/utils";
 import { createId, parseId } from "@/helpers";
+import type { Chain, Table } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { TABLES, type Chain, type Table } from "@/constants";
 
-// This table uses indexes slightly differently than others. Noticably, we use a normal index over both columns as opposed
-// to a primary key. This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct
-// in our query to compensate for those duplicates.
+// This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
+// This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
+// compensate for those duplicates.
 
 // There are two reasons why we do this: it trades off a reduced storage costs for a increased CPU costs. After partitioning
 // by timestamp we reduce the search space so significantly that we can just perform a scan over the remaining values. The
@@ -37,11 +38,11 @@ export const table = pgTable(
 		block_number: integer().notNull(),
 	},
 	(table) => [
-		index("index_account_v4_account_chain_table_id_block_timestamp_idx").on(
-			table.account,
+		index("index_account_v4_timeline_idx").on(
+			table.account, //
+			table.block_timestamp,
 			table.chain,
 			table.table_id,
-			table.block_timestamp,
 		),
 	],
 );
@@ -93,11 +94,33 @@ export const index_account_v4 = {
 
 		await client.delete(table).where(
 			inTuple(
-				[table.account, table.chain, table.table_id, table.block_timestamp],
+				[
+					// Indexed columns
+					table.account,
+					table.block_timestamp,
+					table.chain,
+					table.table_id,
+
+					// Non-indexed columns
+					table.tx_index,
+					table.log_index,
+					table.block_number,
+				],
 				indexes.map((index) => {
 					const parsed = parseId(index.event_id);
 
-					return [index.account, parsed.chainId, parsed.tableId, parsed.blockTimestamp];
+					return [
+						// Indexed columns
+						index.account,
+						parsed.blockTimestamp,
+						parsed.chainId,
+						parsed.tableId,
+
+						// Non-indexed columns
+						parsed.txIndex,
+						parsed.logIndex,
+						parsed.blockNumber,
+					];
 				}),
 			),
 		);
@@ -121,7 +144,7 @@ type Opts = {
 	/** Pagination limit */
 	limit: number;
 
-	/** Pagination timestamp */
+	/** Pagination cursor */
 	cursor?: string;
 
 	/** Sort ordering */
@@ -137,6 +160,38 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 
 	if (opts.cursor) {
 		const parsedCursor = parseId(opts.cursor);
+		const cursorCondition =
+			opts.order === "latest"
+				? sql`(
+						${table.block_timestamp},
+						${table.block_number},
+						${table.tx_index},
+						${table.log_index},
+						${table.chain},
+						${table.table_id}
+					) < (
+						${parsedCursor.blockTimestamp},
+						${parsedCursor.blockNumber},
+						${parsedCursor.txIndex},
+						${parsedCursor.logIndex},
+						${parsedCursor.chainId},
+						${parsedCursor.tableId}
+					)`
+				: sql`(
+						${table.block_timestamp},
+						${table.block_number},
+						${table.tx_index},
+						${table.log_index},
+						${table.chain},
+						${table.table_id}
+					) > (
+						${parsedCursor.blockTimestamp},
+						${parsedCursor.blockNumber},
+						${parsedCursor.txIndex},
+						${parsedCursor.logIndex},
+						${parsedCursor.chainId},
+						${parsedCursor.tableId}
+					)`;
 
 		const rows = await client
 			.selectDistinct({
@@ -154,10 +209,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 					eq(table.account, account), //
 					inArray(table.chain, opts.chains),
 					inArray(table.table_id, tableIds),
-					(opts.order === "latest" ? lt : gt)(table.block_timestamp, parsedCursor.blockTimestamp),
-					(opts.order === "latest" ? lt : gt)(table.block_number, parsedCursor.blockNumber),
-					(opts.order === "latest" ? lt : gt)(table.tx_index, parsedCursor.txIndex),
-					(opts.order === "latest" ? lt : gt)(table.log_index, parsedCursor.logIndex),
+					cursorCondition,
 				),
 			)
 			.orderBy(
@@ -165,6 +217,8 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 				(opts.order === "latest" ? desc : asc)(table.block_number),
 				(opts.order === "latest" ? desc : asc)(table.tx_index),
 				(opts.order === "latest" ? desc : asc)(table.log_index),
+				(opts.order === "latest" ? desc : asc)(table.chain),
+				(opts.order === "latest" ? desc : asc)(table.table_id),
 			)
 			.limit(opts.limit);
 
@@ -205,6 +259,8 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 			(opts.order === "latest" ? desc : asc)(table.block_number),
 			(opts.order === "latest" ? desc : asc)(table.tx_index),
 			(opts.order === "latest" ? desc : asc)(table.log_index),
+			(opts.order === "latest" ? desc : asc)(table.chain),
+			(opts.order === "latest" ? desc : asc)(table.table_id),
 		)
 		.limit(opts.limit);
 
