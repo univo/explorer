@@ -165,6 +165,12 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 	if (opts.cursor) {
 		const { blockTimestamp, blockNumber, txIndex, logIndex } = parseId(opts.cursor);
 
+		const cursor = sql`
+			(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index}) 
+			${opts.order === "latest" ? "<" : ">"} 
+			(${blockTimestamp},${blockNumber},${txIndex},${logIndex})
+		`;
+
 		const rows = await client
 			.selectDistinct({
 				chain: table.chain,
@@ -181,9 +187,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 					eq(table.account, account), //
 					inArray(table.chain, opts.chains),
 					inArray(table.table_id, tableIds),
-					opts.order === "latest"
-						? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index}) < (${blockTimestamp},${blockNumber},${txIndex},${logIndex})`
-						: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index}) > (${blockTimestamp},${blockNumber},${txIndex},${logIndex})`,
+					cursor,
 				),
 			)
 			.orderBy(
