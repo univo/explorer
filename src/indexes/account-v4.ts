@@ -138,8 +138,8 @@ type Opts = {
 	// Filtering. This _can_ be a computationally expensive operation. The worst case scenario is we perform filtering
 	// on a hot account like USDC for a chain or table where no event exists. This is because it will perform a full
 	// timeline search (possibly billions of rows) of USDC and never satisfy the pagination limit. To avoid this we
-	// should ever be searching for batches of common events of chains we know the account exists so that our search
-	// query returns a in reasonable amount of time.
+	// should only ever be searching for batches of common events on chains we know the account exists so that our
+	// search query returns a in reasonable amount of time.
 
 	chains: Chain[];
 	events: Table[];
