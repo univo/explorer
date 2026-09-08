@@ -12,7 +12,9 @@ import { getAccount, getAccountName } from "@/state/account";
 // TODO
 // On the server we should query for a list of distinct table ids for this account and provide that to
 // the event filters. This header can be cached very aggressively and is okay if it's stale. This query
-// should be reasonably fast anyway with Postgres 18 index skip scans of our timestamp column.
+// should be reasonably fast anyway with Postgres 18 index skip scans of our timestamp column. This requires
+// a select distinct query which is probably best implemented as a standalone table with a pk index over
+// each (account, table_id) using on conflict ignore
 
 export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 	const [account, ens] = await Promise.all([
