@@ -158,18 +158,13 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 
 	const tableIds = opts.events.map((key) => TABLES[key]);
 
-	// If two events have the same block timestamp, block number, tx index and log index it will
-	// create non-deterministic ordering that breaks pagination. In practice though, the chance of
-	// this happening between chains is too rare for me to care.
-
 	if (opts.cursor) {
-		const { blockTimestamp, blockNumber, txIndex, logIndex } = parseId(opts.cursor);
+		const { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId } = parseId(opts.cursor);
 
-		const cursor = sql`
-			(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index}) 
-			${opts.order === "latest" ? "<" : ">"} 
-			(${blockTimestamp},${blockNumber},${txIndex},${logIndex})
-		`;
+		const cursor =
+			opts.order === "latest"
+				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${blockTimestamp},${blockNumber},${txIndex},${logIndex},${chainId},${tableId})`
+				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${blockTimestamp},${blockNumber},${txIndex},${logIndex},${chainId},${tableId})`;
 
 		const rows = await client
 			.selectDistinct({
@@ -195,6 +190,8 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 				(opts.order === "latest" ? desc : asc)(table.block_number),
 				(opts.order === "latest" ? desc : asc)(table.tx_index),
 				(opts.order === "latest" ? desc : asc)(table.log_index),
+				(opts.order === "latest" ? desc : asc)(table.chain),
+				(opts.order === "latest" ? desc : asc)(table.table_id),
 			)
 			.limit(opts.limit);
 
@@ -235,6 +232,8 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 			(opts.order === "latest" ? desc : asc)(table.block_number),
 			(opts.order === "latest" ? desc : asc)(table.tx_index),
 			(opts.order === "latest" ? desc : asc)(table.log_index),
+			(opts.order === "latest" ? desc : asc)(table.chain),
+			(opts.order === "latest" ? desc : asc)(table.table_id),
 		)
 		.limit(opts.limit);
 
