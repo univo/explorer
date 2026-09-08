@@ -36,7 +36,10 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
 		};
 	});
 
-// TODO: Checking for new events should allow accepting a filters, e.g. for a specific table id, and not just by account
+// TODO
+// Checking for new events should allow accepting a filters, e.g. for a specific table id, and not just by account.
+// Should not accept a raw list but rather the same filter groups as shown on the frontend. This ensures alignment
+// but also prevents DoS attacks on this public endpoint by running expensive queries
 
 /**
  * Returns the latest event id for a given account
