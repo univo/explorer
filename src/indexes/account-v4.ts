@@ -13,7 +13,7 @@ import { createPostgresClient } from "@/db/client";
 // This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
 // compensate for those duplicates.
 
-// There are two reasons why we do this: it trades off a reduced storage costs for a increased CPU costs. After partitioning
+// There are two reasons why we do this: it trades off a reduced storage cost for an increased CPU costs. After partitioning
 // by timestamp we reduce the search space so significantly that we can just perform a scan over the remaining values. The
 // second reason and slightly more important is that an index can be added after the first backfill. When initialising the
 // explorer this massively improves insert performance.
@@ -135,19 +135,22 @@ export const index_account_v4 = {
 // involving that contract. This massively reduces search costs while achieving a similar outcome.
 
 type Opts = {
-	/** Filter for specific chains */
-	chains: Chain[];
+	// Filtering. This _can_ be a computationally expensive operation. The worst case scenario is we perform filtering
+	// on a hot account like USDC for a chain or table where no event exists. This is because it will perform a full
+	// timeline search (possibly billions of rows) of USDC and never satisfy the pagination limit. To avoid this we
+	// should ever be searching for batches of common events of chains we know the account exists so that our search
+	// query returns a in reasonable amount of time.
 
-	/** Filter for specific events */
+	chains: Chain[];
 	events: Table[];
 
-	/** Pagination limit */
-	limit: number;
+	// Pagination
 
-	/** Pagination cursor */
+	limit: number;
 	cursor?: string;
 
-	/** Sort ordering */
+	// Ordering
+
 	order: "latest" | "reverse";
 };
 
