@@ -1,5 +1,6 @@
 import { test } from "vitest";
 
+import { TABLES } from "@/constants";
 import { test_getBlock } from "@/tests/utils";
 import { event } from "@/events/intent_native_transfer_v1/event";
 import { getEventIdsForAccount, index_account_v4 } from "./index_account_v4";
@@ -24,7 +25,7 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 		limit: 14,
 		chains: [1],
 		order: "reverse",
-		events: ["intent_native_transfer_v1"],
+		tables: [TABLES.intent_native_transfer_v1],
 	});
 
 	expect(ids).toMatchInlineSnapshot(`

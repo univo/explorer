@@ -141,7 +141,7 @@ type Opts = {
 	// search query returns a in reasonable amount of time.
 
 	chains: Chain[];
-	events: number[];
+	tables: number[];
 
 	// Pagination
 
@@ -181,7 +181,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 				and(
 					eq(table.account, account), //
 					inArray(table.chain, opts.chains),
-					inArray(table.table_id, opts.events),
+					inArray(table.table_id, opts.tables),
 					cursor,
 				),
 			)
@@ -224,7 +224,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 			and(
 				eq(table.account, account), //
 				inArray(table.chain, opts.chains),
-				inArray(table.table_id, opts.events),
+				inArray(table.table_id, opts.tables),
 			),
 		)
 		.orderBy(

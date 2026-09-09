@@ -47,7 +47,7 @@ export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
 			limit: 1,
 			chains: [1],
 			order: "latest",
-			events: PRESETS[data.preset],
+			tables: PRESETS[data.preset],
 		});
 
 		if (id === undefined) {

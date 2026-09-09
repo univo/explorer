@@ -17,7 +17,7 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; preset: 
 		chains: [1],
 		order: "latest",
 		cursor: props.startCursor,
-		events: PRESETS[props.preset],
+		tables: PRESETS[props.preset],
 	});
 
 	if (ids.length === 0) {
