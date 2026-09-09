@@ -39,7 +39,7 @@ function Header() {
 				</div>
 			</div>
 
-			<div className="flex items-center gap-12 text-sm text-gray-700">
+			<div className="flex items-center gap-12 text-sm text-gray-500">
 				<div className="flex flex-col items-start gap-1">
 					<p>Status</p>
 					<p>Timestamp</p>
