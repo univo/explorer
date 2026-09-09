@@ -7,8 +7,18 @@ import { AddressSchema } from "@/schema";
 import { AddressHeaderRsc } from "@/frames/address/address-header-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: AddressSchema }))
-	.handler(({ data }) => renderToReadableStream(<AddressHeaderRsc address={data.address} />));
+	.inputValidator(
+		v.object({
+			address: AddressSchema,
+		}),
+	)
+	.handler(({ data }) => {
+		return renderToReadableStream(
+			<AddressHeaderRsc
+				address={data.address} //
+			/>,
+		);
+	});
 
 export const Route = createFileRoute("/rsc/address-header")({
 	server: {
