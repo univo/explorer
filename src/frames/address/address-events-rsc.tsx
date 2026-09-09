@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 
 import { getEventsForIds } from "@/db/events";
+import type { Filter } from "./filter-context";
 import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
@@ -9,7 +10,7 @@ import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
-export async function AddressEventsRsc(props: { address: `0x${string}`; startCursor: string }) {
+export async function AddressEventsRsc(props: { address: `0x${string}`; filter: Filter; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
 		order: "latest",

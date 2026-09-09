@@ -36,16 +36,11 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
 		};
 	});
 
-// TODO
-// Checking for new events should allow accepting a filters, e.g. for a specific table id, and not just by account.
-// Should not accept a raw list but rather the same filter groups as shown on the frontend. This ensures alignment
-// but also prevents DoS attacks on this public endpoint by running expensive queries
-
 /**
  * Returns the latest event id for a given account
  */
 export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: hashstring() }))
+	.inputValidator(v.object({ address: hashstring(), filter: v.picklist(["all", "payments", "trades", "lending"]) }))
 	.handler(async ({ data }) => {
 		const [id] = await getEventIdsForAccount(data.address, {
 			limit: 1,

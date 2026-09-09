@@ -22,15 +22,13 @@ export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 		getEnsNameForAccount({ chain: 1, address: props.address }),
 	]);
 
-	const showAddress = account === null && ens === null;
-
 	return (
-		<div className="bg-white p-3 border-b border-gray-200">
-			<div className="flex items-center justify-between">
+		<div className="bg-white py-3 border-b border-gray-200 space-y-3">
+			<div className="px-3 flex items-center justify-between">
 				<AddressOrName address={props.address} account={account} ens={ens} />
 
 				<div className="flex items-center gap-2">
-					{showAddress === false && <CopyButton value={props.address} />}
+					<CopyButton value={props.address} />
 
 					<IconButton href={`https://etherscan.io/address/${props.address}`}>
 						<EtherscanIcon className="shrink-0 size-4" />
@@ -40,7 +38,7 @@ export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 				</div>
 			</div>
 
-			<AddressEventFilters address={props.address} />
+			<AddressEventFilters />
 		</div>
 	);
 }
