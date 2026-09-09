@@ -14,7 +14,7 @@ import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddFrameButton, CloseFrameButton } from "@/components/frames";
-import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
+import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {

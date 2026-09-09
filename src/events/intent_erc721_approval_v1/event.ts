@@ -8,7 +8,7 @@ import { isHexEqual, numberToHex } from "@/utils";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentErc721ApprovalV1 {
 	tag: "intent_erc721_approval_v1";

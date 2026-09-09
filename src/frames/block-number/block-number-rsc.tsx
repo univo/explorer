@@ -10,7 +10,7 @@ import { IconButton } from "@/components/icon-button";
 import { CloseFrameButton } from "@/components/frames";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
-import { getEventIdsForBlockNumber } from "@/indexes/block-number-tx-index-v4";
+import { getEventIdsForBlockNumber } from "@/indexes/index_block_number_tx_index_v4";
 
 // TODO: Add timestamp to header and include other block info
 

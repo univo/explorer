@@ -7,7 +7,7 @@ import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { defineLoader, isHexEqual } from "@/utils";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogUniswapV3PoolCreatedV1 {
 	tag: "log_uniswap_v3_pool_created_v1";

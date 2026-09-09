@@ -7,7 +7,7 @@ import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentContractDeploymentV1 {
 	tag: "intent_contract_deployment_v1";

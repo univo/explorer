@@ -8,7 +8,7 @@ import { isHexEqual } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { UNISWAP_V3_FACTORY_DEPLOYED_BLOCK } from "@/events/log_uniswap_v3_pool_created_v1/event";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogUniswapV3SwapV1 {
 	tag: "log_uniswap_v3_swap_v1";
