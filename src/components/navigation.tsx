@@ -3,8 +3,8 @@ import clsx from "clsx";
 import { Logo } from "./logo";
 import { SearchIcon } from "./icons";
 import { Container } from "./container";
-import { ClearFramesButton } from "./frames";
 import { setSearchOpen, useSearchOpen } from "./search-dialog";
+import { ClearFramesButton } from "@/frames/frame-context-provider";
 
 export function Navigation() {
 	const open = useSearchOpen();

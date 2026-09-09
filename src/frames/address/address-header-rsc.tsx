@@ -5,9 +5,9 @@ import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
-import { CloseFrameButton } from "@/components/frames";
-import { AddressEventFilters } from "./address-event-filters";
 import { getAccount, getAccountName } from "@/state/account";
+import { AddressEventFilters } from "./address-event-filters";
+import { CloseFrameButton } from "@/frames/frame-context-provider";
 
 // TODO
 // On the server we should query for a list of distinct table ids for this account and provide that to

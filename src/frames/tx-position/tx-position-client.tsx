@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
-import { CloseFrameButton } from "@/components/frames";
+import { CloseFrameButton } from "@/frames/frame-context-provider";
 
 export function TxPositionClient(props: { block: number; tx: number }) {
 	const query = useQuery({

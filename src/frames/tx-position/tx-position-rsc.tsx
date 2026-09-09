@@ -13,7 +13,7 @@ import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
-import { AddFrameButton, CloseFrameButton } from "@/components/frames";
+import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
 import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 

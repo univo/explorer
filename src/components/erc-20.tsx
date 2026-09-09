@@ -5,11 +5,11 @@ import { getAddress, isAddressEqual } from "viem";
 import { Img } from "./img";
 import { Account } from "./account";
 import { Hoverable } from "./hoverable";
-import { AddFrameButton } from "./frames";
 import { Description } from "./description";
 import { getErc20Account } from "@/state/account";
 import { createPostgresClient } from "@/db/client";
 import { ETH_ADDRESS, type Chain } from "@/constants";
+import { AddFrameButton } from "@/frames/frame-context-provider";
 import { defineLoader, formatNumber, isHexEqual } from "@/utils";
 
 const WETH_ADDRESS = getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
