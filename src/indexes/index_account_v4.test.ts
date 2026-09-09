@@ -30,7 +30,7 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 
 	expect(ids).toMatchInlineSnapshot(`
 		[
-		  "5eb01705009896800000ffffff0001000a",
+		  "5eb01705009896800000ffffff0001001f",
 		]
 	`);
 });
