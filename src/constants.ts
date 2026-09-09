@@ -75,7 +75,7 @@ export type Table = keyof typeof TABLES;
 
 // Presets. Groups of common actions that we can use for event filtering. Don't just blindly add events to
 // these presets because these _can_ be computationally expensive. Avoid rare events because on hot accounts
-// like USDC they cause a full timeline scan.
+// like USDC because they will cause a full timeline scan.
 
 export const PRESETS = {
 	all: Object.values(TABLES),
