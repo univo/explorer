@@ -13,8 +13,8 @@ import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
-import { AddFrameButton, CloseFrameButton } from "@/components/frames";
-import { getEventIdsForTxPosition } from "@/indexes/block-number-tx-index-v4";
+import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
+import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
@@ -69,7 +69,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 				<div className="px-3 pb-3">
 					<div className="flex flex-col items-start gap-1">
 						<div className="flex items-start justify-between">
-							<span className="min-w-24 text-sm text-gray-700">Status</span>
+							<span className="min-w-24 text-sm text-gray-500">Status</span>
 
 							<span className={clsx("text-sm capitalize", receipt.status === "0x1" ? "text-green-500" : "text-red-500")}>
 								{receipt.status === "0x1" ? "Success" : "Failed"}
@@ -77,7 +77,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<span className="min-w-24 text-sm text-gray-700">Timestamp</span>
+							<span className="min-w-24 text-sm text-gray-500">Timestamp</span>
 
 							<div className="flex items-center gap-1 text-sm text-gray-900">
 								<span className="flex-none">
@@ -91,18 +91,18 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<span className="min-w-24 text-sm text-gray-700">Block #</span>
+							<span className="min-w-24 text-sm text-gray-500">Block #</span>
 
 							<AddFrameButton
 								frame={String(hexToNumber(tx.blockNumber))}
-								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-200 data-[hovered=true]:bg-gray-200 select-none"
+								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-100 data-[hovered=true]:bg-gray-100 select-none"
 							>
 								{formatNumber(hexToNumber(tx.blockNumber))}
 							</AddFrameButton>
 						</div>
 
 						<div className="flex items-start justify-between">
-							<span className="min-w-24 text-sm text-gray-700">Tx Fee</span>
+							<span className="min-w-24 text-sm text-gray-500">Tx Fee</span>
 
 							<div className="text-sm text-gray-900 flex items-center gap-1">
 								<span>{formattedFeeEth} ETH</span>
@@ -111,7 +111,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<span className="min-w-24 text-sm text-gray-700">By</span>
+							<span className="min-w-24 text-sm text-gray-500">By</span>
 
 							<span className="text-sm text-gray-900">
 								<Account chain={1} address={tx.from} />
@@ -119,7 +119,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 						</div>
 
 						<div className="flex items-start justify-between">
-							<span className="min-w-24 text-sm text-gray-700">Intent</span>
+							<span className="min-w-24 text-sm text-gray-500">Intent</span>
 
 							{defined(intent) && (
 								<ErrorBoundary fallback={null}>
@@ -159,7 +159,7 @@ function Events(props: { events: Event[] }) {
 				return (
 					<ErrorBoundary key={event.id} fallback={null}>
 						<div className="flex">
-							<span className="text-sm text-gray-700 min-w-12">({formatNumber(logIndex)})</span>
+							<span className="text-sm text-gray-500 min-w-12">({formatNumber(logIndex)})</span>
 
 							<EventDescription event={event} address={undefined} />
 						</div>

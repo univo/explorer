@@ -26,7 +26,7 @@ test.concurrent("intent_fwa_deposited_v1 deletes, writes, and reads from storage
 				blocks: [block],
 				events: [
 					"intent_fwa_deposited_v1", //
-					"intent_fwa_deposited_v1_index_account_v3",
+					"intent_fwa_deposited_v1_index_account_v4",
 					"intent_fwa_deposited_v1_index_block_number_tx_index_v4",
 				],
 			},

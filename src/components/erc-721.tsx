@@ -5,10 +5,10 @@ import { Account } from "./account";
 import { getClient } from "@/clients";
 import { Hoverable } from "./hoverable";
 import type { Chain } from "@/constants";
-import { AddFrameButton } from "./frames";
 import { defined, logger } from "@/utils";
 import { Description } from "./description";
 import { getErc721Account } from "@/state/account";
+import { AddFrameButton } from "@/frames/frame-context-provider";
 
 export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: `0x${string}` }) {
 	const address = getAddress(props.address);

@@ -23,7 +23,7 @@ test.concurrent("intent_aave_v3_supply_v1 deletes, writes, and reads from storag
 				blocks: [block],
 				events: [
 					"intent_aave_v3_supply_v1", //
-					"intent_aave_v3_supply_v1_index_account_v3",
+					"intent_aave_v3_supply_v1_index_account_v4",
 					"intent_aave_v3_supply_v1_index_block_number_tx_index_v4",
 				],
 			},

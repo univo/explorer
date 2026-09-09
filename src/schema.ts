@@ -3,6 +3,11 @@ import { getAddress } from "viem";
 
 import { parseId } from "./helpers";
 
+export const PresetSchema = v.pipe(
+	v.string(), //
+	v.picklist(["all", "payments", "trades", "lending"]),
+);
+
 export const AddressSchema = v.pipe(
 	v.custom<string>((val) => typeof val === "string" && val.startsWith("0x") && val.length === 42),
 	v.transform((address) => getAddress(address as `0x${string}`)),
@@ -31,13 +36,7 @@ export const TxPositionSchema = v.pipe(
 		const blockNumber = Number(block);
 		const txIndex = Number(tx);
 
-		return (
-			Number.isInteger(blockNumber) &&
-			blockNumber >= 0 &&
-			blockNumber <= 1_000_000_000 &&
-			Number.isInteger(txIndex) &&
-			txIndex >= 0
-		);
+		return Number.isInteger(blockNumber) && blockNumber >= 0 && blockNumber <= 1_000_000_000 && Number.isInteger(txIndex) && txIndex >= 0;
 	}),
 	v.transform((position) => {
 		const [block, tx] = position.split("-");
@@ -45,10 +44,16 @@ export const TxPositionSchema = v.pipe(
 	}),
 );
 
-export const TxIndexSchema = v.pipe(v.string(), v.toNumber(), v.integer(), v.minValue(0), v.maxValue(1_000_000_000));
+export const TxIndexSchema = v.pipe(
+	v.string(), //
+	v.toNumber(),
+	v.integer(),
+	v.minValue(0),
+	v.maxValue(1_000_000_000),
+);
 
 export const BlockNumberSchema = v.pipe(
-	v.string(),
+	v.string(), //
 	v.toNumber(),
 	v.integer(),
 	v.minValue(0),

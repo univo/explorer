@@ -2,12 +2,12 @@ import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
-import { CloseFrameButton } from "@/components/frames";
+import { CloseFrameButton } from "@/frames/frame-context-provider";
 
 export function TxPositionClient(props: { block: number; tx: number }) {
 	const query = useQuery({
 		queryKey: [`/rsc/tx-position?block=${props.block}&tx=${props.tx}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/tx-position?block=${props.block}&tx=${props.tx}`)),
+		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 
 	if (query.status === "pending") {
@@ -39,7 +39,7 @@ function Header() {
 				</div>
 			</div>
 
-			<div className="flex items-center gap-12 text-sm text-gray-700">
+			<div className="flex items-center gap-12 text-sm text-gray-500">
 				<div className="flex flex-col items-start gap-1">
 					<p>Status</p>
 					<p>Timestamp</p>

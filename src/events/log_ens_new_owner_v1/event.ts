@@ -7,7 +7,7 @@ import { isHexEqual } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { TABLES, type Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogEnsNewOwnerV1 {
 	tag: "log_ens_new_owner_v1";

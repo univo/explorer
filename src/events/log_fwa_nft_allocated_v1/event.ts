@@ -7,8 +7,8 @@ import { TABLES } from "@/constants";
 import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { index_account_v3 } from "@/indexes/account-v3";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_account_v4 } from "@/indexes/index_account_v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v1/event";
 
 export interface LogFwaNftAllocatedV1 {
@@ -125,8 +125,8 @@ univo.event({
 
 univo.event({
 	filters: event.filters,
-	storage: index_account_v3,
-	id: "log_fwa_nft_allocated_v1_index_account_v3",
+	storage: index_account_v4,
+	id: "log_fwa_nft_allocated_v1_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [

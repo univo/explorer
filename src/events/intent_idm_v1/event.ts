@@ -5,10 +5,10 @@ import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { index_account_v3 } from "@/indexes/account-v3";
+import { index_account_v4 } from "@/indexes/index_account_v4";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentIdmV1 {
 	tag: "intent_idm_v1";
@@ -118,8 +118,8 @@ univo.event({
 
 univo.event({
 	filters: event.filters,
-	storage: index_account_v3,
-	id: "intent_idm_v1_index_account_v3",
+	storage: index_account_v4,
+	id: "intent_idm_v1_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [

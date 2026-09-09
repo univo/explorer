@@ -71,6 +71,36 @@ export const TABLES = {
 	intent_fwa_acquire_v1: 51,
 };
 
+export type Table = keyof typeof TABLES;
+
+// Presets. Groups of common actions that we can use for event filtering. Don't just blindly add events to
+// these presets because these _can_ be computationally expensive. Avoid rare events because on hot accounts
+// like USDC because they will cause a full timeline scan.
+
+export const PRESETS = {
+	all: Object.values(TABLES),
+
+	payments: [
+		TABLES.intent_native_transfer_v1, //
+		TABLES.intent_erc20_transfer_v1,
+		TABLES.log_erc20_transfer_v1,
+	],
+
+	trades: [
+		TABLES.intent_uniswap_v3_swap_v1, //
+		TABLES.log_uniswap_v3_swap_v1,
+	],
+
+	lending: [
+		TABLES.intent_aave_v3_borrow_v1, //
+		TABLES.intent_aave_v3_repay_v1,
+		TABLES.intent_aave_v3_supply_v1,
+		TABLES.intent_aave_v3_withdraw_v1,
+	],
+};
+
+export type Preset = keyof typeof PRESETS;
+
 // Some of our events operate at the transaction level, i.e. they attempt to classify and interpret a single
 // tx as a whole. When this happens it's important to use the `TRANSACTION_EVENT` constant as the provided
 // logIndex for those event identifiers. This ensures that any log level events that actually do need to specify

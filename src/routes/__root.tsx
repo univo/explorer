@@ -4,8 +4,8 @@ import css from "@/styles/tailwind.css?url";
 import { Devtools } from "@/components/devtools";
 import { Navigation } from "@/components/navigation";
 import { SearchDialog } from "@/components/search-dialog";
-import { FrameContextProvider } from "@/components/frames";
 import { GlobalLoading } from "@/components/global-loading";
+import { FrameContextProvider } from "@/frames/frame-context-provider";
 import { QueryClientProvider } from "@/components/query-client-provider";
 
 export const Route = createRootRoute({

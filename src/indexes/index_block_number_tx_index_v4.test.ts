@@ -3,11 +3,7 @@ import { test } from "vitest";
 import { test_getBlock } from "@/tests/utils";
 import { event as erc20_transfer_v3 } from "@/events/log_erc20_transfer_v1/event";
 import { event as native_transfer_v3 } from "@/events/intent_native_transfer_v1/event";
-import {
-	getEventIdsForBlockNumber,
-	getEventIdsForTxPosition,
-	index_block_number_tx_index_v4,
-} from "./block-number-tx-index-v4";
+import { getEventIdsForBlockNumber, getEventIdsForTxPosition, index_block_number_tx_index_v4 } from "./index_block_number_tx_index_v4";
 
 test.concurrent("native_transfer_v3", async ({ expect }) => {
 	const block_number = 10000000;

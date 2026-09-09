@@ -7,7 +7,7 @@ import type { MouseEvent, ReactNode } from "react";
 import { parseId } from "@/helpers";
 import { Timestamp } from "./timestamp";
 import { RelativeTimestamp } from "./relative-timestamp";
-import { useFrameIndex, useFrames } from "@/frames/context";
+import { useFrameIndex, useFrames } from "@/frames/frame-context";
 
 export function EventTableRow(props: { id: string; previousId: string; children: ReactNode }) {
 	const frames = useFrames();

@@ -14,7 +14,7 @@ export function Hoverable(props: { children: ReactNode; id: string }) {
 			onMouseLeave={() => setId(null)}
 			onMouseEnter={() => setId(props.id)}
 			data-hovered={String(id === props.id)}
-			className="px-px rounded data-[hovered=true]:bg-gray-200"
+			className="px-px rounded data-[hovered=true]:bg-gray-100"
 		>
 			{props.children}
 		</div>

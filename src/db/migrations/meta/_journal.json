@@ -134,6 +134,13 @@
       "when": 1788221797109,
       "tag": "0018_overrated_carmella_unuscione",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1788926330161,
+      "tag": "0019_public_ikaris",
+      "breakpoints": true
     }
   ]
 }

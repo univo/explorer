@@ -7,7 +7,7 @@ import { TABLES } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogErc721TransferV1 {
 	tag: "log_erc721_transfer_v1";

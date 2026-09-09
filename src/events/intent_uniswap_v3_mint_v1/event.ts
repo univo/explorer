@@ -1,22 +1,14 @@
 import { asc, inArray, sql } from "drizzle-orm";
-import {
-	parseAbi,
-	keccak256,
-	getAddress,
-	decodeFunctionData,
-	encodeAbiParameters,
-	getCreate2Address,
-	toFunctionSelector,
-} from "viem";
+import { parseAbi, keccak256, getAddress, decodeFunctionData, encodeAbiParameters, getCreate2Address, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
-import { index_account_v3 } from "@/indexes/account-v3";
+import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
-import { index_block_number_tx_index_v4 } from "@/indexes/block-number-tx-index-v4";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentUniswapV3MintV1 {
 	tag: "intent_uniswap_v3_mint_v1";
@@ -83,10 +75,7 @@ export const event = univo.event({
 					from: UNISWAP_V3_FACTORY_ADDRESS,
 					bytecodeHash: UNISWAP_V3_POOL_INIT_CODE_HASH,
 					salt: keccak256(
-						encodeAbiParameters(
-							[{ type: "address" }, { type: "address" }, { type: "uint24" }],
-							[token0, token1, params.fee],
-						),
+						encodeAbiParameters([{ type: "address" }, { type: "address" }, { type: "uint24" }], [token0, token1, params.fee]),
 					),
 				});
 
@@ -171,8 +160,8 @@ univo.event({
 
 univo.event({
 	filters: event.filters,
-	storage: index_account_v3,
-	id: "intent_uniswap_v3_mint_v1_index_account_v3",
+	storage: index_account_v4,
+	id: "intent_uniswap_v3_mint_v1_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [

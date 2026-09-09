@@ -7,8 +7,15 @@ import { BlockNumberSchema, TxIndexSchema } from "@/schema";
 import { TxPositionRsc } from "@/frames/tx-position/tx-position-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ block: BlockNumberSchema, tx: TxIndexSchema }))
-	.handler(({ data }) => renderToReadableStream(<TxPositionRsc block={data.block} tx={data.tx} />));
+	.inputValidator(
+		v.object({
+			block: BlockNumberSchema,
+			tx: TxIndexSchema,
+		}),
+	)
+	.handler(({ data }) => {
+		return renderToReadableStream(<TxPositionRsc block={data.block} tx={data.tx} />);
+	});
 
 export const Route = createFileRoute("/rsc/tx-position")({
 	server: {

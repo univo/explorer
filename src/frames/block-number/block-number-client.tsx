@@ -6,12 +6,12 @@ import { formatNumber } from "@/utils";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
-import { CloseFrameButton } from "@/components/frames";
+import { CloseFrameButton } from "@/frames/frame-context-provider";
 
 export function BlockNumberClient(props: { number: number }) {
 	const query = useQuery({
 		queryKey: [`/rsc/block-number?number=${props.number}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/block-number?number=${props.number}`)),
+		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 
 	if (query.status === "pending") {

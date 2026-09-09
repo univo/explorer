@@ -3,12 +3,26 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { AddressSchema } from "@/schema";
+import { AddressSchema, PresetSchema } from "@/schema";
 import { AddressEventsRsc } from "@/frames/address/address-events-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: AddressSchema, cursor: v.string() }))
-	.handler(({ data }) => renderToReadableStream(<AddressEventsRsc address={data.address} startCursor={data.cursor} />));
+	.inputValidator(
+		v.object({
+			cursor: v.string(),
+			preset: PresetSchema,
+			address: AddressSchema,
+		}),
+	)
+	.handler((context) => {
+		return renderToReadableStream(
+			<AddressEventsRsc
+				preset={context.data.preset}
+				address={context.data.address} //
+				startCursor={context.data.cursor}
+			/>,
+		);
+	});
 
 export const Route = createFileRoute("/rsc/address-events")({
 	server: {
@@ -19,10 +33,13 @@ export const Route = createFileRoute("/rsc/address-events")({
 				const address = search.get("address");
 				if (address === null) throw new Error("Expected request address");
 
+				const preset = search.get("preset");
+				if (preset === null) throw new Error("Expected request preset");
+
 				const cursor = search.get("cursor");
 				if (cursor === null) throw new Error("Expected request cursor");
 
-				const stream = await getFlightStream({ data: { address, cursor } });
+				const stream = await getFlightStream({ data: { address, preset, cursor } });
 
 				return new Response(stream, {
 					headers: {

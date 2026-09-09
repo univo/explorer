@@ -3,9 +3,9 @@ import { getAddress } from "viem";
 
 import { Hoverable } from "./hoverable";
 import type { Chain } from "@/constants";
-import { AddFrameButton } from "./frames";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
 import { getAccount, getAccountName } from "@/state/account";
+import { AddFrameButton } from "@/frames/frame-context-provider";
 
 export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 	const [account, ens] = await Promise.all([

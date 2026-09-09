@@ -7,8 +7,18 @@ import { BlockNumberSchema } from "@/schema";
 import { BlockNumberRsc } from "@/frames/block-number/block-number-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ number: BlockNumberSchema }))
-	.handler(({ data }) => renderToReadableStream(<BlockNumberRsc number={data.number} />));
+	.inputValidator(
+		v.object({
+			number: BlockNumberSchema,
+		}),
+	)
+	.handler(({ data }) => {
+		return renderToReadableStream(
+			<BlockNumberRsc
+				number={data.number} //
+			/>,
+		);
+	});
 
 export const Route = createFileRoute("/rsc/block-number")({
 	server: {

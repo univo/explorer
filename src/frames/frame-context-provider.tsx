@@ -7,14 +7,14 @@ import { useServerFn } from "@tanstack/react-start";
 import type { ComponentProps, ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { XIcon } from "./icons";
 import { parseId } from "@/helpers";
-import { IconButton } from "./icon-button";
+import { XIcon } from "../components/icons";
 import { sf_getTxPosition } from "@/functions";
+import { IconButton } from "../components/icon-button";
 import { AddressClient } from "@/frames/address/address-client";
 import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
 import { BlockNumberClient } from "@/frames/block-number/block-number-client";
-import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/context";
+import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/frame-context";
 import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type Frame =

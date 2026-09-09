@@ -1,28 +1,35 @@
 "use client";
 
 import clsx from "clsx";
+import { getAddress } from "viem";
 import type { ReactNode } from "react";
-import { getAddress, numberToHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { Suspense, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
-import { createContext, Suspense, useContext, useEffect, useState } from "react";
 
-import { iife, raise } from "@/utils";
-import { createId, parseId } from "@/helpers";
+import { iife } from "@/utils";
+import { parseId } from "@/helpers";
 import { Spinner } from "@/components/spinner";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
-import { CloseFrameButton } from "@/components/frames";
 import { sf_getLatestEventForAccount } from "@/functions";
 import { ArrowUpIcon, EtherscanIcon } from "@/components/icons";
+import { CloseFrameButton } from "@/frames/frame-context-provider";
+import { AddressEventFiltersSkeleton } from "./address-event-filters";
+import { PresetContextProvider, usePresetContext } from "./preset-context";
+import { CursorContextProvider, useCursorContext } from "./cursor-context";
 
 export function AddressClient(props: { address: `0x${string}` }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header address={props.address} />
-			<Events address={props.address} />
+			<PresetContextProvider>
+				<CursorContextProvider>
+					<Header address={props.address} />
+					<Events address={props.address} />
+				</CursorContextProvider>
+			</PresetContextProvider>
 		</div>
 	);
 }
@@ -30,114 +37,63 @@ export function AddressClient(props: { address: `0x${string}` }) {
 function Header(props: { address: `0x${string}` }) {
 	const query = useQuery({
 		queryKey: [`/rsc/address-header?address=${props.address}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/address-header?address=${props.address}`)),
+		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 
 	if (query.status === "success") {
-		return <Suspense fallback={<HeaderFallback address={props.address} />}>{query.data}</Suspense>;
+		return <Suspense fallback={<HeaderSkeleton address={props.address} />}>{query.data}</Suspense>;
 	}
 
-	return <HeaderFallback address={props.address} />;
+	return <HeaderSkeleton address={props.address} />;
 }
 
-function HeaderFallback(props: { address: `0x${string}` }) {
+function HeaderSkeleton(props: { address: `0x${string}` }) {
 	return (
-		<div className="bg-white px-3 py-3 flex items-center justify-end border-b border-gray-200">
-			<div className="flex items-center gap-2">
-				<CopyButton value={props.address} />
+		<div className="bg-white py-3 border-b border-gray-200 space-y-3">
+			<div className="px-3 flex items-center justify-between">
+				<div />
 
-				<IconButton href={`https://etherscan.io/address/${props.address}`}>
-					<EtherscanIcon className="shrink-0 size-4" />
-				</IconButton>
+				<div className="flex items-center gap-2">
+					<CopyButton value={props.address} />
 
-				<CloseFrameButton />
+					<IconButton href={`https://etherscan.io/address/${props.address}`}>
+						<EtherscanIcon className="shrink-0 size-4" />
+					</IconButton>
+
+					<CloseFrameButton />
+				</div>
 			</div>
+
+			<AddressEventFiltersSkeleton />
 		</div>
 	);
 }
 
-type CursorContextValue = {
-	cursors: Map<string, string | null | undefined>;
-	refreshCursors: () => void;
-	insertNextCursor: (startCursor: string) => void;
-	insertStopCursor: (startCursor: string, stopCursor: string | null) => void;
-};
-
-const CursorContext = createContext<CursorContextValue | null>(null);
-
-const useCursorContext = () => useContext(CursorContext) ?? raise("Missing CursorContext provider");
-
 function Events(props: { address: `0x${string}` }) {
-	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
-		// TODO: Add cache alignment to the initial cursor
+	const cursor = useCursorContext();
 
-		const initialCursor = createId({
-			blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
-			tableId: 0, // Irrelevant
-			chainId: "0x1", // Irrelevant but must specify a known chain id
-			txIndex: "0x0", // Irrelevant
-			logIndex: "0x0", // Irrelevant
-			blockNumber: "0x0", // Irrelevant
-		});
-
-		return new Map().set(initialCursor, undefined);
-	});
-
-	function refreshCursors() {
-		setCursors(() => {
-			const initialCursor = createId({
-				blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
-				tableId: 0, // Irrelevant
-				chainId: "0x1", // Irrelevant but must specify a known chain id
-				txIndex: "0x0", // Irrelevant
-				logIndex: "0x0", // Irrelevant
-				blockNumber: "0x0", // Irrelevant
-			});
-
-			return new Map().set(initialCursor, undefined);
-		});
-	}
-
-	function insertNextCursor(startCursor: string) {
-		setCursors((cursors) => {
-			const result = new Map(cursors); // Must be a new map to force react to rerender
-			result.set(startCursor, undefined);
-			return result;
-		});
-	}
-
-	function insertStopCursor(startCursor: string, stopCursor: string | null) {
-		setCursors((cursors) => {
-			const result = new Map(cursors); // Must be a new map to force react to rerender
-			result.set(startCursor, stopCursor);
-			return result;
-		});
-	}
-
-	const nextCursor = getNextCursor(cursors);
+	const nextCursor = getNextCursor(cursor.cursors);
 
 	return (
-		<CursorContext value={{ cursors, refreshCursors, insertNextCursor, insertStopCursor }}>
-			<div className="relative grow overflow-y-scroll overscroll-y-none isolate">
-				<div className="sticky top-0 h-0 z-20">
-					<Banner address={props.address} />
-				</div>
-
-				<div>
-					{Array.from(cursors).map(([startCursor]) => {
-						return (
-							<EventsContainer
-								key={startCursor} //
-								address={props.address}
-								startCursor={startCursor}
-							/>
-						);
-					})}
-
-					{nextCursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => insertNextCursor(nextCursor)} />}
-				</div>
+		<div className="relative grow overflow-y-scroll overscroll-y-none isolate">
+			<div className="sticky top-0 h-0 z-20">
+				<Banner address={props.address} />
 			</div>
-		</CursorContext>
+
+			<div>
+				{Array.from(cursor.cursors).map(([startCursor]) => {
+					return (
+						<EventsContainer
+							key={startCursor} //
+							address={props.address}
+							startCursor={startCursor}
+						/>
+					);
+				})}
+
+				{nextCursor === null ? <NoMoreEvents /> : <LoadingIndicator onVisible={() => cursor.insertNextCursor(nextCursor)} />}
+			</div>
+		</div>
 	);
 }
 
@@ -164,12 +120,13 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 }
 
 function Banner(props: { address: `0x${string}` }) {
-	const context = useCursorContext();
+	const cursor = useCursorContext();
+	const preset = usePresetContext();
 
 	const address = getAddress(props.address);
 
 	const timestamp = iife(() => {
-		const firstBatch = Array.from(context.cursors)[0];
+		const firstBatch = Array.from(cursor.cursors)[0];
 
 		if (firstBatch === undefined) {
 			throw new Error("Expected atleast the initial cursor");
@@ -190,8 +147,8 @@ function Banner(props: { address: `0x${string}` }) {
 		refetchOnMount: false,
 		refetchOnReconnect: "always",
 		refetchOnWindowFocus: "always",
-		queryKey: ["latest-event", address],
-		queryFn: () => getLatestEventForAccount({ data: { address } }),
+		queryKey: ["latest-event", address, preset.value],
+		queryFn: () => getLatestEventForAccount({ data: { address, preset: preset.value } }),
 	});
 
 	const show = query.status === "success" && typeof query.data === "string" && parseId(query.data).blockTimestamp > timestamp;
@@ -200,7 +157,7 @@ function Banner(props: { address: `0x${string}` }) {
 		<div className="flex justify-center pt-4 pointer-events-none">
 			<button
 				type="button"
-				onMouseDown={() => context.refreshCursors()}
+				onMouseDown={() => cursor.refreshCursors()}
 				className={clsx(
 					"transform-gpu",
 					show === true && "translate-y-0 scale-100 ease-[cubic-bezier(0,0,0,1.1)] duration-250",
@@ -216,9 +173,11 @@ function Banner(props: { address: `0x${string}` }) {
 }
 
 function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
+	const preset = usePresetContext();
+
 	const query = useQuery({
-		queryKey: [`/rsc/address-events?address=${props.address}&cursor=${props.startCursor}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/address-events?address=${props.address}&cursor=${props.startCursor}`)),
+		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
+		queryKey: [`/rsc/address-events?address=${props.address}&preset=${preset.value}&cursor=${props.startCursor}`],
 	});
 
 	if (query.status === "error") {
@@ -249,7 +208,8 @@ export function StopCursorContainer(props: { startCursor: string; stopCursor: st
 // TODO
 // This virtualisation strategy breaks our position sticky separators. This creates a child-div
 // that only allows the header to be sticky while this child div is visible. It also means that
-// between sections there isn't a border when there should be one.
+// between sections there isn't a border when there should be one. Instead of rendering nothing,
+// we should render the active position sticky separator only
 
 export function VirtualisationContainer(props: { children: ReactNode }) {
 	const [height, setHeight] = useState<number | null>(null);
