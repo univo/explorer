@@ -95,7 +95,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 
 							<AddFrameButton
 								frame={String(hexToNumber(tx.blockNumber))}
-								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-200 data-[hovered=true]:bg-gray-200 select-none"
+								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-100 data-[hovered=true]:bg-gray-100 select-none"
 							>
 								{formatNumber(hexToNumber(tx.blockNumber))}
 							</AddFrameButton>
