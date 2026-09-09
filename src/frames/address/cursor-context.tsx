@@ -1,9 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
 import { createId } from "@/helpers";
 import { numberToHex, raise } from "@/utils";
-import { useFilterContext } from "./filter-context";
+import { usePresetContext } from "./preset-context";
 
 type CursorContextValue = {
 	cursors: Map<string, string | null | undefined>;
@@ -17,11 +19,11 @@ const CursorContext = createContext<CursorContextValue | null>(null);
 export const useCursorContext = () => useContext(CursorContext) ?? raise("Missing CursorContext provider");
 
 export function CursorContextProvider(props: { children: ReactNode }) {
-	const filter = useFilterContext();
+	const preset = usePresetContext();
 
 	return (
 		<CursorContextProviderChild
-			key={filter.value} // This forces the cursor context to reset whenever the filter changes
+			key={preset.value} // This forces the cursor context to reset whenever the preset changes
 		>
 			{props.children}
 		</CursorContextProviderChild>

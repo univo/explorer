@@ -3,8 +3,9 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { rpc } from "./helpers";
 import { hexToNumber } from "./utils";
-import { getEventIdsForAccount } from "./indexes/account-v3";
-import { AddressSchema, FilterSchema, TxHashSchema } from "./schema";
+import { PRESETS } from "./constants";
+import { getEventIdsForAccount } from "./indexes/index_account_v4";
+import { AddressSchema, PresetSchema, TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
 // identifiers are stable according to these two things. So any time they are updated we will break old
@@ -40,11 +41,13 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
  * Returns the latest event id for a given account
  */
 export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ address: AddressSchema, filter: FilterSchema }))
+	.inputValidator(v.object({ address: AddressSchema, preset: PresetSchema }))
 	.handler(async ({ data }) => {
 		const [id] = await getEventIdsForAccount(data.address, {
 			limit: 1,
+			chains: [1],
 			order: "latest",
+			events: PRESETS[data.preset],
 		});
 
 		if (id === undefined) {

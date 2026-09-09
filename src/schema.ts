@@ -3,7 +3,7 @@ import { getAddress } from "viem";
 
 import { parseId } from "./helpers";
 
-export const FilterSchema = v.pipe(
+export const PresetSchema = v.pipe(
 	v.string(), //
 	v.picklist(["all", "payments", "trades", "lending"]),
 );

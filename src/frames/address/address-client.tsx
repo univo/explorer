@@ -18,18 +18,18 @@ import { CloseFrameButton } from "@/components/frames";
 import { sf_getLatestEventForAccount } from "@/functions";
 import { ArrowUpIcon, EtherscanIcon } from "@/components/icons";
 import { AddressEventFiltersSkeleton } from "./address-event-filters";
-import { FilterContextProvider, useFilterContext } from "./filter-context";
+import { PresetContextProvider, usePresetContext } from "./preset-context";
 import { CursorContextProvider, useCursorContext } from "./cursor-context";
 
 export function AddressClient(props: { address: `0x${string}` }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<FilterContextProvider>
+			<PresetContextProvider>
 				<CursorContextProvider>
 					<Header address={props.address} />
 					<Events address={props.address} />
 				</CursorContextProvider>
-			</FilterContextProvider>
+			</PresetContextProvider>
 		</div>
 	);
 }
@@ -121,7 +121,7 @@ function getNextCursor(cursors: Map<string, string | null | undefined>): string 
 
 function Banner(props: { address: `0x${string}` }) {
 	const cursor = useCursorContext();
-	const filter = useFilterContext();
+	const preset = usePresetContext();
 
 	const address = getAddress(props.address);
 
@@ -147,8 +147,8 @@ function Banner(props: { address: `0x${string}` }) {
 		refetchOnMount: false,
 		refetchOnReconnect: "always",
 		refetchOnWindowFocus: "always",
-		queryKey: ["latest-event", address, filter.value],
-		queryFn: () => getLatestEventForAccount({ data: { address, filter: filter.value } }),
+		queryKey: ["latest-event", address, preset.value],
+		queryFn: () => getLatestEventForAccount({ data: { address, preset: preset.value } }),
 	});
 
 	const show = query.status === "success" && typeof query.data === "string" && parseId(query.data).blockTimestamp > timestamp;
@@ -173,11 +173,11 @@ function Banner(props: { address: `0x${string}` }) {
 }
 
 function EventsContainer(props: { address: `0x${string}`; startCursor: string }) {
-	const filter = useFilterContext();
+	const preset = usePresetContext();
 
 	const query = useQuery({
 		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
-		queryKey: [`/rsc/address-events?address=${props.address}&filter=${filter.value}&cursor=${props.startCursor}`],
+		queryKey: [`/rsc/address-events?address=${props.address}&preset=${preset.value}&cursor=${props.startCursor}`],
 	});
 
 	if (query.status === "error") {

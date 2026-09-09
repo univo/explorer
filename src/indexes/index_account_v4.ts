@@ -2,11 +2,10 @@ import { getAddress } from "viem";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
-import { TABLES } from "@/constants";
+import type { Chain } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { logger, numberToHex } from "@/utils";
 import { createId, parseId } from "@/helpers";
-import type { Chain, Table } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
@@ -142,7 +141,7 @@ type Opts = {
 	// search query returns a in reasonable amount of time.
 
 	chains: Chain[];
-	events: Table[];
+	events: number[];
 
 	// Pagination
 
@@ -158,8 +157,6 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 	const start = Date.now();
 
 	const client = await createPostgresClient();
-
-	const tableIds = opts.events.map((key) => TABLES[key]);
 
 	if (opts.cursor) {
 		const { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId } = parseId(opts.cursor);
@@ -184,7 +181,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 				and(
 					eq(table.account, account), //
 					inArray(table.chain, opts.chains),
-					inArray(table.table_id, tableIds),
+					inArray(table.table_id, opts.events),
 					cursor,
 				),
 			)
@@ -227,7 +224,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 			and(
 				eq(table.account, account), //
 				inArray(table.chain, opts.chains),
-				inArray(table.table_id, tableIds),
+				inArray(table.table_id, opts.events),
 			),
 		)
 		.orderBy(

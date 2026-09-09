@@ -3,8 +3,8 @@
 import { useId } from "react";
 import type { ReactNode } from "react";
 import { Radio } from "@base-ui/react/radio";
+import { usePresetContext } from "./preset-context";
 import { RadioGroup } from "@base-ui/react/radio-group";
-import { useFilterContext } from "./filter-context";
 
 export function AddressEventFiltersSkeleton() {
 	return (
@@ -19,14 +19,14 @@ export function AddressEventFiltersSkeleton() {
 
 export function AddressEventFilters() {
 	const id = useId();
-	const filter = useFilterContext();
+	const preset = usePresetContext();
 
 	return (
 		<RadioGroup
 			defaultValue="all"
+			value={preset.value}
 			aria-labelledby={id}
-			value={filter.value}
-			onValueChange={filter.setValue}
+			onValueChange={preset.setValue}
 			style={{ scrollbarWidth: "none" }}
 			className="flex items-center gap-1 overflow-x-scroll px-3"
 		>

@@ -1,20 +1,23 @@
 import { ErrorBoundary } from "react-error-boundary";
 
+import { PRESETS } from "@/constants";
+import type { Preset } from "@/constants";
 import { getEventsForIds } from "@/db/events";
-import type { Filter } from "./filter-context";
 import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
-import { getEventIdsForAccount } from "@/indexes/account-v3";
 import { EventDescription } from "@/components/event-description";
+import { getEventIdsForAccount } from "@/indexes/index_account_v4";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
-export async function AddressEventsRsc(props: { address: `0x${string}`; filter: Filter; startCursor: string }) {
+export async function AddressEventsRsc(props: { address: `0x${string}`; preset: Preset; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
+		chains: [1],
 		order: "latest",
 		cursor: props.startCursor,
+		events: PRESETS[props.preset],
 	});
 
 	if (ids.length === 0) {
