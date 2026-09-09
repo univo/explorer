@@ -23,7 +23,7 @@ test.concurrent("intent_fwa_won_v2 deletes, writes, and reads from storage", asy
 				blocks: [block],
 				events: [
 					"intent_fwa_won_v2", //
-					"intent_fwa_won_v2_index_account_v3",
+					"intent_fwa_won_v2_index_account_v4",
 					"intent_fwa_won_v2_index_block_number_tx_index_v4",
 				],
 			},

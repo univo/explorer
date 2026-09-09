@@ -22,7 +22,7 @@ test.concurrent("intent_uniswap_v3_mint_v1 deletes, writes, and reads from stora
 				blocks: [block],
 				events: [
 					"intent_uniswap_v3_mint_v1", //
-					"intent_uniswap_v3_mint_v1_index_account_v3",
+					"intent_uniswap_v3_mint_v1_index_account_v4",
 					"intent_uniswap_v3_mint_v1_index_block_number_tx_index_v4",
 				],
 			},

@@ -23,7 +23,7 @@ test.concurrent("intent_erc721_approval_v1 deletes, writes, and reads from stora
 				blocks: [block],
 				events: [
 					"intent_erc721_approval_v1", //
-					"intent_erc721_approval_v1_index_account_v3",
+					"intent_erc721_approval_v1_index_account_v4",
 					"intent_erc721_approval_v1_index_block_number_tx_index_v4",
 				],
 			},

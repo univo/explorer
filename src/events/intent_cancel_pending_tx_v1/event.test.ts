@@ -23,7 +23,7 @@ test.concurrent("intent_cancel_pending_tx_v1", async ({ expect }) => {
 				blocks: [block],
 				events: [
 					"intent_cancel_pending_tx_v1",
-					"intent_cancel_pending_tx_v1_index_account_v3",
+					"intent_cancel_pending_tx_v1_index_account_v4",
 					"intent_cancel_pending_tx_v1_index_block_number_tx_index_v4",
 				],
 			},

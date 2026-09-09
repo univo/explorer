@@ -23,7 +23,7 @@ test.concurrent("intent_tornado_withdrawal_v1 direct pool withdrawal", async ({ 
 				blocks: [block],
 				events: [
 					"intent_tornado_withdrawal_v1",
-					"intent_tornado_withdrawal_v1_index_account_v3",
+					"intent_tornado_withdrawal_v1_index_account_v4",
 					"intent_tornado_withdrawal_v1_index_block_number_tx_index_v4",
 				],
 			},
@@ -69,7 +69,7 @@ test.concurrent("intent_tornado_withdrawal_v1 proxy withdrawal", async ({ expect
 				blocks: [block],
 				events: [
 					"intent_tornado_withdrawal_v1",
-					"intent_tornado_withdrawal_v1_index_account_v3",
+					"intent_tornado_withdrawal_v1_index_account_v4",
 					"intent_tornado_withdrawal_v1_index_block_number_tx_index_v4",
 				],
 			},
