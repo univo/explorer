@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { useEffect } from "react";
 import { Dialog as Radix } from "radix-ui";

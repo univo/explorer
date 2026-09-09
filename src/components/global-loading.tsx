@@ -1,3 +1,5 @@
+"use client";
+
 import clsx from "clsx";
 import { ClientOnly, useRouterState } from "@tanstack/react-router";
 
