@@ -3,6 +3,11 @@ import { getAddress } from "viem";
 
 import { parseId } from "./helpers";
 
+export const FilterSchema = v.pipe(
+	v.custom<string>((val) => typeof val === "string"),
+	v.picklist(["all", "payments", "trades", "lending"]),
+);
+
 export const AddressSchema = v.pipe(
 	v.custom<string>((val) => typeof val === "string" && val.startsWith("0x") && val.length === 42),
 	v.transform((address) => getAddress(address as `0x${string}`)),
