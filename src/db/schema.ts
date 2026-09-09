@@ -2,7 +2,6 @@ export { table as cache_ens } from "@/cache/ens/table";
 
 export { table as state_accounts_v3 } from "@/state/account";
 
-export { table as index_account_v3 } from "@/indexes/index_account_v3";
 export { table as index_account_v4 } from "@/indexes/index_account_v4";
 export { table as index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 

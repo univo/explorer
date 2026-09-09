@@ -1,0 +1,1 @@
+DROP TABLE "index_account_v3" CASCADE;

@@ -141,6 +141,13 @@
       "when": 1788926330161,
       "tag": "0019_public_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1788995405787,
+      "tag": "0020_misty_night_thrasher",
+      "breakpoints": true
     }
   ]
 }
