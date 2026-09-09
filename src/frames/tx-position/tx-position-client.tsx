@@ -7,7 +7,7 @@ import { CloseFrameButton } from "@/components/frames";
 export function TxPositionClient(props: { block: number; tx: number }) {
 	const query = useQuery({
 		queryKey: [`/rsc/tx-position?block=${props.block}&tx=${props.tx}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/tx-position?block=${props.block}&tx=${props.tx}`)),
+		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 
 	if (query.status === "pending") {

@@ -11,7 +11,7 @@ import { CloseFrameButton } from "@/components/frames";
 export function BlockNumberClient(props: { number: number }) {
 	const query = useQuery({
 		queryKey: [`/rsc/block-number?number=${props.number}`],
-		queryFn: () => createFromFetch(fetch(`/rsc/block-number?number=${props.number}`)),
+		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 
 	if (query.status === "pending") {
