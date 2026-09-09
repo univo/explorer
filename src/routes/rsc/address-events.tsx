@@ -17,8 +17,8 @@ const getFlightStream = createServerFn({ method: "GET" })
 	.handler((context) => {
 		return renderToReadableStream(
 			<AddressEventsRsc
-				address={context.data.address} //
 				filter={context.data.filter}
+				address={context.data.address} //
 				startCursor={context.data.cursor}
 			/>,
 		);
