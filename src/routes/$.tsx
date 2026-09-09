@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
-import { useFrames } from "@/frames/context";
 import { SearchIcon } from "@/components/icons";
+import { useFrames } from "@/frames/frame-context";
 import { OpenSearchButton } from "@/components/open-search-button";
 import { Frame, FrameContainer, FramesContainer } from "@/components/frames";
 
