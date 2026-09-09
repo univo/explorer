@@ -2,9 +2,9 @@ import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
 import { event } from "@/events/intent_native_transfer_v1/event";
-import { getEventIdsForAccount, index_account_v3 } from "./account-v3";
+import { getEventIdsForAccount, index_account_v3 } from "./index_account_v3";
 
-test.concurrent("account-v3", async ({ expect }) => {
+test.concurrent("index_account_v3", async ({ expect }) => {
 	const block_number = 10000000;
 
 	const block = await test_getBlock({ chain: 1, block_number });
