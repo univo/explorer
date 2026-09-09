@@ -42,7 +42,7 @@ function RadioButton(props: { value: string; children: ReactNode }) {
 	return (
 		<Radio.Root
 			value={props.value}
-			className="hover:bg-gray-100 py-px px-1.5 rounded-md text-sm cursor-pointer data-checked:bg-primary-500 data-checked:text-white"
+			className="hover:bg-gray-100 py-px px-1.5 rounded-md text-sm cursor-pointer data-unchecked:text-gray-500 data-checked:bg-primary-500 data-checked:text-white"
 		>
 			<label className="cursor-pointer">{props.children}</label>
 		</Radio.Root>
