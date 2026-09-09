@@ -40,8 +40,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@cloudflare/vite-plugin": "1.45.0",
-		"@cloudflare/vitest-pool-workers": "0.18.5",
+		"@cloudflare/vite-plugin": "1.54.6",
+		"@cloudflare/vitest-pool-workers": "0.22.0",
 		"@tailwindcss/vite": "4.1.18",
 		"@tanstack/react-devtools": "0.10.2",
 		"@tanstack/react-router-devtools": "1.166.13",
@@ -59,6 +59,6 @@
 		"vite": "^7.1.7",
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "4.1.10",
-		"wrangler": "4.111.0"
+		"wrangler": "4.130.0"
 	}
 }
