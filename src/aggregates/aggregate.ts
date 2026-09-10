@@ -10,25 +10,30 @@ import type { Event } from "univo";
 
 // Expresses a computation
 
-interface Aggregate<TEvent, TValue> {
+type InferEvents<TEvent> = TEvent extends Event<any, infer TValue> ? TValue : never;
+
+interface Aggregate<TEvents extends readonly Event<any, any>[], TValue> {
 	id: string;
 
-	events: Event<any, TEvent>[];
+	events: TEvents;
 
 	handlers: {
-		map: (event: TEvent) => Array<[key: string, value: TValue]>;
+		map: (event: InferEvents<TEvents[number]>) => Array<[key: string, value: TValue]>;
 
 		reduce: (result: TValue, value: TValue) => TValue;
 	};
 }
 
-export function aggregate<TEvent, TValue>(aggregate: Aggregate<TEvent, TValue>) {
+export function aggregate<const TEvents extends readonly Event<any, any>[], TValue>(aggregate: Aggregate<TEvents, TValue>) {
 	return aggregate;
 }
 
 // Performs that computation. Assumes that the entire dataset fits on this machine.
 
-export function execute<TEvent, TValue>(aggregate: Aggregate<TEvent, TValue>, events: TEvent[]) {
+export function execute<TEvents extends readonly Event<any, any>[], TValue>(
+	aggregate: Aggregate<TEvents, TValue>,
+	events: InferEvents<TEvents[number]>[],
+) {
 	const partitions: Record<string, TValue[]> = {};
 
 	for (const event of events) {
