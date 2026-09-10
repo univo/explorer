@@ -27,7 +27,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
 
 	handler: (block) => {
-		return block.eth_getBlockReceipts.flatMap((receipt) => {
+		return block.eth_getBlockReceipts.flatMap<LogErc721TransferV1>((receipt) => {
 			return receipt.logs.flatMap((log) => {
 				try {
 					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
@@ -49,6 +49,7 @@ export const event = univo.event({
 
 					return {
 						id,
+						tag: "log_erc721_transfer_v1",
 						to_address: getAddress(args.to),
 						success: getEventSuccess(receipt),
 						token_id: numberToHex(args.tokenId),

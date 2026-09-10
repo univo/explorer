@@ -27,12 +27,13 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
 
 	handler: (block) => {
-		return block.eth_getBlockReceipts.flatMap((receipt) => {
+		return block.eth_getBlockReceipts.flatMap<LogErc20TransferV1>((receipt) => {
 			return receipt.logs.flatMap((log) => {
 				try {
 					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
 						return [];
 					}
+
 					const { args } = decodeEventLog({ topics: log.topics, data: log.data, strict: true, abi: [abi] });
 
 					if (args.value === 0n) {
@@ -51,6 +52,7 @@ export const event = univo.event({
 					const receipt = getTxReceiptForLog(block.eth_getBlockReceipts, log);
 
 					return {
+						tag: "log_erc20_transfer_v1",
 						id,
 						to_address: getAddress(args.to),
 						quantity: numberToHex(args.value),
@@ -125,7 +127,7 @@ export async function getLogErc20TransferV1(ids: string[]) {
 
 	return rows.map<LogErc20TransferV1>((result) => {
 		return {
-			tag: "log_erc20_transfer_v1" as const,
+			tag: "log_erc20_transfer_v1",
 			id: result.id,
 			success: result.success,
 			quantity: result.quantity,
