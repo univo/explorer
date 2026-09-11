@@ -25,7 +25,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler(block) {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentIdmV1>((tx) => {
 			try {
 				if (tx.input === "0x" || tx.input === "0x0") {
 					return [];
@@ -62,6 +62,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
+					tag: "intent_idm_v1",
 					id,
 					message,
 					to_address: getAddress(tx.to),
@@ -183,7 +184,7 @@ export async function getIntentIdmV1(ids: string[]) {
 
 	return rows.map<IntentIdmV1>((result) => {
 		return {
-			tag: "intent_idm_v1" as const,
+			tag: "intent_idm_v1",
 			id: result.id,
 			success: result.success,
 			message: result.message,

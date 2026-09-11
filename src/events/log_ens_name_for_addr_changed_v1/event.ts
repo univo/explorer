@@ -12,7 +12,6 @@ import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_
 export interface LogEnsNameForAddrChangedV1 {
 	tag: "log_ens_name_for_addr_changed_v1";
 	id: string;
-	success: true;
 	name: string;
 	account_address: `0x${string}`;
 }
@@ -36,7 +35,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogEnsNameForAddrChangedV1>((log) => {
 				try {
 					if (!isHexEqual(log.address, ENS_DEFAULT_REVERSE_REGISTRAR_ADDRESS)) {
 						return [];
@@ -63,6 +62,7 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_ens_name_for_addr_changed_v1",
 						id,
 						name: args.name,
 						account_address: getAddress(args.addr),
@@ -132,7 +132,6 @@ export async function getLogEnsNameForAddrChangedV1(ids: string[]) {
 		tag: "log_ens_name_for_addr_changed_v1",
 		id: row.id,
 		name: row.name,
-		success: true,
 		account_address: getAddress(row.account_address),
 	}));
 }

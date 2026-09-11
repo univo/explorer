@@ -35,7 +35,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentUsdcBlacklistV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -60,6 +60,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
+					tag: "intent_usdc_blacklist_v1",
 					id,
 					success: getEventSuccess(receipt),
 					account_address: getAddress(args[0]),
@@ -140,7 +141,7 @@ export async function getIntentUsdcBlacklistV1(ids: string[]) {
 
 	return rows.map<IntentUsdcBlacklistV1>((result) => {
 		return {
-			tag: "intent_usdc_blacklist_v1" as const,
+			tag: "intent_usdc_blacklist_v1",
 			id: result.id,
 			success: result.success,
 			account_address: getAddress(result.account_address),

@@ -30,7 +30,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: TORNADO_CASH_DEPLOYED_BLOCK }],
 
 	handler(block) {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentTornadoWithdrawalV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -98,6 +98,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => receipt.transactionHash === tx.hash);
 
 				return {
+					tag: "intent_tornado_withdrawal_v1",
 					id,
 					to_address: getAddress(tx.to),
 					fee: numberToHex(withdrawal.fee),
@@ -192,7 +193,7 @@ export async function getIntentTornadoWithdrawalV1(ids: string[]) {
 
 	return rows.map<IntentTornadoWithdrawalV1>((result) => {
 		return {
-			tag: "intent_tornado_withdrawal_v1" as const,
+			tag: "intent_tornado_withdrawal_v1",
 			id: result.id,
 			fee: result.fee,
 			success: result.success,

@@ -13,7 +13,6 @@ import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_
 export interface LogUniswapV3SwapV1 {
 	tag: "log_uniswap_v3_swap_v1";
 	id: string;
-	success: true;
 	tick: number;
 	amount_0: bigint;
 	amount_1: bigint;
@@ -41,7 +40,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogUniswapV3SwapV1>((log) => {
 				try {
 					if (!isHexEqual(log.topics[0], toEventSelector(SWAP_ABI))) {
 						return [];
@@ -64,6 +63,7 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_uniswap_v3_swap_v1",
 						id,
 						tick: args.tick,
 						amount_0: args.amount0,
@@ -145,7 +145,6 @@ export async function getLogUniswapV3SwapV1(ids: string[]) {
 		return {
 			tag: "log_uniswap_v3_swap_v1",
 			id: result.id,
-			success: true,
 			tick: result.tick,
 			amount_0: result.amount_0,
 			amount_1: result.amount_1,

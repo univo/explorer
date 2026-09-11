@@ -19,6 +19,13 @@ export interface IntentEnsNameRegisteredV1 {
 	owner_address: `0x${string}`;
 }
 
+// TODO: These indexed fields should be included in the event
+
+type IndexedFields = {
+	sender_address: `0x${string}`;
+	controller_address: `0x${string}`;
+};
+
 export const ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK = 9380471;
 export const ENS_REGISTRAR_CONTROLLER_V2_ADDRESS = getAddress("0x283af0b28c62c092c9727f1ee09c02ca627eb7f5");
 export const ENS_REGISTRAR_CONTROLLER_V3_ADDRESS = getAddress("0x253553366da8546fc250f225fe3d25d0c782303b");
@@ -50,7 +57,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentEnsNameRegisteredV1 & IndexedFields>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -86,6 +93,7 @@ export const event = univo.event({
 				});
 
 				return {
+					tag: "intent_ens_name_registered_v1",
 					id,
 					name: args[0],
 					duration: numberToHex(args[2]),
@@ -175,7 +183,7 @@ export async function getIntentEnsNameRegisteredV1(ids: string[]) {
 
 	return rows.map<IntentEnsNameRegisteredV1>((result) => {
 		return {
-			tag: "intent_ens_name_registered_v1" as const,
+			tag: "intent_ens_name_registered_v1",
 			id: result.id,
 			name: result.name,
 			success: result.success,

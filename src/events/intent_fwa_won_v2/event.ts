@@ -54,7 +54,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentFwaWonV2>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -177,6 +177,7 @@ export const event = univo.event({
 				});
 
 				return {
+					tag: "intent_fwa_won_v2",
 					id,
 					success,
 					token_out: tokenOut,
@@ -265,7 +266,7 @@ export async function getIntentFwaWonV2(ids: string[]) {
 
 	return rows.map<IntentFwaWonV2>((result) => {
 		return {
-			tag: "intent_fwa_won_v2" as const,
+			tag: "intent_fwa_won_v2",
 			id: result.id,
 			success: result.success,
 			token_out: result.token_out,
