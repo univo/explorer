@@ -167,7 +167,7 @@ function Logs(props: { events: Event[] }) {
 					return (
 						<ErrorBoundary key={event.id} fallback={null}>
 							<div className="flex">
-								<span className="text-sm text-gray-500 min-w-24">({formatNumber(logIndex)})</span>
+								<span className="text-sm text-gray-500 min-w-12 sm:min-w-24">({formatNumber(logIndex)})</span>
 
 								<EventDescription event={event} address={undefined} />
 							</div>
@@ -258,8 +258,6 @@ function Balances(props: { block: Block; events: Event[] }) {
 		{} as Record<string, Record<string, bigint>>,
 	);
 
-	const timestamp = hexToNumber(props.block.timestamp) * 1000;
-
 	return (
 		<div>
 			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
@@ -269,22 +267,23 @@ function Balances(props: { block: Block; events: Event[] }) {
 			<div className="">
 				{Object.entries(nested).map(([address, assets]) => {
 					return (
-						<div key={address} className="p-3 flex not-last:border-b">
-							<div className="flex-1">
+						<div key={address} className="p-3 flex flex-col space-y-3 sm:flex-row sm:space-y-0 not-last:border-b">
+							<div className="sm:flex-1 flex flex-col items-start">
 								<span className="text-sm text-gray-900">
 									<Account chain={1} address={address as `0x${string}`} />
 								</span>
 							</div>
 
-							<div className="flex-1">
+							<div className="sm:flex-1 flex flex-col items-start">
 								{Object.entries(assets).map(([asset, quantity]) => {
 									if (asset.startsWith("erc20")) {
+										const change = quantity > 0n ? "increase" : "decrease";
 										const [_, address] = asset.split(":") as [string, `0x${string}`];
 
 										return (
-											<span key={asset} className="flex items-center gap-1 text-sm text-gray-900">
-												<Erc20 chain={1} address={address} quantity={quantity} at={timestamp} />
-											</span>
+											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
+												<Erc20 change={change} chain={1} address={address} quantity={quantity} at={hexToNumber(props.block.timestamp)} />
+											</div>
 										);
 									}
 
@@ -292,9 +291,9 @@ function Balances(props: { block: Block; events: Event[] }) {
 										const [_, address, id] = asset.split(":") as [string, `0x${string}`, `0x${string}`];
 
 										return (
-											<span key={asset} className="flex items-center gap-1 text-sm text-gray-900">
+											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
 												<Erc721 chain={1} address={address} id={id} />
-											</span>
+											</div>
 										);
 									}
 								})}

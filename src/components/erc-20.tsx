@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { Fragment } from "react";
 import { sql } from "drizzle-orm";
 import { getAddress, isAddressEqual } from "viem";
@@ -14,7 +15,24 @@ import { defineLoader, formatNumber, isHexEqual } from "@/utils";
 
 const WETH_ADDRESS = getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
 
-export async function Erc20(props: { chain: Chain; address: `0x${string}`; quantity?: `0x${string}` | bigint; at: number }) {
+interface Erc20Props {
+	/** Chain identifier */
+	chain: Chain;
+
+	/** Token address */
+	address: `0x${string}`;
+
+	/** Quantity of the token exchanged */
+	quantity?: `0x${string}` | bigint;
+
+	/** Timestamp in seconds used for pricing */
+	at: number;
+
+	/** Indicates a change */
+	change?: "increase" | "decrease";
+}
+
+export async function Erc20(props: Erc20Props) {
 	const address = getAddress(props.address);
 	const timestamp = new Date(props.at * 1000);
 
@@ -49,7 +67,7 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 
 	return (
 		<Fragment>
-			<Quantity quantity={props.quantity} decimals={account["erc20.decimals"]} />
+			<Quantity change={props.change} quantity={props.quantity} decimals={account["erc20.decimals"]} />
 
 			<AddFrameButton frame={address} className="select-none cursor-pointer touch-none">
 				<Hoverable id={`${props.chain}:${address}`}>
@@ -66,12 +84,22 @@ export async function Erc20(props: { chain: Chain; address: `0x${string}`; quant
 	);
 }
 
-function Quantity(props: { decimals: number; quantity: `0x${string}` | bigint | undefined }) {
+function Quantity(props: { change?: "increase" | "decrease"; decimals: number; quantity: `0x${string}` | bigint | undefined }) {
 	if (props.quantity === undefined) {
 		return null;
 	}
 
-	return <span>{formatTokenQuantity(props.quantity, props.decimals)}</span>;
+	return (
+		<span
+			className={clsx(
+				props.change === "decrease" && "text-red-600",
+				props.change === "increase" && "text-green-600", //
+			)}
+		>
+			{props.change === "increase" && <span>+</span>}
+			{formatTokenQuantity(props.quantity, props.decimals)}
+		</span>
+	);
 }
 
 function formatTokenQuantity(quantity: `0x${string}` | bigint, decimals: number) {
@@ -114,7 +142,7 @@ function Value(props: { quantity: `0x${string}` | bigint | undefined; decimals: 
 	const priceAsNumber = Number(props.price.price_usd);
 	const quantityAsNumber = quantityAsInteger / 10 ** props.decimals;
 
-	const valueAsNumber = quantityAsNumber * priceAsNumber;
+	const valueAsNumber = Math.abs(quantityAsNumber * priceAsNumber);
 	const valueAsString = String(valueAsNumber);
 
 	if (props.decimals > valueAsString.length) {
