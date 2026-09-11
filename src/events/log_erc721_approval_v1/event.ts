@@ -4,9 +4,9 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
+import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogErc721ApprovalV1 {
@@ -44,12 +44,9 @@ export const event = univo.event({
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
-					const receipt = getTxReceiptForLog(block.eth_getBlockReceipts, log);
-
 					return {
 						tag: "log_erc721_approval_v1",
 						id,
-						success: getEventSuccess(receipt),
 						token_id: numberToHex(args.tokenId),
 						owner_address: getAddress(args.owner),
 						token_address: getAddress(log.address),
