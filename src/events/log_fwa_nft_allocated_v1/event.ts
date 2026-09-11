@@ -123,6 +123,8 @@ univo.event({
 // from Chainlink's VRF becomes available. We want this result to show for both the winner (purchaser_address)
 // and the loser (depositor_address). This is why we also add the log event to our account index.
 
+// TODO: Because we added this event to the account index we must store it's success status
+
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
