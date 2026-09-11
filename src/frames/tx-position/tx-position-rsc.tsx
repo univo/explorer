@@ -2,20 +2,23 @@ import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Account } from "@/components/account";
-import { getBlockByNumber } from "@/state/block";
+import { execute } from "@/aggregates/aggregate";
 import { EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
-import { getTokenPrice } from "@/components/erc-20";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
+import { balances_v1 } from "@/aggregates/balances_v1";
 import { getEventsForIds, type Event } from "@/db/events";
-import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
+import { Erc20, getTokenPrice } from "@/components/erc-20";
+import { getBlockByNumber, type Block } from "@/state/block";
+import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
 import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
+import { Erc721 } from "@/components/erc-721";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
@@ -50,8 +53,8 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 		<div className="h-full flex flex-col bg-white">
 			<div>
 				<div className="bg-white p-3 flex items-center justify-between gap-3">
-					<div className="flex items-center gap-2 overflow-hidden">
-						<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
+					<div className="flex items-center overflow-hidden">
+						<p className="text-gray-900 font-semibold text-base select-all min-w-24">Transaction</p>
 						<p className="text-gray-500 text-base select-all truncate">{tx.hash}</p>
 					</div>
 
@@ -65,7 +68,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 				</div>
 			</div>
 
-			<div className="relative overflow-scroll">
+			<div className="relative isolate overflow-scroll">
 				<div className="px-3 pb-3">
 					<div className="flex flex-col items-start gap-1">
 						<div className="flex items-start justify-between">
@@ -130,19 +133,19 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 					</div>
 				</div>
 
-				<div className="sticky top-0 border-t"></div>
+				<Balances block={block} events={ordered} />
 
-				<Events events={ordered} />
+				<Logs events={ordered} />
 			</div>
 		</div>
 	);
 }
 
-function Events(props: { events: Event[] }) {
+function Logs(props: { events: Event[] }) {
 	if (props.events.length === 0) {
 		return (
 			<div className="p-3 flex items-center justify-center">
-				<p className="text-gray-900 text-sm font-medium">No events found</p>
+				<p className="text-gray-900 text-sm">No events found</p>
 			</div>
 		);
 	}
@@ -152,20 +155,131 @@ function Events(props: { events: Event[] }) {
 	});
 
 	return (
-		<div className="p-3 flex flex-col gap-1">
-			{logs.map((event) => {
-				const { logIndex } = parseId(event.id);
+		<div>
+			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">Logs</p>
+			</div>
 
-				return (
-					<ErrorBoundary key={event.id} fallback={null}>
-						<div className="flex">
-							<span className="text-sm text-gray-500 min-w-12">({formatNumber(logIndex)})</span>
+			<div className="p-3 flex flex-col gap-1">
+				{logs.map((event) => {
+					const { logIndex } = parseId(event.id);
 
-							<EventDescription event={event} address={undefined} />
+					return (
+						<ErrorBoundary key={event.id} fallback={null}>
+							<div className="flex">
+								<span className="text-sm text-gray-500 min-w-24">({formatNumber(logIndex)})</span>
+
+								<EventDescription event={event} address={undefined} />
+							</div>
+						</ErrorBoundary>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
+
+function Balances(props: { block: Block; events: Event[] }) {
+	// Compute sum of transfers
+
+	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v1" || event.tag === "log_erc721_transfer_v1");
+	const result = execute(balances_v1, transfers);
+
+	// Remove values where the net-change is zero, and also remove the null address
+
+	const filtered = Object.entries(result).filter(([key, quantity]) => {
+		if (quantity === 0n) {
+			return false;
+		}
+
+		if (key.startsWith(ZERO_ADDRESS)) {
+			return false;
+		}
+
+		return true;
+	});
+
+	if (filtered.length === 0) {
+		return;
+	}
+
+	// Group by address
+
+	const nested = filtered.reduce(
+		(result, [key, value]) => {
+			const [address, ...rest] = key.split(":");
+
+			result[address] ??= {};
+			result[address][rest.join(":")] = value;
+
+			return result;
+		},
+		{} as Record<string, Record<string, bigint>>,
+	);
+
+	// Within each address, sort by asset and then whether the quantity is positive or negative
+
+	const rank = (asset: string) => {
+		if (asset.startsWith("erc20")) {
+			return 0;
+		}
+
+		if (asset.startsWith("erc721")) {
+			return 1;
+		}
+
+		return 2;
+	};
+
+	const timestamp = hexToNumber(props.block.timestamp) * 1000;
+
+	return (
+		<div>
+			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">Transfers</p>
+			</div>
+
+			<div className="">
+				{Object.entries(nested).map(([address, assets]) => {
+					const sorted = Object.entries(assets).sort(([assetA], [assetB]) => {
+						return rank(assetA) - rank(assetB);
+					});
+
+					return (
+						<div key={address} className="p-3 flex not-last:border-b">
+							<div className="flex-1">
+								<span className="text-sm text-gray-900">
+									<Account chain={1} address={address as `0x${string}`} />
+								</span>
+							</div>
+
+							<div className="flex-1">
+								{sorted.map(([asset, quantity]) => {
+									if (asset.startsWith("erc20")) {
+										const [_, address] = asset.split(":") as [string, `0x${string}`];
+
+										return (
+											<span key={asset} className="flex items-center gap-1 text-sm text-gray-900">
+												<Erc20 chain={1} address={address} quantity={quantity} at={timestamp} />
+											</span>
+										);
+									}
+
+									if (asset.startsWith("erc721")) {
+										const [_, address, id] = asset.split(":") as [string, `0x${string}`, `0x${string}`];
+
+										return (
+											<span key={asset} className="flex items-center gap-1 text-sm text-gray-900">
+												<Erc721 chain={1} address={address} id={id} />
+											</span>
+										);
+									}
+								})}
+							</div>
 						</div>
-					</ErrorBoundary>
-				);
-			})}
+					);
+				})}
+			</div>
 		</div>
 	);
 }
