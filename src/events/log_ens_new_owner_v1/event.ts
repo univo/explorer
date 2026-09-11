@@ -12,7 +12,6 @@ import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_
 export interface LogEnsNewOwnerV1 {
 	tag: "log_ens_new_owner_v1";
 	id: string;
-	success: true;
 	label: `0x${string}`;
 	owner_address: `0x${string}`;
 }
@@ -47,7 +46,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogEnsNewOwnerV1>((log) => {
 				try {
 					if (!ENS_REGISTRIES.some((address) => isHexEqual(log.address, address))) {
 						return [];
@@ -78,6 +77,7 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_ens_new_owner_v1",
 						id,
 						label: args.label,
 						owner_address: getAddress(args.owner),
@@ -146,7 +146,6 @@ export async function getLogEnsNewOwnerV1(ids: string[]) {
 	return rows.map<LogEnsNewOwnerV1>((row) => ({
 		tag: "log_ens_new_owner_v1",
 		id: row.id,
-		success: true,
 		label: row.label,
 		owner_address: getAddress(row.owner_address),
 	}));

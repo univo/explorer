@@ -4,15 +4,14 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
+import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogErc721TransferV1 {
 	tag: "log_erc721_transfer_v1";
 	id: string;
-	success: boolean;
 	token_id: `0x${string}`;
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
@@ -28,7 +27,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogErc721TransferV1>((log) => {
 				try {
 					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
 						return [];
@@ -45,12 +44,10 @@ export const event = univo.event({
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
-					const receipt = getTxReceiptForLog(block.eth_getBlockReceipts, log);
-
 					return {
+						tag: "log_erc721_transfer_v1",
 						id,
 						to_address: getAddress(args.to),
-						success: getEventSuccess(receipt),
 						token_id: numberToHex(args.tokenId),
 						from_address: getAddress(args.from),
 						token_address: getAddress(log.address),
@@ -75,7 +72,6 @@ export const event = univo.event({
 					.onConflictDoUpdate({
 						target: table.id,
 						set: {
-							success: sql.raw(`excluded.${table.success.name}`),
 							token_id: sql.raw(`excluded.${table.token_id.name}`),
 							to_address: sql.raw(`excluded.${table.to_address.name}`),
 							from_address: sql.raw(`excluded.${table.from_address.name}`),
@@ -122,9 +118,8 @@ export async function getLogErc721TransferV1(ids: string[]) {
 
 	return rows.map<LogErc721TransferV1>((result) => {
 		return {
-			tag: "log_erc721_transfer_v1" as const,
+			tag: "log_erc721_transfer_v1",
 			id: result.id,
-			success: result.success,
 			token_id: result.token_id,
 			to_address: getAddress(result.to_address),
 			from_address: getAddress(result.from_address),

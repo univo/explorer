@@ -43,7 +43,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentAaveV3RepayV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -73,6 +73,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
+					tag: "intent_aave_v3_repay_v1",
 					id,
 					success: getEventSuccess(receipt),
 					repayer_address: getAddress(tx.from),
@@ -161,7 +162,7 @@ export async function getIntentAaveV3RepayV1(ids: string[]) {
 
 	return rows.map<IntentAaveV3RepayV1>((result) => {
 		return {
-			tag: "intent_aave_v3_repay_v1" as const,
+			tag: "intent_aave_v3_repay_v1",
 			id: result.id,
 			success: result.success,
 			quantity: result.quantity,

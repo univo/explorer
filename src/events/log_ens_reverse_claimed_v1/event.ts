@@ -12,7 +12,6 @@ import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_
 export interface LogEnsReverseClaimedV1 {
 	tag: "log_ens_reverse_claimed_v1";
 	id: string;
-	success: true;
 	node: `0x${string}`;
 	account_address: `0x${string}`;
 }
@@ -36,7 +35,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogEnsReverseClaimedV1>((log) => {
 				try {
 					if (!isHexEqual(log.address, ENS_REVERSE_REGISTRAR_V2_ADDRESS)) {
 						return [];
@@ -63,6 +62,7 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_ens_reverse_claimed_v1",
 						id,
 						node: args.node,
 						account_address: getAddress(args.addr),
@@ -131,7 +131,6 @@ export async function getLogEnsReverseClaimedV1(ids: string[]) {
 	return rows.map<LogEnsReverseClaimedV1>((row) => ({
 		tag: "log_ens_reverse_claimed_v1",
 		id: row.id,
-		success: true,
 		node: row.node,
 		account_address: getAddress(row.account_address),
 	}));

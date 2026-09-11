@@ -4,15 +4,14 @@ import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem"
 import { table } from "./table";
 import { univo } from "@/lib/univo";
 import { TABLES } from "@/constants";
+import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { getEventSuccess, getTxReceiptForLog, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogErc721ApprovalV1 {
 	tag: "log_erc721_approval_v1";
 	id: string;
-	success: boolean;
 	token_id: `0x${string}`;
 	owner_address: `0x${string}`;
 	token_address: `0x${string}`;
@@ -28,11 +27,12 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogErc721ApprovalV1>((log) => {
 				try {
 					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
 						return [];
 					}
+
 					const { args } = decodeEventLog({ topics: log.topics, data: log.data, strict: true, abi: [abi] });
 
 					const id = createId({
@@ -44,11 +44,9 @@ export const event = univo.event({
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
-					const receipt = getTxReceiptForLog(block.eth_getBlockReceipts, log);
-
 					return {
+						tag: "log_erc721_approval_v1",
 						id,
-						success: getEventSuccess(receipt),
 						token_id: numberToHex(args.tokenId),
 						owner_address: getAddress(args.owner),
 						token_address: getAddress(log.address),
@@ -74,7 +72,6 @@ export const event = univo.event({
 					.onConflictDoUpdate({
 						target: table.id,
 						set: {
-							success: sql.raw(`excluded.${table.success.name}`),
 							token_id: sql.raw(`excluded.${table.token_id.name}`),
 							owner_address: sql.raw(`excluded.${table.owner_address.name}`),
 							token_address: sql.raw(`excluded.${table.token_address.name}`),
@@ -121,9 +118,8 @@ export async function getLogErc721ApprovalV1(ids: string[]) {
 
 	return rows.map<LogErc721ApprovalV1>((result) => {
 		return {
-			tag: "log_erc721_approval_v1" as const,
+			tag: "log_erc721_approval_v1",
 			id: result.id,
-			success: result.success,
 			token_id: result.token_id,
 			owner_address: getAddress(result.owner_address),
 			token_address: getAddress(result.token_address),

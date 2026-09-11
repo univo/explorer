@@ -25,7 +25,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentNativeTransferV1>((tx) => {
 			if (BigInt(tx.value) === 0n) {
 				return [];
 			}
@@ -52,6 +52,7 @@ export const event = univo.event({
 			const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 			return {
+				tag: "intent_native_transfer_v1",
 				id,
 				quantity: tx.value,
 				to_address: getAddress(tx.to),
@@ -134,7 +135,7 @@ export async function getIntentNativeTransferV1(ids: string[]) {
 
 	return rows.map<IntentNativeTransferV1>((result) => {
 		return {
-			tag: "intent_native_transfer_v1" as const,
+			tag: "intent_native_transfer_v1",
 			id: result.id,
 			success: result.success,
 			quantity: result.quantity,

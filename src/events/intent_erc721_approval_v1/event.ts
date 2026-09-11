@@ -37,7 +37,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc721ApprovalV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -104,10 +104,11 @@ export const event = univo.event({
 				});
 
 				return {
+					tag: "intent_erc721_approval_v1",
 					id,
-					success: getEventSuccess(receipt),
 					token_id: numberToHex(args[1]),
 					token_address: getAddress(tx.to),
+					success: getEventSuccess(receipt),
 					caller_address: getAddress(tx.from),
 					spender_address: getAddress(args[0]),
 				};
@@ -191,7 +192,7 @@ export async function getIntentErc721ApprovalV1(ids: string[]) {
 
 	return rows.map<IntentErc721ApprovalV1>((result) => {
 		return {
-			tag: "intent_erc721_approval_v1" as const,
+			tag: "intent_erc721_approval_v1",
 			id: result.id,
 			success: result.success,
 			token_id: result.token_id,

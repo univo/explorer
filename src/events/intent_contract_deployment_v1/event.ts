@@ -23,7 +23,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockReceipts.flatMap((receipt) => {
+		return block.eth_getBlockReceipts.flatMap<IntentContractDeploymentV1>((receipt) => {
 			if (receipt.contractAddress === null || receipt.contractAddress === undefined) {
 				return [];
 			}
@@ -38,6 +38,7 @@ export const event = univo.event({
 			});
 
 			return {
+				tag: "intent_contract_deployment_v1",
 				id,
 				success: getEventSuccess(receipt),
 				deployer_address: getAddress(receipt.from),
@@ -118,7 +119,7 @@ export async function getIntentContractDeploymentV1(ids: string[]) {
 
 	return rows.map<IntentContractDeploymentV1>((result) => {
 		return {
-			tag: "intent_contract_deployment_v1" as const,
+			tag: "intent_contract_deployment_v1",
 			id: result.id,
 			success: result.success,
 			deployer_address: getAddress(result.deployer_address),

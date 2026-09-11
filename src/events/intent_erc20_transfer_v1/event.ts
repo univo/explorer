@@ -29,7 +29,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc20TransferV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -58,6 +58,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
+					tag: "intent_erc20_transfer_v1",
 					id,
 					to_address: getAddress(args[0]),
 					quantity: numberToHex(args[1]),
@@ -145,7 +146,7 @@ export async function getIntentErc20TransferV1(ids: string[]) {
 
 	return rows.map<IntentErc20TransferV1>((result) => {
 		return {
-			tag: "intent_erc20_transfer_v1" as const,
+			tag: "intent_erc20_transfer_v1",
 			id: result.id,
 			success: result.success,
 			quantity: result.quantity,

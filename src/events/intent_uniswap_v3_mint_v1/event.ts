@@ -49,7 +49,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentUniswapV3MintV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -91,6 +91,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
+					tag: "intent_uniswap_v3_mint_v1",
 					id,
 					token_1_address: token1,
 					token_0_address: token0,
