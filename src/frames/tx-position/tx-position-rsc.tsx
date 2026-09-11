@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
 import { EtherscanIcon } from "@/components/icons";
@@ -11,14 +12,13 @@ import { balances_v1 } from "@/aggregates/balances_v1";
 import { getEventsForIds, type Event } from "@/db/events";
 import { Erc20, getTokenPrice } from "@/components/erc-20";
 import { getBlockByNumber, type Block } from "@/state/block";
-import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
 import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
-import { Erc721 } from "@/components/erc-721";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
