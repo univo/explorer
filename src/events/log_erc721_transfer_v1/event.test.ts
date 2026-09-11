@@ -34,7 +34,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004100010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -43,7 +42,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004200010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -52,7 +50,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004300010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -61,7 +58,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004400010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -70,7 +66,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004500010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -79,7 +74,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004600010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -88,7 +82,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004700010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -97,7 +90,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004800010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -106,7 +98,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004900010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -115,7 +106,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004a00010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -124,7 +114,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004b00010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
@@ -133,7 +122,6 @@ test.concurrent("log_erc721_transfer_v1", async ({ expect }) => {
 		  {
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
 		    "id": "5eb0170500989680002600004c00010026",
-		    "success": true,
 		    "tag": "log_erc721_transfer_v1",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
 		    "token_address": "0x2594d80da5f2e4f742D1E479eb9408aAD132D0Bd",
