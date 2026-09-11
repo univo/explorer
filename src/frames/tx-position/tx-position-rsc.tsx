@@ -203,9 +203,50 @@ function Balances(props: { block: Block; events: Event[] }) {
 		return;
 	}
 
+	// After filtering we perform sorting. The basic sort order from most to least important:
+	// - Sort accounts by quantity of balance changes
+	// - Within accounts, put positive changes before negative changes
+	// - Within that, put erc20 before erc721
+
+	const counts = filtered.reduce(
+		(result, [key]) => {
+			const [address] = key.split(":");
+
+			result.set(address, (result.get(address) ?? 0) + 1);
+
+			return result;
+		},
+		new Map<string, number>(), //
+	);
+
+	const rank = (address: string, asset: string, quantity: bigint) => {
+		let assetRank = 2;
+
+		if (asset === "erc20") {
+			assetRank = 0;
+		}
+
+		if (asset === "erc721") {
+			assetRank = 1;
+		}
+
+		const countRank = filtered.length - counts.get(address)!;
+
+		const quantityRank = quantity > 0n ? 0 : 1;
+
+		return countRank * 6 + quantityRank * 3 + assetRank;
+	};
+
+	const ordered = filtered.sort(([keyA, quantityA], [keyB, quantityB]) => {
+		const [addressA, assetA] = keyA.split(":");
+		const [addressB, assetB] = keyB.split(":");
+
+		return rank(addressA, assetA, quantityA) - rank(addressB, assetB, quantityB);
+	});
+
 	// Group by address
 
-	const nested = filtered.reduce(
+	const nested = ordered.reduce(
 		(result, [key, value]) => {
 			const [address, ...rest] = key.split(":");
 
@@ -217,20 +258,6 @@ function Balances(props: { block: Block; events: Event[] }) {
 		{} as Record<string, Record<string, bigint>>,
 	);
 
-	// Within each address, sort by asset and then whether the quantity is positive or negative
-
-	const rank = (asset: string) => {
-		if (asset.startsWith("erc20")) {
-			return 0;
-		}
-
-		if (asset.startsWith("erc721")) {
-			return 1;
-		}
-
-		return 2;
-	};
-
 	const timestamp = hexToNumber(props.block.timestamp) * 1000;
 
 	return (
@@ -241,10 +268,6 @@ function Balances(props: { block: Block; events: Event[] }) {
 
 			<div className="">
 				{Object.entries(nested).map(([address, assets]) => {
-					const sorted = Object.entries(assets).sort(([assetA], [assetB]) => {
-						return rank(assetA) - rank(assetB);
-					});
-
 					return (
 						<div key={address} className="p-3 flex not-last:border-b">
 							<div className="flex-1">
@@ -254,7 +277,7 @@ function Balances(props: { block: Block; events: Event[] }) {
 							</div>
 
 							<div className="flex-1">
-								{sorted.map(([asset, quantity]) => {
+								{Object.entries(assets).map(([asset, quantity]) => {
 									if (asset.startsWith("erc20")) {
 										const [_, address] = asset.split(":") as [string, `0x${string}`];
 
