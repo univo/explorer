@@ -67,7 +67,7 @@ export const event = univo.event({
 					return [];
 				}
 
-				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
+				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				const id = createId({
 					logIndex: TRANSACTION_EVENT,
