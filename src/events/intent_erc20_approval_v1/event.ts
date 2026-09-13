@@ -37,7 +37,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc20ApprovalV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -105,6 +105,7 @@ export const event = univo.event({
 				});
 
 				return {
+					tag: "intent_erc20_approval_v1",
 					id,
 					quantity: numberToHex(args[1]),
 					token_address: getAddress(tx.to),
@@ -192,7 +193,7 @@ export async function getIntentErc20ApprovalV1(ids: string[]) {
 
 	return rows.map<IntentErc20ApprovalV1>((result) => {
 		return {
-			tag: "intent_erc20_approval_v1" as const,
+			tag: "intent_erc20_approval_v1",
 			id: result.id,
 			success: result.success,
 			quantity: result.quantity,

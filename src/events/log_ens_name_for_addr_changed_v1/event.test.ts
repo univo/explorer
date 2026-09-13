@@ -37,7 +37,6 @@ test.concurrent("log_ens_name_for_addr_changed_v1 deletes, writes, and reads fro
 		    "account_address": "0x8D56AeBB8321c6964943DfA056Bbd7261fEc9214",
 		    "id": "6a82fe4301894ad001540004260001002b",
 		    "name": "etherscanofficial.eth",
-		    "success": true,
 		    "tag": "log_ens_name_for_addr_changed_v1",
 		  },
 		]

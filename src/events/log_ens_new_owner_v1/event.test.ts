@@ -37,7 +37,6 @@ test.concurrent("log_ens_new_owner_v1 deletes, writes, and reads from storage", 
 		    "id": "5db875880086d0ce00d30000e90001002c",
 		    "label": "0x535bdae9bb214b3cc583b53384464999f2f7f48625f160728c63e73e766ff71e",
 		    "owner_address": "0x9062C0A6Dbd6108336BcBe4593a3D1cE05512069",
-		    "success": true,
 		    "tag": "log_ens_new_owner_v1",
 		  },
 		]

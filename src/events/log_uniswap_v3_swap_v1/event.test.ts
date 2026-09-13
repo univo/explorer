@@ -42,7 +42,6 @@ test.concurrent("log_uniswap_v3_swap_v1 deletes, writes, and reads from storage"
 		    "recipient_address": "0x3b8ccaa89FcD432f1334D35b10fF8547001Ce3e5",
 		    "sender_address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
 		    "sqrt_price_x96": 1364573512386034424627810688n,
-		    "success": true,
 		    "tag": "log_uniswap_v3_swap_v1",
 		    "tick": -81234,
 		  },

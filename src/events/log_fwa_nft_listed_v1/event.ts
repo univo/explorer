@@ -13,7 +13,6 @@ import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v
 export interface LogFwaNftListedV1 {
 	tag: "log_fwa_nft_listed_v1";
 	id: string;
-	success: true;
 	slot: `0x${string}`;
 	weight: `0x${string}`;
 	token_id: `0x${string}`;
@@ -41,7 +40,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogFwaNftListedV1>((log) => {
 				try {
 					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], toEventSelector(NFT_LISTED_ABI))) {
 						return [];
@@ -64,12 +63,13 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_fwa_nft_listed_v1",
 						id,
 						slot: numberToHex(args.slot),
 						weight: numberToHex(args.weight),
 						token_id: numberToHex(args.tokenId),
-						listing_id: numberToHex(args.listingId),
 						backing_eth: numberToHex(args.value),
+						listing_id: numberToHex(args.listingId),
 						depositor_address: getAddress(args.depositor),
 						collection_address: getAddress(args.collection),
 					};
@@ -143,7 +143,6 @@ export async function getLogFwaNftListedV1(ids: string[]) {
 		return {
 			tag: "log_fwa_nft_listed_v1",
 			id: result.id,
-			success: true,
 			slot: result.slot,
 			weight: result.weight,
 			token_id: result.token_id,
@@ -177,7 +176,6 @@ export const getFwaListingById = defineLoader(async (ids: readonly `0x${string}`
 		return {
 			tag: "log_fwa_nft_listed_v1",
 			id: result.id,
-			success: true,
 			slot: result.slot,
 			weight: result.weight,
 			token_id: result.token_id,

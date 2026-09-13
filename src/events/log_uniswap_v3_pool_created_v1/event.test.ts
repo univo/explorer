@@ -37,7 +37,6 @@ test.concurrent("log_uniswap_v3_pool_created_v1 deletes, writes, and reads from 
 		    "fee": 500,
 		    "id": "6091a75500bcbf60005200005000010028",
 		    "pool_address": "0x6c6Bc977E13Df9b0de53b251522280BB72383700",
-		    "success": true,
 		    "tag": "log_uniswap_v3_pool_created_v1",
 		    "tick_spacing": 10,
 		    "token_0_address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",

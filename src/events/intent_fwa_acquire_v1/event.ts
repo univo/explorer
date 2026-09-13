@@ -45,7 +45,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentFwaAcquireV1>((tx) => {
 			try {
 				if (tx.to === null || !isHexEqual(tx.to, FWA_ADDRESS)) {
 					return [];
@@ -79,6 +79,7 @@ export const event = univo.event({
 				});
 
 				return {
+					tag: "intent_fwa_acquire_v1",
 					id,
 					submitted_eth: tx.value,
 					success: getEventSuccess(receipt),

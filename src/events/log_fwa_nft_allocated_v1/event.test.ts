@@ -39,7 +39,6 @@ test.concurrent("log_fwa_nft_allocated_v1 deletes, writes, and reads from storag
 		    "id": "6a6abceb0187473900df0004d100010032",
 		    "listing_id": "0x016f9b",
 		    "purchaser_address": "0xa89C876BE69223295A0925D7A62Cb6868dEc4ac8",
-		    "success": true,
 		    "tag": "log_fwa_nft_allocated_v1",
 		  },
 		]

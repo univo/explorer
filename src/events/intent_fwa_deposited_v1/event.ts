@@ -37,7 +37,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentFwaDepositedV1>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -62,6 +62,7 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 				return {
+					tag: "intent_fwa_deposited_v1",
 					id,
 					backing_eth: tx.value,
 					token_id: numberToHex(args[1]),
@@ -149,7 +150,7 @@ export async function getIntentFwaDepositedV1(ids: string[]) {
 
 	return rows.map<IntentFwaDepositedV1>((result) => {
 		return {
-			tag: "intent_fwa_deposited_v1" as const,
+			tag: "intent_fwa_deposited_v1",
 			id: result.id,
 			success: result.success,
 			token_id: result.token_id,

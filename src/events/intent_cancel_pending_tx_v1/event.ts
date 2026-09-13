@@ -24,7 +24,7 @@ export const event = univo.event({
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentCancelPendingTxV1>((tx) => {
 			// When deploying a contract the `to` field is null
 			if (tx.to === null) {
 				return [];
@@ -57,6 +57,7 @@ export const event = univo.event({
 			const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionHash, tx.hash));
 
 			return {
+				tag: "intent_cancel_pending_tx_v1",
 				id,
 				success: getEventSuccess(receipt),
 				from_address: getAddress(tx.from),
@@ -136,7 +137,7 @@ export async function getIntentCancelPendingTxV1(ids: string[]) {
 
 	return rows.map<IntentCancelPendingTxV1>((result) => {
 		return {
-			tag: "intent_cancel_pending_tx_v1" as const,
+			tag: "intent_cancel_pending_tx_v1",
 			id: result.id,
 			nonce: result.nonce,
 			success: result.success,

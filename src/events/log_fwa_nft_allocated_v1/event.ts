@@ -14,7 +14,6 @@ import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v
 export interface LogFwaNftAllocatedV1 {
 	tag: "log_fwa_nft_allocated_v1";
 	id: string;
-	success: true;
 	listing_id: `0x${string}`;
 	backing_eth: `0x${string}`;
 	purchaser_address: `0x${string}`;
@@ -39,7 +38,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogFwaNftAllocatedV1>((log) => {
 				try {
 					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], toEventSelector(NFT_ALLOCATED_ABI))) {
 						return [];
@@ -62,6 +61,7 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_fwa_nft_allocated_v1",
 						id,
 						backing_eth: numberToHex(args.value),
 						listing_id: numberToHex(args.listingId),
@@ -123,6 +123,8 @@ univo.event({
 // from Chainlink's VRF becomes available. We want this result to show for both the winner (purchaser_address)
 // and the loser (depositor_address). This is why we also add the log event to our account index.
 
+// TODO: Because we added this event to the account index we must store it's success status
+
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
@@ -156,7 +158,6 @@ export async function getLogFwaNftAllocatedV1(ids: string[]) {
 		return {
 			tag: "log_fwa_nft_allocated_v1",
 			id: result.id,
-			success: true,
 			listing_id: result.listing_id,
 			backing_eth: result.backing_eth,
 			purchaser_address: getAddress(result.purchaser_address),

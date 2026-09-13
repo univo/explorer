@@ -12,7 +12,6 @@ import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_
 export interface LogUniswapV3PoolCreatedV1 {
 	tag: "log_uniswap_v3_pool_created_v1";
 	id: string;
-	success: true;
 	fee: number;
 	tick_spacing: number;
 	pool_address: `0x${string}`;
@@ -41,7 +40,7 @@ export const event = univo.event({
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap((log) => {
+			return receipt.logs.flatMap<LogUniswapV3PoolCreatedV1>((log) => {
 				try {
 					if (!isHexEqual(log.address, UNISWAP_V3_FACTORY_ADDRESS)) {
 						return [];
@@ -68,6 +67,7 @@ export const event = univo.event({
 					});
 
 					return {
+						tag: "log_uniswap_v3_pool_created_v1",
 						id,
 						fee: args.fee,
 						tick_spacing: args.tickSpacing,
@@ -143,7 +143,6 @@ export async function getLogUniswapV3PoolCreatedV1(ids: string[]) {
 		return {
 			tag: "log_uniswap_v3_pool_created_v1",
 			id: result.id,
-			success: true,
 			fee: result.fee,
 			tick_spacing: result.tick_spacing,
 			pool_address: getAddress(result.pool_address),
@@ -175,7 +174,6 @@ export const getPoolByAddress = defineLoader(async (pools: readonly `0x${string}
 		return {
 			tag: "log_uniswap_v3_pool_created_v1",
 			id: result.id,
-			success: true,
 			fee: result.fee,
 			tick_spacing: result.tick_spacing,
 			pool_address: getAddress(result.pool_address),

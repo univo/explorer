@@ -1,18 +1,21 @@
 import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import { getBlockByNumber } from "@/state/block";
+import { execute } from "@/aggregates/aggregate";
 import { EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
-import { getTokenPrice } from "@/components/erc-20";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
+import { balances_v1 } from "@/aggregates/balances_v1";
 import { getEventsForIds, type Event } from "@/db/events";
-import { ETH_ADDRESS, TRANSACTION_EVENT } from "@/constants";
+import { Erc20, getTokenPrice } from "@/components/erc-20";
+import { getBlockByNumber, type Block } from "@/state/block";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
 import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
@@ -50,8 +53,8 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 		<div className="h-full flex flex-col bg-white">
 			<div>
 				<div className="bg-white p-3 flex items-center justify-between gap-3">
-					<div className="flex items-center gap-2 overflow-hidden">
-						<p className="text-gray-900 font-semibold text-base select-all">Transaction</p>
+					<div className="flex items-center overflow-hidden">
+						<p className="text-gray-900 font-semibold text-base select-all min-w-24">Transaction</p>
 						<p className="text-gray-500 text-base select-all truncate">{tx.hash}</p>
 					</div>
 
@@ -65,7 +68,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 				</div>
 			</div>
 
-			<div className="relative overflow-scroll">
+			<div className="relative isolate overflow-scroll">
 				<div className="px-3 pb-3">
 					<div className="flex flex-col items-start gap-1">
 						<div className="flex items-start justify-between">
@@ -130,19 +133,19 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 					</div>
 				</div>
 
-				<div className="sticky top-0 border-t"></div>
+				<Balances block={block} events={ordered} />
 
-				<Events events={ordered} />
+				<Logs events={ordered} />
 			</div>
 		</div>
 	);
 }
 
-function Events(props: { events: Event[] }) {
+function Logs(props: { events: Event[] }) {
 	if (props.events.length === 0) {
 		return (
 			<div className="p-3 flex items-center justify-center">
-				<p className="text-gray-900 text-sm font-medium">No events found</p>
+				<p className="text-gray-900 text-sm">No events found</p>
 			</div>
 		);
 	}
@@ -152,20 +155,153 @@ function Events(props: { events: Event[] }) {
 	});
 
 	return (
-		<div className="p-3 flex flex-col gap-1">
-			{logs.map((event) => {
-				const { logIndex } = parseId(event.id);
+		<div>
+			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">Logs</p>
+			</div>
 
-				return (
-					<ErrorBoundary key={event.id} fallback={null}>
-						<div className="flex">
-							<span className="text-sm text-gray-500 min-w-12">({formatNumber(logIndex)})</span>
+			<div className="p-3 flex flex-col gap-1">
+				{logs.map((event) => {
+					const { logIndex } = parseId(event.id);
 
-							<EventDescription event={event} address={undefined} />
+					return (
+						<ErrorBoundary key={event.id} fallback={null}>
+							<div className="flex">
+								<span className="text-sm text-gray-500 min-w-12 sm:min-w-24">({formatNumber(logIndex)})</span>
+
+								<EventDescription event={event} address={undefined} />
+							</div>
+						</ErrorBoundary>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
+
+function Balances(props: { block: Block; events: Event[] }) {
+	// Compute sum of transfers
+
+	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v1" || event.tag === "log_erc721_transfer_v1");
+	const result = execute(balances_v1, transfers);
+
+	// Remove values where the net-change is zero, and also remove the null address
+
+	const filtered = Object.entries(result).filter(([key, quantity]) => {
+		if (quantity === 0n) {
+			return false;
+		}
+
+		if (key.startsWith(ZERO_ADDRESS)) {
+			return false;
+		}
+
+		return true;
+	});
+
+	if (filtered.length === 0) {
+		return;
+	}
+
+	// After filtering we perform sorting. The basic sort order from most to least important:
+	// - Sort accounts by quantity of balance changes
+	// - Within accounts, put positive changes before negative changes
+	// - Within that, put erc20 before erc721
+
+	const counts = filtered.reduce(
+		(result, [key]) => {
+			const [address] = key.split(":");
+
+			result.set(address, (result.get(address) ?? 0) + 1);
+
+			return result;
+		},
+		new Map<string, number>(), //
+	);
+
+	const rank = (address: string, asset: string, quantity: bigint) => {
+		let assetRank = 2;
+
+		if (asset === "erc20") {
+			assetRank = 0;
+		}
+
+		if (asset === "erc721") {
+			assetRank = 1;
+		}
+
+		const countRank = filtered.length - counts.get(address)!;
+
+		const quantityRank = quantity > 0n ? 0 : 1;
+
+		return countRank * 6 + quantityRank * 3 + assetRank;
+	};
+
+	const ordered = filtered.sort(([keyA, quantityA], [keyB, quantityB]) => {
+		const [addressA, assetA] = keyA.split(":");
+		const [addressB, assetB] = keyB.split(":");
+
+		return rank(addressA, assetA, quantityA) - rank(addressB, assetB, quantityB);
+	});
+
+	// Group by address
+
+	const nested = ordered.reduce(
+		(result, [key, value]) => {
+			const [address, ...rest] = key.split(":");
+
+			result[address] ??= {};
+			result[address][rest.join(":")] = value;
+
+			return result;
+		},
+		{} as Record<string, Record<string, bigint>>,
+	);
+
+	return (
+		<div>
+			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">Transfers</p>
+			</div>
+
+			<div className="">
+				{Object.entries(nested).map(([address, assets]) => {
+					return (
+						<div key={address} className="p-3 flex flex-col space-y-3 sm:flex-row sm:space-y-0 not-last:border-b">
+							<div className="sm:flex-1 flex flex-col items-start">
+								<span className="text-sm text-gray-900">
+									<Account chain={1} address={address as `0x${string}`} />
+								</span>
+							</div>
+
+							<div className="sm:flex-1 flex flex-col items-start">
+								{Object.entries(assets).map(([asset, quantity]) => {
+									if (asset.startsWith("erc20")) {
+										const change = quantity > 0n ? "increase" : "decrease";
+										const [_, address] = asset.split(":") as [string, `0x${string}`];
+
+										return (
+											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
+												<Erc20 change={change} chain={1} address={address} quantity={quantity} at={hexToNumber(props.block.timestamp)} />
+											</div>
+										);
+									}
+
+									if (asset.startsWith("erc721")) {
+										const [_, address, id] = asset.split(":") as [string, `0x${string}`, `0x${string}`];
+
+										return (
+											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
+												<Erc721 chain={1} address={address} id={id} />
+											</div>
+										);
+									}
+								})}
+							</div>
 						</div>
-					</ErrorBoundary>
-				);
-			})}
+					);
+				})}
+			</div>
 		</div>
 	);
 }
