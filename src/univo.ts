@@ -1,19 +1,18 @@
-import { indexer } from "univo";
+import { defineIndexer } from "univo";
 import { env } from "cloudflare:workers";
-import { Storage } from "@storagesdk/core";
+import { defineStorage } from "univo/metadata";
+import { r2 } from "univo/metadata/adapters/r2-binding";
 import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
 import { rpc } from "@/helpers";
-import { retry } from "@/utils";
-import { r2 } from "./storagesdk";
 
-const metadataStorage = new Storage({
+const metadataStorage = defineStorage({
 	adapter: r2({
 		binding: env.BUCKET,
 	}),
 });
 
-export const univo = indexer({
+export const univo = defineIndexer({
 	getBlock,
 	quiet: false,
 	metadataStorage,
@@ -22,12 +21,12 @@ export const univo = indexer({
 
 async function getBlock(block: { chain: `0x${string}`; number: string }) {
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
-		retry(() => rpc({ jsonrpc: "2.0", id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }), 4),
-		retry(() => rpc({ jsonrpc: "2.0", id: 2, method: "eth_getBlockReceipts", params: [block.number] }), 4),
+		rpc({ jsonrpc: "2.0", id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }),
+		rpc({ jsonrpc: "2.0", id: 2, method: "eth_getBlockReceipts", params: [block.number] }),
 	]);
 
-	if (!eth_getBlockByNumber) return null;
-	if (!eth_getBlockReceipts) return null;
+	if (!eth_getBlockByNumber) throw new Error("eth_getBlockByNumber is null");
+	if (!eth_getBlockReceipts) throw new Error("eth_getBlockReceipts is null");
 
 	return {
 		eth_chainId: block.chain,

@@ -2,7 +2,7 @@ import { getAddress } from "viem";
 import { asc, inArray, sql } from "drizzle-orm";
 
 import { table } from "./table";
-import { univo } from "@/lib/univo";
+import { univo } from "@/univo";
 import { isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
