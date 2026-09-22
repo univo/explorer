@@ -1,4 +1,4 @@
-import { univo } from "@/lib/univo";
+import { univo } from "@/univo";
 import { parseId } from "@/helpers";
 import { invalidateEnsCacheForAccount } from "@/cache/ens/ens";
 import { event as log_ens_name_for_addr_changed_v1 } from "@/events/log_ens_name_for_addr_changed_v1/event";
@@ -12,11 +12,9 @@ univo.action({
 
 	event: log_ens_name_for_addr_changed_v1,
 
-	handler: {
-		finalized: async (event) => {
-			const { chainId } = parseId(event.id);
+	handler: async (event) => {
+		const { chainId } = parseId(event.id);
 
-			await invalidateEnsCacheForAccount({ chain: chainId, address: event.account_address });
-		},
+		await invalidateEnsCacheForAccount({ chain: chainId, address: event.account_address });
 	},
 });

@@ -2,7 +2,7 @@ import { asc, inArray, sql } from "drizzle-orm";
 import { parseAbi, keccak256, getAddress, decodeFunctionData, encodeAbiParameters, getCreate2Address, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/lib/univo";
+import { univo } from "@/univo";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
