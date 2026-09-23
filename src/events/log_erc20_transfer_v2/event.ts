@@ -1,4 +1,4 @@
-import { getAddress } from "viem";
+import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 import { and, asc, inArray } from "drizzle-orm";
 
 import { table } from "./table";
@@ -6,9 +6,8 @@ import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { createId, parseId } from "@/helpers";
-import { numberToHex } from "@/utils";
+import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { event as log_erc20_transfer_v1 } from "@/events/log_erc20_transfer_v1/event";
 
 export interface LogErc20TransferV2 {
 	tag: "log_erc20_transfer_v2";
@@ -18,6 +17,8 @@ export interface LogErc20TransferV2 {
 	from_address: `0x${string}`;
 	token_address: `0x${string}`;
 }
+
+const abi = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 value)");
 
 function parseStorageId(id: string) {
 	const parsed = parseId(id);
@@ -50,19 +51,44 @@ function createStorageId(row: {
 
 export const event = univo.event({
 	id: "log_erc20_transfer_v2",
-	filters: log_erc20_transfer_v1.filters,
-	handler: (block): LogErc20TransferV2[] => {
-		return log_erc20_transfer_v1.handler(block).map((event) => {
-			const id = createStorageId(parseStorageId(event.id));
 
-			return {
-				id,
-				tag: "log_erc20_transfer_v2",
-				quantity: event.quantity,
-				to_address: event.to_address,
-				from_address: event.from_address,
-				token_address: event.token_address,
-			};
+	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
+
+	handler: (block) => {
+		return block.eth_getBlockReceipts.flatMap((receipt) => {
+			return receipt.logs.flatMap<LogErc20TransferV2>((log) => {
+				try {
+					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
+						return [];
+					}
+
+					const { args } = decodeEventLog({ topics: log.topics, data: log.data, strict: true, abi: [abi] });
+
+					if (args.value === 0n) {
+						return []; // Only record non-zero transfers
+					}
+
+					const id = createId({
+						logIndex: log.logIndex,
+						chainId: block.eth_chainId,
+						txIndex: log.transactionIndex,
+						tableId: TABLES.log_erc20_transfer_v2,
+						blockNumber: block.eth_getBlockByNumber.number,
+						blockTimestamp: block.eth_getBlockByNumber.timestamp,
+					});
+
+					return {
+						id,
+						tag: "log_erc20_transfer_v2",
+						to_address: getAddress(args.to),
+						quantity: numberToHex(args.value),
+						from_address: getAddress(args.from),
+						token_address: getAddress(log.address),
+					};
+				} catch {
+					return [];
+				}
+			});
 		});
 	},
 	storage: {
