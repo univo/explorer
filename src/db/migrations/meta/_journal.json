@@ -155,6 +155,13 @@
       "when": 1789108457683,
       "tag": "0021_motionless_umar",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1790122816076,
+      "tag": "0022_log-erc20-transfer-v2",
+      "breakpoints": true
     }
   ]
 }
