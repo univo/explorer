@@ -5,15 +5,11 @@
 	"scripts": {
 		"test": "vitest run",
 		"dev": "vite dev --port 3000",
+		"postinstall": "patch-package",
 		"cf-typegen": "wrangler types",
-		"preview": "npm run build:staging && vite preview --port 3000",
-		"build:staging": "CLOUDFLARE_ENV=staging vite build",
-		"build:production": "CLOUDFLARE_ENV=production vite build",
-		"deploy:staging": "npm run build:staging && wrangler deploy",
-		"deploy:production": "npm run build:production && wrangler deploy",
-		"tail:staging": "wrangler tail --env staging",
 		"tail:production": "wrangler tail --env production",
-		"postinstall": "patch-package"
+		"build:production": "CLOUDFLARE_ENV=production vite build",
+		"deploy:production": "npm run build:production && wrangler deploy"
 	},
 	"dependencies": {
 		"@base-ui/react": "1.8.0",
