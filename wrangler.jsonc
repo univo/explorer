@@ -46,29 +46,6 @@
 		}
 	],
 	"env": {
-		"staging": {
-			"vars": {
-				"LOG_LEVEL": "DEBUG",
-				"ENVIRONMENT": "STAGING"
-			},
-			"route": {
-				"custom_domain": true,
-				"pattern": "staging.explorer.univo.app"
-			},
-			"r2_buckets": [
-				{
-					"remote": true,
-					"binding": "BUCKET",
-					"bucket_name": "explorer-staging"
-				}
-			],
-			"hyperdrive": [
-				{
-					"binding": "PG",
-					"id": "2ee0a71e78274194901a2ff23ee5c1fc"
-				}
-			]
-		},
 		"production": {
 			"vars": {
 				"LOG_LEVEL": "WARN",
@@ -88,7 +65,7 @@
 			"hyperdrive": [
 				{
 					"binding": "PG",
-					"id": "de9c1c526cb347778a95aa4e2597cd2b"
+					"id": "6aff50d6adf14ddfb68322477e615129"
 				}
 			]
 		}
