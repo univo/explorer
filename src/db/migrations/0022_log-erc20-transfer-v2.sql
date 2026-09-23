@@ -17,3 +17,9 @@ SELECT create_hypertable(
 	by_range('block_timestamp', INTERVAL '1 day'),
 	create_default_indexes => FALSE
 );
+--> statement-breakpoint
+ALTER TABLE "log_erc20_transfer_v2" SET (
+	timescaledb.enable_columnstore = TRUE,
+	timescaledb.segmentby = 'chain',
+	timescaledb.orderby = 'block_timestamp DESC, block_number DESC, tx_index DESC, log_index DESC'
+);
