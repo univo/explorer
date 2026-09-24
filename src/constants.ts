@@ -76,6 +76,7 @@ export const TABLES = {
 	log_uniswap_v3_swap_v2: 56,
 	log_uniswap_v3_pool_created_v2: 57,
 	log_ens_name_for_addr_changed_v2: 58,
+	log_ens_new_owner_v2: 59,
 };
 
 export type Table = keyof typeof TABLES;
