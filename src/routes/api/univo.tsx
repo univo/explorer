@@ -29,7 +29,7 @@ import "@/events/intent_contract_deployment_v1/event";
 import "@/events/intent_ens_name_registered_v1/event";
 
 import "@/events/log_ens_new_owner_v1/event";
-import "@/events/log_erc20_approval_v1/event";
+import "@/events/log_erc20_approval_v2/event";
 import "@/events/log_erc20_transfer_v2/event";
 import "@/events/log_fwa_nft_listed_v1/event";
 import "@/events/log_erc721_transfer_v1/event";
