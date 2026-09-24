@@ -182,7 +182,7 @@ function Logs(props: { events: Event[] }) {
 function Balances(props: { block: Block; events: Event[] }) {
 	// Compute sum of transfers
 
-	const transfers = props.events.filter((event) => event.tag === "log_erc20" || event.tag === "log_erc721_transfer_v1");
+	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v1");
 	const result = execute(balances_v1, transfers);
 
 	// Remove values where the net-change is zero, and also remove the null address
