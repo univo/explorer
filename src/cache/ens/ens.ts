@@ -8,7 +8,7 @@ import type { Chain } from "@/constants";
 import { table } from "@/cache/ens/table";
 import { createPostgresClient } from "@/db/client";
 import { defineLoader, isHexEqual, logger } from "@/utils";
-import { getEnsExistsForAccounts } from "@/events/log_ens_new_owner_v1/event";
+import { getEnsExistsForAccounts } from "@/events/log_ens_new_owner_v2/event";
 
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
