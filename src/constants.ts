@@ -69,6 +69,7 @@ export const TABLES = {
 	intent_fwa_won_v2: 49,
 	log_fwa_nft_allocated_v1: 50,
 	intent_fwa_acquire_v1: 51,
+	log_erc20_transfer_v2: 52,
 };
 
 export type Table = keyof typeof TABLES;
@@ -83,7 +84,7 @@ export const PRESETS = {
 	payments: [
 		TABLES.intent_native_transfer_v1, //
 		TABLES.intent_erc20_transfer_v1,
-		TABLES.log_erc20_transfer_v1,
+		TABLES.log_erc20_transfer_v2,
 	],
 
 	trades: [

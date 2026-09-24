@@ -6,7 +6,7 @@ export { table as index_account_v4 } from "@/indexes/index_account_v4";
 export { table as index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export { table as log_ens_new_owner_v1 } from "@/events/log_ens_new_owner_v1/table";
-export { table as log_erc20_transfer_v1 } from "@/events/log_erc20_transfer_v1/table";
+export { table as log_erc20_transfer_v2 } from "@/events/log_erc20_transfer_v2/table";
 export { table as log_erc20_approval_v1 } from "@/events/log_erc20_approval_v1/table";
 export { table as log_fwa_nft_listed_v1 } from "@/events/log_fwa_nft_listed_v1/table";
 export { table as log_erc721_transfer_v1 } from "@/events/log_erc721_transfer_v1/table";
