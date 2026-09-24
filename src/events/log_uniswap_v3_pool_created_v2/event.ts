@@ -156,7 +156,31 @@ export async function getLogUniswapV3PoolCreatedV2(ids: string[]) {
 		)
 		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map(toEvent);
+	return rows.map((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.log_uniswap_v3_pool_created_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
+		return {
+			tag: "log_uniswap_v3_pool_created_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			fee: row.fee,
+			tick_spacing: row.tick_spacing,
+			pool_address: getAddress(row.pool_address),
+			token_0_address: getAddress(row.token_0_address),
+			token_1_address: getAddress(row.token_1_address),
+		};
+	});
 }
 
 export const getPoolByAddress = defineLoader(async (pools: readonly `0x${string}`[]) => {
@@ -173,32 +197,33 @@ export const getPoolByAddress = defineLoader(async (pools: readonly `0x${string}
 
 	return pools.map<LogUniswapV3PoolCreatedV2 | null>((pool) => {
 		const row = rows.find((row) => isHexEqual(row.pool_address, pool));
-		return row === undefined ? null : toEvent(row);
+
+		if (row === undefined) {
+			return null;
+		}
+
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.log_uniswap_v3_pool_created_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
+		return {
+			tag: "log_uniswap_v3_pool_created_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			fee: row.fee,
+			tick_spacing: row.tick_spacing,
+			pool_address: getAddress(row.pool_address),
+			token_0_address: getAddress(row.token_0_address),
+			token_1_address: getAddress(row.token_1_address),
+		};
 	});
 });
-
-function toEvent(row: typeof table.$inferSelect): LogUniswapV3PoolCreatedV2 {
-	const id = createId({
-		chainId: numberToHex(row.chain),
-		txIndex: numberToHex(row.tx_index),
-		tableId: TABLES.log_uniswap_v3_pool_created_v2,
-		logIndex: numberToHex(row.log_index),
-		blockNumber: numberToHex(row.block_number),
-		blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
-	});
-
-	return {
-		tag: "log_uniswap_v3_pool_created_v2",
-		id,
-		chain: row.chain,
-		tx_index: row.tx_index,
-		log_index: row.log_index,
-		block_number: row.block_number,
-		block_timestamp: row.block_timestamp,
-		fee: row.fee,
-		tick_spacing: row.tick_spacing,
-		pool_address: getAddress(row.pool_address),
-		token_0_address: getAddress(row.token_0_address),
-		token_1_address: getAddress(row.token_1_address),
-	};
-}
