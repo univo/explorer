@@ -16,5 +16,7 @@ export const table = pgTable(
 		from_address: hex().notNull(),
 		token_address: hex().notNull(),
 	},
-	(table) => [index("log_erc20_transfer_v2_block_timestamp_idx").on(table.block_timestamp.desc())],
+	(table) => [
+		index("log_erc20_transfer_v2_block_timestamp_idx").on(table.block_timestamp.desc()), //
+	],
 );
