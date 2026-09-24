@@ -12,6 +12,7 @@ import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_
 
 export interface LogErc20TransferV2 {
 	tag: "log_erc20_transfer_v2";
+	id: string;
 	chain: number;
 	tx_index: number;
 	log_index: number;
@@ -44,8 +45,18 @@ export const event = univo.event({
 						return []; // Only record non-zero transfers
 					}
 
+					const id = createId({
+						logIndex: log.logIndex,
+						chainId: block.eth_chainId,
+						txIndex: log.transactionIndex,
+						tableId: TABLES.log_erc20_approval_v1,
+						blockNumber: block.eth_getBlockByNumber.number,
+						blockTimestamp: block.eth_getBlockByNumber.timestamp,
+					});
+
 					return {
 						tag: "log_erc20_transfer_v2",
+						id,
 						log_index: hexToNumber(log.logIndex),
 						chain: hexToNumber(block.eth_chainId),
 						tx_index: hexToNumber(log.transactionIndex),
@@ -96,18 +107,7 @@ univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	id: "log_erc20_transfer_v2_index_block_number_tx_index_v4",
-	handler: (block) => {
-		return event.handler(block).map((event) => {
-			return createId({
-				chainId: numberToHex(event.chain),
-				txIndex: numberToHex(event.tx_index),
-				tableId: TABLES.log_erc20_transfer_v2,
-				logIndex: numberToHex(event.log_index),
-				blockNumber: numberToHex(event.block_number),
-				blockTimestamp: numberToHex(event.block_timestamp.getTime() / 1000),
-			});
-		});
-	},
+	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 export async function getLogErc20TransferV2(ids: string[]) {
@@ -145,8 +145,18 @@ export async function getLogErc20TransferV2(ids: string[]) {
 		);
 
 	return rows.map<LogErc20TransferV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.log_erc20_transfer_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
 		return {
 			tag: "log_erc20_transfer_v2",
+			id,
 			chain: row.chain,
 			tx_index: row.tx_index,
 			log_index: row.log_index,
