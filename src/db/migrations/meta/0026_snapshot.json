@@ -1,6 +1,6 @@
 {
-  "id": "e96a8d79-93f1-48e4-a31c-c28f9d601d70",
-  "prevId": "5a09517a-73e6-4006-a5a4-32e9bca5abfc",
+  "id": "b18fd91e-fc28-4007-baa1-b1191e787fdc",
+  "prevId": "e96a8d79-93f1-48e4-a31c-c28f9d601d70",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1572,14 +1572,38 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.log_erc721_transfer_v1": {
-      "name": "log_erc721_transfer_v1",
+    "public.log_erc721_transfer_v2": {
+      "name": "log_erc721_transfer_v2",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "bytea",
-          "primaryKey": true,
+        "chain": {
+          "name": "chain",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tx_index": {
+          "name": "tx_index",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "log_index": {
+          "name": "log_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_number": {
+          "name": "block_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_timestamp": {
+          "name": "block_timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
           "notNull": true
         },
         "token_id": {
@@ -1607,7 +1631,23 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "log_erc721_transfer_v2_block_timestamp_idx": {
+          "name": "log_erc721_transfer_v2_block_timestamp_idx",
+          "columns": [
+            {
+              "expression": "block_timestamp",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
