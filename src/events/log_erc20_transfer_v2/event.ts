@@ -3,9 +3,9 @@ import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector 
 
 import { table } from "./table";
 import { univo } from "@/univo";
-import { createId, parseId } from "@/helpers";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
+import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
