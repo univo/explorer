@@ -5,7 +5,7 @@ import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { LogUniswapV3SwapV2 } from "./event";
 import { Description } from "@/components/description";
-import { getPoolByAddress, type LogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
+import { getPoolByAddress, type LogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 
 export async function LogUniswapV3SwapV2Description(props: { event: LogUniswapV3SwapV2; address: `0x${string}` | undefined }) {
 	const chain = getExternalChain(props.event.chain);
@@ -48,7 +48,7 @@ export async function LogUniswapV3SwapV2Description(props: { event: LogUniswapV3
 	);
 }
 
-function getSwap(pool: LogUniswapV3PoolCreatedV1, swap: LogUniswapV3SwapV2) {
+function getSwap(pool: LogUniswapV3PoolCreatedV2, swap: LogUniswapV3SwapV2) {
 	if (swap.amount_0 > 0n && swap.amount_1 < 0n) {
 		return {
 			amountIn: swap.amount_0,

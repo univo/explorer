@@ -37,7 +37,7 @@ import "@/events/log_uniswap_v3_swap_v2/event";
 import "@/events/log_erc721_approval_v2/event";
 import "@/events/log_fwa_nft_allocated_v1/event";
 import "@/events/log_ens_reverse_claimed_v1/event";
-import "@/events/log_uniswap_v3_pool_created_v1/event";
+import "@/events/log_uniswap_v3_pool_created_v2/event";
 import "@/events/log_ens_name_for_addr_changed_v1/event";
 
 export const Route = createFileRoute("/api/univo")({

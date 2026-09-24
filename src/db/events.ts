@@ -27,7 +27,7 @@ import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/e
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
 import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
-import { getLogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
+import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
 import { getLogEnsNameForAddrChangedV1 } from "@/events/log_ens_name_for_addr_changed_v1/event";
 
@@ -52,7 +52,7 @@ export async function getEventsForIds(ids: string[]) {
 		getLogErc721TransferV2(ids),
 		getLogFwaNftAllocatedV1(ids),
 		getLogEnsReverseClaimedV1(ids),
-		getLogUniswapV3PoolCreatedV1(ids),
+		getLogUniswapV3PoolCreatedV2(ids),
 		getLogEnsNameForAddrChangedV1(ids),
 
 		getIntentIdmV1(ids),
