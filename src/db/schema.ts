@@ -15,7 +15,7 @@ export { table as log_uniswap_v3_swap_v2 } from "@/events/log_uniswap_v3_swap_v2
 export { table as log_fwa_nft_allocated_v1 } from "@/events/log_fwa_nft_allocated_v1/table";
 export { table as log_ens_reverse_claimed_v1 } from "@/events/log_ens_reverse_claimed_v1/table";
 export { table as log_uniswap_v3_pool_created_v2 } from "@/events/log_uniswap_v3_pool_created_v2/table";
-export { table as log_ens_name_for_addr_changed_v1 } from "@/events/log_ens_name_for_addr_changed_v1/table";
+export { table as log_ens_name_for_addr_changed_v2 } from "@/events/log_ens_name_for_addr_changed_v2/table";
 
 export { table as intent_idm_v1 } from "@/events/intent_idm_v1/table";
 export { table as intent_fwa_won_v2 } from "@/events/intent_fwa_won_v2/table";

@@ -29,7 +29,7 @@ import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal
 import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
 import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
-import { getLogEnsNameForAddrChangedV1 } from "@/events/log_ens_name_for_addr_changed_v1/event";
+import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
 
 // This is our central point of configuration for which all the events the app loads.
 
@@ -53,7 +53,7 @@ export async function getEventsForIds(ids: string[]) {
 		getLogFwaNftAllocatedV1(ids),
 		getLogEnsReverseClaimedV1(ids),
 		getLogUniswapV3PoolCreatedV2(ids),
-		getLogEnsNameForAddrChangedV1(ids),
+		getLogEnsNameForAddrChangedV2(ids),
 
 		getIntentIdmV1(ids),
 		getIntentFwaWonV2(ids),

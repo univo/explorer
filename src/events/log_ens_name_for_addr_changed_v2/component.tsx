@@ -1,11 +1,11 @@
-import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
-import type { LogEnsNameForAddrChangedV1 } from "./event";
+import type { LogEnsNameForAddrChangedV2 } from "./event";
 
-export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsNameForAddrChangedV1; address: `0x${string}` | undefined }) {
-	const chain = parseId(props.event.id).chainId;
+export function LogEnsNameForAddrChangedV2Description(props: { event: LogEnsNameForAddrChangedV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 	const isRevoked = props.event.name === "";
 
 	if (isRevoked) {
@@ -17,6 +17,7 @@ export function LogEnsNameForAddrChangedV1Description(props: { event: LogEnsName
 			</Description>
 		);
 	}
+
 	return (
 		<Description>
 			<Account chain={chain} address={props.event.account_address} />

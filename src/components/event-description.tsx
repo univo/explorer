@@ -10,7 +10,7 @@ import { LogErc721ApprovalV2Description } from "@/events/log_erc721_approval_v2/
 import { LogFwaNftAllocatedV1Description } from "@/events/log_fwa_nft_allocated_v1/component";
 import { LogEnsReverseClaimedV1Description } from "@/events/log_ens_reverse_claimed_v1/component";
 import { LogUniswapV3PoolCreatedV2Description } from "@/events/log_uniswap_v3_pool_created_v2/component";
-import { LogEnsNameForAddrChangedV1Description } from "@/events/log_ens_name_for_addr_changed_v1/component";
+import { LogEnsNameForAddrChangedV2Description } from "@/events/log_ens_name_for_addr_changed_v2/component";
 
 import { IntentIdmV1AccountDescription } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV2AccountDescription } from "@/events/intent_fwa_won_v2/component";
@@ -126,8 +126,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <LogEnsReverseClaimedV1Description event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "log_ens_name_for_addr_changed_v1") {
-		return <LogEnsNameForAddrChangedV1Description event={props.event} address={props.address} />;
+	if (props.event.tag === "log_ens_name_for_addr_changed_v2") {
+		return <LogEnsNameForAddrChangedV2Description event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "log_erc20_approval_v2") {
