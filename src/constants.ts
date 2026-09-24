@@ -72,6 +72,7 @@ export const TABLES = {
 	log_erc20_transfer_v2: 52,
 	log_erc20_approval_v2: 53,
 	log_erc721_approval_v2: 54,
+	log_erc721_transfer_v2: 55,
 };
 
 export type Table = keyof typeof TABLES;
