@@ -49,7 +49,7 @@ export const event = univo.event({
 						logIndex: log.logIndex,
 						chainId: block.eth_chainId,
 						txIndex: log.transactionIndex,
-						tableId: TABLES.log_erc20_approval_v1,
+						tableId: TABLES.log_erc20_transfer_v2,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
@@ -128,11 +128,11 @@ export async function getLogErc20TransferV2(ids: string[]) {
 			and(
 				inArray(
 					table.block_timestamp,
-					mapped.map((event) => new Date(event.blockTimestamp * 100)),
+					mapped.map((event) => new Date(event.blockTimestamp * 1000)),
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					mapped.map((event) => [new Date(event.blockTimestamp * 100), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+					mapped.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
 				),
 			),
 		)
