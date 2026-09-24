@@ -5,11 +5,11 @@ import { hex } from "@/db/types";
 export const table = pgTable(
 	"log_erc20_transfer_v2",
 	{
-		block_timestamp: timestamp({ mode: "date", withTimezone: true }).notNull(),
-		block_number: integer().notNull(),
+		chain: smallint().notNull(),
 		tx_index: smallint().notNull(),
 		log_index: integer().notNull(),
-		chain: smallint().notNull(),
+		block_number: integer().notNull(),
+		block_timestamp: timestamp({ mode: "date", withTimezone: true }).notNull(),
 
 		quantity: hex().notNull(),
 		to_address: hex().notNull(),

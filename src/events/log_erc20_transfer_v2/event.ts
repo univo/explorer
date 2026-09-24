@@ -1,17 +1,21 @@
-import { decodeEventLog, getAddress, parseAbiItem, toEventSelector } from "viem";
 import { and, asc, inArray } from "drizzle-orm";
+import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
-import { createId, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { getInternalChain, parseId } from "@/helpers";
 
 export interface LogErc20TransferV2 {
 	tag: "log_erc20_transfer_v2";
-	id: string;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
 	quantity: `0x${string}`;
 	to_address: `0x${string}`;
 	from_address: `0x${string}`;
@@ -19,35 +23,6 @@ export interface LogErc20TransferV2 {
 }
 
 const abi = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 value)");
-
-function parseStorageId(id: string) {
-	const parsed = parseId(id);
-
-	return {
-		chain: parsed.chainId,
-		tx_index: parsed.txIndex,
-		log_index: parsed.logIndex,
-		block_number: parsed.blockNumber,
-		block_timestamp: new Date(parsed.blockTimestamp * 1000),
-	};
-}
-
-function createStorageId(row: {
-	chain: number;
-	tx_index: number;
-	log_index: number;
-	block_number: number;
-	block_timestamp: Date;
-}) {
-	return createId({
-		tableId: TABLES.log_erc20_transfer_v2,
-		chainId: numberToHex(row.chain),
-		txIndex: numberToHex(row.tx_index),
-		logIndex: numberToHex(row.log_index),
-		blockNumber: numberToHex(row.block_number),
-		blockTimestamp: numberToHex(Math.floor(row.block_timestamp.getTime() / 1000)),
-	});
-}
 
 export const event = univo.event({
 	id: "log_erc20_transfer_v2",
@@ -68,18 +43,13 @@ export const event = univo.event({
 						return []; // Only record non-zero transfers
 					}
 
-					const id = createId({
-						logIndex: log.logIndex,
-						chainId: block.eth_chainId,
-						txIndex: log.transactionIndex,
-						tableId: TABLES.log_erc20_transfer_v2,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
 					return {
-						id,
 						tag: "log_erc20_transfer_v2",
+						log_index: hexToNumber(log.logIndex),
+						chain: getInternalChain(block.eth_chainId),
+						tx_index: hexToNumber(log.transactionIndex),
+						block_number: hexToNumber(block.eth_getBlockByNumber.number),
+						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 						to_address: getAddress(args.to),
 						quantity: numberToHex(args.value),
 						from_address: getAddress(args.from),
@@ -93,53 +63,27 @@ export const event = univo.event({
 	},
 	storage: {
 		async upsert(events) {
-			const unique = new Map<string, typeof table.$inferInsert>();
-
-			for (const event of events) {
-				const position = parseStorageId(event.id);
-				const key = [position.block_timestamp.getTime(), position.block_number, position.tx_index, position.log_index, position.chain].join(
-					":",
-				);
-
-				unique.set(key, {
-					...position,
-					quantity: event.quantity,
-					to_address: event.to_address,
-					from_address: event.from_address,
-					token_address: event.token_address,
-				});
-			}
-
-			const batch = [...unique.values()];
-			const client = await createPostgresClient();
 			const MAX_BATCH_SIZE = 8000;
 
-			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
-				await client.insert(table).values(batch.slice(i, i + MAX_BATCH_SIZE));
+			const client = await createPostgresClient();
+
+			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
+				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
 			}
 		},
 
 		async delete(events) {
-			if (events.length === 0) return;
-
-			const positions = events.map((event) => parseStorageId(event.id));
 			const client = await createPostgresClient();
 
 			await client.delete(table).where(
 				and(
 					inArray(
 						table.block_timestamp,
-						positions.map((position) => position.block_timestamp),
+						events.map((event) => event.block_timestamp),
 					),
 					inTuple(
 						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-						positions.map((position) => [
-							position.block_timestamp,
-							position.block_number,
-							position.tx_index,
-							position.log_index,
-							position.chain,
-						]),
+						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
 					),
 				),
 			);
@@ -148,13 +92,16 @@ export const event = univo.event({
 });
 
 export async function getLogErc20TransferV2(ids: string[]) {
-	const positions = ids.filter((id) => parseId(id).tableId === TABLES.log_erc20_transfer_v2).map((id) => parseStorageId(id));
+	const mapped = ids.map((id) => parseId(id));
 
-	if (positions.length === 0) {
+	const filtered = mapped.filter((id) => id.tableId === TABLES.log_erc20_transfer_v2);
+
+	if (filtered.length === 0) {
 		return [];
 	}
 
 	const client = await createPostgresClient();
+
 	const rows = await client
 		.selectDistinct()
 		.from(table)
@@ -162,26 +109,30 @@ export async function getLogErc20TransferV2(ids: string[]) {
 			and(
 				inArray(
 					table.block_timestamp,
-					positions.map((position) => position.block_timestamp),
+					mapped.map((event) => new Date(event.blockTimestamp * 100)),
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					positions.map((position) => [
-						position.block_timestamp,
-						position.block_number,
-						position.tx_index,
-						position.log_index,
-						position.chain,
-					]),
+					mapped.map((event) => [new Date(event.blockTimestamp * 100), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
 				),
 			),
 		)
-		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
+		.orderBy(
+			asc(table.block_timestamp), //
+			asc(table.block_number),
+			asc(table.tx_index),
+			asc(table.log_index),
+			asc(table.chain),
+		);
 
 	return rows.map<LogErc20TransferV2>((row) => {
 		return {
-			id: createStorageId(row),
 			tag: "log_erc20_transfer_v2",
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
 			quantity: row.quantity,
 			to_address: getAddress(row.to_address),
 			from_address: getAddress(row.from_address),
