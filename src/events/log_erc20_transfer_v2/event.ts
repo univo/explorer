@@ -3,11 +3,11 @@ import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector 
 
 import { table } from "./table";
 import { univo } from "@/univo";
+import { parseId } from "@/helpers";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { getInternalChain, parseId } from "@/helpers";
 
 export interface LogErc20TransferV2 {
 	tag: "log_erc20_transfer_v2";
@@ -46,7 +46,7 @@ export const event = univo.event({
 					return {
 						tag: "log_erc20_transfer_v2",
 						log_index: hexToNumber(log.logIndex),
-						chain: getInternalChain(block.eth_chainId),
+						chain: hexToNumber(block.eth_chainId),
 						tx_index: hexToNumber(log.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
