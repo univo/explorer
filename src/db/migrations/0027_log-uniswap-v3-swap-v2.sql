@@ -274,7 +274,7 @@ WITH
 SELECT * FROM "winning_prices"
 UNION ALL
 SELECT * FROM "usdc_prices"
-WITH NO DATA;
+WITH DATA;
 --> statement-breakpoint
 CREATE UNIQUE INDEX "view_prices_v1_chain_token_period_idx"
 ON "view_prices_v1" USING btree ("chain", "token_address", "period_end");
