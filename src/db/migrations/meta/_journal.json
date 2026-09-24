@@ -176,6 +176,13 @@
       "when": 1790221110851,
       "tag": "0024_log-erc20-approval-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1790227821369,
+      "tag": "0025_log-uniswap-v3-swap-v2",
+      "breakpoints": true
     }
   ]
 }

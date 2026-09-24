@@ -1,14 +1,15 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { LogUniswapV3SwapV1 } from "./event";
+import type { LogUniswapV3SwapV2 } from "./event";
 import { Description } from "@/components/description";
 import { getPoolByAddress, type LogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
 
-export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3SwapV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export async function LogUniswapV3SwapV2Description(props: { event: LogUniswapV3SwapV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const pool = await getPoolByAddress(props.event.pool_address);
 
@@ -47,7 +48,7 @@ export async function LogUniswapV3SwapV1Description(props: { event: LogUniswapV3
 	);
 }
 
-function getSwap(pool: LogUniswapV3PoolCreatedV1, swap: LogUniswapV3SwapV1) {
+function getSwap(pool: LogUniswapV3PoolCreatedV1, swap: LogUniswapV3SwapV2) {
 	if (swap.amount_0 > 0n && swap.amount_1 < 0n) {
 		return {
 			amountIn: swap.amount_0,

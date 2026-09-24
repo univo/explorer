@@ -71,6 +71,7 @@ export const TABLES = {
 	intent_fwa_acquire_v1: 51,
 	log_erc20_transfer_v2: 52,
 	log_erc20_approval_v2: 53,
+	log_uniswap_v3_swap_v2: 56,
 };
 
 export type Table = keyof typeof TABLES;
@@ -90,7 +91,7 @@ export const PRESETS = {
 
 	trades: [
 		TABLES.intent_uniswap_v3_swap_v1, //
-		TABLES.log_uniswap_v3_swap_v1,
+		TABLES.log_uniswap_v3_swap_v2,
 	],
 
 	lending: [
