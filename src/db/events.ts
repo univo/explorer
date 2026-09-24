@@ -6,7 +6,7 @@ import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
 import { getLogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
 import { getLogErc20ApprovalV2 } from "@/events/log_erc20_approval_v2/event";
 import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
-import { getLogUniswapV3SwapV1 } from "@/events/log_uniswap_v3_swap_v1/event";
+import { getLogUniswapV3SwapV2 } from "@/events/log_uniswap_v3_swap_v2/event";
 import { getLogErc721TransferV2 } from "@/events/log_erc721_transfer_v2/event";
 import { getLogErc721ApprovalV2 } from "@/events/log_erc721_approval_v2/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
@@ -27,7 +27,7 @@ import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/e
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
 import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
-import { getLogUniswapV3PoolCreatedV1 } from "@/events/log_uniswap_v3_pool_created_v1/event";
+import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
 import { getLogEnsNameForAddrChangedV1 } from "@/events/log_ens_name_for_addr_changed_v1/event";
 
@@ -47,12 +47,12 @@ export async function getEventsForIds(ids: string[]) {
 		getLogFwaNftListedV1(ids),
 		getLogErc20ApprovalV2(ids),
 		getLogErc20TransferV2(ids),
-		getLogUniswapV3SwapV1(ids),
+		getLogUniswapV3SwapV2(ids),
 		getLogErc721ApprovalV2(ids),
 		getLogErc721TransferV2(ids),
 		getLogFwaNftAllocatedV1(ids),
 		getLogEnsReverseClaimedV1(ids),
-		getLogUniswapV3PoolCreatedV1(ids),
+		getLogUniswapV3PoolCreatedV2(ids),
 		getLogEnsNameForAddrChangedV1(ids),
 
 		getIntentIdmV1(ids),

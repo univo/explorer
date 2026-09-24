@@ -1,12 +1,12 @@
-import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { UNISWAP_V3_FACTORY_ADDRESS } from "./event";
 import { Description } from "@/components/description";
-import type { LogUniswapV3PoolCreatedV1 } from "./event";
+import type { LogUniswapV3PoolCreatedV2 } from "./event";
 
-export function LogUniswapV3PoolCreatedV1Description(props: { event: LogUniswapV3PoolCreatedV1; address: `0x${string}` | undefined }) {
-	const chain = parseId(props.event.id).chainId;
+export function LogUniswapV3PoolCreatedV2Description(props: { event: LogUniswapV3PoolCreatedV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 
 	return (
 		<Description>

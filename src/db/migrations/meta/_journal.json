@@ -190,6 +190,13 @@
       "when": 1790224744722,
       "tag": "0026_log-erc721-transfer-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1790230700915,
+      "tag": "0027_log-uniswap-v3-swap-v2",
+      "breakpoints": true
     }
   ]
 }
