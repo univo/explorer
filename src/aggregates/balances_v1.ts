@@ -1,12 +1,12 @@
 import { aggregate } from "./aggregate";
 
-import { event as log_erc20_transfer_v1 } from "@/events/log_erc20_transfer_v1/event";
+import { event as log_erc20_transfer_v2 } from "@/events/log_erc20_transfer_v2/event";
 import { event as log_erc721_transfer_v1 } from "@/events/log_erc721_transfer_v1/event";
 
 export const balances_v1 = aggregate({
 	id: "balances_v1",
 
-	events: [log_erc20_transfer_v1, log_erc721_transfer_v1],
+	events: [log_erc20_transfer_v2, log_erc721_transfer_v1],
 
 	handlers: {
 		map: (transfer) => {

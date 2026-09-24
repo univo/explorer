@@ -1,18 +1,18 @@
 import { logger } from "@/utils";
 import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
 import { getIntentFwaWonV2 } from "@/events/intent_fwa_won_v2/event";
-import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
 import { getLogEnsNewOwnerV1 } from "@/events/log_ens_new_owner_v1/event";
 import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
-import { getLogFwaNftAllocatedV1 } from "@/events/log_fwa_nft_allocated_v1/event";
-import { getLogErc20TransferV1 } from "@/events/log_erc20_transfer_v1/event";
+import { getLogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
 import { getLogErc20ApprovalV1 } from "@/events/log_erc20_approval_v1/event";
+import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
 import { getLogUniswapV3SwapV1 } from "@/events/log_uniswap_v3_swap_v1/event";
 import { getLogErc721TransferV1 } from "@/events/log_erc721_transfer_v1/event";
 import { getLogErc721ApprovalV1 } from "@/events/log_erc721_approval_v1/event";
 import { getIntentAaveV3RepayV1 } from "@/events/intent_aave_v3_repay_v1/event";
 import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event";
 import { getIntentAaveV3SupplyV1 } from "@/events/intent_aave_v3_supply_v1/event";
+import { getLogFwaNftAllocatedV1 } from "@/events/log_fwa_nft_allocated_v1/event";
 import { getIntentAaveV3BorrowV1 } from "@/events/intent_aave_v3_borrow_v1/event";
 import { getIntentErc20ApprovalV1 } from "@/events/intent_erc20_approval_v1/event";
 import { getIntentErc20TransferV1 } from "@/events/intent_erc20_transfer_v1/event";
@@ -46,7 +46,7 @@ export async function getEventsForIds(ids: string[]) {
 		getLogEnsNewOwnerV1(ids),
 		getLogFwaNftListedV1(ids),
 		getLogErc20ApprovalV1(ids),
-		getLogErc20TransferV1(ids),
+		getLogErc20TransferV2(ids),
 		getLogUniswapV3SwapV1(ids),
 		getLogErc721ApprovalV1(ids),
 		getLogErc721TransferV1(ids),

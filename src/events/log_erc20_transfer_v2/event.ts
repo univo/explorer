@@ -95,7 +95,7 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "log_erc20_transfer_v1_index_block_number_tx_index_v4",
+	id: "log_erc20_transfer_v2_index_block_number_tx_index_v4",
 	handler: (block) => {
 		return event.handler(block).map((event) => {
 			return createId({

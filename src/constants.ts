@@ -84,7 +84,7 @@ export const PRESETS = {
 	payments: [
 		TABLES.intent_native_transfer_v1, //
 		TABLES.intent_erc20_transfer_v1,
-		TABLES.log_erc20_transfer_v1,
+		TABLES.log_erc20_transfer_v2,
 	],
 
 	trades: [
