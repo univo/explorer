@@ -9,7 +9,7 @@ import { Description } from "@/components/description";
 
 export function LogErc20TransferV2Description(props: { event: LogErc20TransferV2; address: `0x${string}` | undefined }) {
 	const chain = getExternalChain(props.event.chain);
-	const blockTimestamp = props.event.block_timestamp.getTime();
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	if (isAddressEqual(props.event.from_address, "0x0000000000000000000000000000000000000000")) {
 		return (

@@ -10,8 +10,8 @@ import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
-export interface LogErc20TransferV2 {
-	tag: "log_erc20_transfer_v2";
+export interface LogErc20ApprovalV2 {
+	tag: "log_erc20_approval_v2";
 	id: string;
 	chain: number;
 	tx_index: number;
@@ -19,21 +19,21 @@ export interface LogErc20TransferV2 {
 	block_number: number;
 	block_timestamp: Date;
 	quantity: `0x${string}`;
-	to_address: `0x${string}`;
-	from_address: `0x${string}`;
+	owner_address: `0x${string}`;
 	token_address: `0x${string}`;
+	spender_address: `0x${string}`;
 }
 
-const abi = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 value)");
+const abi = parseAbiItem("event Approval(address indexed owner, address indexed spender, uint256 value)");
 
 export const event = univo.event({
-	id: "log_erc20_transfer_v2",
+	id: "log_erc20_approval_v2",
 
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
-			return receipt.logs.flatMap<LogErc20TransferV2>((log) => {
+			return receipt.logs.flatMap<LogErc20ApprovalV2>((log) => {
 				try {
 					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
 						return [];
@@ -41,31 +41,27 @@ export const event = univo.event({
 
 					const { args } = decodeEventLog({ topics: log.topics, data: log.data, strict: true, abi: [abi] });
 
-					if (args.value === 0n) {
-						return []; // Only record non-zero transfers
-					}
-
 					const id = createId({
 						logIndex: log.logIndex,
 						chainId: block.eth_chainId,
 						txIndex: log.transactionIndex,
-						tableId: TABLES.log_erc20_transfer_v2,
+						tableId: TABLES.log_erc20_approval_v2,
 						blockNumber: block.eth_getBlockByNumber.number,
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
 					return {
-						tag: "log_erc20_transfer_v2",
+						tag: "log_erc20_approval_v2",
 						id,
 						log_index: hexToNumber(log.logIndex),
 						chain: hexToNumber(block.eth_chainId),
 						tx_index: hexToNumber(log.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
-						to_address: getAddress(args.to),
 						quantity: numberToHex(args.value),
-						from_address: getAddress(args.from),
+						owner_address: getAddress(args.owner),
 						token_address: getAddress(log.address),
+						spender_address: getAddress(args.spender),
 					};
 				} catch {
 					return [];
@@ -106,14 +102,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "log_erc20_transfer_v2_index_block_number_tx_index_v4",
+	id: "log_erc20_approval_v2_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
-export async function getLogErc20TransferV2(ids: string[]) {
+export async function getLogErc20ApprovalV2(ids: string[]) {
 	const mapped = ids.map((id) => parseId(id));
 
-	const filtered = mapped.filter((id) => id.tableId === TABLES.log_erc20_transfer_v2);
+	const filtered = mapped.filter((id) => id.tableId === TABLES.log_erc20_approval_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -137,25 +133,25 @@ export async function getLogErc20TransferV2(ids: string[]) {
 			),
 		)
 		.orderBy(
-			asc(table.block_timestamp), //
+			asc(table.block_timestamp),
 			asc(table.block_number),
 			asc(table.tx_index),
 			asc(table.log_index),
 			asc(table.chain),
 		);
 
-	return rows.map<LogErc20TransferV2>((row) => {
+	return rows.map<LogErc20ApprovalV2>((row) => {
 		const id = createId({
 			chainId: numberToHex(row.chain),
 			txIndex: numberToHex(row.tx_index),
-			tableId: TABLES.log_erc20_transfer_v2,
+			tableId: TABLES.log_erc20_approval_v2,
 			logIndex: numberToHex(row.log_index),
 			blockNumber: numberToHex(row.block_number),
 			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
 		});
 
 		return {
-			tag: "log_erc20_transfer_v2",
+			tag: "log_erc20_approval_v2",
 			id,
 			chain: row.chain,
 			tx_index: row.tx_index,
@@ -163,9 +159,9 @@ export async function getLogErc20TransferV2(ids: string[]) {
 			block_number: row.block_number,
 			block_timestamp: row.block_timestamp,
 			quantity: row.quantity,
-			to_address: getAddress(row.to_address),
-			from_address: getAddress(row.from_address),
+			owner_address: getAddress(row.owner_address),
 			token_address: getAddress(row.token_address),
+			spender_address: getAddress(row.spender_address),
 		};
 	});
 }

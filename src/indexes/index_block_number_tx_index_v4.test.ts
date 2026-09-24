@@ -1,16 +1,16 @@
 import { test } from "vitest";
 
 import { test_getBlock } from "@/tests/utils";
-import { event as erc20_transfer_v3 } from "@/events/log_erc20_transfer_v1/event";
-import { event as native_transfer_v3 } from "@/events/intent_native_transfer_v1/event";
+import { event as log_erc20_transfer_v2 } from "@/events/log_erc20_transfer_v2/event";
+import { event as intent_native_transfer_v1 } from "@/events/intent_native_transfer_v1/event";
 import { getEventIdsForBlockNumber, getEventIdsForTxPosition, index_block_number_tx_index_v4 } from "./index_block_number_tx_index_v4";
 
-test.concurrent("native_transfer_v3", async ({ expect }) => {
+test.concurrent("intent_native_transfer_v1", async ({ expect }) => {
 	const block_number = 10000000;
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
-	const indexes = native_transfer_v3.handler(block).map((event) => {
+	const indexes = intent_native_transfer_v1.handler(block).map((event) => {
 		return event.id;
 	});
 
@@ -57,12 +57,12 @@ test.concurrent("native_transfer_v3", async ({ expect }) => {
 	`);
 });
 
-test.concurrent("erc20_transfer_v3", async ({ expect }) => {
+test.concurrent("log_erc20_transfer_v2", async ({ expect }) => {
 	const block_number = 20000000;
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
-	const indexes = erc20_transfer_v3.handler(block).map((event) => {
+	const indexes = log_erc20_transfer_v2.handler(block).map((event) => {
 		return event.id;
 	});
 
@@ -74,14 +74,14 @@ test.concurrent("erc20_transfer_v3", async ({ expect }) => {
 
 	expect(ids).toMatchInlineSnapshot(`
 		[
-		  "665ba27f01312d00000000000000010009",
-		  "665ba27f01312d00000000000100010009",
-		  "665ba27f01312d00000000000400010009",
-		  "665ba27f01312d00000000000500010009",
-		  "665ba27f01312d00000000000800010009",
-		  "665ba27f01312d00000000000900010009",
-		  "665ba27f01312d00000000000c00010009",
-		  "665ba27f01312d00000000000d00010009",
+		  "665ba27f01312d00000000000000010034",
+		  "665ba27f01312d00000000000100010034",
+		  "665ba27f01312d00000000000400010034",
+		  "665ba27f01312d00000000000500010034",
+		  "665ba27f01312d00000000000800010034",
+		  "665ba27f01312d00000000000900010034",
+		  "665ba27f01312d00000000000c00010034",
+		  "665ba27f01312d00000000000d00010034",
 		]
 	`);
 });

@@ -70,6 +70,7 @@ export const TABLES = {
 	log_fwa_nft_allocated_v1: 50,
 	intent_fwa_acquire_v1: 51,
 	log_erc20_transfer_v2: 52,
+	log_erc20_approval_v2: 53,
 };
 
 export type Table = keyof typeof TABLES;
