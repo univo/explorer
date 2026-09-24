@@ -75,6 +75,7 @@ export const TABLES = {
 	log_erc721_transfer_v2: 55,
 	log_uniswap_v3_swap_v2: 56,
 	log_uniswap_v3_pool_created_v2: 57,
+	log_ens_name_for_addr_changed_v2: 58,
 };
 
 export type Table = keyof typeof TABLES;

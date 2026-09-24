@@ -197,6 +197,13 @@
       "when": 1790230700915,
       "tag": "0027_log-uniswap-v3-swap-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1790234153595,
+      "tag": "0028_log-ens-name-for-addr-changed-v2",
+      "breakpoints": true
     }
   ]
 }
