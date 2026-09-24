@@ -128,11 +128,11 @@ export async function getLogErc20TransferV2(ids: string[]) {
 			and(
 				inArray(
 					table.block_timestamp,
-					mapped.map((event) => new Date(event.blockTimestamp * 1000)),
+					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					mapped.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
 				),
 			),
 		)
