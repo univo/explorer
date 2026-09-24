@@ -183,6 +183,13 @@
       "when": 1790223960903,
       "tag": "0025_log-erc721-approval-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1790224744722,
+      "tag": "0026_log-erc721-transfer-v2",
+      "breakpoints": true
     }
   ]
 }
