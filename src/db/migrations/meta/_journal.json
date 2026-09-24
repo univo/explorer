@@ -162,6 +162,13 @@
       "when": 1790122816076,
       "tag": "0022_log-erc20-transfer-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1790212960408,
+      "tag": "0023_silky_steel_serpent",
+      "breakpoints": true
     }
   ]
 }

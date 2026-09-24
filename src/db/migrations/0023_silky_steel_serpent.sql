@@ -1,0 +1,1 @@
+DROP TABLE "log_erc20_transfer_v1" CASCADE;
