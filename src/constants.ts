@@ -71,6 +71,7 @@ export const TABLES = {
 	intent_fwa_acquire_v1: 51,
 	log_erc20_transfer_v2: 52,
 	log_erc20_approval_v2: 53,
+	log_erc721_approval_v2: 54,
 };
 
 export type Table = keyof typeof TABLES;

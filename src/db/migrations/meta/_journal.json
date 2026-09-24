@@ -176,6 +176,13 @@
       "when": 1790221110851,
       "tag": "0024_log-erc20-approval-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1790223960903,
+      "tag": "0025_log-erc721-approval-v2",
+      "breakpoints": true
     }
   ]
 }
