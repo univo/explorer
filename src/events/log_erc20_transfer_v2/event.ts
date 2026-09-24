@@ -3,11 +3,12 @@ import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector 
 
 import { table } from "./table";
 import { univo } from "@/univo";
-import { parseId } from "@/helpers";
+import { createId, parseId } from "@/helpers";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogErc20TransferV2 {
 	tag: "log_erc20_transfer_v2";
@@ -88,6 +89,24 @@ export const event = univo.event({
 				),
 			);
 		},
+	},
+});
+
+univo.event({
+	filters: event.filters,
+	storage: index_block_number_tx_index_v4,
+	id: "log_erc20_transfer_v1_index_block_number_tx_index_v4",
+	handler: (block) => {
+		return event.handler(block).map((event) => {
+			return createId({
+				chainId: numberToHex(event.chain),
+				txIndex: numberToHex(event.tx_index),
+				tableId: TABLES.log_erc20_transfer_v2,
+				logIndex: numberToHex(event.log_index),
+				blockNumber: numberToHex(event.block_number),
+				blockTimestamp: numberToHex(event.block_timestamp.getTime() / 1000),
+			});
+		});
 	},
 });
 
