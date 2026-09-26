@@ -62,7 +62,7 @@ export const index_block_number_tx_index_v4 = {
 			});
 		}
 
-		const MAX_BATCH_SIZE = 8000;
+		const MAX_BATCH_SIZE = 4000;
 
 		const client = await createPostgresClient();
 
