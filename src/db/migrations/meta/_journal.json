@@ -211,6 +211,13 @@
       "when": 1790235178587,
       "tag": "0029_log-ens-new-owner-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1790551532897,
+      "tag": "0030_log-fwa-nft-listed-v2",
+      "breakpoints": true
     }
   ]
 }
