@@ -127,45 +127,9 @@ univo.event({
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
-function toEvent(row: typeof table.$inferSelect): LogFwaNftListedV2 {
-	const id = createId({
-		chainId: numberToHex(row.chain),
-		txIndex: numberToHex(row.tx_index),
-		tableId: TABLES.log_fwa_nft_listed_v2,
-		logIndex: numberToHex(row.log_index),
-		blockNumber: numberToHex(row.block_number),
-		blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
-	});
-
-	return {
-		tag: "log_fwa_nft_listed_v2",
-		id,
-		chain: row.chain,
-		tx_index: row.tx_index,
-		log_index: row.log_index,
-		block_number: row.block_number,
-		block_timestamp: row.block_timestamp,
-		slot: row.slot,
-		weight: row.weight,
-		token_id: row.token_id,
-		listing_id: row.listing_id,
-		backing_eth: row.backing_eth,
-		depositor_address: getAddress(row.depositor_address),
-		collection_address: getAddress(row.collection_address),
-	};
-}
-
 export async function getLogFwaNftListedV2(ids: string[]) {
-	const filtered = ids.flatMap((id) => {
-		if (!/^[0-9a-fA-F]{34}$/.test(id)) return [];
-
-		try {
-			const parsed = parseId(id);
-			return parsed.tableId === TABLES.log_fwa_nft_listed_v2 ? [parsed] : [];
-		} catch {
-			return [];
-		}
-	});
+	const mapped = ids.map((id) => parseId(id));
+	const filtered = mapped.filter((id) => id.tableId === TABLES.log_fwa_nft_listed_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -190,7 +154,33 @@ export async function getLogFwaNftListedV2(ids: string[]) {
 		)
 		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map(toEvent);
+	return rows.map<LogFwaNftListedV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.log_fwa_nft_listed_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
+		return {
+			tag: "log_fwa_nft_listed_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			slot: row.slot,
+			weight: row.weight,
+			token_id: row.token_id,
+			listing_id: row.listing_id,
+			backing_eth: row.backing_eth,
+			depositor_address: getAddress(row.depositor_address),
+			collection_address: getAddress(row.collection_address),
+		};
+	});
 }
 
 export const getFwaListingById = defineLoader(async (ids: readonly `0x${string}`[]) => {
@@ -204,6 +194,35 @@ export const getFwaListingById = defineLoader(async (ids: readonly `0x${string}`
 
 	return ids.map<LogFwaNftListedV2 | null>((id) => {
 		const row = rows.find((row) => isHexEqual(row.listing_id, id));
-		return row ? toEvent(row) : null;
+
+		if (row === undefined) {
+			return null;
+		}
+
+		const eventId = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.log_fwa_nft_listed_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
+		return {
+			tag: "log_fwa_nft_listed_v2",
+			id: eventId,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			slot: row.slot,
+			weight: row.weight,
+			token_id: row.token_id,
+			listing_id: row.listing_id,
+			backing_eth: row.backing_eth,
+			depositor_address: getAddress(row.depositor_address),
+			collection_address: getAddress(row.collection_address),
+		};
 	});
 });
