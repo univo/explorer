@@ -71,8 +71,7 @@ export const event = univo.event({
 	},
 	storage: {
 		async upsert(events) {
-			const MAX_BATCH_SIZE = 8000;
-
+			const MAX_BATCH_SIZE = 4000;
 			const client = await createPostgresClient();
 
 			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
@@ -132,13 +131,7 @@ export async function getLogErc20ApprovalV2(ids: string[]) {
 				),
 			),
 		)
-		.orderBy(
-			asc(table.block_timestamp),
-			asc(table.block_number),
-			asc(table.tx_index),
-			asc(table.log_index),
-			asc(table.chain),
-		);
+		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
 	return rows.map<LogErc20ApprovalV2>((row) => {
 		const id = createId({

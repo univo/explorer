@@ -79,7 +79,7 @@ export const index_account_v4 = {
 			});
 		}
 
-		const MAX_BATCH_SIZE = 8000;
+		const MAX_BATCH_SIZE = 4000;
 
 		const client = await createPostgresClient();
 
