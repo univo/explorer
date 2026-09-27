@@ -2,7 +2,7 @@ import { logger } from "@/utils";
 import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
 import { getIntentFwaWonV2 } from "@/events/intent_fwa_won_v2/event";
 import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
-import { getLogFwaNftListedV1 } from "@/events/log_fwa_nft_listed_v1/event";
+import { getLogFwaNftListedV2 } from "@/events/log_fwa_nft_listed_v2/event";
 import { getLogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
 import { getLogErc20ApprovalV2 } from "@/events/log_erc20_approval_v2/event";
 import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
@@ -44,7 +44,7 @@ export async function getEventsForIds(ids: string[]) {
 
 	const events = await Promise.all([
 		getLogEnsNewOwnerV2(ids),
-		getLogFwaNftListedV1(ids),
+		getLogFwaNftListedV2(ids),
 		getLogErc20ApprovalV2(ids),
 		getLogErc20TransferV2(ids),
 		getLogUniswapV3SwapV2(ids),

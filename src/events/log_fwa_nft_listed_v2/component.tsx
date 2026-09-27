@@ -1,15 +1,16 @@
-import { parseId } from "@/helpers";
+import { getExternalChain } from "@/helpers";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
-import type { LogFwaNftListedV1 } from "./event";
+import type { LogFwaNftListedV2 } from "./event";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v1/event";
 
-export function LogFwaNftListedV1Description(props: { event: LogFwaNftListedV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export function LogFwaNftListedV2Description(props: { event: LogFwaNftListedV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	return (
 		<Description>

@@ -8,7 +8,7 @@ import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v1/event";
-import { getFwaListingById } from "../log_fwa_nft_listed_v1/event";
+import { getFwaListingById } from "../log_fwa_nft_listed_v2/event";
 
 const FWA_TOKEN_ADDRESS = "0xa0Df17B5aC76ABaBA36E1450E2cbCd18A620C845";
 
