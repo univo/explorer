@@ -85,7 +85,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 		}
 
 		return (
-			<Description>
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.recipient_address} />
 				<Action type="withdraw">withdraws</Action>
 				<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
@@ -118,7 +118,7 @@ export function IntentTornadoWithdrawalV1AccountDescription(props: {
 	// gas money and maximises privacy (but incurs a fee for processing).
 
 	return (
-		<Description>
+		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.recipient_address} />
 			<Action type="withdraw">withdraws</Action>
 			<Erc20 chain={chain} address={pool.asset} quantity={pool.quantity} at={blockTimestamp} />
