@@ -1,13 +1,14 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { IntentErc20TransferV1 } from "./event";
+import type { IntentErc20TransferV2 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentErc20TransferV1AccountDescription(props: { event: IntentErc20TransferV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export function IntentErc20TransferV2AccountDescription(props: { event: IntentErc20TransferV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	// (tx.from) from_address
 
@@ -22,7 +23,7 @@ export function IntentErc20TransferV1AccountDescription(props: { event: IntentEr
 		);
 	}
 
-	// (tx.to) to_address
+	// transfer recipient
 
 	if (isHexEqual(props.address, props.event.to_address)) {
 		return (
