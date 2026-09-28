@@ -1,3 +1,4 @@
+import { isHexEqual } from "@/utils";
 import { Action } from "@/components/action";
 import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
@@ -18,10 +19,25 @@ export function IntentEnsNameRegisteredV2AccountDescription(props: {
 		year: "numeric",
 	});
 
+	// owner_address
+
+	if (isHexEqual(props.address, props.event.owner_address)) {
+		return (
+			<Description success={props.event.success}>
+				<Action type="register">Register</Action>
+				<span>{props.event.name}.eth</span>
+				<span>expiring</span>
+				<span>{expiryFormatted}</span>
+			</Description>
+		);
+	}
+
+	// (tx.from) sender_address, (tx.to) controller_address
+
 	return (
 		<Description success={props.event.success}>
 			{props.address === undefined && <Account chain={chain} address={props.event.owner_address} />}
-			<Action type="register">Register</Action>
+			<Action type="register">registers</Action>
 			<span>{props.event.name}.eth</span>
 			<span>expiring</span>
 			<span>{expiryFormatted}</span>
