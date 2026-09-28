@@ -1,12 +1,12 @@
-import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { formatNumber, isHexEqual } from "@/utils";
 import { Description } from "@/components/description";
-import type { IntentCancelPendingTxV1 } from "./event";
+import type { IntentCancelPendingTxV2 } from "./event";
 
-export function IntentCancelPendingTxV1AccountDescription(props: { event: IntentCancelPendingTxV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain } = parseId(props.event.id);
+export function IntentCancelPendingTxV2AccountDescription(props: { event: IntentCancelPendingTxV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 
 	// from_address: account cancelling the transaction
 
