@@ -26,7 +26,7 @@ import { getLogEnsReverseClaimedV2 } from "@/events/log_ens_reverse_claimed_v2/e
 import { getIntentAaveV3WithdrawV2 } from "@/events/intent_aave_v3_withdraw_v2/event";
 import { getIntentCancelPendingTxV2 } from "@/events/intent_cancel_pending_tx_v2/event";
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
-import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
+import { getIntentEnsNameRegisteredV2 } from "@/events/intent_ens_name_registered_v2/event";
 import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { getIntentContractDeploymentV2 } from "@/events/intent_contract_deployment_v2/event";
 import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
@@ -73,7 +73,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentNativeTransferV1(ids),
 		getIntentCancelPendingTxV2(ids),
 		getIntentTornadoWithdrawalV1(ids),
-		getIntentEnsNameRegisteredV1(ids),
+		getIntentEnsNameRegisteredV2(ids),
 		getIntentContractDeploymentV2(ids),
 	]);
 

@@ -30,7 +30,7 @@ import { IntentNativeTransferV1AccountDescription } from "@/events/intent_native
 import { IntentAaveV3WithdrawV2AccountDescription } from "@/events/intent_aave_v3_withdraw_v2/component";
 import { IntentCancelPendingTxV2AccountDescription } from "@/events/intent_cancel_pending_tx_v2/component";
 import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tornado_withdrawal_v1/component";
-import { IntentEnsNameRegisteredV1AccountDescription } from "@/events/intent_ens_name_registered_v1/component";
+import { IntentEnsNameRegisteredV2AccountDescription } from "@/events/intent_ens_name_registered_v2/component";
 import { IntentContractDeploymentV2AccountDescription } from "@/events/intent_contract_deployment_v2/component";
 
 export function EventDescription(props: { event: Event; address: `0x${string}` | undefined }) {
@@ -60,8 +60,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <IntentIdmV1AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "intent_ens_name_registered_v1") {
-		return <IntentEnsNameRegisteredV1AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_ens_name_registered_v2") {
+		return <IntentEnsNameRegisteredV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_contract_deployment_v2") {

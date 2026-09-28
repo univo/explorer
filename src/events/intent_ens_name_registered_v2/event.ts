@@ -1,8 +1,9 @@
-import { asc, inArray, sql } from "drizzle-orm";
-import { decodeFunctionData, getAddress, parseAbiItem, toFunctionSelector } from "viem";
+import { and, asc, inArray } from "drizzle-orm";
+import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/univo";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -10,21 +11,21 @@ import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
-export interface IntentEnsNameRegisteredV1 {
-	tag: "intent_ens_name_registered_v1";
+export interface IntentEnsNameRegisteredV2 {
+	tag: "intent_ens_name_registered_v2";
 	id: string;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
 	success: boolean;
 	name: string;
 	duration: `0x${string}`;
 	owner_address: `0x${string}`;
-}
-
-// TODO: These indexed fields should be included in the event
-
-type IndexedFields = {
 	sender_address: `0x${string}`;
 	controller_address: `0x${string}`;
-};
+}
 
 export const ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK = 9380471;
 export const ENS_REGISTRAR_CONTROLLER_V2_ADDRESS = getAddress("0x283af0b28c62c092c9727f1ee09c02ca627eb7f5");
@@ -41,7 +42,7 @@ const V3_REGISTER_ABI = parseAbiItem(
 );
 
 export const event = univo.event({
-	id: "intent_ens_name_registered_v1",
+	id: "intent_ens_name_registered_v2",
 
 	filters: [
 		{
@@ -57,7 +58,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap<IntentEnsNameRegisteredV1 & IndexedFields>((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentEnsNameRegisteredV2>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -87,20 +88,23 @@ export const event = univo.event({
 					logIndex: TRANSACTION_EVENT,
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.intent_ens_name_registered_v1,
+					tableId: TABLES.intent_ens_name_registered_v2,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
 				return {
-					tag: "intent_ens_name_registered_v1",
+					tag: "intent_ens_name_registered_v2",
 					id,
+					log_index: hexToNumber(TRANSACTION_EVENT),
+					chain: hexToNumber(block.eth_chainId),
+					tx_index: hexToNumber(tx.transactionIndex),
+					block_number: hexToNumber(block.eth_getBlockByNumber.number),
+					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					name: args[0],
 					duration: numberToHex(args[2]),
 					success: getEventSuccess(receipt),
 					owner_address: getAddress(args[1]),
-
-					// Used for indexes
 					sender_address: getAddress(tx.from),
 					controller_address: getAddress(tx.to),
 				};
@@ -111,33 +115,28 @@ export const event = univo.event({
 	},
 
 	storage: {
-		async upsert(batch) {
+		async upsert(events) {
 			const MAX_BATCH_SIZE = 4000;
 			const client = await createPostgresClient();
 
-			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
-				await client
-					.insert(table)
-					.values(batch.slice(i, i + MAX_BATCH_SIZE))
-					.onConflictDoUpdate({
-						target: table.id,
-						set: {
-							name: sql.raw(`excluded.${table.name.name}`),
-							success: sql.raw(`excluded.${table.success.name}`),
-							duration: sql.raw(`excluded.${table.duration.name}`),
-							owner_address: sql.raw(`excluded.${table.owner_address.name}`),
-						},
-					});
+			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
+				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
 			}
 		},
 
-		async delete(batch) {
+		async delete(events) {
 			const client = await createPostgresClient();
 
 			await client.delete(table).where(
-				inArray(
-					table.id,
-					batch.map((event) => event.id),
+				and(
+					inArray(
+						table.block_timestamp,
+						events.map((event) => event.block_timestamp),
+					),
+					inTuple(
+						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+					),
 				),
 			);
 		},
@@ -147,14 +146,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "intent_ens_name_registered_v1_index_block_number_tx_index_v4",
+	id: "intent_ens_name_registered_v2_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
-	id: "intent_ens_name_registered_v1_index_account_v4",
+	id: "intent_ens_name_registered_v2_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
@@ -166,8 +165,9 @@ univo.event({
 	},
 });
 
-export async function getIntentEnsNameRegisteredV1(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_ens_name_registered_v1);
+export async function getIntentEnsNameRegisteredV2(ids: string[]) {
+	const mapped = ids.map((id) => parseId(id));
+	const filtered = mapped.filter((id) => id.tableId === TABLES.intent_ens_name_registered_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -176,19 +176,46 @@ export async function getIntentEnsNameRegisteredV1(ids: string[]) {
 	const client = await createPostgresClient();
 
 	const rows = await client
-		.select() //
+		.selectDistinct()
 		.from(table)
-		.where(inArray(table.id, filtered))
-		.orderBy(asc(table.id));
+		.where(
+			and(
+				inArray(
+					table.block_timestamp,
+					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+				),
+				inTuple(
+					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+				),
+			),
+		)
+		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map<IntentEnsNameRegisteredV1>((result) => {
+	return rows.map<IntentEnsNameRegisteredV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.intent_ens_name_registered_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
 		return {
-			tag: "intent_ens_name_registered_v1",
-			id: result.id,
-			name: result.name,
-			success: result.success,
-			duration: result.duration,
-			owner_address: getAddress(result.owner_address),
+			tag: "intent_ens_name_registered_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			name: row.name,
+			success: row.success,
+			duration: row.duration,
+			owner_address: getAddress(row.owner_address),
+			sender_address: getAddress(row.sender_address),
+			controller_address: getAddress(row.controller_address),
 		};
 	});
 }
