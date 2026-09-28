@@ -90,6 +90,7 @@ export const TABLES = {
 	intent_erc20_approval_v2: 70,
 	intent_erc20_transfer_v2: 71,
 	intent_erc721_approval_v2: 72,
+	intent_erc721_transfer_v2: 73,
 };
 
 export type Table = keyof typeof TABLES;
