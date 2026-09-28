@@ -1,15 +1,15 @@
 import { Fragment } from "react";
 
-import { parseId } from "@/helpers";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { isHexEqual } from "@/utils";
-import type { IntentUniswapV3SwapV1 } from "./event";
+import type { IntentUniswapV3SwapV2 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUniswapV3SwapV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain } = parseId(props.event.id);
+export function IntentUniswapV3SwapV2AccountDescription(props: { event: IntentUniswapV3SwapV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 
 	// (tx.from) sender_address: the account performing the swap
 
@@ -102,11 +102,12 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 	);
 }
 
-function Amounts(props: { event: IntentUniswapV3SwapV1 }) {
+function Amounts(props: { event: IntentUniswapV3SwapV2 }) {
 	// Normally I avoid creating these utility components and prefer simple top level if branches,
 	// but in this case it's worth it and doesn't double the size of our branches above
 
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	if (props.event.swap_type === "exact_input") {
 		return (

@@ -30,7 +30,7 @@ export { table as intent_erc20_transfer_v2 } from "@/events/intent_erc20_transfe
 export { table as intent_erc721_approval_v2 } from "@/events/intent_erc721_approval_v2/table";
 export { table as intent_erc721_transfer_v2 } from "@/events/intent_erc721_transfer_v2/table";
 export { table as intent_native_transfer_v2 } from "@/events/intent_native_transfer_v2/table";
-export { table as intent_uniswap_v3_swap_v1 } from "@/events/intent_uniswap_v3_swap_v1/table";
+export { table as intent_uniswap_v3_swap_v2 } from "@/events/intent_uniswap_v3_swap_v2/table";
 export { table as intent_uniswap_v3_mint_v2 } from "@/events/intent_uniswap_v3_mint_v2/table";
 export { table as intent_aave_v3_withdraw_v2 } from "@/events/intent_aave_v3_withdraw_v2/table";
 export { table as intent_cancel_pending_tx_v2 } from "@/events/intent_cancel_pending_tx_v2/table";

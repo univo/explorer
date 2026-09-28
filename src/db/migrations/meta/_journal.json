@@ -358,6 +358,13 @@
       "when": 1790633586507,
       "tag": "0050_intent-uniswap-v3-mint-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1790637472351,
+      "tag": "0051_intent-uniswap-v3-swap-v2",
+      "breakpoints": true
     }
   ]
 }
