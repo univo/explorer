@@ -1,12 +1,12 @@
 import { test } from "vitest";
 
 import { test_client, test_getBlock } from "@/tests/utils";
-import { event, FWA_ADDRESS, getIntentFwaDepositedV1 } from "./event";
+import { event, FWA_ADDRESS, getIntentFwaDepositedV2 } from "./event";
 
 const BLOCK_NUMBER = 25641949;
 const DEPOSIT_TX_HASH = "0x2fe93ab36544d28f6997d5f2dceac1eea8985edbe2a59f6df8e7a70f74fc8786";
 
-test.concurrent("intent_fwa_deposited_v1 deletes, writes, and reads from storage", async ({ expect }) => {
+test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: BLOCK_NUMBER });
 
 	const events = event.handler(block);
@@ -15,7 +15,7 @@ test.concurrent("intent_fwa_deposited_v1 deletes, writes, and reads from storage
 
 	const ids = events.map((event) => event.id);
 
-	const initial = await getIntentFwaDepositedV1(ids);
+	const initial = await getIntentFwaDepositedV2(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -25,32 +25,37 @@ test.concurrent("intent_fwa_deposited_v1 deletes, writes, and reads from storage
 			{
 				blocks: [block],
 				events: [
-					"intent_fwa_deposited_v1", //
-					"intent_fwa_deposited_v1_index_account_v4",
-					"intent_fwa_deposited_v1_index_block_number_tx_index_v4",
+					"intent_fwa_deposited_v2", //
+					"intent_fwa_deposited_v2_index_account_v4",
+					"intent_fwa_deposited_v2_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const final = await getIntentFwaDepositedV1(ids);
+	const final = await getIntentFwaDepositedV2(ids);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
 		  {
 		    "backing_eth": "0xb1a2bc2ec50000",
+		    "block_number": 25641949,
+		    "block_timestamp": 2026-07-30T00:02:11.000Z,
+		    "chain": 1,
 		    "collection_address": "0x26D7Ad0E930b54b84C00DAad077Ee31Ba9e2Fb2E",
 		    "depositor_address": "0x906691Bc9F0b5b505F3E9024B2e9342c554C7958",
-		    "id": "6a6a9483018743dd0017ffffff00010014",
+		    "id": "6a6a9483018743dd0017ffffff0001004b",
+		    "log_index": 16777215,
 		    "success": true,
-		    "tag": "intent_fwa_deposited_v1",
+		    "tag": "intent_fwa_deposited_v2",
 		    "token_id": "0x0afe",
+		    "tx_index": 23,
 		  },
 		]
 	`);
 });
 
-test.concurrent("intent_fwa_deposited_v1 includes failed submissions", async ({ expect }) => {
+test.concurrent("intent_fwa_deposited_v2 includes failed submissions", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: BLOCK_NUMBER });
 
 	const failed = {
@@ -79,7 +84,7 @@ test.concurrent("intent_fwa_deposited_v1 includes failed submissions", async ({ 
 	]);
 });
 
-test.concurrent("intent_fwa_deposited_v1 requires the FWA address and listNFT selector", async ({ expect }) => {
+test.concurrent("intent_fwa_deposited_v2 requires the FWA address and listNFT selector", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: BLOCK_NUMBER });
 
 	const depositTx = block.eth_getBlockByNumber.transactions.find((tx) => tx.hash === DEPOSIT_TX_HASH);

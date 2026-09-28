@@ -10,7 +10,7 @@ import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
-import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v1/event";
+import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v2/event";
 
 export interface IntentFwaAcquireV2 {
 	tag: "intent_fwa_acquire_v2";
