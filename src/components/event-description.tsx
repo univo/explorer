@@ -21,7 +21,7 @@ import { IntentAaveV3SupplyV2AccountDescription } from "@/events/intent_aave_v3_
 import { IntentAaveV3BorrowV2AccountDescription } from "@/events/intent_aave_v3_borrow_v2/component";
 import { IntentErc20ApprovalV2AccountDescription } from "@/events/intent_erc20_approval_v2/component";
 import { IntentErc20TransferV2AccountDescription } from "@/events/intent_erc20_transfer_v2/component";
-import { IntentUsdcBlacklistV1AccountDescription } from "@/events/intent_usdc_blacklist_v1/component";
+import { IntentUsdcBlacklistV2AccountDescription } from "@/events/intent_usdc_blacklist_v2/component";
 import { IntentUniswapV3SwapV2AccountDescription } from "@/events/intent_uniswap_v3_swap_v2/component";
 import { IntentUniswapV3MintV2AccountDescription } from "@/events/intent_uniswap_v3_mint_v2/component";
 import { IntentErc721ApprovalV2AccountDescription } from "@/events/intent_erc721_approval_v2/component";
@@ -76,8 +76,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <IntentTornadoWithdrawalV2AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "intent_usdc_blacklist_v1") {
-		return <IntentUsdcBlacklistV1AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_usdc_blacklist_v2") {
+		return <IntentUsdcBlacklistV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_fwa_deposited_v2") {

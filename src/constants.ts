@@ -99,6 +99,7 @@ export const TABLES = {
 	intent_tornado_withdrawal_v2: 79,
 	intent_uniswap_v3_mint_v2: 80,
 	intent_uniswap_v3_swap_v2: 81,
+	intent_usdc_blacklist_v2: 82,
 };
 
 export type Table = keyof typeof TABLES;

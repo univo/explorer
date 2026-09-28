@@ -1,17 +1,18 @@
 import { getAddress } from "viem";
 
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { IntentUsdcBlacklistV1 } from "./event";
+import type { IntentUsdcBlacklistV2 } from "./event";
 import { Description } from "@/components/description";
 
 const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
-export function IntentUsdcBlacklistV1AccountDescription(props: { event: IntentUsdcBlacklistV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export function IntentUsdcBlacklistV2AccountDescription(props: { event: IntentUsdcBlacklistV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	// (tx.from) not actually covered in this event and should be added
 
