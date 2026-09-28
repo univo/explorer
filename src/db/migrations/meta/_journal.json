@@ -274,6 +274,13 @@
       "when": 1790570307720,
       "tag": "0038_intent-contract-deployment-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1790571777442,
+      "tag": "0039_intent-ens-name-registered-v2",
+      "breakpoints": true
     }
   ]
 }

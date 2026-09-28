@@ -86,6 +86,7 @@ export const TABLES = {
 	intent_aave_v3_withdraw_v2: 66,
 	intent_cancel_pending_tx_v2: 67,
 	intent_contract_deployment_v2: 68,
+	intent_ens_name_registered_v2: 69,
 };
 
 export type Table = keyof typeof TABLES;
