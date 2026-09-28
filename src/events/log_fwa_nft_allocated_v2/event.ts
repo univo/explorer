@@ -130,6 +130,7 @@ univo.event({
 });
 
 // Allocations settle asynchronously, so index the result for both the winner and the depositor.
+
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
