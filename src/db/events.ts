@@ -22,7 +22,7 @@ import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/eve
 import { getIntentErc721ApprovalV1 } from "@/events/intent_erc721_approval_v1/event";
 import { getIntentErc721TransferV1 } from "@/events/intent_erc721_transfer_v1/event";
 import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
-import { getLogEnsReverseClaimedV1 } from "@/events/log_ens_reverse_claimed_v1/event";
+import { getLogEnsReverseClaimedV2 } from "@/events/log_ens_reverse_claimed_v2/event";
 import { getIntentAaveV3WithdrawV1 } from "@/events/intent_aave_v3_withdraw_v1/event";
 import { getIntentCancelPendingTxV1 } from "@/events/intent_cancel_pending_tx_v1/event";
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
@@ -51,7 +51,7 @@ export async function getEventsForIds(ids: string[]) {
 		getLogErc721ApprovalV2(ids),
 		getLogErc721TransferV2(ids),
 		getLogFwaNftAllocatedV2(ids),
-		getLogEnsReverseClaimedV1(ids),
+		getLogEnsReverseClaimedV2(ids),
 		getLogUniswapV3PoolCreatedV2(ids),
 		getLogEnsNameForAddrChangedV2(ids),
 

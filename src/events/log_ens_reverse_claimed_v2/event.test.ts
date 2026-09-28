@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { event, getLogEnsReverseClaimedV1 } from "./event";
+import { event, getLogEnsReverseClaimedV2 } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
 
-test.concurrent("log_ens_reverse_claimed_v1 deletes, writes, and reads from storage", async ({ expect }) => {
+test.concurrent("log_ens_reverse_claimed_v2 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25770632 });
 
 	const events = event.handler(block);
@@ -12,7 +12,7 @@ test.concurrent("log_ens_reverse_claimed_v1 deletes, writes, and reads from stor
 
 	const ids = events.map((event) => event.id);
 
-	const initial = await getLogEnsReverseClaimedV1(ids);
+	const initial = await getLogEnsReverseClaimedV2(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -22,22 +22,27 @@ test.concurrent("log_ens_reverse_claimed_v1 deletes, writes, and reads from stor
 			{
 				blocks: [block],
 				events: [
-					"log_ens_reverse_claimed_v1", //
-					"log_ens_reverse_claimed_v1_index_block_number_tx_index_v4",
+					"log_ens_reverse_claimed_v2", //
+					"log_ens_reverse_claimed_v2_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const stored = await getLogEnsReverseClaimedV1(ids);
+	const stored = await getLogEnsReverseClaimedV2(ids);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
 		  {
 		    "account_address": "0x33b86899aFFfDdac63cFB1038370450e69530F70",
-		    "id": "6a823a2f01893a88024d0002f10001002a",
+		    "block_number": 25770632,
+		    "block_timestamp": 2026-08-16T22:31:11.000Z,
+		    "chain": 1,
+		    "id": "6a823a2f01893a88024d0002f10001003e",
+		    "log_index": 753,
 		    "node": "0x2eaf481c711aa75ef5f72810e28d92c9fb27e79db947366b8371c69cee4def52",
-		    "tag": "log_ens_reverse_claimed_v1",
+		    "tag": "log_ens_reverse_claimed_v2",
+		    "tx_index": 589,
 		  },
 		]
 	`);

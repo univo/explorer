@@ -1,7 +1,7 @@
-import { parseId } from "@/helpers";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { LogEnsReverseClaimedV1 } from "./event";
+import type { LogEnsReverseClaimedV2 } from "./event";
 import { Description } from "@/components/description";
 
 // This component doesn't provide much information. Unfortunately the `node` value in the event
@@ -10,8 +10,8 @@ import { Description } from "@/components/description";
 // data that would allow us to perform a JOIN here and get back to the original ENS name but
 // I've decided it's not really worth it for a legacy event
 
-export function LogEnsReverseClaimedV1Description(props: { event: LogEnsReverseClaimedV1; address: `0x${string}` | undefined }) {
-	const chain = parseId(props.event.id).chainId;
+export function LogEnsReverseClaimedV2Description(props: { event: LogEnsReverseClaimedV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 
 	return (
 		<Description>

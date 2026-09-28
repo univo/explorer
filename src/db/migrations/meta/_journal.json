@@ -225,6 +225,13 @@
       "when": 1790553576571,
       "tag": "0031_log-fwa-nft-allocated-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1790557935932,
+      "tag": "0032_log-ens-reverse-claimed-v2",
+      "breakpoints": true
     }
   ]
 }
