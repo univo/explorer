@@ -7,7 +7,7 @@ import { LogErc20ApprovalV2Description } from "@/events/log_erc20_approval_v2/co
 import { LogUniswapV3SwapV2Description } from "@/events/log_uniswap_v3_swap_v2/component";
 import { LogErc721TransferV2Description } from "@/events/log_erc721_transfer_v2/component";
 import { LogErc721ApprovalV2Description } from "@/events/log_erc721_approval_v2/component";
-import { LogFwaNftAllocatedV1Description } from "@/events/log_fwa_nft_allocated_v1/component";
+import { LogFwaNftAllocatedV2Description } from "@/events/log_fwa_nft_allocated_v2/component";
 import { LogEnsReverseClaimedV1Description } from "@/events/log_ens_reverse_claimed_v1/component";
 import { LogUniswapV3PoolCreatedV2Description } from "@/events/log_uniswap_v3_pool_created_v2/component";
 import { LogEnsNameForAddrChangedV2Description } from "@/events/log_ens_name_for_addr_changed_v2/component";
@@ -150,8 +150,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <LogFwaNftListedV2Description event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "log_fwa_nft_allocated_v1") {
-		return <LogFwaNftAllocatedV1Description event={props.event} address={props.address} />;
+	if (props.event.tag === "log_fwa_nft_allocated_v2") {
+		return <LogFwaNftAllocatedV2Description event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "log_uniswap_v3_pool_created_v2") {

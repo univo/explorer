@@ -78,6 +78,7 @@ export const TABLES = {
 	log_ens_name_for_addr_changed_v2: 58,
 	log_ens_new_owner_v2: 59,
 	log_fwa_nft_listed_v2: 60,
+	log_fwa_nft_allocated_v2: 61,
 };
 
 export type Table = keyof typeof TABLES;
