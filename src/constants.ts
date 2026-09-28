@@ -87,6 +87,7 @@ export const TABLES = {
 	intent_cancel_pending_tx_v2: 67,
 	intent_contract_deployment_v2: 68,
 	intent_ens_name_registered_v2: 69,
+	intent_erc20_approval_v2: 70,
 };
 
 export type Table = keyof typeof TABLES;

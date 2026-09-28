@@ -14,7 +14,7 @@ import { getIntentFwaDepositedV1 } from "@/events/intent_fwa_deposited_v1/event"
 import { getIntentAaveV3SupplyV2 } from "@/events/intent_aave_v3_supply_v2/event";
 import { getLogFwaNftAllocatedV2 } from "@/events/log_fwa_nft_allocated_v2/event";
 import { getIntentAaveV3BorrowV2 } from "@/events/intent_aave_v3_borrow_v2/event";
-import { getIntentErc20ApprovalV1 } from "@/events/intent_erc20_approval_v1/event";
+import { getIntentErc20ApprovalV2 } from "@/events/intent_erc20_approval_v2/event";
 import { getIntentErc20TransferV1 } from "@/events/intent_erc20_transfer_v1/event";
 import { getIntentUsdcBlacklistV1 } from "@/events/intent_usdc_blacklist_v1/event";
 import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/event";
@@ -62,7 +62,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV2(ids),
 		getIntentAaveV3BorrowV2(ids),
-		getIntentErc20ApprovalV1(ids),
+		getIntentErc20ApprovalV2(ids),
 		getIntentErc20TransferV1(ids),
 		getIntentUsdcBlacklistV1(ids),
 		getIntentUniswapV3SwapV1(ids),
