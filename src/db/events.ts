@@ -28,7 +28,7 @@ import { getIntentCancelPendingTxV2 } from "@/events/intent_cancel_pending_tx_v2
 import { getIntentTornadoWithdrawalV1 } from "@/events/intent_tornado_withdrawal_v1/event";
 import { getIntentEnsNameRegisteredV1 } from "@/events/intent_ens_name_registered_v1/event";
 import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
-import { getIntentContractDeploymentV1 } from "@/events/intent_contract_deployment_v1/event";
+import { getIntentContractDeploymentV2 } from "@/events/intent_contract_deployment_v2/event";
 import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
 
 // This is our central point of configuration for which all the events the app loads.
@@ -74,7 +74,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentCancelPendingTxV2(ids),
 		getIntentTornadoWithdrawalV1(ids),
 		getIntentEnsNameRegisteredV1(ids),
-		getIntentContractDeploymentV1(ids),
+		getIntentContractDeploymentV2(ids),
 	]);
 
 	const flat = events.flat(1);
