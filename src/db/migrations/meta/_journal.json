@@ -316,6 +316,13 @@
       "when": 1790577130439,
       "tag": "0044_intent-fwa-acquire-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1790577824743,
+      "tag": "0045_intent-fwa-deposited-v2",
+      "breakpoints": true
     }
   ]
 }

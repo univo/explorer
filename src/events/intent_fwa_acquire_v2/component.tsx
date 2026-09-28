@@ -6,7 +6,7 @@ import { Account } from "@/components/account";
 import { hexToNumber, isHexEqual } from "@/utils";
 import type { IntentFwaAcquireV2 } from "./event";
 import { Description } from "@/components/description";
-import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v1/event";
+import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v2/event";
 
 export function IntentFwaAcquireV2AccountDescription(props: { event: IntentFwaAcquireV2; address: `0x${string}` | undefined }) {
 	const chain = getExternalChain(props.event.chain);
