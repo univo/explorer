@@ -239,6 +239,13 @@
       "when": 1790559335013,
       "tag": "0033_intent-aave-v3-borrow-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1790560169236,
+      "tag": "0034_intent-aave-v3-repay-v2",
+      "breakpoints": true
     }
   ]
 }

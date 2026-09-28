@@ -81,6 +81,7 @@ export const TABLES = {
 	log_fwa_nft_allocated_v2: 61,
 	log_ens_reverse_claimed_v2: 62,
 	intent_aave_v3_borrow_v2: 63,
+	intent_aave_v3_repay_v2: 64,
 };
 
 export type Table = keyof typeof TABLES;
@@ -105,7 +106,7 @@ export const PRESETS = {
 
 	lending: [
 		TABLES.intent_aave_v3_borrow_v2, //
-		TABLES.intent_aave_v3_repay_v1,
+		TABLES.intent_aave_v3_repay_v2,
 		TABLES.intent_aave_v3_supply_v1,
 		TABLES.intent_aave_v3_withdraw_v1,
 	],
