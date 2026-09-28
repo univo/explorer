@@ -260,6 +260,13 @@
       "when": 1790562100463,
       "tag": "0036_intent-aave-v3-withdraw-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1790562999805,
+      "tag": "0037_intent-cancel-pending-tx-v2",
+      "breakpoints": true
     }
   ]
 }

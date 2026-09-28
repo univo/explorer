@@ -23,7 +23,7 @@ import "@/events/intent_native_transfer_v1/event";
 import "@/events/intent_uniswap_v3_swap_v1/event";
 import "@/events/intent_uniswap_v3_mint_v1/event";
 import "@/events/intent_aave_v3_withdraw_v2/event";
-import "@/events/intent_cancel_pending_tx_v1/event";
+import "@/events/intent_cancel_pending_tx_v2/event";
 import "@/events/intent_tornado_withdrawal_v1/event";
 import "@/events/intent_contract_deployment_v1/event";
 import "@/events/intent_ens_name_registered_v1/event";
