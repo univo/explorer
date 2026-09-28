@@ -79,6 +79,7 @@ export const TABLES = {
 	log_ens_new_owner_v2: 59,
 	log_fwa_nft_listed_v2: 60,
 	log_fwa_nft_allocated_v2: 61,
+	log_ens_reverse_claimed_v2: 62,
 };
 
 export type Table = keyof typeof TABLES;
