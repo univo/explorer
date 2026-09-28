@@ -14,7 +14,7 @@ import "@/events/intent_fwa_deposited_v1/event";
 import "@/events/intent_aave_v3_repay_v1/event";
 import "@/events/intent_usdc_blacklist_v1/event";
 import "@/events/intent_aave_v3_supply_v1/event";
-import "@/events/intent_aave_v3_borrow_v1/event";
+import "@/events/intent_aave_v3_borrow_v2/event";
 import "@/events/intent_erc20_approval_v1/event";
 import "@/events/intent_erc20_transfer_v1/event";
 import "@/events/intent_erc721_approval_v1/event";

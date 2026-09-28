@@ -18,7 +18,7 @@ import { IntentFwaAcquireV1AccountDescription } from "@/events/intent_fwa_acquir
 import { IntentAaveV3RepayV1AccountDescription } from "@/events/intent_aave_v3_repay_v1/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV1AccountDescription } from "@/events/intent_aave_v3_supply_v1/component";
-import { IntentAaveV3BorrowV1AccountDescription } from "@/events/intent_aave_v3_borrow_v1/component";
+import { IntentAaveV3BorrowV2AccountDescription } from "@/events/intent_aave_v3_borrow_v2/component";
 import { IntentErc20ApprovalV1AccountDescription } from "@/events/intent_erc20_approval_v1/component";
 import { IntentErc20TransferV1AccountDescription } from "@/events/intent_erc20_transfer_v1/component";
 import { IntentUsdcBlacklistV1AccountDescription } from "@/events/intent_usdc_blacklist_v1/component";
@@ -100,8 +100,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <IntentAaveV3WithdrawV1AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "intent_aave_v3_borrow_v1") {
-		return <IntentAaveV3BorrowV1AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_aave_v3_borrow_v2") {
+		return <IntentAaveV3BorrowV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_aave_v3_repay_v1") {
