@@ -1,14 +1,15 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { ZERO_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { IntentErc20ApprovalV1 } from "./event";
+import type { IntentErc20ApprovalV2 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentErc20ApprovalV1AccountDescription(props: { event: IntentErc20ApprovalV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export function IntentErc20ApprovalV2AccountDescription(props: { event: IntentErc20ApprovalV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const all = props.event.quantity.length >= 30;
 	const isZeroQuantity = BigInt(props.event.quantity) === 0n;

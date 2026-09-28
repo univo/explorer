@@ -281,6 +281,13 @@
       "when": 1790571777442,
       "tag": "0039_intent-ens-name-registered-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1790573088376,
+      "tag": "0040_intent-erc20-approval-v2",
+      "breakpoints": true
     }
   ]
 }
