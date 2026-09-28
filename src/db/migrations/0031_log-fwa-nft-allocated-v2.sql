@@ -4,6 +4,7 @@ CREATE TABLE "log_fwa_nft_allocated_v2" (
 	"log_index" integer NOT NULL,
 	"block_number" integer NOT NULL,
 	"block_timestamp" timestamp with time zone NOT NULL,
+	"success" boolean NOT NULL,
 	"listing_id" "bytea" NOT NULL,
 	"backing_eth" "bytea" NOT NULL,
 	"purchaser_address" "bytea" NOT NULL,

@@ -43,9 +43,31 @@ test.concurrent("log_fwa_nft_allocated_v2 deletes, writes, and reads from storag
 		    "listing_id": "0x016f9b",
 		    "log_index": 1233,
 		    "purchaser_address": "0xa89C876BE69223295A0925D7A62Cb6868dEc4ac8",
+		    "success": true,
 		    "tag": "log_fwa_nft_allocated_v2",
 		    "tx_index": 223,
 		  },
 		]
 	`);
+});
+
+test.concurrent("log_fwa_nft_allocated_v2 includes failed allocations", async ({ expect }) => {
+	const block = await test_getBlock({ chain: 1, block_number: 25642809 });
+
+	const failed = {
+		...block,
+		eth_getBlockReceipts: block.eth_getBlockReceipts.map((receipt) => ({
+			...receipt,
+			status: "0x0" as const,
+		})),
+	};
+
+	expect(event.handler(failed)).toMatchObject([
+		{
+			success: false,
+			listing_id: "0x016f9b",
+			purchaser_address: "0xa89C876BE69223295A0925D7A62Cb6868dEc4ac8",
+			depositor_address: "0x03594D72e895e4ecD716e472C84815233047e566",
+		},
+	]);
 });

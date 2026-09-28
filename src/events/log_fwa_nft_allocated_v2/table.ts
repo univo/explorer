@@ -1,4 +1,4 @@
-import { index, integer, pgTable, smallint, timestamp } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgTable, smallint, timestamp } from "drizzle-orm/pg-core";
 
 import { hex } from "@/db/types";
 
@@ -10,6 +10,7 @@ export const table = pgTable(
 		log_index: integer().notNull(),
 		block_number: integer().notNull(),
 		block_timestamp: timestamp({ mode: "date", withTimezone: true }).notNull(),
+		success: boolean().notNull(),
 
 		listing_id: hex().notNull(),
 		backing_eth: hex().notNull(),

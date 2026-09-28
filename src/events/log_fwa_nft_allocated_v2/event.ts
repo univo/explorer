@@ -5,7 +5,7 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
-import { createId, parseId } from "@/helpers";
+import { createId, getEventSuccess, parseId } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -20,6 +20,7 @@ export interface LogFwaNftAllocatedV2 {
 	log_index: number;
 	block_number: number;
 	block_timestamp: Date;
+	success: boolean;
 	listing_id: `0x${string}`;
 	backing_eth: `0x${string}`;
 	purchaser_address: `0x${string}`;
@@ -66,6 +67,11 @@ export const event = univo.event({
 						blockTimestamp: block.eth_getBlockByNumber.timestamp,
 					});
 
+					// Normally we don't record a success indicator for a log event. In this case, we use
+					// the log event in our account index so it's necessary to show failures in-line.
+
+					const success = getEventSuccess(receipt);
+
 					return {
 						tag: "log_fwa_nft_allocated_v2",
 						id,
@@ -74,6 +80,7 @@ export const event = univo.event({
 						tx_index: hexToNumber(log.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
+						success,
 						backing_eth: numberToHex(args.value),
 						listing_id: numberToHex(args.listingId),
 						purchaser_address: getAddress(args.purchaser),
@@ -188,6 +195,7 @@ export async function getLogFwaNftAllocatedV2(ids: string[]) {
 			log_index: row.log_index,
 			block_number: row.block_number,
 			block_timestamp: row.block_timestamp,
+			success: row.success,
 			listing_id: row.listing_id,
 			backing_eth: row.backing_eth,
 			purchaser_address: getAddress(row.purchaser_address),

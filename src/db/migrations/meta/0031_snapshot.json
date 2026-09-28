@@ -1768,6 +1768,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "success": {
+          "name": "success",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
         "listing_id": {
           "name": "listing_id",
           "type": "bytea",

@@ -20,10 +20,13 @@ export async function LogFwaNftAllocatedV2Description(props: { event: LogFwaNftA
 		throw new Error("Expected allocated NFT to have been listed already");
 	}
 
+	// purchaser_address, depositor_address
+
 	// Allocations settle asynchronously, so this event is shown for both the winner and the depositor.
+
 	if (isHexEqual(props.address, props.event.purchaser_address)) {
 		return (
-			<Description>
+			<Description success={props.event.success}>
 				<Action type="win">Won</Action>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth</span>
@@ -36,7 +39,7 @@ export async function LogFwaNftAllocatedV2Description(props: { event: LogFwaNftA
 
 	if (isHexEqual(props.address, props.event.depositor_address)) {
 		return (
-			<Description>
+			<Description success={props.event.success}>
 				<Action type="lose">Lost</Action>
 				<span>deposit of</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
@@ -49,7 +52,7 @@ export async function LogFwaNftAllocatedV2Description(props: { event: LogFwaNftA
 	}
 
 	return (
-		<Description>
+		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.purchaser_address} />
 			<Action type="win">won</Action>
 			<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
