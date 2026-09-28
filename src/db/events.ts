@@ -21,7 +21,7 @@ import { getIntentUniswapV3SwapV1 } from "@/events/intent_uniswap_v3_swap_v1/eve
 import { getIntentUniswapV3MintV1 } from "@/events/intent_uniswap_v3_mint_v1/event";
 import { getIntentErc721ApprovalV2 } from "@/events/intent_erc721_approval_v2/event";
 import { getIntentErc721TransferV2 } from "@/events/intent_erc721_transfer_v2/event";
-import { getIntentNativeTransferV1 } from "@/events/intent_native_transfer_v1/event";
+import { getIntentNativeTransferV2 } from "@/events/intent_native_transfer_v2/event";
 import { getLogEnsReverseClaimedV2 } from "@/events/log_ens_reverse_claimed_v2/event";
 import { getIntentAaveV3WithdrawV2 } from "@/events/intent_aave_v3_withdraw_v2/event";
 import { getIntentCancelPendingTxV2 } from "@/events/intent_cancel_pending_tx_v2/event";
@@ -70,7 +70,7 @@ export async function getEventsForIds(ids: string[]) {
 		getIntentErc721ApprovalV2(ids),
 		getIntentErc721TransferV2(ids),
 		getIntentAaveV3WithdrawV2(ids),
-		getIntentNativeTransferV1(ids),
+		getIntentNativeTransferV2(ids),
 		getIntentCancelPendingTxV2(ids),
 		getIntentTornadoWithdrawalV1(ids),
 		getIntentEnsNameRegisteredV2(ids),

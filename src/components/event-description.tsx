@@ -26,7 +26,7 @@ import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
 import { IntentErc721ApprovalV2AccountDescription } from "@/events/intent_erc721_approval_v2/component";
 import { IntentErc721TransferV2AccountDescription } from "@/events/intent_erc721_transfer_v2/component";
-import { IntentNativeTransferV1AccountDescription } from "@/events/intent_native_transfer_v1/component";
+import { IntentNativeTransferV2AccountDescription } from "@/events/intent_native_transfer_v2/component";
 import { IntentAaveV3WithdrawV2AccountDescription } from "@/events/intent_aave_v3_withdraw_v2/component";
 import { IntentCancelPendingTxV2AccountDescription } from "@/events/intent_cancel_pending_tx_v2/component";
 import { IntentTornadoWithdrawalV1AccountDescription } from "@/events/intent_tornado_withdrawal_v1/component";
@@ -36,8 +36,8 @@ import { IntentContractDeploymentV2AccountDescription } from "@/events/intent_co
 export function EventDescription(props: { event: Event; address: `0x${string}` | undefined }) {
 	// Intents
 
-	if (props.event.tag === "intent_native_transfer_v1") {
-		return <IntentNativeTransferV1AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_native_transfer_v2") {
+		return <IntentNativeTransferV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_erc20_transfer_v2") {

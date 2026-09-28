@@ -95,6 +95,7 @@ export const TABLES = {
 	intent_fwa_deposited_v2: 75,
 	intent_fwa_won_v3: 76,
 	intent_idm_v2: 77,
+	intent_native_transfer_v2: 78,
 };
 
 export type Table = keyof typeof TABLES;
@@ -107,7 +108,7 @@ export const PRESETS = {
 	all: Object.values(TABLES),
 
 	payments: [
-		TABLES.intent_native_transfer_v1, //
+		TABLES.intent_native_transfer_v2, //
 		TABLES.intent_erc20_transfer_v2,
 		TABLES.log_erc20_transfer_v2,
 	],

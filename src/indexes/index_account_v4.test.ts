@@ -2,7 +2,7 @@ import { test } from "vitest";
 
 import { PRESETS } from "@/constants";
 import { test_getBlock } from "@/tests/utils";
-import { event } from "@/events/intent_native_transfer_v1/event";
+import { event } from "@/events/intent_native_transfer_v2/event";
 import { getEventIdsForAccount, index_account_v4 } from "./index_account_v4";
 
 test.concurrent("index_account_v4", async ({ expect }) => {
@@ -30,7 +30,7 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 
 	expect(ids).toMatchInlineSnapshot(`
 		[
-		  "5eb01705009896800000ffffff0001001f",
+		  "5eb01705009896800000ffffff0001004e",
 		]
 	`);
 });

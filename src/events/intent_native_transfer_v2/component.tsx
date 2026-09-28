@@ -1,14 +1,15 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { IntentNativeTransferV1 } from "./event";
+import type { IntentNativeTransferV2 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentNativeTransferV1AccountDescription(props: { event: IntentNativeTransferV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export function IntentNativeTransferV2AccountDescription(props: { event: IntentNativeTransferV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const at = props.event.block_timestamp.getTime() / 1000;
 
 	// (tx.from) from_address
 
@@ -16,7 +17,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 		return (
 			<Description success={props.event.success}>
 				<Action type="send">Send</Action>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={at} />
 				<span>to</span>
 				<Account chain={chain} address={props.event.to_address} />
 			</Description>
@@ -29,7 +30,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 		return (
 			<Description success={props.event.success}>
 				<Action type="receive">Receive</Action>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={at} />
 				<span>from</span>
 				<Account chain={chain} address={props.event.from_address} />
 			</Description>
@@ -40,7 +41,7 @@ export function IntentNativeTransferV1AccountDescription(props: { event: IntentN
 		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.from_address} />
 			<Action type="send">sends</Action>
-			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={blockTimestamp} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.quantity} at={at} />
 			<span>to</span>
 			<Account chain={chain} address={props.event.to_address} />
 		</Description>
