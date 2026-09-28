@@ -267,6 +267,13 @@
       "when": 1790562999805,
       "tag": "0037_intent-cancel-pending-tx-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1790570307720,
+      "tag": "0038_intent-contract-deployment-v2",
+      "breakpoints": true
     }
   ]
 }

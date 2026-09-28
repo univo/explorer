@@ -1,15 +1,15 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
-import type { IntentContractDeploymentV1 } from "./event";
+import type { IntentContractDeploymentV2 } from "./event";
 
-export function IntentContractDeploymentV1AccountDescription(props: {
-	event: IntentContractDeploymentV1;
+export function IntentContractDeploymentV2AccountDescription(props: {
+	event: IntentContractDeploymentV2;
 	address: `0x${string}` | undefined;
 }) {
-	const chain = parseId(props.event.id).chainId;
+	const chain = getExternalChain(props.event.chain);
 
 	// (tx.from) deployer_address
 
