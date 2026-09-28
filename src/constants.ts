@@ -97,6 +97,7 @@ export const TABLES = {
 	intent_idm_v2: 77,
 	intent_native_transfer_v2: 78,
 	intent_tornado_withdrawal_v2: 79,
+	intent_uniswap_v3_mint_v2: 80,
 };
 
 export type Table = keyof typeof TABLES;
