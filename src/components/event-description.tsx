@@ -24,7 +24,7 @@ import { IntentErc20TransferV2AccountDescription } from "@/events/intent_erc20_t
 import { IntentUsdcBlacklistV1AccountDescription } from "@/events/intent_usdc_blacklist_v1/component";
 import { IntentUniswapV3SwapV1AccountDescription } from "@/events/intent_uniswap_v3_swap_v1/component";
 import { IntentUniswapV3MintV1AccountDescription } from "@/events/intent_uniswap_v3_mint_v1/component";
-import { IntentErc721ApprovalV1AccountDescription } from "@/events/intent_erc721_approval_v1/component";
+import { IntentErc721ApprovalV2AccountDescription } from "@/events/intent_erc721_approval_v2/component";
 import { IntentErc721TransferV1AccountDescription } from "@/events/intent_erc721_transfer_v1/component";
 import { IntentNativeTransferV1AccountDescription } from "@/events/intent_native_transfer_v1/component";
 import { IntentAaveV3WithdrawV2AccountDescription } from "@/events/intent_aave_v3_withdraw_v2/component";
@@ -52,8 +52,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <IntentErc721TransferV1AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "intent_erc721_approval_v1") {
-		return <IntentErc721ApprovalV1AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_erc721_approval_v2") {
+		return <IntentErc721ApprovalV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_idm_v1") {

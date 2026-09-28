@@ -1,18 +1,24 @@
-import { asc, inArray, sql } from "drizzle-orm";
-import { decodeEventLog, decodeFunctionData, getAddress, parseAbiItem, toEventSelector, toFunctionSelector } from "viem";
+import { and, asc, inArray } from "drizzle-orm";
+import { decodeEventLog, decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toEventSelector, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/univo";
-import { createPostgresClient } from "@/db/client";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
+import { createPostgresClient } from "@/db/client";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
-import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
-export interface IntentErc721ApprovalV1 {
-	tag: "intent_erc721_approval_v1";
+export interface IntentErc721ApprovalV2 {
+	tag: "intent_erc721_approval_v2";
 	id: string;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
 	success: boolean;
 	token_id: `0x${string}`;
 	caller_address: `0x${string}`;
@@ -26,7 +32,7 @@ const APPROVAL_ABI = parseAbiItem("event Approval(address indexed owner, address
 const APPROVAL_SELECTOR = toEventSelector(APPROVAL_ABI);
 
 export const event = univo.event({
-	id: "intent_erc721_approval_v1",
+	id: "intent_erc721_approval_v2",
 
 	filters: [
 		{
@@ -37,7 +43,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc721ApprovalV1>((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc721ApprovalV2>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -48,14 +54,8 @@ export const event = univo.event({
 					return [];
 				}
 
-				// This intent is slightly different to others because of one edge case: the approval
-				// function selector is identical on erc20 and erc721 interfaces. Thankfully, they
-				// emit different log signatures for a successful approval so we can inspect those
-				// to differentiate
-
-				// The caveat here is that we will not record an intent if the transaction fails before
-				// emitting the necessary logs. This is rare so i'm fine with this.
-
+				// ERC-20 and ERC-721 approvals share a function selector, so confirm the
+				// calldata against a strictly decoded ERC-721 Approval log.
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				if (receipt === undefined) {
@@ -98,14 +98,19 @@ export const event = univo.event({
 					logIndex: TRANSACTION_EVENT,
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.intent_erc721_approval_v1,
+					tableId: TABLES.intent_erc721_approval_v2,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
 
 				return {
-					tag: "intent_erc721_approval_v1",
+					tag: "intent_erc721_approval_v2",
 					id,
+					log_index: hexToNumber(TRANSACTION_EVENT),
+					chain: hexToNumber(block.eth_chainId),
+					tx_index: hexToNumber(tx.transactionIndex),
+					block_number: hexToNumber(block.eth_getBlockByNumber.number),
+					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					token_id: numberToHex(args[1]),
 					token_address: getAddress(tx.to),
 					success: getEventSuccess(receipt),
@@ -119,34 +124,28 @@ export const event = univo.event({
 	},
 
 	storage: {
-		async upsert(batch) {
+		async upsert(events) {
 			const MAX_BATCH_SIZE = 4000;
 			const client = await createPostgresClient();
 
-			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
-				await client
-					.insert(table)
-					.values(batch.slice(i, i + MAX_BATCH_SIZE))
-					.onConflictDoUpdate({
-						target: table.id,
-						set: {
-							success: sql.raw(`excluded.${table.success.name}`),
-							token_id: sql.raw(`excluded.${table.token_id.name}`),
-							token_address: sql.raw(`excluded.${table.token_address.name}`),
-							caller_address: sql.raw(`excluded.${table.caller_address.name}`),
-							spender_address: sql.raw(`excluded.${table.spender_address.name}`),
-						},
-					});
+			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
+				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
 			}
 		},
 
-		async delete(batch) {
+		async delete(events) {
 			const client = await createPostgresClient();
 
 			await client.delete(table).where(
-				inArray(
-					table.id,
-					batch.map((event) => event.id),
+				and(
+					inArray(
+						table.block_timestamp,
+						events.map((event) => event.block_timestamp),
+					),
+					inTuple(
+						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+					),
 				),
 			);
 		},
@@ -156,14 +155,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "intent_erc721_approval_v1_index_block_number_tx_index_v4",
+	id: "intent_erc721_approval_v2_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
-	id: "intent_erc721_approval_v1_index_account_v4",
+	id: "intent_erc721_approval_v2_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
@@ -175,8 +174,9 @@ univo.event({
 	},
 });
 
-export async function getIntentErc721ApprovalV1(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_erc721_approval_v1);
+export async function getIntentErc721ApprovalV2(ids: string[]) {
+	const mapped = ids.map((id) => parseId(id));
+	const filtered = mapped.filter((id) => id.tableId === TABLES.intent_erc721_approval_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -185,20 +185,45 @@ export async function getIntentErc721ApprovalV1(ids: string[]) {
 	const client = await createPostgresClient();
 
 	const rows = await client
-		.select() //
+		.selectDistinct()
 		.from(table)
-		.where(inArray(table.id, filtered))
-		.orderBy(asc(table.id));
+		.where(
+			and(
+				inArray(
+					table.block_timestamp,
+					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+				),
+				inTuple(
+					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+				),
+			),
+		)
+		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map<IntentErc721ApprovalV1>((result) => {
+	return rows.map<IntentErc721ApprovalV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.intent_erc721_approval_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
 		return {
-			tag: "intent_erc721_approval_v1",
-			id: result.id,
-			success: result.success,
-			token_id: result.token_id,
-			token_address: getAddress(result.token_address),
-			caller_address: getAddress(result.caller_address),
-			spender_address: getAddress(result.spender_address),
+			tag: "intent_erc721_approval_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			success: row.success,
+			token_id: row.token_id,
+			token_address: getAddress(row.token_address),
+			caller_address: getAddress(row.caller_address),
+			spender_address: getAddress(row.spender_address),
 		};
 	});
 }

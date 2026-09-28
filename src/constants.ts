@@ -89,6 +89,7 @@ export const TABLES = {
 	intent_ens_name_registered_v2: 69,
 	intent_erc20_approval_v2: 70,
 	intent_erc20_transfer_v2: 71,
+	intent_erc721_approval_v2: 72,
 };
 
 export type Table = keyof typeof TABLES;
