@@ -1,5 +1,5 @@
 import { logger } from "@/utils";
-import { getIntentIdmV1 } from "@/events/intent_idm_v1/event";
+import { getIntentIdmV2 } from "@/events/intent_idm_v2/event";
 import { getIntentFwaWonV3 } from "@/events/intent_fwa_won_v3/event";
 import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
 import { getLogFwaNftListedV2 } from "@/events/log_fwa_nft_listed_v2/event";
@@ -55,7 +55,7 @@ export async function getEventsForIds(ids: string[]) {
 		getLogUniswapV3PoolCreatedV2(ids),
 		getLogEnsNameForAddrChangedV2(ids),
 
-		getIntentIdmV1(ids),
+		getIntentIdmV2(ids),
 		getIntentFwaWonV3(ids),
 		getIntentFwaAcquireV2(ids),
 		getIntentAaveV3RepayV2(ids),

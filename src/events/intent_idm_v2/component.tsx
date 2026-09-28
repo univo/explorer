@@ -1,12 +1,12 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
-import type { IntentIdmV1 } from "./event";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
+import type { IntentIdmV2 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentIdmV1AccountDescription(props: { event: IntentIdmV1; address: `0x${string}` | undefined }) {
-	const chain = parseId(props.event.id).chainId;
+export function IntentIdmV2AccountDescription(props: { event: IntentIdmV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 
 	// (tx.from) from_address
 

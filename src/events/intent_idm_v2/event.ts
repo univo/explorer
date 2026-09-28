@@ -1,18 +1,24 @@
-import { getAddress } from "viem";
-import { asc, inArray, sql } from "drizzle-orm";
+import { and, asc, inArray } from "drizzle-orm";
+import { getAddress, hexToNumber } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/univo";
-import { isHexEqual } from "@/utils";
+import { inTuple } from "@/db/types";
+import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { getEventSuccess, createId, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
-export interface IntentIdmV1 {
-	tag: "intent_idm_v1";
+export interface IntentIdmV2 {
+	tag: "intent_idm_v2";
 	id: string;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
 	success: boolean;
 	message: string;
 	to_address: `0x${string}`;
@@ -20,12 +26,12 @@ export interface IntentIdmV1 {
 }
 
 export const event = univo.event({
-	id: "intent_idm_v1",
+	id: "intent_idm_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
 
 	handler(block) {
-		return block.eth_getBlockByNumber.transactions.flatMap<IntentIdmV1>((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentIdmV2>((tx) => {
 			try {
 				if (tx.input === "0x" || tx.input === "0x0") {
 					return [];
@@ -54,7 +60,7 @@ export const event = univo.event({
 					chainId: block.eth_chainId,
 					logIndex: TRANSACTION_EVENT,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.intent_idm_v1,
+					tableId: TABLES.intent_idm_v2,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -62,8 +68,13 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				return {
-					tag: "intent_idm_v1",
+					tag: "intent_idm_v2",
 					id,
+					log_index: hexToNumber(TRANSACTION_EVENT),
+					chain: hexToNumber(block.eth_chainId),
+					tx_index: hexToNumber(tx.transactionIndex),
+					block_number: hexToNumber(block.eth_getBlockByNumber.number),
+					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					message,
 					to_address: getAddress(tx.to),
 					success: getEventSuccess(receipt),
@@ -76,33 +87,28 @@ export const event = univo.event({
 	},
 
 	storage: {
-		async upsert(batch) {
+		async upsert(events) {
 			const MAX_BATCH_SIZE = 4000;
 			const client = await createPostgresClient();
 
-			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
-				await client
-					.insert(table)
-					.values(batch.slice(i, i + MAX_BATCH_SIZE))
-					.onConflictDoUpdate({
-						target: table.id,
-						set: {
-							success: sql.raw(`excluded.${table.success.name}`),
-							message: sql.raw(`excluded.${table.message.name}`),
-							to_address: sql.raw(`excluded.${table.to_address.name}`),
-							from_address: sql.raw(`excluded.${table.from_address.name}`),
-						},
-					});
+			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
+				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
 			}
 		},
 
-		async delete(batch) {
+		async delete(events) {
 			const client = await createPostgresClient();
 
 			await client.delete(table).where(
-				inArray(
-					table.id,
-					batch.map((event) => event.id),
+				and(
+					inArray(
+						table.block_timestamp,
+						events.map((event) => event.block_timestamp),
+					),
+					inTuple(
+						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+					),
 				),
 			);
 		},
@@ -112,14 +118,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "intent_idm_v1_index_block_number_tx_index_v4",
+	id: "intent_idm_v2_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
-	id: "intent_idm_v1_index_account_v4",
+	id: "intent_idm_v2_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
@@ -166,8 +172,9 @@ function countValidChars(string: string) {
 	return count;
 }
 
-export async function getIntentIdmV1(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_idm_v1);
+export async function getIntentIdmV2(ids: string[]) {
+	const mapped = ids.map((id) => parseId(id));
+	const filtered = mapped.filter((id) => id.tableId === TABLES.intent_idm_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -176,19 +183,44 @@ export async function getIntentIdmV1(ids: string[]) {
 	const client = await createPostgresClient();
 
 	const rows = await client
-		.select() //
+		.selectDistinct()
 		.from(table)
-		.where(inArray(table.id, filtered))
-		.orderBy(asc(table.id));
+		.where(
+			and(
+				inArray(
+					table.block_timestamp,
+					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+				),
+				inTuple(
+					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+				),
+			),
+		)
+		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map<IntentIdmV1>((result) => {
+	return rows.map<IntentIdmV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.intent_idm_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
 		return {
-			tag: "intent_idm_v1",
-			id: result.id,
-			success: result.success,
-			message: result.message,
-			to_address: getAddress(result.to_address),
-			from_address: getAddress(result.from_address),
+			tag: "intent_idm_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			success: row.success,
+			message: row.message,
+			to_address: getAddress(row.to_address),
+			from_address: getAddress(row.from_address),
 		};
 	});
 }
