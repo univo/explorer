@@ -96,6 +96,7 @@ export const TABLES = {
 	intent_fwa_won_v3: 76,
 	intent_idm_v2: 77,
 	intent_native_transfer_v2: 78,
+	intent_tornado_withdrawal_v2: 79,
 };
 
 export type Table = keyof typeof TABLES;

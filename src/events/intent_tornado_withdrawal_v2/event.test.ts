@@ -1,18 +1,18 @@
 import { test } from "vitest";
 
-import { event, getIntentTornadoWithdrawalV1 } from "./event";
+import { event, getIntentTornadoWithdrawalV2 } from "./event";
 import { test_getBlock, test_client } from "@/tests/utils";
 
 // 0x9bb7303af6ce69085abc3d9f4f5b7884a90023fd6e5925cb6ffed9737ebff78c
 // From address, recipient address, and relay address are all the same
 
-test.concurrent("intent_tornado_withdrawal_v1 direct pool withdrawal", async ({ expect }) => {
+test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 9117176 });
 
 	await event.storage.delete(event.handler(block));
 
 	const ids = event.handler(block).map((event) => event.id);
-	const initial = await getIntentTornadoWithdrawalV1(ids);
+	const initial = await getIntentTornadoWithdrawalV2(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -22,28 +22,33 @@ test.concurrent("intent_tornado_withdrawal_v1 direct pool withdrawal", async ({ 
 			{
 				blocks: [block],
 				events: [
-					"intent_tornado_withdrawal_v1",
-					"intent_tornado_withdrawal_v1_index_account_v4",
-					"intent_tornado_withdrawal_v1_index_block_number_tx_index_v4",
+					"intent_tornado_withdrawal_v2",
+					"intent_tornado_withdrawal_v2_index_account_v4",
+					"intent_tornado_withdrawal_v2_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const events = await getIntentTornadoWithdrawalV1(ids);
+	const events = await getIntentTornadoWithdrawalV2(ids);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
 		  {
+		    "block_number": 9117176,
+		    "block_timestamp": 2019-12-16T20:04:26.000Z,
+		    "chain": 1,
 		    "fee": "0x00",
 		    "from_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
-		    "id": "5df7e34a008b1df80033ffffff00010012",
+		    "id": "5df7e34a008b1df80033ffffff0001004f",
+		    "log_index": 16777215,
 		    "pool_address": "0x12D66f87A04A9E220743712cE6d9bB1B5616B8Fc",
 		    "recipient_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
 		    "relayer_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
 		    "success": true,
-		    "tag": "intent_tornado_withdrawal_v1",
+		    "tag": "intent_tornado_withdrawal_v2",
 		    "to_address": "0x12D66f87A04A9E220743712cE6d9bB1B5616B8Fc",
+		    "tx_index": 51,
 		  },
 		]
 	`);
@@ -52,13 +57,13 @@ test.concurrent("intent_tornado_withdrawal_v1 direct pool withdrawal", async ({ 
 // 0x32fe4de649de55851e98f13e29c4a8b2bf2538592e9c575a268d1570e6187d31
 // From address, recipient address, and relay address are all different
 
-test.concurrent("intent_tornado_withdrawal_v1 proxy withdrawal", async ({ expect }) => {
+test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 11843313 });
 
 	await event.storage.delete(event.handler(block));
 
 	const ids = event.handler(block).map((event) => event.id);
-	const initial = await getIntentTornadoWithdrawalV1(ids);
+	const initial = await getIntentTornadoWithdrawalV2(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -68,28 +73,33 @@ test.concurrent("intent_tornado_withdrawal_v1 proxy withdrawal", async ({ expect
 			{
 				blocks: [block],
 				events: [
-					"intent_tornado_withdrawal_v1",
-					"intent_tornado_withdrawal_v1_index_account_v4",
-					"intent_tornado_withdrawal_v1_index_block_number_tx_index_v4",
+					"intent_tornado_withdrawal_v2",
+					"intent_tornado_withdrawal_v2_index_account_v4",
+					"intent_tornado_withdrawal_v2_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const events = await getIntentTornadoWithdrawalV1(ids);
+	const events = await getIntentTornadoWithdrawalV2(ids);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
 		  {
+		    "block_number": 11843313,
+		    "block_timestamp": 2021-02-12T17:58:31.000Z,
+		    "chain": 1,
 		    "fee": "0x016ed5e01c487000",
 		    "from_address": "0x03EbD2ea2B9F23669C9Eb05C2a1a39f99CBDf372",
-		    "id": "6026c1c700b4b6f1010cffffff00010012",
+		    "id": "6026c1c700b4b6f1010cffffff0001004f",
+		    "log_index": 16777215,
 		    "pool_address": "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936",
 		    "recipient_address": "0x3f20e968a304Bc825Aa1a45228FdfD2D3D90c6Af",
 		    "relayer_address": "0xDdbfCEd30862c0105673B38dFf5e941cf48830e4",
 		    "success": true,
-		    "tag": "intent_tornado_withdrawal_v1",
+		    "tag": "intent_tornado_withdrawal_v2",
 		    "to_address": "0x905b63Fff465B9fFBF41DeA908CEb12478ec7601",
+		    "tx_index": 268,
 		  },
 		]
 	`);
