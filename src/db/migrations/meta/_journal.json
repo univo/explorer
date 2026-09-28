@@ -344,6 +344,13 @@
       "when": 1790582066885,
       "tag": "0048_intent-native-transfer-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1790633366250,
+      "tag": "0049_intent-uniswap-v3-mint-v2",
+      "breakpoints": true
     }
   ]
 }

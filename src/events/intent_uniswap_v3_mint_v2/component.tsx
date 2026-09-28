@@ -1,15 +1,15 @@
 import { Fragment } from "react";
 
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
+import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
-import type { IntentUniswapV3MintV1 } from "./event";
+import type { IntentUniswapV3MintV2 } from "./event";
 import { Description } from "@/components/description";
 
-export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUniswapV3MintV1; address: `0x${string}` | undefined }) {
-	const { chainId: chain } = parseId(props.event.id);
+export function IntentUniswapV3MintV2AccountDescription(props: { event: IntentUniswapV3MintV2; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
 
 	// (tx.from) sender_address: supplier of liquidity
 
@@ -113,11 +113,12 @@ export function IntentUniswapV3MintV1AccountDescription(props: { event: IntentUn
 	);
 }
 
-function Liquidity(props: { event: IntentUniswapV3MintV1 }) {
+function Liquidity(props: { event: IntentUniswapV3MintV2 }) {
 	// Normally I avoid making utility functions like this but in this case it's worth it.
 	// In Uniswap it's possible to supply only one side of the liquidity pool
 
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+	const chain = getExternalChain(props.event.chain);
+	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const token0DesiredQuantity = BigInt(props.event.token_0_desired_quantity);
 	const token0MinimumQuantity = BigInt(props.event.token_0_minimum_quantity);
