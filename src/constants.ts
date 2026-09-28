@@ -98,6 +98,7 @@ export const TABLES = {
 	intent_native_transfer_v2: 78,
 	intent_tornado_withdrawal_v2: 79,
 	intent_uniswap_v3_mint_v2: 80,
+	intent_uniswap_v3_swap_v2: 81,
 };
 
 export type Table = keyof typeof TABLES;
@@ -116,7 +117,7 @@ export const PRESETS = {
 	],
 
 	trades: [
-		TABLES.intent_uniswap_v3_swap_v1, //
+		TABLES.intent_uniswap_v3_swap_v2, //
 		TABLES.log_uniswap_v3_swap_v2,
 	],
 

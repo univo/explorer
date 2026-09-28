@@ -1,8 +1,9 @@
-import { asc, inArray, sql } from "drizzle-orm";
-import { decodeFunctionData, getAddress, isAddressEqual, parseAbi, toFunctionSelector } from "viem";
+import { and, asc, inArray } from "drizzle-orm";
+import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbi, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/univo";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -10,9 +11,14 @@ import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
-export interface IntentUniswapV3SwapV1 {
-	tag: "intent_uniswap_v3_swap_v1";
+export interface IntentUniswapV3SwapV2 {
+	tag: "intent_uniswap_v3_swap_v2";
 	id: string;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
 	success: boolean;
 	swap_type: "exact_input" | "exact_output";
 	exact_quantity: `0x${string}`;
@@ -24,7 +30,10 @@ export interface IntentUniswapV3SwapV1 {
 	recipient_address: `0x${string}`;
 }
 
-type DecodedSwap = Omit<IntentUniswapV3SwapV1, "tag" | "id" | "success">;
+type DecodedSwap = Omit<
+	IntentUniswapV3SwapV2,
+	"tag" | "id" | "chain" | "tx_index" | "log_index" | "block_number" | "block_timestamp" | "success"
+>;
 
 export const UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK = 12369634;
 export const UNISWAP_V3_SWAP_ROUTER_ADDRESS = getAddress("0xE592427A0AEce92De3Edee1F18E0157C05861564");
@@ -220,7 +229,7 @@ function normalizeSwapRouter02Recipient(recipient: `0x${string}`, sender: `0x${s
 }
 
 export const event = univo.event({
-	id: "intent_uniswap_v3_swap_v1",
+	id: "intent_uniswap_v3_swap_v2",
 
 	filters: [
 		{
@@ -230,7 +239,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap<IntentUniswapV3SwapV1>((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentUniswapV3SwapV2>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -247,7 +256,7 @@ export const event = univo.event({
 					logIndex: TRANSACTION_EVENT,
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.intent_uniswap_v3_swap_v1,
+					tableId: TABLES.intent_uniswap_v3_swap_v2,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -255,8 +264,13 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				return {
-					tag: "intent_uniswap_v3_swap_v1",
+					tag: "intent_uniswap_v3_swap_v2",
 					id,
+					log_index: hexToNumber(TRANSACTION_EVENT),
+					chain: hexToNumber(block.eth_chainId),
+					tx_index: hexToNumber(tx.transactionIndex),
+					block_number: hexToNumber(block.eth_getBlockByNumber.number),
+					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					success: getEventSuccess(receipt),
 					swap_type: swap.swap_type,
 					exact_quantity: swap.exact_quantity,
@@ -274,38 +288,28 @@ export const event = univo.event({
 	},
 
 	storage: {
-		async upsert(batch) {
+		async upsert(events) {
 			const MAX_BATCH_SIZE = 4000;
 			const client = await createPostgresClient();
 
-			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
-				await client
-					.insert(table)
-					.values(batch.slice(i, i + MAX_BATCH_SIZE))
-					.onConflictDoUpdate({
-						target: table.id,
-						set: {
-							success: sql.raw(`excluded.${table.success.name}`),
-							swap_type: sql.raw(`excluded.${table.swap_type.name}`),
-							exact_quantity: sql.raw(`excluded.${table.exact_quantity.name}`),
-							limit_quantity: sql.raw(`excluded.${table.limit_quantity.name}`),
-							router_address: sql.raw(`excluded.${table.router_address.name}`),
-							sender_address: sql.raw(`excluded.${table.sender_address.name}`),
-							token_in_address: sql.raw(`excluded.${table.token_in_address.name}`),
-							recipient_address: sql.raw(`excluded.${table.recipient_address.name}`),
-							token_out_address: sql.raw(`excluded.${table.token_out_address.name}`),
-						},
-					});
+			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
+				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
 			}
 		},
 
-		async delete(batch) {
+		async delete(events) {
 			const client = await createPostgresClient();
 
 			await client.delete(table).where(
-				inArray(
-					table.id,
-					batch.map((event) => event.id),
+				and(
+					inArray(
+						table.block_timestamp,
+						events.map((event) => event.block_timestamp),
+					),
+					inTuple(
+						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+					),
 				),
 			);
 		},
@@ -315,14 +319,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "intent_uniswap_v3_swap_v1_index_block_number_tx_index_v4",
+	id: "intent_uniswap_v3_swap_v2_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
-	id: "intent_uniswap_v3_swap_v1_index_account_v4",
+	id: "intent_uniswap_v3_swap_v2_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
@@ -336,8 +340,9 @@ univo.event({
 	},
 });
 
-export async function getIntentUniswapV3SwapV1(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_uniswap_v3_swap_v1);
+export async function getIntentUniswapV3SwapV2(ids: string[]) {
+	const mapped = ids.map((id) => parseId(id));
+	const filtered = mapped.filter((id) => id.tableId === TABLES.intent_uniswap_v3_swap_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -346,24 +351,49 @@ export async function getIntentUniswapV3SwapV1(ids: string[]) {
 	const client = await createPostgresClient();
 
 	const rows = await client
-		.select() //
+		.selectDistinct()
 		.from(table)
-		.where(inArray(table.id, filtered))
-		.orderBy(asc(table.id));
+		.where(
+			and(
+				inArray(
+					table.block_timestamp,
+					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+				),
+				inTuple(
+					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+				),
+			),
+		)
+		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map<IntentUniswapV3SwapV1>((result) => {
+	return rows.map<IntentUniswapV3SwapV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.intent_uniswap_v3_swap_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
 		return {
-			tag: "intent_uniswap_v3_swap_v1",
-			id: result.id,
-			success: result.success,
-			swap_type: result.swap_type as "exact_input" | "exact_output",
-			exact_quantity: result.exact_quantity,
-			limit_quantity: result.limit_quantity,
-			router_address: getAddress(result.router_address),
-			sender_address: getAddress(result.sender_address),
-			token_in_address: getAddress(result.token_in_address),
-			recipient_address: getAddress(result.recipient_address),
-			token_out_address: getAddress(result.token_out_address),
+			tag: "intent_uniswap_v3_swap_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			success: row.success,
+			swap_type: row.swap_type as "exact_input" | "exact_output",
+			exact_quantity: row.exact_quantity,
+			limit_quantity: row.limit_quantity,
+			router_address: getAddress(row.router_address),
+			sender_address: getAddress(row.sender_address),
+			token_in_address: getAddress(row.token_in_address),
+			recipient_address: getAddress(row.recipient_address),
+			token_out_address: getAddress(row.token_out_address),
 		};
 	});
 }
