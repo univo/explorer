@@ -93,6 +93,7 @@ export const TABLES = {
 	intent_erc721_transfer_v2: 73,
 	intent_fwa_acquire_v2: 74,
 	intent_fwa_deposited_v2: 75,
+	intent_fwa_won_v3: 76,
 };
 
 export type Table = keyof typeof TABLES;
