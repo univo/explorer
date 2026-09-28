@@ -1,19 +1,20 @@
-import { parseId } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
-import type { IntentFwaWonV2 } from "./event";
+import type { IntentFwaWonV3 } from "./event";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
+import { getExternalChain } from "@/helpers";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v2/event";
 import { getFwaListingById } from "../log_fwa_nft_listed_v2/event";
 
 const FWA_TOKEN_ADDRESS = "0xa0Df17B5aC76ABaBA36E1450E2cbCd18A620C845";
 
-export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwaWonV2; address: `0x${string}` | undefined }) {
-	const { chainId: chain, blockTimestamp } = parseId(props.event.id);
+export async function IntentFwaWonV3AccountDescription(props: { event: IntentFwaWonV3; address: `0x${string}` | undefined }) {
+	const chain = getExternalChain(props.event.chain);
+	const timestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const listing = await getFwaListingById(props.event.listing_id);
 
@@ -31,7 +32,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 					<span>winnings</span>
 					<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 					<span>worth backing of</span>
-					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
+					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={timestamp} />
 					<span>and relist it on</span>
 					<Account chain={chain} address={FWA_ADDRESS} />
 				</Description>
@@ -43,7 +44,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<Description success={props.event.success}>
 					<Action type="win">Claim</Action>
 					<span>winnings</span>
-					<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={blockTimestamp} />
+					<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={timestamp} />
 					<span>from</span>
 					<Account chain={chain} address={FWA_ADDRESS} />
 				</Description>
@@ -55,7 +56,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<Description success={props.event.success}>
 					<Action type="win">Claim</Action>
 					<span>winnings</span>
-					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={blockTimestamp} />
+					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={timestamp} />
 					<span>from</span>
 					<Account chain={chain} address={FWA_ADDRESS} />
 				</Description>
@@ -68,7 +69,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<span>winnings</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={timestamp} />
 				<span>from</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
@@ -86,7 +87,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 					<span>winnings</span>
 					<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 					<span>worth backing of</span>
-					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
+					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={timestamp} />
 					<span>and relists it</span>
 				</Description>
 			);
@@ -98,7 +99,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 					<Account chain={chain} address={props.event.purchaser_address} />
 					<Action type="win">claims</Action>
 					<span>winnings</span>
-					<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={blockTimestamp} />
+					<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={timestamp} />
 				</Description>
 			);
 		}
@@ -109,7 +110,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 					<Account chain={chain} address={props.event.purchaser_address} />
 					<Action type="win">claims</Action>
 					<span>winnings</span>
-					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={blockTimestamp} />
+					<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={timestamp} />
 				</Description>
 			);
 		}
@@ -121,7 +122,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<span>winnings</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={timestamp} />
 			</Description>
 		);
 	}
@@ -134,7 +135,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<span>winnings</span>
 				<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 				<span>worth backing of</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={timestamp} />
 				<span>and relists it on</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
@@ -147,7 +148,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="win">claims</Action>
 				<span>winnings</span>
-				<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={blockTimestamp} />
+				<Erc20 chain={chain} address={FWA_TOKEN_ADDRESS} quantity={props.event.token_out} at={timestamp} />
 				<span>from</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
@@ -160,7 +161,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 				<Account chain={chain} address={props.event.purchaser_address} />
 				<Action type="win">claims</Action>
 				<span>winnings</span>
-				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={blockTimestamp} />
+				<Erc20 chain={chain} address={ETH_ADDRESS} quantity={props.event.payout_eth} at={timestamp} />
 				<span>from</span>
 				<Account chain={chain} address={FWA_ADDRESS} />
 			</Description>
@@ -174,7 +175,7 @@ export async function IntentFwaWonV2AccountDescription(props: { event: IntentFwa
 			<span>winnings</span>
 			<Erc721 chain={chain} address={listing.collection_address} id={listing.token_id} />
 			<span>worth</span>
-			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={blockTimestamp} />
+			<Erc20 chain={chain} address={ETH_ADDRESS} quantity={listing.backing_eth} at={timestamp} />
 			<span>from</span>
 			<Account chain={chain} address={FWA_ADDRESS} />
 		</Description>
