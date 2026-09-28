@@ -253,6 +253,13 @@
       "when": 1790561282146,
       "tag": "0035_intent-aave-v3-supply-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1790562100463,
+      "tag": "0036_intent-aave-v3-withdraw-v2",
+      "breakpoints": true
     }
   ]
 }
