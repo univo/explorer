@@ -1,0 +1,86 @@
+import { test } from "vitest";
+
+import { event, getIntentNativeTransferV2 } from "./event";
+import { test_getBlock, test_client } from "@/tests/utils";
+
+test.concurrent("intent_native_transfer_v2 deletes, writes, and reads from storage", async ({ expect }) => {
+	const block = await test_getBlock({ chain: 1, block_number: 10000000 });
+
+	const handled = event.handler(block);
+
+	await event.storage.delete(handled);
+
+	const ids = handled.map((event) => event.id);
+
+	const initial = await getIntentNativeTransferV2(ids);
+
+	expect(initial).toStrictEqual([]);
+
+	await test_client.request({
+		method: "private_writeEvents",
+		params: [
+			{
+				blocks: [block],
+				events: [
+					"intent_native_transfer_v2",
+					"intent_native_transfer_v2_index_account_v4",
+					"intent_native_transfer_v2_index_block_number_tx_index_v4",
+				],
+			},
+		],
+	});
+
+	const events = await getIntentNativeTransferV2(ids);
+
+	const snapshot = events.map((event) => {
+		return [
+			event.tag,
+			event.id,
+			event.chain,
+			event.block_number,
+			event.tx_index,
+			event.log_index,
+			event.block_timestamp.toISOString(),
+			event.success,
+			event.quantity,
+			event.to_address,
+			event.from_address,
+		].join(" | ");
+	});
+
+	expect(snapshot).toMatchInlineSnapshot(`
+		[
+		  "intent_native_transfer_v2 | 5eb01705009896800000ffffff0001004e | 1 | 10000000 | 0 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x0554b81ec144eea9 | 0x60f18d941F6253E3F7082Ea0db3bc3944e7e9D40 | 0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8",
+		  "intent_native_transfer_v2 | 5eb01705009896800001ffffff0001004e | 1 | 10000000 | 1 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x02b4c77783338000 | 0x54A9AC972aB091f0ddBb051317F02882e70885C0 | 0xCAc725beF4f114F728cbCfd744a731C2a463c3Fc",
+		  "intent_native_transfer_v2 | 5eb01705009896800002ffffff0001004e | 1 | 10000000 | 2 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0xf556e279ca2800 | 0x2684CA06FFE6AC41a3137F1Ed5c87bb35E7fD82A | 0xFB90501083a3b6AF766c8dA35d3Dde01eB0d2a68",
+		  "intent_native_transfer_v2 | 5eb01705009896800003ffffff0001004e | 1 | 10000000 | 3 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x02c92d27b4b04c8800 | 0x8A9bF82B9df4594291fceEFe6bC4835186f599b2 | 0x876EabF441B2EE5B5b0554Fd502a8E0600950cFa",
+		  "intent_native_transfer_v2 | 5eb01705009896800004ffffff0001004e | 1 | 10000000 | 4 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x472465937dd25000 | 0x37b5AB65Da648146b4C5EA955a1Ec37671FE6B68 | 0x876EabF441B2EE5B5b0554Fd502a8E0600950cFa",
+		  "intent_native_transfer_v2 | 5eb01705009896800008ffffff0001004e | 1 | 10000000 | 8 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x11047ac8796000 | 0x797DBfaB26308010199f0B18c97C1C554Dd119f9 | 0x3F13E7a451a907030f8346Db90C112C5d0DD7D9b",
+		  "intent_native_transfer_v2 | 5eb01705009896800009ffffff0001004e | 1 | 10000000 | 9 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x07252bea5dcf5400 | 0x004F6C62200D001D2b6C01319f141c2d2b4d25B1 | 0x002e08000acbbaE2155Fab7AC01929564949070d",
+		  "intent_native_transfer_v2 | 5eb0170500989680000affffff0001004e | 1 | 10000000 | 10 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x1dc8a0d8b1e50e00 | 0x0f9F20053d0B32e985683E41733f186C34352E04 | 0x002e08000acbbaE2155Fab7AC01929564949070d",
+		  "intent_native_transfer_v2 | 5eb0170500989680000fffffff0001004e | 1 | 10000000 | 15 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x01a215214e9ec767 | 0x797DBfaB26308010199f0B18c97C1C554Dd119f9 | 0x3682d9Df580BEf3d01CA8B94668a07D3e6D32A06",
+		  "intent_native_transfer_v2 | 5eb01705009896800010ffffff0001004e | 1 | 10000000 | 16 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x6816fe85c9b000 | 0xC88F7666330b4b511358b7742dC2a3234710e7B1 | 0x663c35c7a2Ccf6bb433f4428Bab0668a84fa3Bc8",
+		  "intent_native_transfer_v2 | 5eb01705009896800013ffffff0001004e | 1 | 10000000 | 19 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x0214e8348c4f0000 | 0x3ABd838b3673920626916aEfe3e27fE18b52C7b2 | 0x042C805d595d350a1dAEB800Fd3C94e0f5CEfF8d",
+		  "intent_native_transfer_v2 | 5eb01705009896800017ffffff0001004e | 1 | 10000000 | 23 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x1147806691101000 | 0x3B89578FC9f4B3C76380aE52269e2f037e2E4E62 | 0xfda400E0dD1E6564FCaED38c1622C88227C11Ada",
+		  "intent_native_transfer_v2 | 5eb01705009896800023ffffff0001004e | 1 | 10000000 | 35 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x038d7ea4c68000 | 0x5Dc24F0178FaF2553A05B6109934585574FE3a79 | 0xC38686B6c46A7833264b907aA90c1a965b831B25",
+		  "intent_native_transfer_v2 | 5eb01705009896800025ffffff0001004e | 1 | 10000000 | 37 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x0fc3a4b8d7a15617 | 0x172798f5e9AB2a92AD7A133ebD76e649b3Ff5133 | 0xCB4e45fbbC50A3C972c35bD2cFe552DbE493Ec7D",
+		  "intent_native_transfer_v2 | 5eb01705009896800027ffffff0001004e | 1 | 10000000 | 39 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x106b742d95f00a70 | 0x74381D4533cc43121abFef7566010dD9FB7c9F7a | 0xa0a3aD52bD69e93C0C9613f432A8D71DfF511FA8",
+		  "intent_native_transfer_v2 | 5eb01705009896800028ffffff0001004e | 1 | 10000000 | 40 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x015e6ebd075ae000 | 0xAc54b0f52F314F1eFBEf245A5416fD5d7E381B71 | 0xbD322d388f27D71cC7fdE9B146676aE140306d2a",
+		  "intent_native_transfer_v2 | 5eb01705009896800029ffffff0001004e | 1 | 10000000 | 41 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x057898378e89e780 | 0x74381D4533cc43121abFef7566010dD9FB7c9F7a | 0xbD322d388f27D71cC7fdE9B146676aE140306d2a",
+		  "intent_native_transfer_v2 | 5eb0170500989680002affffff0001004e | 1 | 10000000 | 42 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x057ae23c5e164a70 | 0x74381D4533cc43121abFef7566010dD9FB7c9F7a | 0x4aA45465D8aA3A80306bF5b068Cf33694D370145",
+		  "intent_native_transfer_v2 | 5eb0170500989680002cffffff0001004e | 1 | 10000000 | 44 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0xb1a2bc2ec50000 | 0x2815B97ce93D9162d26B833CFd30eDBF040Db6D2 | 0x77acB4781d4faf056355deF26Ba935C4a0ecaAdd",
+		  "intent_native_transfer_v2 | 5eb0170500989680002dffffff0001004e | 1 | 10000000 | 45 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0xb1a2bc2ec50000 | 0x2815B97ce93D9162d26B833CFd30eDBF040Db6D2 | 0x48Cd5866A154B98B912315b194eCb35c4ae4b047",
+		  "intent_native_transfer_v2 | 5eb0170500989680002fffffff0001004e | 1 | 10000000 | 47 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x012a6d8e11220000 | 0xB64Ea50f0c5a4b683Faa6f52655BD5b1A136653D | 0x2789a160325c6513A248f0147F28f32634bbc631",
+		  "intent_native_transfer_v2 | 5eb01705009896800030ffffff0001004e | 1 | 10000000 | 48 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x0162c2850b074544 | 0x29D5527CaA78f1946a409FA6aCaf14A0a4A0274b | 0x57b19F2e1061068d8ee2C101147405CC19D31d5f",
+		  "intent_native_transfer_v2 | 5eb01705009896800036ffffff0001004e | 1 | 10000000 | 54 | 16777215 | 2020-05-04T13:22:13.000Z | false | 0x5af3107a4000 | 0x0c045FAF60F5df62eBdcb25a8D7437f31ab5Ef8A | 0xb0339Aa29411085bBf7666136ACC34b9d588431F",
+		  "intent_native_transfer_v2 | 5eb01705009896800037ffffff0001004e | 1 | 10000000 | 55 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0xb1a2bc2ec50000 | 0x2815B97ce93D9162d26B833CFd30eDBF040Db6D2 | 0xC9a3919E99bACdad659f309451F104E1D483e4Ee",
+		  "intent_native_transfer_v2 | 5eb01705009896800047ffffff0001004e | 1 | 10000000 | 71 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x0429d069189e0000 | 0xFDA2a17aeC9ce1f4e98a9C232B7e09EBc479B71e | 0x3e086996dD447E05e01D6B2B99DA14793001C5c1",
+		  "intent_native_transfer_v2 | 5eb01705009896800048ffffff0001004e | 1 | 10000000 | 72 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x09b6e64a8ec60000 | 0xD85A723BE781b2102E5e1B28e9875BcbdF0E1171 | 0x3e086996dD447E05e01D6B2B99DA14793001C5c1",
+		  "intent_native_transfer_v2 | 5eb0170500989680004cffffff0001004e | 1 | 10000000 | 76 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x071afd498d0000 | 0xa9325582C0db7B26e290619Cb080191F8FD2273C | 0x287f571a21B28f35E499647e06c9b3136214daB1",
+		  "intent_native_transfer_v2 | 5eb0170500989680004dffffff0001004e | 1 | 10000000 | 77 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x09ac732c8011f500 | 0x4bda0fb64E1d415d4377478D247ab685D0F164BB | 0x1F3f1e944606d76CF16812683Bb95060b473f1f6",
+		  "intent_native_transfer_v2 | 5eb0170500989680005fffffff0001004e | 1 | 10000000 | 95 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x03e2c284391c0000 | 0x7555c3db1815973d9325bA17D6279d0bEefC022d | 0xa26E46d53cc0Cbc19F3f46FE933A6ecfDD2BCA7f",
+		  "intent_native_transfer_v2 | 5eb01705009896800062ffffff0001004e | 1 | 10000000 | 98 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x7c585087238000 | 0xf93501385BdE9305C6a36E13D0Ee499B01574338 | 0x8b6FD247c940D1a8b44BAeB918Db74195F956cc1",
+		  "intent_native_transfer_v2 | 5eb01705009896800066ffffff0001004e | 1 | 10000000 | 102 | 16777215 | 2020-05-04T13:22:13.000Z | true | 0x1bc16d674ec80000 | 0xd69B8fF1888e78d9C337C2f2e6b3Bf3E7357800E | 0x8A9d69Aa686fA0f9BbDec21294F67D4D9CFb4A3E",
+		]
+	`);
+});
