@@ -42,7 +42,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 
 	if (isHexEqual(props.address, props.event.recipient_address)) {
 		return (
-			<Description>
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
 				<Action type="swap">swaps</Action>
 				<Amounts event={props.event} />
@@ -79,7 +79,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 
 	if (isHexEqual(props.event.sender_address, props.event.recipient_address)) {
 		return (
-			<Description>
+			<Description success={props.event.success}>
 				<Account chain={chain} address={props.event.sender_address} />
 				<Action type="swap">swaps</Action>
 				<Amounts event={props.event} />
@@ -90,7 +90,7 @@ export function IntentUniswapV3SwapV1AccountDescription(props: { event: IntentUn
 	}
 
 	return (
-		<Description>
+		<Description success={props.event.success}>
 			<Account chain={chain} address={props.event.sender_address} />
 			<Action type="swap">swaps</Action>
 			<Amounts event={props.event} />
