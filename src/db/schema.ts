@@ -17,7 +17,7 @@ export { table as log_ens_reverse_claimed_v2 } from "@/events/log_ens_reverse_cl
 export { table as log_uniswap_v3_pool_created_v2 } from "@/events/log_uniswap_v3_pool_created_v2/table";
 export { table as log_ens_name_for_addr_changed_v2 } from "@/events/log_ens_name_for_addr_changed_v2/table";
 
-export { table as intent_idm_v1 } from "@/events/intent_idm_v1/table";
+export { table as intent_idm_v2 } from "@/events/intent_idm_v2/table";
 export { table as intent_fwa_won_v3 } from "@/events/intent_fwa_won_v3/table";
 export { table as intent_fwa_acquire_v2 } from "@/events/intent_fwa_acquire_v2/table";
 export { table as intent_fwa_deposited_v2 } from "@/events/intent_fwa_deposited_v2/table";
