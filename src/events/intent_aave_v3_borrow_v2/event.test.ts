@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { event, getIntentAaveV3BorrowV1 } from "./event";
+import { event, getIntentAaveV3BorrowV2 } from "./event";
 import { test_client, test_getBlock } from "@/tests/utils";
 
-test.concurrent("intent_aave_v3_borrow_v1 deletes, writes, and reads from storage", async ({ expect }) => {
+test.concurrent("intent_aave_v3_borrow_v2 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25621865 });
 
 	const events = event.handler(block);
@@ -12,7 +12,7 @@ test.concurrent("intent_aave_v3_borrow_v1 deletes, writes, and reads from storag
 
 	const ids = events.map((event) => event.id);
 
-	const initial = await getIntentAaveV3BorrowV1(ids);
+	const initial = await getIntentAaveV3BorrowV2(ids);
 
 	expect(initial).toStrictEqual([]);
 
@@ -22,53 +22,63 @@ test.concurrent("intent_aave_v3_borrow_v1 deletes, writes, and reads from storag
 			{
 				blocks: [block],
 				events: [
-					"intent_aave_v3_borrow_v1", //
-					"intent_aave_v3_borrow_v1_index_account_v4",
-					"intent_aave_v3_borrow_v1_index_block_number_tx_index_v4",
+					"intent_aave_v3_borrow_v2", //
+					"intent_aave_v3_borrow_v2_index_account_v4",
+					"intent_aave_v3_borrow_v2_index_block_number_tx_index_v4",
 				],
 			},
 		],
 	});
 
-	const final = await getIntentAaveV3BorrowV1(ids);
+	const final = await getIntentAaveV3BorrowV2(ids);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
 		  {
+		    "block_number": 25621865,
+		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "borrower_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
-		    "id": "6a66e3830186f56900bcffffff00010019",
+		    "chain": 1,
+		    "id": "6a66e3830186f56900bcffffff0001003f",
 		    "interest_rate_mode": "0x02",
+		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "quantity": "0x04edf12cb800",
 		    "referral_code": "0x00",
 		    "success": true,
-		    "tag": "intent_aave_v3_borrow_v1",
+		    "tag": "intent_aave_v3_borrow_v2",
 		    "token_address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+		    "tx_index": 188,
 		  },
 		]
 	`);
 });
 
-test.concurrent("intent_aave_v3_borrow_v1 handles all function selectors", async ({ expect }) => {
+test.concurrent("intent_aave_v3_borrow_v2 handles all function selectors", async ({ expect }) => {
 	const b25621865 = await test_getBlock({ chain: 1, block_number: 25621865 });
 
 	expect(event.handler(b25621865)).toMatchInlineSnapshot(`
 		[
 		  {
+		    "block_number": 25621865,
+		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "borrower_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
-		    "id": "6a66e3830186f56900bcffffff00010019",
+		    "chain": 1,
+		    "id": "6a66e3830186f56900bcffffff0001003f",
 		    "interest_rate_mode": "0x2",
+		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "quantity": "0x4edf12cb800",
 		    "referral_code": "0x0",
 		    "success": true,
 		    "token_address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+		    "tx_index": 188,
 		  },
 		]
 	`);
 });
 
-test.concurrent("intent_aave_v3_borrow_v1 includes failed submissions", async ({ expect }) => {
+test.concurrent("intent_aave_v3_borrow_v2 includes failed submissions", async ({ expect }) => {
 	const block = await test_getBlock({ chain: 1, block_number: 25621865 });
 
 	const failed = {
@@ -89,14 +99,19 @@ test.concurrent("intent_aave_v3_borrow_v1 includes failed submissions", async ({
 	expect(event.handler(failed)).toMatchInlineSnapshot(`
 		[
 		  {
+		    "block_number": 25621865,
+		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "borrower_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
-		    "id": "6a66e3830186f56900bcffffff00010019",
+		    "chain": 1,
+		    "id": "6a66e3830186f56900bcffffff0001003f",
 		    "interest_rate_mode": "0x2",
+		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "quantity": "0x4edf12cb800",
 		    "referral_code": "0x0",
 		    "success": false,
 		    "token_address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+		    "tx_index": 188,
 		  },
 		]
 	`);

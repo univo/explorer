@@ -232,6 +232,13 @@
       "when": 1790557935932,
       "tag": "0032_log-ens-reverse-claimed-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1790559335013,
+      "tag": "0033_intent-aave-v3-borrow-v2",
+      "breakpoints": true
     }
   ]
 }

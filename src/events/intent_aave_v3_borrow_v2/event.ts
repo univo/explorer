@@ -1,8 +1,9 @@
-import { asc, inArray, sql } from "drizzle-orm";
-import { decodeFunctionData, getAddress, parseAbiItem, toFunctionSelector } from "viem";
+import { and, asc, inArray } from "drizzle-orm";
+import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
 import { univo } from "@/univo";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -10,9 +11,14 @@ import { index_account_v4 } from "@/indexes/index_account_v4";
 import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
-export interface IntentAaveV3BorrowV1 {
-	tag: "intent_aave_v3_borrow_v1";
+export interface IntentAaveV3BorrowV2 {
+	tag: "intent_aave_v3_borrow_v2";
 	id: string;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
 	success: boolean;
 	quantity: `0x${string}`;
 	referral_code: `0x${string}`;
@@ -30,7 +36,7 @@ const BORROW_ABI = parseAbiItem(
 );
 
 export const event = univo.event({
-	id: "intent_aave_v3_borrow_v1",
+	id: "intent_aave_v3_borrow_v2",
 
 	filters: [
 		{
@@ -41,7 +47,7 @@ export const event = univo.event({
 	],
 
 	handler: (block) => {
-		return block.eth_getBlockByNumber.transactions.flatMap<IntentAaveV3BorrowV1>((tx) => {
+		return block.eth_getBlockByNumber.transactions.flatMap<IntentAaveV3BorrowV2>((tx) => {
 			try {
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
@@ -62,7 +68,7 @@ export const event = univo.event({
 					logIndex: TRANSACTION_EVENT,
 					chainId: block.eth_chainId,
 					txIndex: tx.transactionIndex,
-					tableId: TABLES.intent_aave_v3_borrow_v1,
+					tableId: TABLES.intent_aave_v3_borrow_v2,
 					blockNumber: block.eth_getBlockByNumber.number,
 					blockTimestamp: block.eth_getBlockByNumber.timestamp,
 				});
@@ -70,8 +76,13 @@ export const event = univo.event({
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				return {
-					tag: "intent_aave_v3_borrow_v1",
+					tag: "intent_aave_v3_borrow_v2",
 					id,
+					log_index: hexToNumber(TRANSACTION_EVENT),
+					chain: hexToNumber(block.eth_chainId),
+					tx_index: hexToNumber(tx.transactionIndex),
+					block_number: hexToNumber(block.eth_getBlockByNumber.number),
+					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					quantity: numberToHex(args[1]),
 					success: getEventSuccess(receipt),
 					token_address: getAddress(args[0]),
@@ -87,36 +98,28 @@ export const event = univo.event({
 	},
 
 	storage: {
-		async upsert(batch) {
+		async upsert(events) {
 			const MAX_BATCH_SIZE = 4000;
 			const client = await createPostgresClient();
 
-			for (let i = 0; i < batch.length; i += MAX_BATCH_SIZE) {
-				await client
-					.insert(table)
-					.values(batch.slice(i, i + MAX_BATCH_SIZE))
-					.onConflictDoUpdate({
-						target: table.id,
-						set: {
-							success: sql.raw(`excluded.${table.success.name}`),
-							quantity: sql.raw(`excluded.${table.quantity.name}`),
-							referral_code: sql.raw(`excluded.${table.referral_code.name}`),
-							token_address: sql.raw(`excluded.${table.token_address.name}`),
-							borrower_address: sql.raw(`excluded.${table.borrower_address.name}`),
-							interest_rate_mode: sql.raw(`excluded.${table.interest_rate_mode.name}`),
-							on_behalf_of_address: sql.raw(`excluded.${table.on_behalf_of_address.name}`),
-						},
-					});
+			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
+				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
 			}
 		},
 
-		async delete(batch) {
+		async delete(events) {
 			const client = await createPostgresClient();
 
 			await client.delete(table).where(
-				inArray(
-					table.id,
-					batch.map((event) => event.id),
+				and(
+					inArray(
+						table.block_timestamp,
+						events.map((event) => event.block_timestamp),
+					),
+					inTuple(
+						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+					),
 				),
 			);
 		},
@@ -126,14 +129,14 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
-	id: "intent_aave_v3_borrow_v1_index_block_number_tx_index_v4",
+	id: "intent_aave_v3_borrow_v2_index_block_number_tx_index_v4",
 	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
 	filters: event.filters,
 	storage: index_account_v4,
-	id: "intent_aave_v3_borrow_v1_index_account_v4",
+	id: "intent_aave_v3_borrow_v2_index_account_v4",
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
@@ -146,8 +149,9 @@ univo.event({
 	},
 });
 
-export async function getIntentAaveV3BorrowV1(ids: string[]) {
-	const filtered = ids.filter((id) => parseId(id).tableId === TABLES.intent_aave_v3_borrow_v1);
+export async function getIntentAaveV3BorrowV2(ids: string[]) {
+	const mapped = ids.map((id) => parseId(id));
+	const filtered = mapped.filter((id) => id.tableId === TABLES.intent_aave_v3_borrow_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -156,22 +160,47 @@ export async function getIntentAaveV3BorrowV1(ids: string[]) {
 	const client = await createPostgresClient();
 
 	const rows = await client
-		.select() //
+		.selectDistinct()
 		.from(table)
-		.where(inArray(table.id, filtered))
-		.orderBy(asc(table.id));
+		.where(
+			and(
+				inArray(
+					table.block_timestamp,
+					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+				),
+				inTuple(
+					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
+					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+				),
+			),
+		)
+		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
-	return rows.map<IntentAaveV3BorrowV1>((result) => {
+	return rows.map<IntentAaveV3BorrowV2>((row) => {
+		const id = createId({
+			chainId: numberToHex(row.chain),
+			txIndex: numberToHex(row.tx_index),
+			tableId: TABLES.intent_aave_v3_borrow_v2,
+			logIndex: numberToHex(row.log_index),
+			blockNumber: numberToHex(row.block_number),
+			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
+		});
+
 		return {
-			tag: "intent_aave_v3_borrow_v1",
-			id: result.id,
-			success: result.success,
-			quantity: result.quantity,
-			referral_code: result.referral_code,
-			interest_rate_mode: result.interest_rate_mode,
-			token_address: getAddress(result.token_address),
-			borrower_address: getAddress(result.borrower_address),
-			on_behalf_of_address: getAddress(result.on_behalf_of_address),
+			tag: "intent_aave_v3_borrow_v2",
+			id,
+			chain: row.chain,
+			tx_index: row.tx_index,
+			log_index: row.log_index,
+			block_number: row.block_number,
+			block_timestamp: row.block_timestamp,
+			success: row.success,
+			quantity: row.quantity,
+			referral_code: row.referral_code,
+			interest_rate_mode: row.interest_rate_mode,
+			token_address: getAddress(row.token_address),
+			borrower_address: getAddress(row.borrower_address),
+			on_behalf_of_address: getAddress(row.on_behalf_of_address),
 		};
 	});
 }

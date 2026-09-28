@@ -24,7 +24,7 @@ export { table as intent_fwa_deposited_v1 } from "@/events/intent_fwa_deposited_
 export { table as intent_aave_v3_repay_v1 } from "@/events/intent_aave_v3_repay_v1/table";
 export { table as intent_usdc_blacklist_v1 } from "@/events/intent_usdc_blacklist_v1/table";
 export { table as intent_aave_v3_supply_v1 } from "@/events/intent_aave_v3_supply_v1/table";
-export { table as intent_aave_v3_borrow_v1 } from "@/events/intent_aave_v3_borrow_v1/table";
+export { table as intent_aave_v3_borrow_v2 } from "@/events/intent_aave_v3_borrow_v2/table";
 export { table as intent_erc20_approval_v1 } from "@/events/intent_erc20_approval_v1/table";
 export { table as intent_erc20_transfer_v1 } from "@/events/intent_erc20_transfer_v1/table";
 export { table as intent_erc721_approval_v1 } from "@/events/intent_erc721_approval_v1/table";
