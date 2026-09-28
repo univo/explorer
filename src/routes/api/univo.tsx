@@ -11,7 +11,7 @@ import "@/events/intent_idm_v1/event";
 import "@/events/intent_fwa_won_v2/event";
 import "@/events/intent_fwa_acquire_v1/event";
 import "@/events/intent_fwa_deposited_v1/event";
-import "@/events/intent_aave_v3_repay_v1/event";
+import "@/events/intent_aave_v3_repay_v2/event";
 import "@/events/intent_usdc_blacklist_v1/event";
 import "@/events/intent_aave_v3_supply_v1/event";
 import "@/events/intent_aave_v3_borrow_v2/event";
