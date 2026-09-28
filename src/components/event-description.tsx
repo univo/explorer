@@ -14,7 +14,7 @@ import { LogEnsNameForAddrChangedV2Description } from "@/events/log_ens_name_for
 
 import { IntentIdmV1AccountDescription } from "@/events/intent_idm_v1/component";
 import { IntentFwaWonV2AccountDescription } from "@/events/intent_fwa_won_v2/component";
-import { IntentFwaAcquireV1AccountDescription } from "@/events/intent_fwa_acquire_v1/component";
+import { IntentFwaAcquireV2AccountDescription } from "@/events/intent_fwa_acquire_v2/component";
 import { IntentAaveV3RepayV2AccountDescription } from "@/events/intent_aave_v3_repay_v2/component";
 import { IntentFwaDepositedV1AccountDescription } from "@/events/intent_fwa_deposited_v1/component";
 import { IntentAaveV3SupplyV2AccountDescription } from "@/events/intent_aave_v3_supply_v2/component";
@@ -88,8 +88,8 @@ export function EventDescription(props: { event: Event; address: `0x${string}` |
 		return <IntentFwaWonV2AccountDescription event={props.event} address={props.address} />;
 	}
 
-	if (props.event.tag === "intent_fwa_acquire_v1") {
-		return <IntentFwaAcquireV1AccountDescription event={props.event} address={props.address} />;
+	if (props.event.tag === "intent_fwa_acquire_v2") {
+		return <IntentFwaAcquireV2AccountDescription event={props.event} address={props.address} />;
 	}
 
 	if (props.event.tag === "intent_aave_v3_supply_v2") {

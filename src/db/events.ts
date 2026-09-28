@@ -5,7 +5,7 @@ import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
 import { getLogFwaNftListedV2 } from "@/events/log_fwa_nft_listed_v2/event";
 import { getLogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
 import { getLogErc20ApprovalV2 } from "@/events/log_erc20_approval_v2/event";
-import { getIntentFwaAcquireV1 } from "@/events/intent_fwa_acquire_v1/event";
+import { getIntentFwaAcquireV2 } from "@/events/intent_fwa_acquire_v2/event";
 import { getLogUniswapV3SwapV2 } from "@/events/log_uniswap_v3_swap_v2/event";
 import { getLogErc721TransferV2 } from "@/events/log_erc721_transfer_v2/event";
 import { getLogErc721ApprovalV2 } from "@/events/log_erc721_approval_v2/event";
@@ -57,7 +57,7 @@ export async function getEventsForIds(ids: string[]) {
 
 		getIntentIdmV1(ids),
 		getIntentFwaWonV2(ids),
-		getIntentFwaAcquireV1(ids),
+		getIntentFwaAcquireV2(ids),
 		getIntentAaveV3RepayV2(ids),
 		getIntentFwaDepositedV1(ids),
 		getIntentAaveV3SupplyV2(ids),
