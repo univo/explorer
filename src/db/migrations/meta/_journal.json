@@ -365,6 +365,13 @@
       "when": 1790637472351,
       "tag": "0051_intent-uniswap-v3-swap-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1790638327648,
+      "tag": "0052_intent-usdc-blacklist-v2",
+      "breakpoints": true
     }
   ]
 }
