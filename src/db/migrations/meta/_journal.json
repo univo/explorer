@@ -295,6 +295,13 @@
       "when": 1790574214200,
       "tag": "0041_intent-erc20-transfer-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1790574997670,
+      "tag": "0042_intent-erc721-approval-v2",
+      "breakpoints": true
     }
   ]
 }
