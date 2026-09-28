@@ -309,6 +309,13 @@
       "when": 1790576085766,
       "tag": "0043_intent-erc721-transfer-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1790577130439,
+      "tag": "0044_intent-fwa-acquire-v2",
+      "breakpoints": true
     }
   ]
 }
