@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { test_getBlock } from "@/tests/utils";
 import { event as log_erc20_transfer_v2 } from "@/events/log_erc20_transfer_v2/event";
 import { event as intent_native_transfer_v2 } from "@/events/intent_native_transfer_v2/event";
-import { getEventIdsForBlockNumber, getEventIdsForTxPosition, index_block_number_tx_index_v4 } from "./index_block_number_tx_index_v4";
+import { getEventsForBlockNumber, getEventsForTxPosition, index_block_number_tx_index_v4 } from "./index_block_number_tx_index_v4";
 
 test.concurrent("intent_native_transfer_v2", async ({ expect }) => {
 	const block_number = 10000000;
@@ -16,7 +16,7 @@ test.concurrent("intent_native_transfer_v2", async ({ expect }) => {
 
 	await index_block_number_tx_index_v4.upsert(indexes);
 
-	const ids = await getEventIdsForBlockNumber(1, block_number);
+	const ids = await getEventsForBlockNumber(1, block_number);
 
 	expect(ids).toMatchInlineSnapshot(`
 		[
@@ -66,7 +66,7 @@ test.concurrent("log_erc20_transfer_v2", async ({ expect }) => {
 
 	await index_block_number_tx_index_v4.upsert(indexes);
 
-	const ids = await getEventIdsForTxPosition(1, block_number, 0);
+	const ids = await getEventsForTxPosition(1, block_number, 0);
 
 	expect(ids).toMatchInlineSnapshot(`
 		[
