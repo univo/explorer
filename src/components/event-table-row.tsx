@@ -4,12 +4,21 @@ import clsx from "clsx";
 import { Fragment } from "react";
 import type { MouseEvent, ReactNode } from "react";
 
-import { parseId } from "@/helpers";
 import { Timestamp } from "./timestamp";
 import { RelativeTimestamp } from "./relative-timestamp";
 import { useFrameIndex, useFrames } from "@/frames/frame-context";
 
-export function EventTableRow(props: { id: string; previousId: string; children: ReactNode }) {
+type EventTableRowProps = {
+	blockNumber: number;
+	txIndex: number;
+
+	blockTimestamp: number;
+	previousBlockTimestamp: number;
+
+	children: ReactNode;
+};
+
+export function EventTableRow(props: EventTableRowProps) {
 	const frames = useFrames();
 	const index = useFrameIndex();
 
@@ -18,11 +27,11 @@ export function EventTableRow(props: { id: string; previousId: string; children:
 			return;
 		}
 
-		frames.push(props.id, index);
+		frames.push(`${props.blockNumber}-${props.txIndex}`, index);
 	}
 
-	const timestamp = new Date(parseId(props.id).blockTimestamp * 1000);
-	const previousTimestamp = new Date(parseId(props.previousId).blockTimestamp * 1000);
+	const timestamp = new Date(props.blockTimestamp);
+	const previousTimestamp = new Date(props.previousBlockTimestamp);
 	const eventDay = timestamp.toLocaleDateString("en", { day: "numeric" });
 	const previousEventDay = previousTimestamp.toLocaleDateString("en", { day: "numeric" });
 	const showSeparator = eventDay !== previousEventDay;

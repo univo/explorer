@@ -10,9 +10,7 @@ test.concurrent("log_fwa_nft_allocated_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getLogFwaNftAllocatedV2(ids);
+	const initial = await getLogFwaNftAllocatedV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -29,7 +27,7 @@ test.concurrent("log_fwa_nft_allocated_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const final = await getLogFwaNftAllocatedV2(ids);
+	const final = await getLogFwaNftAllocatedV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("log_fwa_nft_allocated_v2 deletes, writes, and reads from storag
 		    "block_timestamp": 2026-07-30T02:54:35.000Z,
 		    "chain": 1,
 		    "depositor_address": "0x03594D72e895e4ecD716e472C84815233047e566",
-		    "id": "6a6abceb0187473900df0004d10001003d",
 		    "listing_id": "0x016f9b",
 		    "log_index": 1233,
 		    "purchaser_address": "0xa89C876BE69223295A0925D7A62Cb6868dEc4ac8",

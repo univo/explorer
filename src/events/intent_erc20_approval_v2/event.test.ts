@@ -12,9 +12,7 @@ test.concurrent("intent_erc20_approval_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(handled);
 
-	const ids = handled.map((event) => event.id);
-
-	const initial = await getIntentErc20ApprovalV2(ids);
+	const initial = await getIntentErc20ApprovalV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -32,7 +30,7 @@ test.concurrent("intent_erc20_approval_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const stored = await getIntentErc20ApprovalV2(ids);
+	const stored = await getIntentErc20ApprovalV2(handled);
 
 	expect(stored).toHaveLength(2);
 
@@ -41,7 +39,6 @@ test.concurrent("intent_erc20_approval_v2 deletes, writes, and reads from storag
 		  "block_number": 10000000,
 		  "block_timestamp": 2020-05-04T13:22:13.000Z,
 		  "chain": 1,
-		  "id": "5eb0170500989680004fffffff00010046",
 		  "log_index": 16777215,
 		  "owner_address": "0x09e80bdE912794fdbEA1e5B68B0C37A346b73cfC",
 		  "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",

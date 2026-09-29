@@ -1,4 +1,5 @@
 import { logger } from "@/utils";
+import type { Table } from "./constants";
 import { getIntentIdmV2 } from "@/events/intent_idm_v2/event";
 import { getIntentFwaWonV3 } from "@/events/intent_fwa_won_v3/event";
 import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
@@ -31,11 +32,18 @@ import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_creat
 import { getIntentContractDeploymentV2 } from "@/events/intent_contract_deployment_v2/event";
 import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
 
-// This is our central point of configuration for which all the events the app loads.
+export type Id = {
+	tag: Table;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
+};
 
 export type Event = Awaited<ReturnType<typeof getEventsForIds>>[number];
 
-export async function getEventsForIds(ids: string[]) {
+export async function getEventsForIds(ids: Id[]) {
 	if (ids.length === 0) {
 		return [];
 	}

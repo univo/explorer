@@ -8,9 +8,9 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 
 	await event.storage.delete(event.handler(block));
 
-	const ids = event.handler(block).map((event) => event.id);
+	const handled = event.handler(block);
 
-	const initial = await getLogErc20ApprovalV2(ids);
+	const initial = await getLogErc20ApprovalV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -27,7 +27,7 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		],
 	});
 
-	const events = await getLogErc20ApprovalV2(ids);
+	const events = await getLogErc20ApprovalV2(handled);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -35,7 +35,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001800001000010035",
 		    "log_index": 16,
 		    "owner_address": "0xBCE5FE052B25E422550f6012FDD1941F9353f001",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -48,7 +47,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001900002700010035",
 		    "log_index": 39,
 		    "owner_address": "0x1f52775214e2B3d099eB82b6e9e9025c490157ad",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -61,7 +59,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001a00002900010035",
 		    "log_index": 41,
 		    "owner_address": "0x2858e866C5fdCefeA13Bedf13948A785b5C8b040",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -74,7 +71,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001b00002b00010035",
 		    "log_index": 43,
 		    "owner_address": "0x903171964EE615Dc99F350bd29ea747B887aE3F4",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -87,7 +83,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001c00002f00010035",
 		    "log_index": 47,
 		    "owner_address": "0x798bE9b2AdfcA455c78fB648ec11538C0964F69d",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -100,7 +95,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001d00003100010035",
 		    "log_index": 49,
 		    "owner_address": "0x445328c3b205Ea0415a9e8fB6EA8E4C5D2dB6B2e",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -113,7 +107,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001e00003500010035",
 		    "log_index": 53,
 		    "owner_address": "0x657FbEEe7214758a72e3139EC0d04b162e274814",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -126,7 +119,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680001f00003700010035",
 		    "log_index": 55,
 		    "owner_address": "0x425a488128aF3eD04886AA4220b58C145601f23f",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -139,7 +131,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680002000003900010035",
 		    "log_index": 57,
 		    "owner_address": "0xae3703814FD2658EA0AE7da11fed10047ae89c49",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -152,7 +143,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680002100003d00010035",
 		    "log_index": 61,
 		    "owner_address": "0x685dB7892a33cD919774eEA104f1B3cfD25f470E",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -165,7 +155,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680002200003f00010035",
 		    "log_index": 63,
 		    "owner_address": "0xD4d64d331281e5CFeD11FCfb23882A3eE946289F",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -178,7 +167,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680004f00007500010035",
 		    "log_index": 117,
 		    "owner_address": "0x09e80bdE912794fdbEA1e5B68B0C37A346b73cfC",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -191,7 +179,6 @@ test.concurrent("log_erc20_approval_v2", async ({ expect }) => {
 		    "block_number": 10000000,
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
-		    "id": "5eb0170500989680005000007600010035",
 		    "log_index": 118,
 		    "owner_address": "0x09e80bdE912794fdbEA1e5B68B0C37A346b73cfC",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",

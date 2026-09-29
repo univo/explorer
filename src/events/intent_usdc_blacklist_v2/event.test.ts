@@ -10,9 +10,7 @@ test.concurrent("intent_usdc_blacklist_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(handled);
 
-	const ids = handled.map((event) => event.id);
-
-	const initial = await getIntentUsdcBlacklistV2(ids);
+	const initial = await getIntentUsdcBlacklistV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_usdc_blacklist_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const events = await getIntentUsdcBlacklistV2(ids);
+	const events = await getIntentUsdcBlacklistV2(handled);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("intent_usdc_blacklist_v2 deletes, writes, and reads from storag
 		    "block_number": 25497404,
 		    "block_timestamp": 2026-07-09T20:26:11.000Z,
 		    "chain": 1,
-		    "id": "6a5003e301850f3c0023ffffff00010052",
 		    "log_index": 16777215,
 		    "success": true,
 		    "tag": "intent_usdc_blacklist_v2",

@@ -13,9 +13,7 @@ test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentFwaDepositedV2(ids);
+	const initial = await getIntentFwaDepositedV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -33,7 +31,7 @@ test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage
 		],
 	});
 
-	const final = await getIntentFwaDepositedV2(ids);
+	const final = await getIntentFwaDepositedV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -44,7 +42,6 @@ test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage
 		    "chain": 1,
 		    "collection_address": "0x26D7Ad0E930b54b84C00DAad077Ee31Ba9e2Fb2E",
 		    "depositor_address": "0x906691Bc9F0b5b505F3E9024B2e9342c554C7958",
-		    "id": "6a6a9483018743dd0017ffffff0001004b",
 		    "log_index": 16777215,
 		    "success": true,
 		    "tag": "intent_fwa_deposited_v2",

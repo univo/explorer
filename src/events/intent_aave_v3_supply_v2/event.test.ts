@@ -10,9 +10,7 @@ test.concurrent("intent_aave_v3_supply_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentAaveV3SupplyV2(ids);
+	const initial = await getIntentAaveV3SupplyV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_aave_v3_supply_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const final = await getIntentAaveV3SupplyV2(ids);
+	const final = await getIntentAaveV3SupplyV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -38,7 +36,6 @@ test.concurrent("intent_aave_v3_supply_v2 deletes, writes, and reads from storag
 		    "block_number": 25621890,
 		    "block_timestamp": 2026-07-27T04:55:11.000Z,
 		    "chain": 1,
-		    "id": "6a66e4af0186f58200acffffff00010041",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xD411D428a63cf4c7029Bc53f0e0f56C4933FDbb7",
 		    "quantity": "0x1e44dc0520",
@@ -62,7 +59,6 @@ test.concurrent("intent_aave_v3_supply_v2 handles all function selectors", async
 		    "block_number": 25621890,
 		    "block_timestamp": 2026-07-27T04:55:11.000Z,
 		    "chain": 1,
-		    "id": "6a66e4af0186f58200acffffff00010041",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xD411D428a63cf4c7029Bc53f0e0f56C4933FDbb7",
 		    "quantity": "0x1e44dc0520",
@@ -83,7 +79,6 @@ test.concurrent("intent_aave_v3_supply_v2 handles all function selectors", async
 		    "block_number": 25622082,
 		    "block_timestamp": 2026-07-27T05:33:47.000Z,
 		    "chain": 1,
-		    "id": "6a66edbb0186f6420062ffffff00010041",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0x7F7c47b9a4160cB500F40aeD289b67857701a9Ac",
 		    "quantity": "0x2723d945db3dad54",
@@ -104,7 +99,6 @@ test.concurrent("intent_aave_v3_supply_v2 handles all function selectors", async
 		    "block_number": 25635372,
 		    "block_timestamp": 2026-07-29T02:02:23.000Z,
 		    "chain": 1,
-		    "id": "6a695f2f01872a2c0107ffffff00010041",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0x44d15Af7b0A5651EaA4a2F653a352Ca5763aaeC3",
 		    "quantity": "0x28ab6d0",
@@ -142,7 +136,6 @@ test.concurrent("intent_aave_v3_supply_v2 includes failed submissions", async ({
 		    "block_number": 25621890,
 		    "block_timestamp": 2026-07-27T04:55:11.000Z,
 		    "chain": 1,
-		    "id": "6a66e4af0186f58200acffffff00010041",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xD411D428a63cf4c7029Bc53f0e0f56C4933FDbb7",
 		    "quantity": "0x1e44dc0520",

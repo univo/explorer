@@ -1,4 +1,5 @@
-import { sql, type Column, type SQL } from "drizzle-orm";
+import { sql } from "drizzle-orm";
+import type { Column, SQL } from "drizzle-orm";
 import { customType } from "drizzle-orm/pg-core";
 
 export function inTuple(columns: Column[], values: any[][]): SQL<unknown> {

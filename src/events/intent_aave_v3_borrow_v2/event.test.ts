@@ -10,9 +10,7 @@ test.concurrent("intent_aave_v3_borrow_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentAaveV3BorrowV2(ids);
+	const initial = await getIntentAaveV3BorrowV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_aave_v3_borrow_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const final = await getIntentAaveV3BorrowV2(ids);
+	const final = await getIntentAaveV3BorrowV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("intent_aave_v3_borrow_v2 deletes, writes, and reads from storag
 		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "borrower_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "chain": 1,
-		    "id": "6a66e3830186f56900bcffffff0001003f",
 		    "interest_rate_mode": "0x02",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
@@ -64,7 +61,6 @@ test.concurrent("intent_aave_v3_borrow_v2 handles all function selectors", async
 		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "borrower_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "chain": 1,
-		    "id": "6a66e3830186f56900bcffffff0001003f",
 		    "interest_rate_mode": "0x2",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
@@ -103,7 +99,6 @@ test.concurrent("intent_aave_v3_borrow_v2 includes failed submissions", async ({
 		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "borrower_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "chain": 1,
-		    "id": "6a66e3830186f56900bcffffff0001003f",
 		    "interest_rate_mode": "0x2",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",

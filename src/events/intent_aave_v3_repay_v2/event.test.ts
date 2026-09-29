@@ -10,9 +10,7 @@ test.concurrent("intent_aave_v3_repay_v2 deletes, writes, and reads from storage
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentAaveV3RepayV2(ids);
+	const initial = await getIntentAaveV3RepayV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_aave_v3_repay_v2 deletes, writes, and reads from storage
 		],
 	});
 
-	const final = await getIntentAaveV3RepayV2(ids);
+	const final = await getIntentAaveV3RepayV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -38,7 +36,6 @@ test.concurrent("intent_aave_v3_repay_v2 deletes, writes, and reads from storage
 		    "block_number": 25621858,
 		    "block_timestamp": 2026-07-27T04:48:47.000Z,
 		    "chain": 1,
-		    "id": "6a66e32f0186f562007cffffff00010040",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "quantity": "0x049da91a1da4b0b228f87f",
@@ -61,7 +58,6 @@ test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async 
 		    "block_number": 25621858,
 		    "block_timestamp": 2026-07-27T04:48:47.000Z,
 		    "chain": 1,
-		    "id": "6a66e32f0186f562007cffffff00010040",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "quantity": "0x49da91a1da4b0b228f87f",
@@ -81,7 +77,6 @@ test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async 
 		    "block_number": 25622279,
 		    "block_timestamp": 2026-07-27T06:13:35.000Z,
 		    "chain": 1,
-		    "id": "6a66f70f0186f7070033ffffff00010040",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0x282E75F8a72919581994729766189d3aDd339897",
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -101,7 +96,6 @@ test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async 
 		    "block_number": 25621977,
 		    "block_timestamp": 2026-07-27T05:12:35.000Z,
 		    "chain": 1,
-		    "id": "6a66e8c30186f5d9003fffffff00010040",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0x1deD480959Ac0Ccc36757E26D10F83DF44eAe808",
 		    "quantity": "0x63a47bf56f4e0000",
@@ -138,7 +132,6 @@ test.concurrent("intent_aave_v3_repay_v2 includes failed submissions", async ({ 
 		    "block_number": 25621858,
 		    "block_timestamp": 2026-07-27T04:48:47.000Z,
 		    "chain": 1,
-		    "id": "6a66e32f0186f562007cffffff00010040",
 		    "log_index": 16777215,
 		    "on_behalf_of_address": "0xCf0a12CBd8088fc5f84ad431E71787157041cD69",
 		    "quantity": "0x49da91a1da4b0b228f87f",

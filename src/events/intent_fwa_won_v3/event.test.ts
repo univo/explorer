@@ -10,9 +10,7 @@ test.concurrent("intent_fwa_won_v3 deletes, writes, and reads from storage", asy
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentFwaWonV3(ids);
+	const initial = await getIntentFwaWonV3(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_fwa_won_v3 deletes, writes, and reads from storage", asy
 		],
 	});
 
-	const final = await getIntentFwaWonV3(ids);
+	const final = await getIntentFwaWonV3(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -38,7 +36,6 @@ test.concurrent("intent_fwa_won_v3 deletes, writes, and reads from storage", asy
 		    "block_number": 25641950,
 		    "block_timestamp": 2026-07-30T00:02:23.000Z,
 		    "chain": 1,
-		    "id": "6a6a948f018743de0045ffffff0001004c",
 		    "listing_id": "0xf8ac",
 		    "log_index": 16777215,
 		    "payout_eth": "0x0fccc3b7ccc84000",
@@ -62,7 +59,6 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 		    "block_number": 25641950,
 		    "block_timestamp": 2026-07-30T00:02:23.000Z,
 		    "chain": 1,
-		    "id": "6a6a948f018743de0045ffffff0001004c",
 		    "listing_id": "0xf8ac",
 		    "log_index": 16777215,
 		    "payout_eth": "0xfccc3b7ccc84000",
@@ -83,7 +79,6 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 		    "block_number": 25642834,
 		    "block_timestamp": 2026-07-30T02:59:35.000Z,
 		    "chain": 1,
-		    "id": "6a6abe1701874752005cffffff0001004c",
 		    "listing_id": "0x176bb",
 		    "log_index": 16777215,
 		    "payout_eth": "0x14c2dc12e7fc000",
@@ -97,7 +92,6 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 		    "block_number": 25642834,
 		    "block_timestamp": 2026-07-30T02:59:35.000Z,
 		    "chain": 1,
-		    "id": "6a6abe17018747520062ffffff0001004c",
 		    "listing_id": "0x16f9b",
 		    "log_index": 16777215,
 		    "payout_eth": "0x93b8ca29c2c000",
@@ -118,7 +112,6 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 		    "block_number": 25641960,
 		    "block_timestamp": 2026-07-30T00:04:23.000Z,
 		    "chain": 1,
-		    "id": "6a6a9507018743e80030ffffff0001004c",
 		    "listing_id": "0x167bd",
 		    "log_index": 16777215,
 		    "payout_eth": "0xe8866da08ca000",
@@ -141,7 +134,6 @@ test.concurrent("intent_fwa_won_v3 uses sentinels for failed settlements", async
 		    "block_number": 25642555,
 		    "block_timestamp": 2026-07-30T02:03:47.000Z,
 		    "chain": 1,
-		    "id": "6a6ab1030187463b0079ffffff0001004c",
 		    "listing_id": "0x17804",
 		    "log_index": 16777215,
 		    "payout_eth": "0x0",

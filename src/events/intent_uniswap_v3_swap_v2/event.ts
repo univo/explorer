@@ -4,16 +4,16 @@ import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbi, 
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
+import type { Id } from "@/events";
+import { getEventSuccess } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
-import { createId, getEventSuccess, parseId } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentUniswapV3SwapV2 {
 	tag: "intent_uniswap_v3_swap_v2";
-	id: string;
 	chain: number;
 	tx_index: number;
 	log_index: number;
@@ -30,10 +30,7 @@ export interface IntentUniswapV3SwapV2 {
 	recipient_address: `0x${string}`;
 }
 
-type DecodedSwap = Omit<
-	IntentUniswapV3SwapV2,
-	"tag" | "id" | "chain" | "tx_index" | "log_index" | "block_number" | "block_timestamp" | "success"
->;
+type DecodedSwap = Omit<IntentUniswapV3SwapV2, "tag" | "chain" | "tx_index" | "log_index" | "block_number" | "block_timestamp" | "success">;
 
 export const UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK = 12369634;
 export const UNISWAP_V3_SWAP_ROUTER_ADDRESS = getAddress("0xE592427A0AEce92De3Edee1F18E0157C05861564");
@@ -252,22 +249,12 @@ export const event = univo.event({
 					return [];
 				}
 
-				const id = createId({
-					logIndex: TRANSACTION_EVENT,
-					chainId: block.eth_chainId,
-					txIndex: tx.transactionIndex,
-					tableId: TABLES.intent_uniswap_v3_swap_v2,
-					blockNumber: block.eth_getBlockByNumber.number,
-					blockTimestamp: block.eth_getBlockByNumber.timestamp,
-				});
-
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
 
 				return {
 					tag: "intent_uniswap_v3_swap_v2",
-					id,
-					log_index: hexToNumber(TRANSACTION_EVENT),
 					chain: hexToNumber(block.eth_chainId),
+					log_index: hexToNumber(TRANSACTION_EVENT),
 					tx_index: hexToNumber(tx.transactionIndex),
 					block_number: hexToNumber(block.eth_getBlockByNumber.number),
 					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
@@ -319,8 +306,8 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
+	handler: (block) => event.handler(block),
 	id: "intent_uniswap_v3_swap_v2_index_block_number_tx_index_v4",
-	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 univo.event({
@@ -330,19 +317,18 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event_id: event.id, account: event.router_address },
-				{ event_id: event.id, account: event.sender_address },
-				{ event_id: event.id, account: event.token_in_address },
-				{ event_id: event.id, account: event.recipient_address },
-				{ event_id: event.id, account: event.token_out_address },
+				{ id: event, account: event.router_address },
+				{ id: event, account: event.sender_address },
+				{ id: event, account: event.token_in_address },
+				{ id: event, account: event.recipient_address },
+				{ id: event, account: event.token_out_address },
 			];
 		});
 	},
 });
 
-export async function getIntentUniswapV3SwapV2(ids: string[]) {
-	const mapped = ids.map((id) => parseId(id));
-	const filtered = mapped.filter((id) => id.tableId === TABLES.intent_uniswap_v3_swap_v2);
+export async function getIntentUniswapV3SwapV2(ids: Id[]) {
+	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_uniswap_v3_swap_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -357,29 +343,19 @@ export async function getIntentUniswapV3SwapV2(ids: string[]) {
 			and(
 				inArray(
 					table.block_timestamp,
-					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+					filtered.map((id) => id.block_timestamp),
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+					filtered.map((id) => [id.block_timestamp, id.block_number, id.tx_index, id.log_index, id.chain]),
 				),
 			),
 		)
 		.orderBy(asc(table.block_timestamp), asc(table.block_number), asc(table.tx_index), asc(table.log_index), asc(table.chain));
 
 	return rows.map<IntentUniswapV3SwapV2>((row) => {
-		const id = createId({
-			chainId: numberToHex(row.chain),
-			txIndex: numberToHex(row.tx_index),
-			tableId: TABLES.intent_uniswap_v3_swap_v2,
-			logIndex: numberToHex(row.log_index),
-			blockNumber: numberToHex(row.block_number),
-			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
-		});
-
 		return {
 			tag: "intent_uniswap_v3_swap_v2",
-			id,
 			chain: row.chain,
 			tx_index: row.tx_index,
 			log_index: row.log_index,

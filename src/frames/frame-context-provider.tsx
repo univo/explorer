@@ -7,18 +7,16 @@ import { useServerFn } from "@tanstack/react-start";
 import type { ComponentProps, ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { parseId } from "@/helpers";
 import { XIcon } from "../components/icons";
 import { sf_getTxPosition } from "@/functions";
 import { IconButton } from "../components/icon-button";
 import { AddressClient } from "@/frames/address/address-client";
 import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
 import { BlockNumberClient } from "@/frames/block-number/block-number-client";
+import { AddressSchema, BlockNumberSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/frame-context";
-import { AddressSchema, BlockNumberSchema, EventSchema, TxHashSchema, TxPositionSchema } from "@/schema";
 
 export type Frame =
-	| { type: "event"; data: string; raw: string }
 	| { type: "block-number"; data: number; raw: string }
 	| { type: "address"; data: `0x${string}`; raw: string }
 	| { type: "transaction-hash"; data: `0x${string}`; raw: string }
@@ -65,14 +63,6 @@ export function FrameContextProvider(props: { children?: ReactNode }) {
 
 		if (parsed === null) {
 			return; // Ignore invalid frames
-		}
-
-		if (parsed.type === "event") {
-			setState((state) => ({ ...state, status: "pending" }));
-
-			const { blockNumber, txIndex } = parseId(parsed.data);
-
-			return push(`${blockNumber}-${txIndex}`, index);
 		}
 
 		if (parsed.type === "transaction-hash") {
@@ -129,9 +119,6 @@ export function getFrame(frame: string): Frame | null {
 
 	const block_number = v.safeParse(BlockNumberSchema, frame);
 	if (block_number.success) return { type: "block-number", data: block_number.output, raw: frame };
-
-	const event = v.safeParse(EventSchema, frame);
-	if (event.success) return { type: "event", data: event.output, raw: frame };
 
 	return null;
 }

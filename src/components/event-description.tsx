@@ -1,4 +1,4 @@
-import type { Event } from "@/db/events";
+import type { Event } from "@/events";
 
 import { LogEnsNewOwnerV2Description } from "@/events/log_ens_new_owner_v2/component";
 import { LogFwaNftListedV2Description } from "@/events/log_fwa_nft_listed_v2/component";

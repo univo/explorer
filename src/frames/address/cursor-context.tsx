@@ -3,8 +3,9 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
-import { createId } from "@/helpers";
-import { numberToHex, raise } from "@/utils";
+import { raise } from "@/utils";
+import { serializeCursor } from "./cursor";
+import { REVERSE_TABLES } from "@/constants";
 import { usePresetContext } from "./preset-context";
 
 type CursorContextValue = {
@@ -34,13 +35,13 @@ function CursorContextProviderChild(props: { children: ReactNode }) {
 	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
 		// TODO: Add cache alignment to the initial cursor
 
-		const initialCursor = createId({
-			blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
-			tableId: 0, // Irrelevant
-			chainId: "0x1", // Irrelevant but must specify a known chain id
-			txIndex: "0x0", // Irrelevant
-			logIndex: "0x0", // Irrelevant
-			blockNumber: "0x0", // Irrelevant
+		const initialCursor = serializeCursor({
+			chain: 1,
+			tx_index: 0,
+			log_index: 0,
+			block_number: 0,
+			tag: REVERSE_TABLES[0],
+			block_timestamp: new Date(),
 		});
 
 		return new Map().set(initialCursor, undefined);
@@ -48,13 +49,13 @@ function CursorContextProviderChild(props: { children: ReactNode }) {
 
 	function refreshCursors() {
 		setCursors(() => {
-			const initialCursor = createId({
-				blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
-				tableId: 0, // Irrelevant
-				chainId: "0x1", // Irrelevant but must specify a known chain id
-				txIndex: "0x0", // Irrelevant
-				logIndex: "0x0", // Irrelevant
-				blockNumber: "0x0", // Irrelevant
+			const initialCursor = serializeCursor({
+				chain: 1,
+				tx_index: 0,
+				log_index: 0,
+				block_number: 0,
+				tag: REVERSE_TABLES[0],
+				block_timestamp: new Date(),
 			});
 
 			return new Map().set(initialCursor, undefined);

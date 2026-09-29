@@ -10,9 +10,7 @@ test.concurrent("intent_idm_v2 deletes, writes, and reads from storage", async (
 
 	await event.storage.delete(handled);
 
-	const ids = handled.map((event) => event.id);
-
-	const initial = await getIntentIdmV2(ids);
+	const initial = await getIntentIdmV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_idm_v2 deletes, writes, and reads from storage", async (
 		],
 	});
 
-	const stored = await getIntentIdmV2(ids);
+	const stored = await getIntentIdmV2(handled);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("intent_idm_v2 deletes, writes, and reads from storage", async (
 		    "block_timestamp": 2025-10-01T13:36:23.000Z,
 		    "chain": 1,
 		    "from_address": "0x878761636a1Dd513463B04A66413C77E8B4eEDEd",
-		    "id": "68dd2e57016653980015ffffff0001004d",
 		    "log_index": 16777215,
 		    "message": "Blockchain Verified Certificate of Purity for So Pure Supplements XParasite. Batch Code: A5F37E33CB45 Certifying authority: Blockchain Institute of Technology. https://verify.blockchaininstitute.com/ipfs/bafybeigiy6z3mg255bee7wf3pzdekcdqnvj37u55m5agdtrutn7mkuicyq",
 		    "success": true,

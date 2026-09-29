@@ -12,8 +12,8 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 
 	const indexes = event.handler(block).flatMap((event) => {
 		return [
-			{ event_id: event.id, account: event.to_address }, //
-			{ event_id: event.id, account: event.from_address },
+			{ id: event, account: event.to_address }, //
+			{ id: event, account: event.from_address },
 		];
 	});
 
@@ -30,7 +30,14 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 
 	expect(ids).toMatchInlineSnapshot(`
 		[
-		  "5eb01705009896800000ffffff0001004e",
+		  {
+		    "block_number": 10000000,
+		    "block_timestamp": 2020-05-04T13:22:13.000Z,
+		    "chain": 1,
+		    "log_index": 16777215,
+		    "tag": "intent_native_transfer_v2",
+		    "tx_index": 0,
+		  },
 		]
 	`);
 });

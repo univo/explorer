@@ -1,10 +1,13 @@
 import type { RpcTransactionReceipt } from "viem";
 
+import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
-import { CHAINS, CHAINS_REVERSED } from "./constants";
+import { CHAINS, REVERSE_CHAINS } from "./constants";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
-	if (receipt === undefined) throw new Error("No receipt");
+	if (receipt === undefined) {
+		throw new Error("No receipt");
+	}
 
 	// Correctly the types suggest that `status` is always available on the receipt. This is only true for
 	// blocks after the Byzantium upgrade in 2017 at block 4,370,000.
@@ -12,6 +15,7 @@ export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	// We have to use the `in` syntax here to prevent univo returning an 'incomplete_error'. This occurs
 	// because we attempt to read a property on an object that doesn't exist. Which the impl detail of univo
 	// uses to determine if new properties of the block are being accessed during historical indexes.
+
 	if ("status" in receipt) {
 		return receipt.status === "0x1";
 	}
@@ -19,58 +23,27 @@ export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	// At the moment we default to this being true. This could be misleading for events before the upgrade if
 	// they actually did fail (there might be a different way to detect this?). The reasoning is that data
 	// this old is less important to be equally as accurate as fresher data.
+
 	return true;
 }
 
-type IdOptions = {
-	blockTimestamp: `0x${string}`;
-	blockNumber: `0x${string}`;
-	txIndex: `0x${string}`;
-	logIndex: `0x${string}`;
-	chainId: `0x${string}`;
-	tableId: number;
-};
-
-export function createId(opts: IdOptions) {
-	const blockTimestamp = opts.blockTimestamp.slice(2).padStart(8, "0");
-	const blockNumber = opts.blockNumber.slice(2).padStart(8, "0");
-	const txIndex = opts.txIndex.slice(2).padStart(4, "0");
-	const logIndex = opts.logIndex.slice(2).padStart(6, "0");
-	const chainId = getInternalChain(opts.chainId).toString(16).padStart(4, "0");
-	const tableId = opts.tableId.toString(16).padStart(4, "0");
-	return `${blockTimestamp}${blockNumber}${txIndex}${logIndex}${chainId}${tableId}`;
-}
-
-export function parseId(id: string) {
-	const blockTimestamp = Number.parseInt(id.slice(0, 8), 16);
-	const blockNumber = Number.parseInt(id.slice(8, 16), 16);
-	const txIndex = Number.parseInt(id.slice(16, 20), 16);
-	const logIndex = Number.parseInt(id.slice(20, 26), 16);
-	const chainId = getExternalChain(Number.parseInt(id.slice(26, 30), 16));
-	const tableId = Number.parseInt(id.slice(30, 34), 16);
-	return { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId };
-}
-
-export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[], order: "latest" | "reverse") {
+export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
 	if (order === "latest") {
 		return events.sort((a, b) => {
-			const _a = parseId(a.id);
-			const _b = parseId(b.id);
-
 			// Compare timestamp first
-			const timestamp = _b.blockTimestamp - _a.blockTimestamp;
+			const timestamp = b.block_timestamp.getTime() - a.block_timestamp.getTime();
 			if (timestamp !== 0) return timestamp;
 
 			// Compare block number
-			const block = _b.blockNumber - _a.blockNumber;
+			const block = b.block_number - a.block_number;
 			if (block !== 0) return block;
 
 			// Compare tx index if from same block
-			const tx = _b.txIndex - _a.txIndex;
+			const tx = b.tx_index - a.tx_index;
 			if (tx !== 0) return tx;
 
 			// Compare log index if from same transaction
-			const log = _b.logIndex - _a.logIndex;
+			const log = b.log_index - a.log_index;
 			if (log !== 0) return log;
 
 			return 0; // Can't order between these two events
@@ -78,23 +51,20 @@ export function getOrderedEvents<TEvent extends { id: string }>(events: TEvent[]
 	}
 
 	return events.sort((a, b) => {
-		const _a = parseId(a.id);
-		const _b = parseId(b.id);
-
 		// Compare timestamp first
-		const timestamp = _a.blockTimestamp - _b.blockTimestamp;
+		const timestamp = a.block_timestamp.getTime() - b.block_timestamp.getTime();
 		if (timestamp !== 0) return timestamp;
 
 		// Compare block number
-		const block = _a.blockNumber - _b.blockNumber;
+		const block = a.block_number - b.block_number;
 		if (block !== 0) return block;
 
 		// Compare tx index if from same block
-		const tx = _a.txIndex - _b.txIndex;
+		const tx = a.tx_index - b.tx_index;
 		if (tx !== 0) return tx;
 
 		// Compare log index if from same transaction
-		const log = _a.logIndex - _b.logIndex;
+		const log = a.log_index - b.log_index;
 		if (log !== 0) return log;
 
 		return 0; // Can't order between these two events
@@ -128,7 +98,7 @@ export function getInternalChain(external_chain: `0x${string}` | keyof typeof CH
  */
 export function getExternalChain(internal_chain: number) {
 	return (
-		(CHAINS_REVERSED[internal_chain as keyof typeof CHAINS_REVERSED] as keyof typeof CHAINS) ||
+		(REVERSE_CHAINS[internal_chain as keyof typeof REVERSE_CHAINS] as keyof typeof CHAINS) ||
 		raise(`Unknown internal chain id ${internal_chain}`)
 	);
 }

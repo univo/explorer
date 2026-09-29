@@ -1,8 +1,9 @@
 import { ErrorBoundary } from "react-error-boundary";
 
+import type { Id } from "@/events";
+import { getEventsForIds } from "@/events";
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
-import { getEventsForIds } from "@/db/events";
 import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
 import { formatNumber, hexToNumber } from "@/utils";
@@ -47,7 +48,7 @@ function Header(props: { block: Block }) {
 	);
 }
 
-async function EventsTable(props: { ids: string[] }) {
+async function EventsTable(props: { ids: Id[] }) {
 	if (props.ids.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-128">
@@ -65,11 +66,16 @@ async function EventsTable(props: { ids: string[] }) {
 
 	return (
 		<div className="relative grow overflow-scroll isolate">
-			{ordered.map((event) => {
+			{ordered.map((event, i) => {
 				return (
-					<ErrorBoundary key={event.id} fallback={null}>
+					<ErrorBoundary key={i} fallback={null}>
 						<div className="border-b border-gray-200">
-							<EventTableRow id={event.id} previousId={event.id}>
+							<EventTableRow
+								txIndex={event.tx_index}
+								blockNumber={event.block_number}
+								blockTimestamp={event.block_timestamp.getTime()}
+								previousBlockTimestamp={event.block_timestamp.getTime()}
+							>
 								<div className="px-3 py-1.5 overflow-hidden grow">
 									<EventDescription event={event} address={undefined} />
 								</div>

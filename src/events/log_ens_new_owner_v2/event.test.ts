@@ -10,9 +10,7 @@ test.concurrent("log_ens_new_owner_v2 deletes, writes, and reads from storage", 
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getLogEnsNewOwnerV2(ids);
+	const initial = await getLogEnsNewOwnerV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -29,7 +27,7 @@ test.concurrent("log_ens_new_owner_v2 deletes, writes, and reads from storage", 
 		],
 	});
 
-	const stored = await getLogEnsNewOwnerV2(ids);
+	const stored = await getLogEnsNewOwnerV2(events);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -37,7 +35,6 @@ test.concurrent("log_ens_new_owner_v2 deletes, writes, and reads from storage", 
 		    "block_number": 8835278,
 		    "block_timestamp": 2019-10-29T17:23:20.000Z,
 		    "chain": 1,
-		    "id": "5db875880086d0ce00d30000e90001003b",
 		    "label": "0x535bdae9bb214b3cc583b53384464999f2f7f48625f160728c63e73e766ff71e",
 		    "log_index": 233,
 		    "owner_address": "0x9062C0A6Dbd6108336BcBe4593a3D1cE05512069",

@@ -10,7 +10,7 @@ export const CHAINS: Record<Chain, number> = {
 
 // Reverse look up table for chains to convert back
 
-export const CHAINS_REVERSED: Record<number, Chain> = {
+export const REVERSE_CHAINS: Record<number, Chain> = {
 	1: 1,
 };
 
@@ -100,9 +100,97 @@ export const TABLES = {
 	intent_uniswap_v3_mint_v2: 80,
 	intent_uniswap_v3_swap_v2: 81,
 	intent_usdc_blacklist_v2: 82,
-};
+} as const;
 
 export type Table = keyof typeof TABLES;
+
+// Reverse tables look up
+
+export const REVERSE_TABLES: Record<number, Table> = {
+	0: "native_transfer_v1",
+	1: "erc20_transfer_v1",
+	2: "erc20_approval_v1",
+	3: "input_data_message_v1",
+	4: "contract_deployment_v1",
+	5: "ens_name_registered_v1",
+	6: "cancel_pending_tx_v1",
+	7: "erc721_transfer_v1",
+	8: "erc721_approval_v1",
+	9: "erc20_transfer_v3",
+	10: "native_transfer_v3",
+	11: "erc20_approval_v3",
+	12: "input_data_message_v3",
+	13: "contract_deployment_v3",
+	14: "ens_name_registered_v3",
+	15: "cancel_pending_tx_v3",
+	16: "erc721_transfer_v3",
+	17: "erc721_approval_v3",
+	18: "tornado_cash_withdrawal_v3",
+	19: "usdc_blacklist_v3",
+	20: "intent_fwa_deposited_v1",
+	21: "intent_fwa_won_v1",
+	22: "log_fwa_nft_listed_v1",
+	23: "intent_aave_v3_supply_v1",
+	24: "intent_aave_v3_withdraw_v1",
+	25: "intent_aave_v3_borrow_v1",
+	26: "intent_aave_v3_repay_v1",
+	27: "intent_uniswap_v3_swap_v1",
+	28: "intent_uniswap_v3_mint_v1",
+	29: "intent_contract_deployment_v1",
+	30: "intent_cancel_pending_tx_v1",
+	31: "intent_native_transfer_v1",
+	32: "intent_tornado_withdrawal_v1",
+	33: "intent_usdc_blacklist_v1",
+	34: "intent_idm_v1",
+	35: "log_erc20_approval_v1",
+	36: "log_erc20_transfer_v1",
+	37: "log_erc721_approval_v1",
+	38: "log_erc721_transfer_v1",
+	39: "intent_ens_name_registered_v1",
+	40: "log_uniswap_v3_pool_created_v1",
+	41: "log_uniswap_v3_swap_v1",
+	42: "log_ens_reverse_claimed_v1",
+	43: "log_ens_name_for_addr_changed_v1",
+	44: "log_ens_new_owner_v1",
+	45: "intent_erc20_transfer_v1",
+	46: "intent_erc20_approval_v1",
+	47: "intent_erc721_transfer_v1",
+	48: "intent_erc721_approval_v1",
+	49: "intent_fwa_won_v2",
+	50: "log_fwa_nft_allocated_v1",
+	51: "intent_fwa_acquire_v1",
+	52: "log_erc20_transfer_v2",
+	53: "log_erc20_approval_v2",
+	54: "log_erc721_approval_v2",
+	55: "log_erc721_transfer_v2",
+	56: "log_uniswap_v3_swap_v2",
+	57: "log_uniswap_v3_pool_created_v2",
+	58: "log_ens_name_for_addr_changed_v2",
+	59: "log_ens_new_owner_v2",
+	60: "log_fwa_nft_listed_v2",
+	61: "log_fwa_nft_allocated_v2",
+	62: "log_ens_reverse_claimed_v2",
+	63: "intent_aave_v3_borrow_v2",
+	64: "intent_aave_v3_repay_v2",
+	65: "intent_aave_v3_supply_v2",
+	66: "intent_aave_v3_withdraw_v2",
+	67: "intent_cancel_pending_tx_v2",
+	68: "intent_contract_deployment_v2",
+	69: "intent_ens_name_registered_v2",
+	70: "intent_erc20_approval_v2",
+	71: "intent_erc20_transfer_v2",
+	72: "intent_erc721_approval_v2",
+	73: "intent_erc721_transfer_v2",
+	74: "intent_fwa_acquire_v2",
+	75: "intent_fwa_deposited_v2",
+	76: "intent_fwa_won_v3",
+	77: "intent_idm_v2",
+	78: "intent_native_transfer_v2",
+	79: "intent_tornado_withdrawal_v2",
+	80: "intent_uniswap_v3_mint_v2",
+	81: "intent_uniswap_v3_swap_v2",
+	82: "intent_usdc_blacklist_v2",
+};
 
 // Presets. Groups of common actions that we can use for event filtering. Don't just blindly add events to
 // these presets because these _can_ be computationally expensive. Avoid rare events because on hot accounts

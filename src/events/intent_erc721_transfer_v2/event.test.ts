@@ -12,9 +12,7 @@ test.concurrent("intent_erc721_transfer_v2 deletes, writes, and reads from stora
 
 	await event.storage.delete(handled);
 
-	const ids = handled.map((event) => event.id);
-
-	expect(await getIntentErc721TransferV2(ids)).toStrictEqual([]);
+	expect(await getIntentErc721TransferV2(handled)).toStrictEqual([]);
 
 	await test_client.request({
 		method: "private_writeEvents",
@@ -30,7 +28,7 @@ test.concurrent("intent_erc721_transfer_v2 deletes, writes, and reads from stora
 		],
 	});
 
-	const stored = await getIntentErc721TransferV2(ids);
+	const stored = await getIntentErc721TransferV2(handled);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -40,7 +38,6 @@ test.concurrent("intent_erc721_transfer_v2 deletes, writes, and reads from stora
 		    "caller_address": "0x0866584736ebcAC48E958C8BDaC9DFA43E6138b3",
 		    "chain": 1,
 		    "from_address": "0x0866584736ebcAC48E958C8BDaC9DFA43E6138b3",
-		    "id": "6a874beb0189a6510036ffffff00010049",
 		    "log_index": 16777215,
 		    "success": true,
 		    "tag": "intent_erc721_transfer_v2",
@@ -55,7 +52,6 @@ test.concurrent("intent_erc721_transfer_v2 deletes, writes, and reads from stora
 		    "caller_address": "0x0c000806d0158095b1E332415C2C65C063571a93",
 		    "chain": 1,
 		    "from_address": "0x0c000806d0158095b1E332415C2C65C063571a93",
-		    "id": "6a874beb0189a6510065ffffff00010049",
 		    "log_index": 16777215,
 		    "success": true,
 		    "tag": "intent_erc721_transfer_v2",
@@ -70,7 +66,6 @@ test.concurrent("intent_erc721_transfer_v2 deletes, writes, and reads from stora
 		    "caller_address": "0xD1323a3AA1D2c39801AcB0d3F65201bEda710aD7",
 		    "chain": 1,
 		    "from_address": "0xD1323a3AA1D2c39801AcB0d3F65201bEda710aD7",
-		    "id": "6a874beb0189a65100adffffff00010049",
 		    "log_index": 16777215,
 		    "success": true,
 		    "tag": "intent_erc721_transfer_v2",

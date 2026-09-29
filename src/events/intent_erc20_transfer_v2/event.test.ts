@@ -12,9 +12,7 @@ test.concurrent("intent_erc20_transfer_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(handled);
 
-	const ids = handled.map((event) => event.id);
-
-	const initial = await getIntentErc20TransferV2(ids);
+	const initial = await getIntentErc20TransferV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -32,7 +30,7 @@ test.concurrent("intent_erc20_transfer_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const stored = await getIntentErc20TransferV2(ids);
+	const stored = await getIntentErc20TransferV2(handled);
 
 	expect(stored).toHaveLength(40);
 
@@ -42,7 +40,6 @@ test.concurrent("intent_erc20_transfer_v2 deletes, writes, and reads from storag
 		  "block_timestamp": 2020-05-04T13:22:13.000Z,
 		  "chain": 1,
 		  "from_address": "0x876EabF441B2EE5B5b0554Fd502a8E0600950cFa",
-		  "id": "5eb01705009896800005ffffff00010047",
 		  "log_index": 16777215,
 		  "quantity": "0x052769477a7d940000",
 		  "success": true,

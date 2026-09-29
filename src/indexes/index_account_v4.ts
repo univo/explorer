@@ -2,11 +2,12 @@ import { getAddress } from "viem";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
+import { logger } from "@/utils";
+import type { Id } from "@/events";
 import type { Chain } from "@/constants";
 import { inTuple, hex } from "@/db/types";
-import { logger, numberToHex } from "@/utils";
-import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
+import { REVERSE_TABLES, TABLES } from "@/constants";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
 // This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
@@ -18,8 +19,8 @@ import { createPostgresClient } from "@/db/client";
 // explorer this massively improves insert performance.
 
 type Index = {
+	id: Id;
 	account: `0x${string}`;
-	event_id: string;
 };
 
 export const table = pgTable(
@@ -57,7 +58,15 @@ export const index_account_v4 = {
 		for (const index of indexes) {
 			const account = getAddress(index.account);
 
-			const key = [account, index.event_id].join(":");
+			const key = [
+				account,
+				index.id.chain,
+				index.id.block_timestamp,
+				index.id.block_number,
+				index.id.tx_index,
+				index.id.log_index,
+				index.id.tag,
+			].join(":");
 
 			if (unique[key]) {
 				continue;
@@ -65,17 +74,15 @@ export const index_account_v4 = {
 
 			unique[key] = true;
 
-			const parsed = parseId(index.event_id);
-
 			batch.push({
 				account,
-				chain: parsed.chainId,
-				table_id: parsed.tableId,
-				block_timestamp: parsed.blockTimestamp,
+				chain: index.id.chain,
+				table_id: TABLES[index.id.tag],
+				block_timestamp: Math.floor(index.id.block_timestamp.getTime() / 1000),
 
-				tx_index: parsed.txIndex,
-				log_index: parsed.logIndex,
-				block_number: parsed.blockNumber,
+				tx_index: index.id.tx_index,
+				log_index: index.id.log_index,
+				block_number: index.id.block_number,
 			});
 		}
 
@@ -106,19 +113,17 @@ export const index_account_v4 = {
 					table.block_number,
 				],
 				indexes.map((index) => {
-					const parsed = parseId(index.event_id);
-
 					return [
 						// Indexed columns
 						index.account,
-						parsed.blockTimestamp,
-						parsed.chainId,
-						parsed.tableId,
+						Math.floor(index.id.block_timestamp.getTime() / 1000),
+						index.id.chain,
+						TABLES[index.id.tag],
 
 						// Non-indexed columns
-						parsed.txIndex,
-						parsed.logIndex,
-						parsed.blockNumber,
+						index.id.tx_index,
+						index.id.log_index,
+						index.id.block_number,
 					];
 				}),
 			),
@@ -146,7 +151,7 @@ type Opts = {
 	// Pagination
 
 	limit: number;
-	cursor?: string;
+	cursor?: Id;
 
 	// Ordering
 
@@ -159,12 +164,15 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 	const client = await createPostgresClient();
 
 	if (opts.cursor) {
-		const { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId } = parseId(opts.cursor);
+		const { block_timestamp, block_number, tx_index, log_index, chain, tag } = opts.cursor;
+
+		const table_id = TABLES[tag];
+		const block_timestamp_seconds = Math.floor(block_timestamp.getTime() / 1000);
 
 		const cursor =
 			opts.order === "latest"
-				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${blockTimestamp},${blockNumber},${txIndex},${logIndex},${chainId},${tableId})`
-				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${blockTimestamp},${blockNumber},${txIndex},${logIndex},${chainId},${tableId})`;
+				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${chain},${table_id})`
+				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${chain},${table_id})`;
 
 		const rows = await client
 			.selectDistinct({
@@ -198,14 +206,14 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 		logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
 		return rows.map((result) => {
-			return createId({
-				tableId: result.table_id,
-				chainId: numberToHex(result.chain),
-				txIndex: numberToHex(result.tx_index),
-				logIndex: numberToHex(result.log_index),
-				blockNumber: numberToHex(result.block_number),
-				blockTimestamp: numberToHex(result.block_timestamp),
-			});
+			return {
+				chain: result.chain,
+				tx_index: result.tx_index,
+				log_index: result.log_index,
+				block_number: result.block_number,
+				tag: REVERSE_TABLES[result.table_id],
+				block_timestamp: new Date(result.block_timestamp * 1000),
+			};
 		});
 	}
 
@@ -240,13 +248,13 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 	logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
 	return rows.map((result) => {
-		return createId({
-			tableId: result.table_id,
-			chainId: numberToHex(result.chain),
-			txIndex: numberToHex(result.tx_index),
-			logIndex: numberToHex(result.log_index),
-			blockNumber: numberToHex(result.block_number),
-			blockTimestamp: numberToHex(result.block_timestamp),
-		});
+		return {
+			chain: result.chain,
+			tx_index: result.tx_index,
+			log_index: result.log_index,
+			block_number: result.block_number,
+			tag: REVERSE_TABLES[result.table_id],
+			block_timestamp: new Date(result.block_timestamp * 1000),
+		};
 	});
 }

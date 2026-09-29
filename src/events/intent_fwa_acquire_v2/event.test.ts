@@ -10,9 +10,7 @@ test.concurrent("intent_fwa_acquire_v2 deletes, writes, and reads from storage",
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentFwaAcquireV2(ids);
+	const initial = await getIntentFwaAcquireV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_fwa_acquire_v2 deletes, writes, and reads from storage",
 		],
 	});
 
-	const final = await getIntentFwaAcquireV2(ids);
+	const final = await getIntentFwaAcquireV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("intent_fwa_acquire_v2 deletes, writes, and reads from storage",
 		    "block_number": 25873188,
 		    "block_timestamp": 2026-08-31T05:31:59.000Z,
 		    "chain": 1,
-		    "id": "6a9511cf018acb24005affffff0001004a",
 		    "log_index": 16777215,
 		    "purchaser_address": "0xFdA2Ef0876F237C99f30F60Ed99d376cd563A430",
 		    "submitted_eth": "0x0229c7625ce650e4",

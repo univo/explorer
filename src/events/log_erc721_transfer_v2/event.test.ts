@@ -8,9 +8,9 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 
 	await event.storage.delete(event.handler(block));
 
-	const ids = event.handler(block).map((event) => event.id);
+	const handled = event.handler(block);
 
-	const initial = await getLogErc721TransferV2(ids);
+	const initial = await getLogErc721TransferV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -27,7 +27,7 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		],
 	});
 
-	const events = await getLogErc721TransferV2(ids);
+	const events = await getLogErc721TransferV2(handled);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -36,7 +36,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004100010037",
 		    "log_index": 65,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -49,7 +48,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004200010037",
 		    "log_index": 66,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -62,7 +60,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004300010037",
 		    "log_index": 67,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -75,7 +72,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004400010037",
 		    "log_index": 68,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -88,7 +84,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004500010037",
 		    "log_index": 69,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -101,7 +96,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004600010037",
 		    "log_index": 70,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -114,7 +108,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004700010037",
 		    "log_index": 71,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -127,7 +120,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004800010037",
 		    "log_index": 72,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -140,7 +132,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004900010037",
 		    "log_index": 73,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -153,7 +144,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004a00010037",
 		    "log_index": 74,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -166,7 +156,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004b00010037",
 		    "log_index": 75,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",
@@ -179,7 +168,6 @@ test.concurrent("log_erc721_transfer_v2", async ({ expect }) => {
 		    "block_timestamp": 2020-05-04T13:22:13.000Z,
 		    "chain": 1,
 		    "from_address": "0xA6fA96567abC0ea45E6683A0B29Ca575fdf8Af85",
-		    "id": "5eb0170500989680002600004c00010037",
 		    "log_index": 76,
 		    "tag": "log_erc721_transfer_v2",
 		    "to_address": "0x074fdC302F8D3C0E8B11C80F2A07BF2a3b8ca855",

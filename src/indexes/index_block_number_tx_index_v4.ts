@@ -1,10 +1,11 @@
 import { and, eq, sql } from "drizzle-orm";
 import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
-import { createId, parseId } from "@/helpers";
-import { logger, numberToHex } from "@/utils";
+import { logger } from "@/utils";
+import type { Id } from "@/events";
+import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { TRANSACTION_EVENT, type Chain } from "@/constants";
+import { REVERSE_TABLES, TABLES, TRANSACTION_EVENT } from "@/constants";
 
 // Transactions can be uniquely represented in two ways: their transaction hash, or the combination of their block number
 // and transaction index. In general, the explorer uses the latter and there are a few reasons why:
@@ -16,7 +17,8 @@ import { TRANSACTION_EVENT, type Chain } from "@/constants";
 // - Covered index. The same index can used to look up events from a given block number.
 //
 // The tradeoff here is that this representation fails under chain reorganisations. A transaction in a reorganised block can
-// end up in a completely different position when it is included canonically.
+// end up in a completely different position when it is included canonically. If a user clicks on a transaction that hasn't
+// finalized it should be represented by its unique hash so its safe in the rare case its position changes.
 
 export const table = pgTable(
 	"index_block_number_tx_index_v4",
@@ -36,15 +38,13 @@ export const table = pgTable(
 );
 
 export const index_block_number_tx_index_v4 = {
-	async upsert(ids: string[]) {
+	async upsert(ids: Id[]) {
 		const unique: Record<string, true> = {};
 
 		const batch: (typeof table.$inferInsert)[] = [];
 
 		for (const id of ids) {
-			const parsed = parseId(id);
-
-			const key = [parsed.chainId, parsed.blockNumber, parsed.txIndex, parsed.logIndex, parsed.tableId].join(":");
+			const key = [id.chain, id.block_number, id.tx_index, id.log_index, id.tag].join(":");
 
 			if (unique[key]) {
 				continue;
@@ -53,12 +53,12 @@ export const index_block_number_tx_index_v4 = {
 			unique[key] = true;
 
 			batch.push({
-				chain: parsed.chainId,
-				tx_index: parsed.txIndex,
-				table_id: parsed.tableId,
-				log_index: parsed.logIndex,
-				block_number: parsed.blockNumber,
-				block_timestamp: parsed.blockTimestamp,
+				chain: id.chain,
+				tx_index: id.tx_index,
+				log_index: id.log_index,
+				table_id: TABLES[id.tag],
+				block_number: id.block_number,
+				block_timestamp: Math.floor(id.block_timestamp.getTime() / 1000),
 			});
 		}
 
@@ -77,26 +77,24 @@ export const index_block_number_tx_index_v4 = {
 		}
 	},
 
-	async delete(ids: string[]) {
+	async delete(ids: Id[]) {
 		let chain = undefined;
 		let block_number = undefined;
 
 		for (const id of ids) {
-			const parsed = parseId(id);
-
 			if (chain === undefined) {
-				chain = parsed.chainId;
+				chain = id.chain;
 			}
 
-			if (chain !== parsed.chainId) {
+			if (chain !== id.chain) {
 				throw new Error("Expected entire batch to be from the same chain");
 			}
 
 			if (block_number === undefined) {
-				block_number = parsed.blockNumber;
+				block_number = id.block_number;
 			}
 
-			if (block_number !== parsed.blockNumber) {
+			if (block_number !== id.block_number) {
 				throw new Error("Expected entire batch to be from the same block number");
 			}
 		}
@@ -129,15 +127,15 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map((result) => {
-		return createId({
-			tableId: result.table_id,
-			chainId: numberToHex(result.chain),
-			txIndex: numberToHex(result.tx_index),
-			logIndex: numberToHex(result.log_index),
-			blockNumber: numberToHex(result.block_number),
-			blockTimestamp: numberToHex(result.block_timestamp),
-		});
+	return rows.map<Id>((result) => {
+		return {
+			chain: result.chain,
+			tx_index: result.tx_index,
+			log_index: result.log_index,
+			block_number: result.block_number,
+			tag: REVERSE_TABLES[result.table_id],
+			block_timestamp: new Date(result.block_timestamp * 1000),
+		};
 	});
 }
 
@@ -159,14 +157,14 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map((result) => {
-		return createId({
-			tableId: result.table_id,
-			chainId: numberToHex(result.chain),
-			txIndex: numberToHex(result.tx_index),
-			logIndex: numberToHex(result.log_index),
-			blockNumber: numberToHex(result.block_number),
-			blockTimestamp: numberToHex(result.block_timestamp),
-		});
+	return rows.map<Id>((result) => {
+		return {
+			chain: result.chain,
+			tx_index: result.tx_index,
+			log_index: result.log_index,
+			block_number: result.block_number,
+			tag: REVERSE_TABLES[result.table_id],
+			block_timestamp: new Date(result.block_timestamp * 1000),
+		};
 	});
 }

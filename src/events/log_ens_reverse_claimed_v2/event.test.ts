@@ -10,9 +10,7 @@ test.concurrent("log_ens_reverse_claimed_v2 deletes, writes, and reads from stor
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getLogEnsReverseClaimedV2(ids);
+	const initial = await getLogEnsReverseClaimedV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -29,7 +27,7 @@ test.concurrent("log_ens_reverse_claimed_v2 deletes, writes, and reads from stor
 		],
 	});
 
-	const stored = await getLogEnsReverseClaimedV2(ids);
+	const stored = await getLogEnsReverseClaimedV2(events);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -38,7 +36,6 @@ test.concurrent("log_ens_reverse_claimed_v2 deletes, writes, and reads from stor
 		    "block_number": 25770632,
 		    "block_timestamp": 2026-08-16T22:31:11.000Z,
 		    "chain": 1,
-		    "id": "6a823a2f01893a88024d0002f10001003e",
 		    "log_index": 753,
 		    "node": "0x2eaf481c711aa75ef5f72810e28d92c9fb27e79db947366b8371c69cee4def52",
 		    "tag": "log_ens_reverse_claimed_v2",

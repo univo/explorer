@@ -10,9 +10,7 @@ test.concurrent("intent_aave_v3_withdraw_v2 deletes, writes, and reads from stor
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentAaveV3WithdrawV2(ids);
+	const initial = await getIntentAaveV3WithdrawV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_aave_v3_withdraw_v2 deletes, writes, and reads from stor
 		],
 	});
 
-	const final = await getIntentAaveV3WithdrawV2(ids);
+	const final = await getIntentAaveV3WithdrawV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -38,7 +36,6 @@ test.concurrent("intent_aave_v3_withdraw_v2 deletes, writes, and reads from stor
 		    "block_number": 25621865,
 		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "chain": 1,
-		    "id": "6a66e3830186f5690045ffffff00010042",
 		    "log_index": 16777215,
 		    "quantity": "0x3c89352800",
 		    "recipient_address": "0x156e1F33761676C559Ca656c32b77Df85d18AEAD",
@@ -61,7 +58,6 @@ test.concurrent("intent_aave_v3_withdraw_v2 handles all function selectors", asy
 		    "block_number": 25621865,
 		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "chain": 1,
-		    "id": "6a66e3830186f5690045ffffff00010042",
 		    "log_index": 16777215,
 		    "quantity": "0x3c89352800",
 		    "recipient_address": "0x156e1F33761676C559Ca656c32b77Df85d18AEAD",
@@ -81,7 +77,6 @@ test.concurrent("intent_aave_v3_withdraw_v2 handles all function selectors", asy
 		    "block_number": 25621839,
 		    "block_timestamp": 2026-07-27T04:44:59.000Z,
 		    "chain": 1,
-		    "id": "6a66e24b0186f54f005effffff00010042",
 		    "log_index": 16777215,
 		    "quantity": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 		    "recipient_address": "0x64c2fA27Ee7eddcCF9Ba05C410fBfa36a29946EC",
@@ -118,7 +113,6 @@ test.concurrent("intent_aave_v3_withdraw_v2 includes failed submissions", async 
 		    "block_number": 25621865,
 		    "block_timestamp": 2026-07-27T04:50:11.000Z,
 		    "chain": 1,
-		    "id": "6a66e3830186f5690045ffffff00010042",
 		    "log_index": 16777215,
 		    "quantity": "0x3c89352800",
 		    "recipient_address": "0x156e1F33761676C559Ca656c32b77Df85d18AEAD",

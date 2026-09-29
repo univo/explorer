@@ -12,9 +12,7 @@ test.concurrent("intent_erc721_approval_v2 deletes, writes, and reads from stora
 
 	await event.storage.delete(handled);
 
-	const ids = handled.map((event) => event.id);
-
-	expect(await getIntentErc721ApprovalV2(ids)).toStrictEqual([]);
+	expect(await getIntentErc721ApprovalV2(handled)).toStrictEqual([]);
 
 	await test_client.request({
 		method: "private_writeEvents",
@@ -30,7 +28,7 @@ test.concurrent("intent_erc721_approval_v2 deletes, writes, and reads from stora
 		],
 	});
 
-	const stored = await getIntentErc721ApprovalV2(ids);
+	const stored = await getIntentErc721ApprovalV2(handled);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("intent_erc721_approval_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-20T19:52:47.000Z,
 		    "caller_address": "0x6668A6c1309075eB513b6C555BE95E8679d875b9",
 		    "chain": 1,
-		    "id": "6a875b0f0189a7930063ffffff00010048",
 		    "log_index": 16777215,
 		    "spender_address": "0x46dB2976C1E46dDdDCB4e5D990de337353007a69",
 		    "success": true,
