@@ -5,7 +5,7 @@ import { getOrderedEvents } from "@/helpers";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
-import { getEvents, type Event } from "@/events";
+import { getEvents, type Event, type EventId } from "@/events";
 import { EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
 import { IconButton } from "@/components/icon-button";
@@ -18,7 +18,7 @@ import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import type { LogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
 import type { LogErc721TransferV2 } from "@/events/log_erc721_transfer_v2/event";
-import { getEventsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
+import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
@@ -26,7 +26,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
 		getBlockByNumber(props.block),
 		getTxByPosition({ block: props.block, tx: props.tx }), //
-		getEventsForTxPosition(1, props.block, props.tx),
+		getEventIdsForTxPosition(1, props.block, props.tx),
 	]);
 
 	const timestamp = new Date(hexToNumber(block.timestamp) * 1000);
@@ -179,7 +179,7 @@ function Logs(props: { events: Event[] }) {
 	);
 }
 
-function Balances(props: { block: Block; events: Event[] }) {
+function Balances(props: { block: Block; events: EventId[] }) {
 	// Compute sum of transfers
 
 	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v2");

@@ -1,7 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 
 import { getEvents } from "@/events";
-import type { Event } from "@/events";
+import type { EventId } from "@/events";
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
 import { getBlockByNumber } from "@/state/block";
@@ -11,14 +11,14 @@ import { IconButton } from "@/components/icon-button";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
-import { getEventsForBlockNumber } from "@/indexes/index_block_number_tx_index_v4";
+import { getEventIdsForBlockNumber } from "@/indexes/index_block_number_tx_index_v4";
 
 // TODO: Add timestamp to header and include other block info
 
 export async function BlockNumberRsc(props: { number: number }) {
 	const [block, ids] = await Promise.all([
 		getBlockByNumber(props.number), //
-		getEventsForBlockNumber(1, props.number),
+		getEventIdsForBlockNumber(1, props.number),
 	]);
 
 	return (
@@ -48,7 +48,7 @@ function Header(props: { block: Block }) {
 	);
 }
 
-async function EventsTable(props: { ids: Event[] }) {
+async function EventsTable(props: { ids: EventId[] }) {
 	if (props.ids.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-128">
