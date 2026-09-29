@@ -2,7 +2,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
 import { logger } from "@/utils";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { REVERSE_TABLES, TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -38,7 +38,7 @@ export const table = pgTable(
 );
 
 export const index_block_number_tx_index_v4 = {
-	async upsert(events: EventId[]) {
+	async upsert(events: Id[]) {
 		const unique: Record<string, true> = {};
 
 		const batch: (typeof table.$inferInsert)[] = [];
@@ -77,7 +77,7 @@ export const index_block_number_tx_index_v4 = {
 		}
 	},
 
-	async delete(events: EventId[]) {
+	async delete(events: Id[]) {
 		let chain = undefined;
 		let block_number = undefined;
 
@@ -127,7 +127,7 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map<EventId>((result) => {
+	return rows.map<Id>((result) => {
 		const tag = REVERSE_TABLES[result.table_id];
 
 		return {
@@ -159,7 +159,7 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map<EventId>((result) => {
+	return rows.map<Id>((result) => {
 		const tag = REVERSE_TABLES[result.table_id];
 
 		return {

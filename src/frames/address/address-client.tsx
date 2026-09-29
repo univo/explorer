@@ -10,7 +10,7 @@ import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { iife } from "@/utils";
-import type { Event } from "@/events";
+import type { Id } from "@/events";
 import { Spinner } from "@/components/spinner";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
@@ -97,8 +97,8 @@ function Events(props: { address: `0x${string}` }) {
 	);
 }
 
-function getNextCursor(cursors: Map<Event, Event | null | undefined>): Event | null {
-	let final_cursor: Event | undefined;
+function getNextCursor(cursors: Map<Id, Id | null | undefined>): Id | null {
+	let final_cursor: Id | undefined;
 
 	for (const [key, value] of cursors) {
 		if (value === null) {

@@ -5,7 +5,7 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import { TABLES, type Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
@@ -125,7 +125,7 @@ univo.event({
 	id: "log_ens_new_owner_v2_index_block_number_tx_index_v4",
 });
 
-export async function getLogEnsNewOwnerV2(ids: EventId[]) {
+export async function getLogEnsNewOwnerV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.log_ens_new_owner_v2);
 
 	if (filtered.length === 0) {

@@ -7,12 +7,12 @@ import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
-import { getEventsForAccount } from "@/indexes/index_account_v4";
+import { getEventIdsForAccount } from "@/indexes/index_account_v4";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; preset: Preset; startCursor: string }) {
-	const ids = await getEventsForAccount(props.address, {
+	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
 		chains: [1],
 		order: "latest",

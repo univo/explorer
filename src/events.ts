@@ -32,7 +32,7 @@ import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_creat
 import { getIntentContractDeploymentV2 } from "@/events/intent_contract_deployment_v2/event";
 import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
 
-export type EventId = {
+export type Id = {
 	tag: keyof typeof TABLES;
 	chain: number;
 	tx_index: number;
@@ -43,7 +43,7 @@ export type EventId = {
 
 export type Event = Awaited<ReturnType<typeof getEvents>>[number];
 
-export async function getEvents(ids: EventId[]) {
+export async function getEvents(ids: Id[]) {
 	if (ids.length === 0) {
 		return [];
 	}

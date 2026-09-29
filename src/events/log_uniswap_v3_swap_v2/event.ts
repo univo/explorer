@@ -6,7 +6,7 @@ import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import { createPostgresClient } from "@/db/client";
 import { UNISWAP_V3_FACTORY_DEPLOYED_BLOCK } from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
@@ -117,7 +117,7 @@ univo.event({
 	id: "log_uniswap_v3_swap_v2_index_block_number_tx_index_v4",
 });
 
-export async function getLogUniswapV3SwapV2(ids: EventId[]) {
+export async function getLogUniswapV3SwapV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.log_uniswap_v3_swap_v2);
 
 	if (filtered.length === 0) {

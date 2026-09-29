@@ -13,7 +13,7 @@ import {
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
@@ -172,7 +172,7 @@ univo.event({
 	},
 });
 
-export async function getIntentUniswapV3MintV2(ids: EventId[]) {
+export async function getIntentUniswapV3MintV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_uniswap_v3_mint_v2);
 
 	if (filtered.length === 0) {

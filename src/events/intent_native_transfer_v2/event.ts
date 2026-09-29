@@ -5,7 +5,7 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -113,7 +113,7 @@ univo.event({
 	},
 });
 
-export async function getIntentNativeTransferV2(ids: EventId[]) {
+export async function getIntentNativeTransferV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_native_transfer_v2);
 
 	if (filtered.length === 0) {

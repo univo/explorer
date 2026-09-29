@@ -1,7 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 
 import { getEvents } from "@/events";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
 import { getBlockByNumber } from "@/state/block";
@@ -48,7 +48,7 @@ function Header(props: { block: Block }) {
 	);
 }
 
-async function EventsTable(props: { ids: EventId[] }) {
+async function EventsTable(props: { ids: Id[] }) {
 	if (props.ids.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-128">

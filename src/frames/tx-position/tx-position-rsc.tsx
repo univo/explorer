@@ -5,7 +5,7 @@ import { getOrderedEvents } from "@/helpers";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
-import { getEvents, type Event, type EventId } from "@/events";
+import { getEvents, type Event, type Id } from "@/events";
 import { EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
 import { IconButton } from "@/components/icon-button";
@@ -179,7 +179,7 @@ function Logs(props: { events: Event[] }) {
 	);
 }
 
-function Balances(props: { block: Block; events: EventId[] }) {
+function Balances(props: { block: Block; events: Id[] }) {
 	// Compute sum of transfers
 
 	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v2");

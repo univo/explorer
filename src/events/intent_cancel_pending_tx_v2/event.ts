@@ -4,7 +4,7 @@ import { getAddress, hexToNumber } from "viem";
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
 import { numberToHex, isHexEqual } from "@/utils";
 import { createPostgresClient } from "@/db/client";
@@ -116,7 +116,7 @@ univo.event({
 	},
 });
 
-export async function getIntentCancelPendingTxV2(ids: EventId[]) {
+export async function getIntentCancelPendingTxV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_cancel_pending_tx_v2);
 
 	if (filtered.length === 0) {

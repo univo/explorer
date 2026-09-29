@@ -4,7 +4,7 @@ import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSe
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
-import type { EventId } from "@/events";
+import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
@@ -124,7 +124,7 @@ univo.event({
 	},
 });
 
-export async function getIntentErc20TransferV2(ids: EventId[]) {
+export async function getIntentErc20TransferV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_erc20_transfer_v2);
 
 	if (filtered.length === 0) {
