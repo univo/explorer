@@ -1,4 +1,5 @@
 import { logger } from "@/utils";
+import type { TABLES } from "./constants";
 import { getIntentIdmV2 } from "@/events/intent_idm_v2/event";
 import { getIntentFwaWonV3 } from "@/events/intent_fwa_won_v3/event";
 import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
@@ -31,53 +32,58 @@ import { getLogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_creat
 import { getIntentContractDeploymentV2 } from "@/events/intent_contract_deployment_v2/event";
 import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
 
-// This is our central point of configuration for which all the events the app loads.
+export type Event = {
+	tag: keyof typeof TABLES;
+	chain: number;
+	tx_index: number;
+	log_index: number;
+	block_number: number;
+	block_timestamp: Date;
+};
 
-export type Event = Awaited<ReturnType<typeof getEventsForIds>>[number];
-
-export async function getEventsForIds(ids: string[]) {
-	if (ids.length === 0) {
+export async function getEvents(events: Event[]) {
+	if (events.length === 0) {
 		return [];
 	}
 
 	const start = Date.now();
 
-	const events = await Promise.all([
-		getLogEnsNewOwnerV2(ids),
-		getLogFwaNftListedV2(ids),
-		getLogErc20ApprovalV2(ids),
-		getLogErc20TransferV2(ids),
-		getLogUniswapV3SwapV2(ids),
-		getLogErc721ApprovalV2(ids),
-		getLogErc721TransferV2(ids),
-		getLogFwaNftAllocatedV2(ids),
-		getLogEnsReverseClaimedV2(ids),
-		getLogUniswapV3PoolCreatedV2(ids),
-		getLogEnsNameForAddrChangedV2(ids),
+	const results = await Promise.all([
+		getLogEnsNewOwnerV2(events),
+		getLogFwaNftListedV2(events),
+		getLogErc20ApprovalV2(events),
+		getLogErc20TransferV2(events),
+		getLogUniswapV3SwapV2(events),
+		getLogErc721ApprovalV2(events),
+		getLogErc721TransferV2(events),
+		getLogFwaNftAllocatedV2(events),
+		getLogEnsReverseClaimedV2(events),
+		getLogUniswapV3PoolCreatedV2(events),
+		getLogEnsNameForAddrChangedV2(events),
 
-		getIntentIdmV2(ids),
-		getIntentFwaWonV3(ids),
-		getIntentFwaAcquireV2(ids),
-		getIntentAaveV3RepayV2(ids),
-		getIntentFwaDepositedV2(ids),
-		getIntentAaveV3SupplyV2(ids),
-		getIntentAaveV3BorrowV2(ids),
-		getIntentErc20ApprovalV2(ids),
-		getIntentErc20TransferV2(ids),
-		getIntentUsdcBlacklistV2(ids),
-		getIntentUniswapV3SwapV2(ids),
-		getIntentUniswapV3MintV2(ids),
-		getIntentErc721ApprovalV2(ids),
-		getIntentErc721TransferV2(ids),
-		getIntentAaveV3WithdrawV2(ids),
-		getIntentNativeTransferV2(ids),
-		getIntentCancelPendingTxV2(ids),
-		getIntentTornadoWithdrawalV2(ids),
-		getIntentEnsNameRegisteredV2(ids),
-		getIntentContractDeploymentV2(ids),
+		getIntentIdmV2(events),
+		getIntentFwaWonV3(events),
+		getIntentFwaAcquireV2(events),
+		getIntentAaveV3RepayV2(events),
+		getIntentFwaDepositedV2(events),
+		getIntentAaveV3SupplyV2(events),
+		getIntentAaveV3BorrowV2(events),
+		getIntentErc20ApprovalV2(events),
+		getIntentErc20TransferV2(events),
+		getIntentUsdcBlacklistV2(events),
+		getIntentUniswapV3SwapV2(events),
+		getIntentUniswapV3MintV2(events),
+		getIntentErc721ApprovalV2(events),
+		getIntentErc721TransferV2(events),
+		getIntentAaveV3WithdrawV2(events),
+		getIntentNativeTransferV2(events),
+		getIntentCancelPendingTxV2(events),
+		getIntentTornadoWithdrawalV2(events),
+		getIntentEnsNameRegisteredV2(events),
+		getIntentContractDeploymentV2(events),
 	]);
 
-	const flat = events.flat(1);
+	const flat = results.flat(1);
 
 	logger.debug(`Loaded ${flat.length} events in ${Date.now() - start}ms`);
 

@@ -3,8 +3,8 @@ import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
 import { createId } from "@/helpers";
 import { logger, numberToHex } from "@/utils";
+import type { Event, Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import type { BaseEvent, Chain } from "@/constants";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 
 // Transactions can be uniquely represented in two ways: their transaction hash, or the combination of their block number
@@ -37,7 +37,7 @@ export const table = pgTable(
 );
 
 export const index_block_number_tx_index_v4 = {
-	async upsert(events: BaseEvent[]) {
+	async upsert(events: Event[]) {
 		const unique: Record<string, true> = {};
 
 		const batch: (typeof table.$inferInsert)[] = [];
@@ -76,7 +76,7 @@ export const index_block_number_tx_index_v4 = {
 		}
 	},
 
-	async delete(events: BaseEvent[]) {
+	async delete(events: Event[]) {
 		let chain = undefined;
 		let block_number = undefined;
 

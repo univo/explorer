@@ -1,7 +1,8 @@
 import type { RpcTransactionReceipt } from "viem";
 
+import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
-import { CHAINS, CHAINS_REVERSED, type BaseEvent } from "./constants";
+import { CHAINS, CHAINS_REVERSED } from "./constants";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) {
@@ -26,7 +27,7 @@ export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	return true;
 }
 
-export function getOrderedEvents(events: BaseEvent[], order: "latest" | "reverse") {
+export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
 	if (order === "latest") {
 		return events.sort((a, b) => {
 			// Compare timestamp first

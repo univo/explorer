@@ -6,8 +6,8 @@ import { TABLES } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { logger, numberToHex } from "@/utils";
 import { createId, parseId } from "@/helpers";
+import type { Event, Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import type { BaseEvent, Chain } from "@/constants";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
 // This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
@@ -19,7 +19,7 @@ import type { BaseEvent, Chain } from "@/constants";
 // explorer this massively improves insert performance.
 
 type Index = {
-	event: BaseEvent;
+	event: Event;
 	account: `0x${string}`;
 };
 

@@ -5,8 +5,8 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
+import type { Event } from "@/events";
 import { getEventSuccess } from "@/helpers";
-import type { BaseEvent } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -135,7 +135,7 @@ univo.event({
 	},
 });
 
-export async function getLogFwaNftAllocatedV2(events: BaseEvent[]) {
+export async function getLogFwaNftAllocatedV2(events: Event[]) {
 	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.log_fwa_nft_allocated_v2);
 
 	if (filtered.length === 0) {

@@ -4,9 +4,9 @@ import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbiIt
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
+import type { Event } from "@/events";
 import { iife, numberToHex } from "@/utils";
 import { getEventSuccess } from "@/helpers";
-import type { BaseEvent } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -168,7 +168,7 @@ univo.event({
 	},
 });
 
-export async function getIntentTornadoWithdrawalV2(events: BaseEvent[]) {
+export async function getIntentTornadoWithdrawalV2(events: Event[]) {
 	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.intent_tornado_withdrawal_v2);
 
 	if (filtered.length === 0) {

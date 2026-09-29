@@ -4,8 +4,8 @@ import { getAddress, hexToNumber } from "viem";
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
+import type { Event } from "@/events";
 import { getEventSuccess } from "@/helpers";
-import type { BaseEvent } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -98,7 +98,7 @@ univo.event({
 	},
 });
 
-export async function getIntentContractDeploymentV2(events: BaseEvent[]) {
+export async function getIntentContractDeploymentV2(events: Event[]) {
 	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.intent_contract_deployment_v2);
 
 	if (filtered.length === 0) {

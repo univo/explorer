@@ -5,8 +5,8 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
+import type { Event } from "@/events";
 import { getEventSuccess } from "@/helpers";
-import type { BaseEvent } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -122,7 +122,7 @@ univo.event({
 	},
 });
 
-export async function getIntentUsdcBlacklistV2(events: BaseEvent[]) {
+export async function getIntentUsdcBlacklistV2(events: Event[]) {
 	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.intent_usdc_blacklist_v2);
 
 	if (filtered.length === 0) {

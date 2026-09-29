@@ -6,7 +6,7 @@ import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { BaseEvent } from "@/constants";
+import type { Event } from "@/events";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
@@ -110,7 +110,7 @@ univo.event({
 	id: "log_ens_reverse_claimed_v2_index_block_number_tx_index_v4",
 });
 
-export async function getLogEnsReverseClaimedV2(events: BaseEvent[]) {
+export async function getLogEnsReverseClaimedV2(events: Event[]) {
 	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.log_ens_reverse_claimed_v2);
 
 	if (filtered.length === 0) {

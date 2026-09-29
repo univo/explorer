@@ -4,8 +4,8 @@ import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSe
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
+import type { Event } from "@/events";
 import { getEventSuccess } from "@/helpers";
-import type { BaseEvent } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -139,7 +139,7 @@ univo.event({
 	},
 });
 
-export async function getIntentAaveV3BorrowV2(events: BaseEvent[]) {
+export async function getIntentAaveV3BorrowV2(events: Event[]) {
 	const filtered = events.filter((id) => TABLES[id.tag] === TABLES.intent_aave_v3_borrow_v2);
 
 	if (filtered.length === 0) {

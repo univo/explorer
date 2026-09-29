@@ -4,12 +4,12 @@ import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSe
 import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
+import type { Event } from "@/events";
+import { getEventSuccess } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import type { BaseEvent } from "@/constants";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
-import { getEventSuccess } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentFwaDepositedV2 {
@@ -128,7 +128,7 @@ univo.event({
 	},
 });
 
-export async function getIntentFwaDepositedV2(events: BaseEvent[]) {
+export async function getIntentFwaDepositedV2(events: Event[]) {
 	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.intent_fwa_deposited_v2);
 
 	if (filtered.length === 0) {

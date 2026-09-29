@@ -4,12 +4,12 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
+import { getEvents, type Event } from "@/events";
 import { EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
 import { balances_v1 } from "@/aggregates/balances_v1";
-import { getEventsForIds, type Event } from "@/events";
 import { Erc20, getTokenPrice } from "@/components/erc-20";
 import { getBlockByNumber, type Block } from "@/state/block";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
@@ -30,7 +30,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const timestamp = new Date(hexToNumber(block.timestamp) * 1000);
 
 	const [events, receipt, price] = await Promise.all([
-		getEventsForIds(ids),
+		getEvents(ids),
 		getTxReceiptByHash(tx.hash), //
 		getTokenPrice({ chain: 1, token: ETH_ADDRESS, timestamp }),
 	]);
