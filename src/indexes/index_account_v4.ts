@@ -205,14 +205,12 @@ export async function getEventsForAccount(account: `0x${string}`, opts: Opts) {
 		logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
 		return rows.map((result) => {
-			const tag = REVERSE_TABLES[result.table_id];
-
 			return {
-				tag,
 				chain: result.chain,
 				tx_index: result.tx_index,
 				log_index: result.log_index,
 				block_number: result.block_number,
+				tag: REVERSE_TABLES[result.table_id],
 				block_timestamp: new Date(result.block_timestamp),
 			};
 		});
@@ -249,14 +247,12 @@ export async function getEventsForAccount(account: `0x${string}`, opts: Opts) {
 	logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
 	return rows.map((result) => {
-		const tag = REVERSE_TABLES[result.table_id];
-
 		return {
-			tag,
 			chain: result.chain,
 			tx_index: result.tx_index,
 			log_index: result.log_index,
 			block_number: result.block_number,
+			tag: REVERSE_TABLES[result.table_id],
 			block_timestamp: new Date(result.block_timestamp),
 		};
 	});
