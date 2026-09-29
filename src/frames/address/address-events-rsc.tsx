@@ -13,14 +13,12 @@ import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; preset: Preset; startCursor: string }) {
-	const cursor = deserializeCursor(props.startCursor);
-
 	const ids = await getEventIdsForAccount(props.address, {
-		cursor,
 		limit: 100,
 		chains: [1],
 		order: "latest",
 		tables: PRESETS[props.preset],
+		cursor: deserializeCursor(props.startCursor),
 	});
 
 	if (ids.length === 0) {
