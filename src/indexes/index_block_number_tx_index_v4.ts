@@ -2,7 +2,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
 import { logger } from "@/utils";
-import type { Event } from "@/events";
+import type { EventId } from "@/events";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { REVERSE_TABLES, TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -38,7 +38,7 @@ export const table = pgTable(
 );
 
 export const index_block_number_tx_index_v4 = {
-	async upsert(events: Event[]) {
+	async upsert(events: EventId[]) {
 		const unique: Record<string, true> = {};
 
 		const batch: (typeof table.$inferInsert)[] = [];
@@ -77,7 +77,7 @@ export const index_block_number_tx_index_v4 = {
 		}
 	},
 
-	async delete(events: Event[]) {
+	async delete(events: EventId[]) {
 		let chain = undefined;
 		let block_number = undefined;
 
@@ -109,7 +109,7 @@ export const index_block_number_tx_index_v4 = {
 	},
 };
 
-export async function getEventsForBlockNumber(chain: Chain, block: number) {
+export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
@@ -127,7 +127,7 @@ export async function getEventsForBlockNumber(chain: Chain, block: number) {
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map<Event>((result) => {
+	return rows.map<EventId>((result) => {
 		const tag = REVERSE_TABLES[result.table_id];
 
 		return {
@@ -141,7 +141,7 @@ export async function getEventsForBlockNumber(chain: Chain, block: number) {
 	});
 }
 
-export async function getEventsForTxPosition(chain: Chain, block: number, tx: number) {
+export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: number) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
@@ -159,7 +159,7 @@ export async function getEventsForTxPosition(chain: Chain, block: number, tx: nu
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map<Event>((result) => {
+	return rows.map<EventId>((result) => {
 		const tag = REVERSE_TABLES[result.table_id];
 
 		return {

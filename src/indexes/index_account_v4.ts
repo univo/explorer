@@ -3,7 +3,7 @@ import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
 import { logger } from "@/utils";
-import type { Event } from "@/events";
+import type { EventId } from "@/events";
 import type { Chain } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
@@ -19,7 +19,7 @@ import { REVERSE_TABLES, TABLES } from "@/constants";
 // explorer this massively improves insert performance.
 
 type Index = {
-	event: Event;
+	event: EventId;
 	account: `0x${string}`;
 };
 
@@ -151,14 +151,14 @@ type Opts = {
 	// Pagination
 
 	limit: number;
-	cursor?: Event;
+	cursor?: EventId;
 
 	// Ordering
 
 	order: "latest" | "reverse";
 };
 
-export async function getEventsForAccount(account: `0x${string}`, opts: Opts) {
+export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();

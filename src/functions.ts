@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { rpc } from "./helpers";
 import { hexToNumber } from "./utils";
 import { PRESETS } from "./constants";
-import { getEventsForAccount } from "./indexes/index_account_v4";
+import { getEventIdsForAccount } from "./indexes/index_account_v4";
 import { AddressSchema, PresetSchema, TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
@@ -43,7 +43,7 @@ export const sf_getTxPosition = createServerFn({ method: "GET" })
 export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ address: AddressSchema, preset: PresetSchema }))
 	.handler(async ({ data }) => {
-		const [id] = await getEventsForAccount(data.address, {
+		const [id] = await getEventIdsForAccount(data.address, {
 			limit: 1,
 			chains: [1],
 			order: "latest",

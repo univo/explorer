@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { PRESETS } from "@/constants";
 import { test_getBlock } from "@/tests/utils";
 import { event } from "@/events/intent_native_transfer_v2/event";
-import { getEventsForAccount, index_account_v4 } from "./index_account_v4";
+import { getEventIdsForAccount, index_account_v4 } from "./index_account_v4";
 
 test.concurrent("index_account_v4", async ({ expect }) => {
 	const block_number = 10000000;
@@ -21,7 +21,7 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 
 	await index_account_v4.upsert(indexes);
 
-	const ids = await getEventsForAccount("0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8", {
+	const ids = await getEventIdsForAccount("0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8", {
 		limit: 14,
 		chains: [1],
 		order: "reverse",
