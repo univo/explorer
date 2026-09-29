@@ -2,11 +2,12 @@ import { getAddress } from "viem";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
-import type { Chain } from "@/constants";
+import { TABLES } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { logger, numberToHex } from "@/utils";
 import { createId, parseId } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
+import type { BaseEvent, Chain } from "@/constants";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
 // This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
@@ -18,8 +19,8 @@ import { createPostgresClient } from "@/db/client";
 // explorer this massively improves insert performance.
 
 type Index = {
+	event: BaseEvent;
 	account: `0x${string}`;
-	event_id: string;
 };
 
 export const table = pgTable(
@@ -57,7 +58,15 @@ export const index_account_v4 = {
 		for (const index of indexes) {
 			const account = getAddress(index.account);
 
-			const key = [account, index.event_id].join(":");
+			const key = [
+				account,
+				index.event.chain,
+				index.event.block_timestamp,
+				index.event.block_number,
+				index.event.tx_index,
+				index.event.log_index,
+				index.event.tag,
+			].join(":");
 
 			if (unique[key]) {
 				continue;
@@ -65,17 +74,15 @@ export const index_account_v4 = {
 
 			unique[key] = true;
 
-			const parsed = parseId(index.event_id);
-
 			batch.push({
 				account,
-				chain: parsed.chainId,
-				table_id: parsed.tableId,
-				block_timestamp: parsed.blockTimestamp,
+				chain: index.event.chain,
+				table_id: TABLES[index.event.tag],
+				block_timestamp: index.event.block_timestamp.getTime(),
 
-				tx_index: parsed.txIndex,
-				log_index: parsed.logIndex,
-				block_number: parsed.blockNumber,
+				tx_index: index.event.tx_index,
+				log_index: index.event.log_index,
+				block_number: index.event.block_number,
 			});
 		}
 
@@ -106,19 +113,17 @@ export const index_account_v4 = {
 					table.block_number,
 				],
 				indexes.map((index) => {
-					const parsed = parseId(index.event_id);
-
 					return [
 						// Indexed columns
 						index.account,
-						parsed.blockTimestamp,
-						parsed.chainId,
-						parsed.tableId,
+						index.event.block_timestamp.getTime(),
+						index.event.chain,
+						TABLES[index.event.tag],
 
 						// Non-indexed columns
-						parsed.txIndex,
-						parsed.logIndex,
-						parsed.blockNumber,
+						index.event.tx_index,
+						index.event.log_index,
+						index.event.block_number,
 					];
 				}),
 			),

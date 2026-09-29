@@ -10,9 +10,7 @@ test.concurrent("intent_aave_v3_borrow_v2 deletes, writes, and reads from storag
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentAaveV3BorrowV2(ids);
+	const initial = await getIntentAaveV3BorrowV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_aave_v3_borrow_v2 deletes, writes, and reads from storag
 		],
 	});
 
-	const final = await getIntentAaveV3BorrowV2(ids);
+	const final = await getIntentAaveV3BorrowV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[

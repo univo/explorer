@@ -10,9 +10,7 @@ test.concurrent("intent_native_transfer_v2", async ({ expect }) => {
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
-	const indexes = intent_native_transfer_v2.handler(block).map((event) => {
-		return event.id;
-	});
+	const indexes = intent_native_transfer_v2.handler(block);
 
 	await index_block_number_tx_index_v4.delete(indexes);
 
@@ -62,9 +60,7 @@ test.concurrent("log_erc20_transfer_v2", async ({ expect }) => {
 
 	const block = await test_getBlock({ chain: 1, block_number });
 
-	const indexes = log_erc20_transfer_v2.handler(block).map((event) => {
-		return event.id;
-	});
+	const indexes = log_erc20_transfer_v2.handler(block);
 
 	await index_block_number_tx_index_v4.delete(indexes);
 

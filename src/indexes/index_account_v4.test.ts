@@ -12,8 +12,8 @@ test.concurrent("index_account_v4", async ({ expect }) => {
 
 	const indexes = event.handler(block).flatMap((event) => {
 		return [
-			{ event_id: event.id, account: event.to_address }, //
-			{ event_id: event.id, account: event.from_address },
+			{ event, account: event.to_address }, //
+			{ event, account: event.from_address },
 		];
 	});
 

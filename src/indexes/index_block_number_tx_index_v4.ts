@@ -1,10 +1,11 @@
 import { and, eq, sql } from "drizzle-orm";
 import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
-import { createId, parseId } from "@/helpers";
+import { createId } from "@/helpers";
 import { logger, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
-import { TRANSACTION_EVENT, type Chain } from "@/constants";
+import type { BaseEvent, Chain } from "@/constants";
+import { TABLES, TRANSACTION_EVENT } from "@/constants";
 
 // Transactions can be uniquely represented in two ways: their transaction hash, or the combination of their block number
 // and transaction index. In general, the explorer uses the latter and there are a few reasons why:
@@ -36,15 +37,13 @@ export const table = pgTable(
 );
 
 export const index_block_number_tx_index_v4 = {
-	async upsert(ids: string[]) {
+	async upsert(events: BaseEvent[]) {
 		const unique: Record<string, true> = {};
 
 		const batch: (typeof table.$inferInsert)[] = [];
 
-		for (const id of ids) {
-			const parsed = parseId(id);
-
-			const key = [parsed.chainId, parsed.blockNumber, parsed.txIndex, parsed.logIndex, parsed.tableId].join(":");
+		for (const event of events) {
+			const key = [event.chain, event.block_number, event.tx_index, event.log_index, event.tag].join(":");
 
 			if (unique[key]) {
 				continue;
@@ -53,12 +52,12 @@ export const index_block_number_tx_index_v4 = {
 			unique[key] = true;
 
 			batch.push({
-				chain: parsed.chainId,
-				tx_index: parsed.txIndex,
-				table_id: parsed.tableId,
-				log_index: parsed.logIndex,
-				block_number: parsed.blockNumber,
-				block_timestamp: parsed.blockTimestamp,
+				chain: event.chain,
+				tx_index: event.tx_index,
+				log_index: event.log_index,
+				table_id: TABLES[event.tag],
+				block_number: event.block_number,
+				block_timestamp: event.block_timestamp.getTime(),
 			});
 		}
 
@@ -77,26 +76,24 @@ export const index_block_number_tx_index_v4 = {
 		}
 	},
 
-	async delete(ids: string[]) {
+	async delete(events: BaseEvent[]) {
 		let chain = undefined;
 		let block_number = undefined;
 
-		for (const id of ids) {
-			const parsed = parseId(id);
-
+		for (const event of events) {
 			if (chain === undefined) {
-				chain = parsed.chainId;
+				chain = event.chain;
 			}
 
-			if (chain !== parsed.chainId) {
+			if (chain !== event.chain) {
 				throw new Error("Expected entire batch to be from the same chain");
 			}
 
 			if (block_number === undefined) {
-				block_number = parsed.blockNumber;
+				block_number = event.block_number;
 			}
 
-			if (block_number !== parsed.blockNumber) {
+			if (block_number !== event.block_number) {
 				throw new Error("Expected entire batch to be from the same block number");
 			}
 		}
