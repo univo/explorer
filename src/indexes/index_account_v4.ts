@@ -78,7 +78,7 @@ export const index_account_v4 = {
 				account,
 				chain: index.id.chain,
 				table_id: TABLES[index.id.tag],
-				block_timestamp: index.id.block_timestamp.getTime(),
+				block_timestamp: Math.floor(index.id.block_timestamp.getTime() / 1000),
 
 				tx_index: index.id.tx_index,
 				log_index: index.id.log_index,
@@ -116,7 +116,7 @@ export const index_account_v4 = {
 					return [
 						// Indexed columns
 						index.account,
-						index.id.block_timestamp.getTime(),
+						Math.floor(index.id.block_timestamp.getTime() / 1000),
 						index.id.chain,
 						TABLES[index.id.tag],
 
@@ -167,11 +167,12 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 		const { block_timestamp, block_number, tx_index, log_index, chain, tag } = opts.cursor;
 
 		const table_id = TABLES[tag];
+		const block_timestamp_seconds = Math.floor(block_timestamp.getTime() / 1000);
 
 		const cursor =
 			opts.order === "latest"
-				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${block_timestamp},${block_number},${tx_index},${log_index},${chain},${table_id})`
-				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${block_timestamp},${block_number},${tx_index},${log_index},${chain},${table_id})`;
+				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${chain},${table_id})`
+				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${chain},${table_id})`;
 
 		const rows = await client
 			.selectDistinct({
@@ -211,7 +212,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 				log_index: result.log_index,
 				block_number: result.block_number,
 				tag: REVERSE_TABLES[result.table_id],
-				block_timestamp: new Date(result.block_timestamp),
+				block_timestamp: new Date(result.block_timestamp * 1000),
 			};
 		});
 	}
@@ -253,7 +254,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 			log_index: result.log_index,
 			block_number: result.block_number,
 			tag: REVERSE_TABLES[result.table_id],
-			block_timestamp: new Date(result.block_timestamp),
+			block_timestamp: new Date(result.block_timestamp * 1000),
 		};
 	});
 }

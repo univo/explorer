@@ -58,7 +58,7 @@ export const index_block_number_tx_index_v4 = {
 				log_index: id.log_index,
 				table_id: TABLES[id.tag],
 				block_number: id.block_number,
-				block_timestamp: id.block_timestamp.getTime(),
+				block_timestamp: Math.floor(id.block_timestamp.getTime() / 1000),
 			});
 		}
 
@@ -134,7 +134,7 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 			log_index: result.log_index,
 			block_number: result.block_number,
 			tag: REVERSE_TABLES[result.table_id],
-			block_timestamp: new Date(result.block_timestamp),
+			block_timestamp: new Date(result.block_timestamp * 1000),
 		};
 	});
 }
@@ -164,7 +164,7 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 			log_index: result.log_index,
 			block_number: result.block_number,
 			tag: REVERSE_TABLES[result.table_id],
-			block_timestamp: new Date(result.block_timestamp),
+			block_timestamp: new Date(result.block_timestamp * 1000),
 		};
 	});
 }

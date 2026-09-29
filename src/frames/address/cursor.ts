@@ -5,7 +5,7 @@ import { REVERSE_TABLES, TABLES } from "@/constants";
 import { getExternalChain, getInternalChain } from "@/helpers";
 
 export function serializeCursor(opts: Id) {
-	const _blockTimestamp = numberToHex(opts.block_timestamp.getTime() / 1000);
+	const _blockTimestamp = numberToHex(Math.floor(opts.block_timestamp.getTime() / 1000));
 	const _blockNumber = numberToHex(opts.block_number);
 	const _txIndex = numberToHex(opts.tx_index);
 	const _logIndex = numberToHex(opts.log_index);
