@@ -1,5 +1,6 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 
+import { Logo } from "@/components/logo";
 import css from "@/styles/tailwind.css?url";
 import { Devtools } from "@/components/devtools";
 import { Navigation } from "@/components/navigation";
@@ -7,6 +8,7 @@ import { SearchDialog } from "@/components/search-dialog";
 import { GlobalLoading } from "@/components/global-loading";
 import { FrameContextProvider } from "@/frames/frame-context-provider";
 import { QueryClientProvider } from "@/components/query-client-provider";
+import { MAINTENANCE_MODE } from "@/constants";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -42,7 +44,7 @@ function Root() {
 						<SearchDialog />
 						<GlobalLoading />
 
-						<Outlet />
+						{MAINTENANCE_MODE ? <Maintenance /> : <Outlet />}
 
 						<Devtools />
 						<Scripts />
@@ -50,6 +52,18 @@ function Root() {
 				</QueryClientProvider>
 			</body>
 		</html>
+	);
+}
+
+function Maintenance() {
+	return (
+		<div className="w-full h-full flex items-center justify-center">
+			<div className="flex flex-col items-center">
+				<Logo className="size-8" />
+				<p className="text-gray-900 font-medium text-lg mt-8">univo is under maintenance</p>
+				<p className="text-gray-500 text-sm mt-0.5">Your favourite block explorer will be back later</p>
+			</div>
+		</div>
 	);
 }
 

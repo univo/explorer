@@ -235,3 +235,7 @@ export const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 // Null address utility
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+// Maintenance mode. Use only in emergency.
+
+export const MAINTENANCE_MODE: boolean = true;
