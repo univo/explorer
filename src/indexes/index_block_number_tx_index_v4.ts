@@ -38,13 +38,13 @@ export const table = pgTable(
 );
 
 export const index_block_number_tx_index_v4 = {
-	async upsert(events: Id[]) {
+	async upsert(ids: Id[]) {
 		const unique: Record<string, true> = {};
 
 		const batch: (typeof table.$inferInsert)[] = [];
 
-		for (const event of events) {
-			const key = [event.chain, event.block_number, event.tx_index, event.log_index, event.tag].join(":");
+		for (const id of ids) {
+			const key = [id.chain, id.block_number, id.tx_index, id.log_index, id.tag].join(":");
 
 			if (unique[key]) {
 				continue;
@@ -53,12 +53,12 @@ export const index_block_number_tx_index_v4 = {
 			unique[key] = true;
 
 			batch.push({
-				chain: event.chain,
-				tx_index: event.tx_index,
-				log_index: event.log_index,
-				table_id: TABLES[event.tag],
-				block_number: event.block_number,
-				block_timestamp: event.block_timestamp.getTime(),
+				chain: id.chain,
+				tx_index: id.tx_index,
+				log_index: id.log_index,
+				table_id: TABLES[id.tag],
+				block_number: id.block_number,
+				block_timestamp: id.block_timestamp.getTime(),
 			});
 		}
 
@@ -77,24 +77,24 @@ export const index_block_number_tx_index_v4 = {
 		}
 	},
 
-	async delete(events: Id[]) {
+	async delete(ids: Id[]) {
 		let chain = undefined;
 		let block_number = undefined;
 
-		for (const event of events) {
+		for (const id of ids) {
 			if (chain === undefined) {
-				chain = event.chain;
+				chain = id.chain;
 			}
 
-			if (chain !== event.chain) {
+			if (chain !== id.chain) {
 				throw new Error("Expected entire batch to be from the same chain");
 			}
 
 			if (block_number === undefined) {
-				block_number = event.block_number;
+				block_number = id.block_number;
 			}
 
-			if (block_number !== event.block_number) {
+			if (block_number !== id.block_number) {
 				throw new Error("Expected entire batch to be from the same block number");
 			}
 		}
