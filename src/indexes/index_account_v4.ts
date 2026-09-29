@@ -2,12 +2,12 @@ import { getAddress } from "viem";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
-import { TABLES } from "@/constants";
+import { logger } from "@/utils";
 import type { Event } from "@/events";
 import type { Chain } from "@/constants";
 import { inTuple, hex } from "@/db/types";
-import { logger, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
+import { REVERSE_TABLES, TABLES } from "@/constants";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
 // This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
@@ -205,14 +205,16 @@ export async function getEventsForAccount(account: `0x${string}`, opts: Opts) {
 		logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
 		return rows.map((result) => {
-			return createId({
-				tableId: result.table_id,
-				chainId: numberToHex(result.chain),
-				txIndex: numberToHex(result.tx_index),
-				logIndex: numberToHex(result.log_index),
-				blockNumber: numberToHex(result.block_number),
-				blockTimestamp: numberToHex(result.block_timestamp),
-			});
+			const tag = REVERSE_TABLES[result.table_id];
+
+			return {
+				tag,
+				chain: result.chain,
+				tx_index: result.tx_index,
+				log_index: result.log_index,
+				block_number: result.block_number,
+				block_timestamp: new Date(result.block_timestamp),
+			};
 		});
 	}
 
@@ -247,13 +249,15 @@ export async function getEventsForAccount(account: `0x${string}`, opts: Opts) {
 	logger.debug(`Found ${rows.length} events for account in ${Date.now() - start}ms`);
 
 	return rows.map((result) => {
-		return createId({
-			tableId: result.table_id,
-			chainId: numberToHex(result.chain),
-			txIndex: numberToHex(result.tx_index),
-			logIndex: numberToHex(result.log_index),
-			blockNumber: numberToHex(result.block_number),
-			blockTimestamp: numberToHex(result.block_timestamp),
-		});
+		const tag = REVERSE_TABLES[result.table_id];
+
+		return {
+			tag,
+			chain: result.chain,
+			tx_index: result.tx_index,
+			log_index: result.log_index,
+			block_number: result.block_number,
+			block_timestamp: new Date(result.block_timestamp),
+		};
 	});
 }

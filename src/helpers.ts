@@ -2,7 +2,7 @@ import type { RpcTransactionReceipt } from "viem";
 
 import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
-import { CHAINS, CHAINS_REVERSED } from "./constants";
+import { CHAINS, REVERSE_CHAINS } from "./constants";
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) {
@@ -98,7 +98,7 @@ export function getInternalChain(external_chain: `0x${string}` | keyof typeof CH
  */
 export function getExternalChain(internal_chain: number) {
 	return (
-		(CHAINS_REVERSED[internal_chain as keyof typeof CHAINS_REVERSED] as keyof typeof CHAINS) ||
+		(REVERSE_CHAINS[internal_chain as keyof typeof REVERSE_CHAINS] as keyof typeof CHAINS) ||
 		raise(`Unknown internal chain id ${internal_chain}`)
 	);
 }

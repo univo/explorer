@@ -5,7 +5,7 @@ import { logger } from "@/utils";
 import type { Event } from "@/events";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { TABLES, TRANSACTION_EVENT } from "@/constants";
+import { REVERSE_TABLES, TABLES, TRANSACTION_EVENT } from "@/constants";
 
 // Transactions can be uniquely represented in two ways: their transaction hash, or the combination of their block number
 // and transaction index. In general, the explorer uses the latter and there are a few reasons why:
@@ -127,7 +127,7 @@ export async function getEventsForBlockNumber(chain: Chain, block: number) {
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
 	return rows.map<Event>((result) => {
-		const tag = TABLES[result.table_id];
+		const tag = REVERSE_TABLES[result.table_id];
 
 		return {
 			tag,
@@ -159,7 +159,7 @@ export async function getEventsForTxPosition(chain: Chain, block: number, tx: nu
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
 	return rows.map<Event>((result) => {
-		const tag = TABLES[result.table_id];
+		const tag = REVERSE_TABLES[result.table_id];
 
 		return {
 			tag,
