@@ -5,7 +5,8 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
-import { createId, getEventSuccess, parseId } from "@/helpers";
+import { getEventSuccess } from "@/helpers";
+import type { BaseEvent } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -14,7 +15,6 @@ import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v
 
 export interface LogFwaNftAllocatedV2 {
 	tag: "log_fwa_nft_allocated_v2";
-	id: string;
 	chain: number;
 	tx_index: number;
 	log_index: number;
@@ -58,15 +58,6 @@ export const event = univo.event({
 						strict: true,
 					});
 
-					const id = createId({
-						logIndex: log.logIndex,
-						chainId: block.eth_chainId,
-						txIndex: log.transactionIndex,
-						tableId: TABLES.log_fwa_nft_allocated_v2,
-						blockNumber: block.eth_getBlockByNumber.number,
-						blockTimestamp: block.eth_getBlockByNumber.timestamp,
-					});
-
 					// Normally we don't record a success indicator for a log event. In this case, we use
 					// the log event in our account index so it's necessary to show failures in-line.
 
@@ -74,7 +65,6 @@ export const event = univo.event({
 
 					return {
 						tag: "log_fwa_nft_allocated_v2",
-						id,
 						log_index: hexToNumber(log.logIndex),
 						chain: hexToNumber(block.eth_chainId),
 						tx_index: hexToNumber(log.transactionIndex),
@@ -125,8 +115,8 @@ export const event = univo.event({
 univo.event({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
+	handler: (block) => event.handler(block),
 	id: "log_fwa_nft_allocated_v2_index_block_number_tx_index_v4",
-	handler: (block) => event.handler(block).map((event) => event.id),
 });
 
 // Allocations settle asynchronously, so index the result for both the winner and the depositor.
@@ -138,16 +128,15 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event_id: event.id, account: event.depositor_address },
-				{ event_id: event.id, account: event.purchaser_address },
+				{ event, account: event.depositor_address },
+				{ event, account: event.purchaser_address },
 			];
 		});
 	},
 });
 
-export async function getLogFwaNftAllocatedV2(ids: string[]) {
-	const mapped = ids.map((id) => parseId(id));
-	const filtered = mapped.filter((id) => id.tableId === TABLES.log_fwa_nft_allocated_v2);
+export async function getLogFwaNftAllocatedV2(events: BaseEvent[]) {
+	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.log_fwa_nft_allocated_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -162,11 +151,11 @@ export async function getLogFwaNftAllocatedV2(ids: string[]) {
 			and(
 				inArray(
 					table.block_timestamp,
-					filtered.map((event) => new Date(event.blockTimestamp * 1000)),
+					filtered.map((event) => event.block_timestamp),
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					filtered.map((event) => [new Date(event.blockTimestamp * 1000), event.blockNumber, event.txIndex, event.logIndex, event.chainId]),
+					filtered.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
 				),
 			),
 		)
@@ -179,18 +168,8 @@ export async function getLogFwaNftAllocatedV2(ids: string[]) {
 		);
 
 	return rows.map<LogFwaNftAllocatedV2>((row) => {
-		const id = createId({
-			chainId: numberToHex(row.chain),
-			txIndex: numberToHex(row.tx_index),
-			tableId: TABLES.log_fwa_nft_allocated_v2,
-			logIndex: numberToHex(row.log_index),
-			blockNumber: numberToHex(row.block_number),
-			blockTimestamp: numberToHex(row.block_timestamp.getTime() / 1000),
-		});
-
 		return {
 			tag: "log_fwa_nft_allocated_v2",
-			id,
 			chain: row.chain,
 			tx_index: row.tx_index,
 			log_index: row.log_index,

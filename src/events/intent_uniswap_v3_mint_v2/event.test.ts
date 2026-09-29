@@ -10,8 +10,7 @@ test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from stora
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-	const initial = await getIntentUniswapV3MintV2(ids);
+	const initial = await getIntentUniswapV3MintV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -29,7 +28,7 @@ test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from stora
 		],
 	});
 
-	const final = await getIntentUniswapV3MintV2(ids);
+	const final = await getIntentUniswapV3MintV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -38,7 +37,6 @@ test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-04T01:43:35.000Z,
 		    "chain": 1,
 		    "fee": "0x0bb8",
-		    "id": "6a7143c70187d200004cffffff00010050",
 		    "log_index": 16777215,
 		    "pool_address": "0x127452F3f9cDc0389b0Bf59ce6131aA3Bd763598",
 		    "recipient_address": "0xC216BfA5dA000965E820845c32e6FD88DB275743",
@@ -67,7 +65,6 @@ test.concurrent("intent_uniswap_v3_mint_v2 decodes mint submissions", async ({ e
 		    "block_timestamp": 2026-08-04T01:43:35.000Z,
 		    "chain": 1,
 		    "fee": "0xbb8",
-		    "id": "6a7143c70187d200004cffffff00010050",
 		    "log_index": 16777215,
 		    "pool_address": "0x127452F3f9cDc0389b0Bf59ce6131aA3Bd763598",
 		    "recipient_address": "0xC216BfA5dA000965E820845c32e6FD88DB275743",
@@ -111,7 +108,6 @@ test.concurrent("intent_uniswap_v3_mint_v2 includes failed submissions", async (
 		    "block_timestamp": 2026-08-04T01:43:35.000Z,
 		    "chain": 1,
 		    "fee": "0xbb8",
-		    "id": "6a7143c70187d200004cffffff00010050",
 		    "log_index": 16777215,
 		    "pool_address": "0x127452F3f9cDc0389b0Bf59ce6131aA3Bd763598",
 		    "recipient_address": "0xC216BfA5dA000965E820845c32e6FD88DB275743",

@@ -8,9 +8,9 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 
 	await event.storage.delete(event.handler(block));
 
-	const ids = event.handler(block).map((event) => event.id);
+	const handled = event.handler(block);
 
-	const initial = await getLogErc721ApprovalV2(ids);
+	const initial = await getLogErc721ApprovalV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -27,7 +27,7 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		],
 	});
 
-	const events = await getLogErc721ApprovalV2(ids);
+	const events = await getLogErc721ApprovalV2(handled);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -35,7 +35,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b000bb00009900010036",
 		    "log_index": 153,
 		    "owner_address": "0x269424e2654dDF7683E71EAADA2ba363FAB37370",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -48,7 +47,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b000c40000a500010036",
 		    "log_index": 165,
 		    "owner_address": "0x8212B16f10746cB5Bfb022aAD72Fa6527e33faD3",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -61,7 +59,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b000c50000a700010036",
 		    "log_index": 167,
 		    "owner_address": "0x8212B16f10746cB5Bfb022aAD72Fa6527e33faD3",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -74,7 +71,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b000ed0000d500010036",
 		    "log_index": 213,
 		    "owner_address": "0x91D1B70a8837d4C8dd27325A909D361eA3f44A9A",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -87,7 +83,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b0010d00010b00010036",
 		    "log_index": 267,
 		    "owner_address": "0x548B388010474279237aa91F359eB6cd86fa8196",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -100,7 +95,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b0011a00012000010036",
 		    "log_index": 288,
 		    "owner_address": "0xCc07E31719b6d430ea1146DaaA25A68ADBfF959c",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -113,7 +107,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b0012100012c00010036",
 		    "log_index": 300,
 		    "owner_address": "0x2F62c8E5D3fcC4A33b0b5edbE7C07f01511e26bb",
 		    "spender_address": "0x0000000000000000000000000000000000000000",
@@ -126,7 +119,6 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 		    "block_number": 13657776,
 		    "block_timestamp": 2021-11-21T11:02:06.000Z,
 		    "chain": 1,
-		    "id": "619a272e00d066b0012300012f00010036",
 		    "log_index": 303,
 		    "owner_address": "0xd7Fc4Ab828AFc1bb4b217f337f1777Ca856Efd12",
 		    "spender_address": "0x0000000000000000000000000000000000000000",

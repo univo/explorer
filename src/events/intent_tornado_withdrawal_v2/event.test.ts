@@ -11,8 +11,8 @@ test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ 
 
 	await event.storage.delete(event.handler(block));
 
-	const ids = event.handler(block).map((event) => event.id);
-	const initial = await getIntentTornadoWithdrawalV2(ids);
+	const handled = event.handler(block);
+	const initial = await getIntentTornadoWithdrawalV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +30,7 @@ test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ 
 		],
 	});
 
-	const events = await getIntentTornadoWithdrawalV2(ids);
+	const events = await getIntentTornadoWithdrawalV2(handled);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -40,7 +40,6 @@ test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ 
 		    "chain": 1,
 		    "fee": "0x00",
 		    "from_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
-		    "id": "5df7e34a008b1df80033ffffff0001004f",
 		    "log_index": 16777215,
 		    "pool_address": "0x12D66f87A04A9E220743712cE6d9bB1B5616B8Fc",
 		    "recipient_address": "0x0039F22efB07A647557C7C5d17854CFD6D489eF3",
@@ -62,8 +61,8 @@ test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect
 
 	await event.storage.delete(event.handler(block));
 
-	const ids = event.handler(block).map((event) => event.id);
-	const initial = await getIntentTornadoWithdrawalV2(ids);
+	const handled = event.handler(block);
+	const initial = await getIntentTornadoWithdrawalV2(handled);
 
 	expect(initial).toStrictEqual([]);
 
@@ -81,7 +80,7 @@ test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect
 		],
 	});
 
-	const events = await getIntentTornadoWithdrawalV2(ids);
+	const events = await getIntentTornadoWithdrawalV2(handled);
 
 	expect(events).toMatchInlineSnapshot(`
 		[
@@ -91,7 +90,6 @@ test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect
 		    "chain": 1,
 		    "fee": "0x016ed5e01c487000",
 		    "from_address": "0x03EbD2ea2B9F23669C9Eb05C2a1a39f99CBDf372",
-		    "id": "6026c1c700b4b6f1010cffffff0001004f",
 		    "log_index": 16777215,
 		    "pool_address": "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936",
 		    "recipient_address": "0x3f20e968a304Bc825Aa1a45228FdfD2D3D90c6Af",

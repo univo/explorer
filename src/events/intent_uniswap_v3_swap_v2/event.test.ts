@@ -10,9 +10,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentUniswapV3SwapV2(ids);
+	const initial = await getIntentUniswapV3SwapV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -30,7 +28,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 		],
 	});
 
-	const final = await getIntentUniswapV3SwapV2(ids);
+	const final = await getIntentUniswapV3SwapV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x03bc2b2b2868c7",
-		    "id": "6a71447b0187d20f0037ffffff00010051",
 		    "limit_quantity": "0x00",
 		    "log_index": 16777215,
 		    "recipient_address": "0xd32f19caacFA558bd5864464E4d7560306D9fE3E",
@@ -57,7 +54,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x01ae805eefa1dc",
-		    "id": "6a71447b0187d20f0038ffffff00010051",
 		    "limit_quantity": "0x00",
 		    "log_index": 16777215,
 		    "recipient_address": "0x0eE4B7145741616E37bc04Cf6ae38a1e73cc4915",
@@ -75,7 +71,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x047608d3059f0f",
-		    "id": "6a71447b0187d20f003affffff00010051",
 		    "limit_quantity": "0x00",
 		    "log_index": 16777215,
 		    "recipient_address": "0x934eB981c5745DE39CC36Fb0BBCfcEbcA4cF76e2",
@@ -93,7 +88,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x05fc",
-		    "id": "6a71447b0187d20f003fffffff00010051",
 		    "limit_quantity": "0xc7adff51a5f4",
 		    "log_index": 16777215,
 		    "recipient_address": "0x2FEF0275663a8dEe208c5e5E88c81630De8359E8",
@@ -111,7 +105,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x01737c715db8c0",
-		    "id": "6a71447b0187d20f0040ffffff00010051",
 		    "limit_quantity": "0x00",
 		    "log_index": 16777215,
 		    "recipient_address": "0x9b056E2fd1b96A5d2494a303daCCE77200F61B96",
@@ -138,7 +131,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:45:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x22c403cd9fd11a942",
-		    "id": "6a71443f0187d20a00e6ffffff00010051",
 		    "limit_quantity": "0x10d815a7",
 		    "log_index": 16777215,
 		    "recipient_address": "0x6FFb71E3c9C0F8ec2DbdCF19C1a1A8cf8acE6B18",
@@ -156,7 +148,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:45:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x3660893b0da985783",
-		    "id": "6a71443f0187d20a00e9ffffff00010051",
 		    "limit_quantity": "0x1a58e2b6",
 		    "log_index": 16777215,
 		    "recipient_address": "0xE455FC5B0e46bB3FC17D09D75D6092C803316Ba9",
@@ -174,7 +165,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:45:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x59248d08ad7aa00c5",
-		    "id": "6a71443f0187d20a00efffffff00010051",
 		    "limit_quantity": "0x29710172",
 		    "log_index": 16777215,
 		    "recipient_address": "0x18EE5d25cE9c738cF4c2A8F7628F936d6cC5EC61",
@@ -199,7 +189,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:41:11.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x64d31da1",
-		    "id": "6a7143370187d1f40025ffffff00010051",
 		    "limit_quantity": "0x33dd62dc2772a00",
 		    "log_index": 16777215,
 		    "recipient_address": "0x12D2b8ac38C59758a062a9f757F2740461779439",
@@ -217,7 +206,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:41:11.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x88ebd979f1b4b000",
-		    "id": "6a7143370187d1f400a9ffffff00010051",
 		    "limit_quantity": "0x25b4864",
 		    "log_index": 16777215,
 		    "recipient_address": "0xfb13CF5020454F01eE24A0D38833093c2dd98189",
@@ -235,7 +223,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:41:11.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0xf9288e3d8a20842f5",
-		    "id": "6a7143370187d1f400ceffffff00010051",
 		    "limit_quantity": "0x459ccb2",
 		    "log_index": 16777215,
 		    "recipient_address": "0x431f04DC9e0d07c41F4985997A99D4D310fF90Bd",
@@ -260,7 +247,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:29:47.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x25391ee35a05c54d000000",
-		    "id": "6a71408b0187d1bb0051ffffff00010051",
 		    "limit_quantity": "0x12bc2a54a30c58c667",
 		    "log_index": 16777215,
 		    "recipient_address": "0xB4897d49c5859B9bb5E3D6c4372BDd83d55c8D6c",
@@ -285,7 +271,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x3bc2b2b2868c7",
-		    "id": "6a71447b0187d20f0037ffffff00010051",
 		    "limit_quantity": "0x0",
 		    "log_index": 16777215,
 		    "recipient_address": "0xd32f19caacFA558bd5864464E4d7560306D9fE3E",
@@ -303,7 +288,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x1ae805eefa1dc",
-		    "id": "6a71447b0187d20f0038ffffff00010051",
 		    "limit_quantity": "0x0",
 		    "log_index": 16777215,
 		    "recipient_address": "0x0eE4B7145741616E37bc04Cf6ae38a1e73cc4915",
@@ -321,7 +305,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x47608d3059f0f",
-		    "id": "6a71447b0187d20f003affffff00010051",
 		    "limit_quantity": "0x0",
 		    "log_index": 16777215,
 		    "recipient_address": "0x934eB981c5745DE39CC36Fb0BBCfcEbcA4cF76e2",
@@ -339,7 +322,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x5fc",
-		    "id": "6a71447b0187d20f003fffffff00010051",
 		    "limit_quantity": "0xc7adff51a5f4",
 		    "log_index": 16777215,
 		    "recipient_address": "0x2FEF0275663a8dEe208c5e5E88c81630De8359E8",
@@ -357,7 +339,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T01:46:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x1737c715db8c0",
-		    "id": "6a71447b0187d20f0040ffffff00010051",
 		    "limit_quantity": "0x0",
 		    "log_index": 16777215,
 		    "recipient_address": "0x9b056E2fd1b96A5d2494a303daCCE77200F61B96",
@@ -382,7 +363,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T00:10:59.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x85209bb78025d",
-		    "id": "6a712e130187d032002bffffff00010051",
 		    "limit_quantity": "0x0",
 		    "log_index": 16777215,
 		    "recipient_address": "0x784b9ff6c133c55b0fBE09E5271Aa9884e12ff3e",
@@ -400,7 +380,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T00:10:59.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x470de4df820000",
-		    "id": "6a712e130187d0320041ffffff00010051",
 		    "limit_quantity": "0x2ba8e49f45377400000",
 		    "log_index": 16777215,
 		    "recipient_address": "0xF5c299316699131d29Adcb7eF87AF8E97bbC7eAD",
@@ -425,7 +404,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-04T00:23:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x144fa40402733637d900",
-		    "id": "6a7131070187d07101eeffffff00010051",
 		    "limit_quantity": "0xbd2dde353d4e17",
 		    "log_index": 16777215,
 		    "recipient_address": "0xbE11308E8631c271E7C3892d7C327B5b0984Afbe",
@@ -450,7 +428,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-03T19:27:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0xee6b280",
-		    "id": "6a70eba70187caab0015ffffff00010051",
 		    "limit_quantity": "0x103ed423771d9700000",
 		    "log_index": 16777215,
 		    "recipient_address": "0x6F858f383842c887A82d30b392Cfc686938413eC",
@@ -468,7 +445,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-03T19:27:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x1a5dcf1d93269d80000",
-		    "id": "6a70eba70187caab010cffffff00010051",
 		    "limit_quantity": "0x17e65e4a",
 		    "log_index": 16777215,
 		    "recipient_address": "0xca02F1b7CAC7f352597699D973F12F95Cc8Cf6F0",
@@ -486,7 +462,6 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		    "block_timestamp": 2026-08-03T19:27:35.000Z,
 		    "chain": 1,
 		    "exact_quantity": "0x1c18cf0ae982",
-		    "id": "6a70eba70187caab0145ffffff00010051",
 		    "limit_quantity": "0x1882d2e210e762000",
 		    "log_index": 16777215,
 		    "recipient_address": "0x4dEb7488220c0610649E14d5c316f982B9eE27B6",
@@ -521,26 +496,21 @@ test.concurrent("intent_uniswap_v3_swap_v2 includes failed submissions", async (
 		}),
 	};
 
-	expect(event.handler(failed).map((event) => ({ id: event.id, success: event.success }))).toMatchInlineSnapshot(`
+	expect(event.handler(failed).map((event) => ({ success: event.success }))).toMatchInlineSnapshot(`
 		[
 		  {
-		    "id": "6a71447b0187d20f0037ffffff00010051",
 		    "success": true,
 		  },
 		  {
-		    "id": "6a71447b0187d20f0038ffffff00010051",
 		    "success": true,
 		  },
 		  {
-		    "id": "6a71447b0187d20f003affffff00010051",
 		    "success": true,
 		  },
 		  {
-		    "id": "6a71447b0187d20f003fffffff00010051",
 		    "success": true,
 		  },
 		  {
-		    "id": "6a71447b0187d20f0040ffffff00010051",
 		    "success": false,
 		  },
 		]

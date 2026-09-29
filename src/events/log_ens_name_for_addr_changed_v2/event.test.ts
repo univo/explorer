@@ -10,9 +10,7 @@ test.concurrent("log_ens_name_for_addr_changed_v2 deletes, writes, and reads fro
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getLogEnsNameForAddrChangedV2(ids);
+	const initial = await getLogEnsNameForAddrChangedV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -29,7 +27,7 @@ test.concurrent("log_ens_name_for_addr_changed_v2 deletes, writes, and reads fro
 		],
 	});
 
-	const stored = await getLogEnsNameForAddrChangedV2(ids);
+	const stored = await getLogEnsNameForAddrChangedV2(events);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -38,7 +36,6 @@ test.concurrent("log_ens_name_for_addr_changed_v2 deletes, writes, and reads fro
 		    "block_number": 25774800,
 		    "block_timestamp": 2026-08-17T12:27:47.000Z,
 		    "chain": 1,
-		    "id": "6a82fe4301894ad001540004260001003a",
 		    "log_index": 1062,
 		    "name": "etherscanofficial.eth",
 		    "tag": "log_ens_name_for_addr_changed_v2",

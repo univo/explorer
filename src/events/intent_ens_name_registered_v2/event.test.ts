@@ -11,9 +11,7 @@ test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from s
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getIntentEnsNameRegisteredV2(ids);
+	const initial = await getIntentEnsNameRegisteredV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -31,7 +29,7 @@ test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from s
 		],
 	});
 
-	const stored = await getIntentEnsNameRegisteredV2(ids);
+	const stored = await getIntentEnsNameRegisteredV2(events);
 
 	expect(stored).toMatchInlineSnapshot(`
 		[
@@ -41,7 +39,6 @@ test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from s
 		    "chain": 1,
 		    "controller_address": "0x253553366Da8546fC250F225fe3d25d0C782303b",
 		    "duration": "0x01e13380",
-		    "id": "65716103011dd5ed009cffffff00010045",
 		    "log_index": 16777215,
 		    "name": "payblock",
 		    "owner_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",
@@ -65,7 +62,6 @@ test.concurrent("intent_ens_name_registered_v2 decodes registration submissions"
 		    "chain": 1,
 		    "controller_address": "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5",
 		    "duration": "0x1e13380",
-		    "id": "68fab8430168c51f008affffff00010045",
 		    "log_index": 16777215,
 		    "name": "hangytong",
 		    "owner_address": "0xeFb564F5623978F68ff3546b0769ed564A9058EC",
@@ -87,7 +83,6 @@ test.concurrent("intent_ens_name_registered_v2 decodes registration submissions"
 		    "chain": 1,
 		    "controller_address": "0x253553366Da8546fC250F225fe3d25d0C782303b",
 		    "duration": "0x1e13380",
-		    "id": "65716103011dd5ed009cffffff00010045",
 		    "log_index": 16777215,
 		    "name": "payblock",
 		    "owner_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",
@@ -123,7 +118,6 @@ test.concurrent("intent_ens_name_registered_v2 includes failed submissions", asy
 		    "chain": 1,
 		    "controller_address": "0x253553366Da8546fC250F225fe3d25d0C782303b",
 		    "duration": "0x1e13380",
-		    "id": "65716103011dd5ed009cffffff00010045",
 		    "log_index": 16777215,
 		    "name": "payblock",
 		    "owner_address": "0xFA929Fc3e365050e539360fb4D4BF971DCf28EdA",

@@ -10,9 +10,7 @@ test.concurrent("log_uniswap_v3_swap_v2 deletes, writes, and reads from storage"
 
 	await event.storage.delete(events);
 
-	const ids = events.map((event) => event.id);
-
-	const initial = await getLogUniswapV3SwapV2(ids);
+	const initial = await getLogUniswapV3SwapV2(events);
 
 	expect(initial).toStrictEqual([]);
 
@@ -29,7 +27,7 @@ test.concurrent("log_uniswap_v3_swap_v2 deletes, writes, and reads from storage"
 		],
 	});
 
-	const final = await getLogUniswapV3SwapV2(ids);
+	const final = await getLogUniswapV3SwapV2(events);
 
 	expect(final).toMatchInlineSnapshot(`
 		[
@@ -39,7 +37,6 @@ test.concurrent("log_uniswap_v3_swap_v2 deletes, writes, and reads from storage"
 		    "block_number": 12369879,
 		    "block_timestamp": 2021-05-04T20:21:15.000Z,
 		    "chain": 1,
-		    "id": "6091acbb00bcbfd7002800005b00010038",
 		    "liquidity": 80059851033970806503n,
 		    "log_index": 91,
 		    "pool_address": "0xC2e9F25Be6257c210d7Adf0D4Cd6E3E881ba25f8",
