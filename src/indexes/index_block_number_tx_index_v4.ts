@@ -17,7 +17,8 @@ import { REVERSE_TABLES, TABLES, TRANSACTION_EVENT } from "@/constants";
 // - Covered index. The same index can used to look up events from a given block number.
 //
 // The tradeoff here is that this representation fails under chain reorganisations. A transaction in a reorganised block can
-// end up in a completely different position when it is included canonically.
+// end up in a completely different position when it is included canonically. If a user clicks on a transaction that hasn't
+// finalized it should be represented by its unique hash so its safe in the rare case its position changes.
 
 export const table = pgTable(
 	"index_block_number_tx_index_v4",
