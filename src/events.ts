@@ -43,49 +43,49 @@ export type EventId = {
 
 export type Event = Awaited<ReturnType<typeof getEvents>>[number];
 
-export async function getEvents(events: EventId[]) {
-	if (events.length === 0) {
+export async function getEvents(ids: EventId[]) {
+	if (ids.length === 0) {
 		return [];
 	}
 
 	const start = Date.now();
 
-	const results = await Promise.all([
-		getLogEnsNewOwnerV2(events),
-		getLogFwaNftListedV2(events),
-		getLogErc20ApprovalV2(events),
-		getLogErc20TransferV2(events),
-		getLogUniswapV3SwapV2(events),
-		getLogErc721ApprovalV2(events),
-		getLogErc721TransferV2(events),
-		getLogFwaNftAllocatedV2(events),
-		getLogEnsReverseClaimedV2(events),
-		getLogUniswapV3PoolCreatedV2(events),
-		getLogEnsNameForAddrChangedV2(events),
+	const events = await Promise.all([
+		getLogEnsNewOwnerV2(ids),
+		getLogFwaNftListedV2(ids),
+		getLogErc20ApprovalV2(ids),
+		getLogErc20TransferV2(ids),
+		getLogUniswapV3SwapV2(ids),
+		getLogErc721ApprovalV2(ids),
+		getLogErc721TransferV2(ids),
+		getLogFwaNftAllocatedV2(ids),
+		getLogEnsReverseClaimedV2(ids),
+		getLogUniswapV3PoolCreatedV2(ids),
+		getLogEnsNameForAddrChangedV2(ids),
 
-		getIntentIdmV2(events),
-		getIntentFwaWonV3(events),
-		getIntentFwaAcquireV2(events),
-		getIntentAaveV3RepayV2(events),
-		getIntentFwaDepositedV2(events),
-		getIntentAaveV3SupplyV2(events),
-		getIntentAaveV3BorrowV2(events),
-		getIntentErc20ApprovalV2(events),
-		getIntentErc20TransferV2(events),
-		getIntentUsdcBlacklistV2(events),
-		getIntentUniswapV3SwapV2(events),
-		getIntentUniswapV3MintV2(events),
-		getIntentErc721ApprovalV2(events),
-		getIntentErc721TransferV2(events),
-		getIntentAaveV3WithdrawV2(events),
-		getIntentNativeTransferV2(events),
-		getIntentCancelPendingTxV2(events),
-		getIntentTornadoWithdrawalV2(events),
-		getIntentEnsNameRegisteredV2(events),
-		getIntentContractDeploymentV2(events),
+		getIntentIdmV2(ids),
+		getIntentFwaWonV3(ids),
+		getIntentFwaAcquireV2(ids),
+		getIntentAaveV3RepayV2(ids),
+		getIntentFwaDepositedV2(ids),
+		getIntentAaveV3SupplyV2(ids),
+		getIntentAaveV3BorrowV2(ids),
+		getIntentErc20ApprovalV2(ids),
+		getIntentErc20TransferV2(ids),
+		getIntentUsdcBlacklistV2(ids),
+		getIntentUniswapV3SwapV2(ids),
+		getIntentUniswapV3MintV2(ids),
+		getIntentErc721ApprovalV2(ids),
+		getIntentErc721TransferV2(ids),
+		getIntentAaveV3WithdrawV2(ids),
+		getIntentNativeTransferV2(ids),
+		getIntentCancelPendingTxV2(ids),
+		getIntentTornadoWithdrawalV2(ids),
+		getIntentEnsNameRegisteredV2(ids),
+		getIntentContractDeploymentV2(ids),
 	]);
 
-	const flat = results.flat(1);
+	const flat = events.flat(1);
 
 	logger.debug(`Loaded ${flat.length} events in ${Date.now() - start}ms`);
 
