@@ -1,7 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 
-import { getEvents } from "@/events";
 import type { Id } from "@/events";
+import { getEventsForIds } from "@/events";
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
 import { getBlockByNumber } from "@/state/block";
@@ -61,7 +61,7 @@ async function EventsTable(props: { ids: Id[] }) {
 		);
 	}
 
-	const events = await getEvents(props.ids);
+	const events = await getEventsForIds(props.ids);
 	const ordered = getOrderedEvents(events, "latest");
 
 	return (

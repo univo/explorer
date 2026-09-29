@@ -1,8 +1,8 @@
 import { ErrorBoundary } from "react-error-boundary";
 
-import { getEvents } from "@/events";
 import { PRESETS } from "@/constants";
 import type { Preset } from "@/constants";
+import { getEventsForIds } from "@/events";
 import { getOrderedEvents } from "@/helpers";
 import { deserializeCursor, serializeCursor } from "./cursor";
 import { Timestamp } from "@/components/timestamp";
@@ -27,7 +27,7 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; preset: 
 		return <StopCursorContainer startCursor={props.startCursor} stopCursor={null} />;
 	}
 
-	const events = await getEvents(ids);
+	const events = await getEventsForIds(ids);
 	const ordered = getOrderedEvents(events, "latest");
 
 	const stopCursor = ids.length < 100 ? null : ordered[ordered.length - 1];

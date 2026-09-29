@@ -41,9 +41,9 @@ export type Id = {
 	block_timestamp: Date;
 };
 
-export type Event = Awaited<ReturnType<typeof getEvents>>[number];
+export type Event = Awaited<ReturnType<typeof getEventsForIds>>[number];
 
-export async function getEvents(ids: Id[]) {
+export async function getEventsForIds(ids: Id[]) {
 	if (ids.length === 0) {
 		return [];
 	}
