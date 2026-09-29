@@ -3,15 +3,16 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
-import { createId } from "@/helpers";
-import { numberToHex, raise } from "@/utils";
+import { raise } from "@/utils";
+import type { Event } from "@/events";
+import { REVERSE_TABLES } from "@/constants";
 import { usePresetContext } from "./preset-context";
 
 type CursorContextValue = {
-	cursors: Map<string, string | null | undefined>;
+	cursors: Map<Event, Event | null | undefined>;
 	refreshCursors: () => void;
-	insertNextCursor: (startCursor: string) => void;
-	insertStopCursor: (startCursor: string, stopCursor: string | null) => void;
+	insertNextCursor: (startCursor: Event) => void;
+	insertStopCursor: (startCursor: Event, stopCursor: Event | null) => void;
 };
 
 const CursorContext = createContext<CursorContextValue | null>(null);
@@ -31,37 +32,37 @@ export function CursorContextProvider(props: { children: ReactNode }) {
 }
 
 function CursorContextProviderChild(props: { children: ReactNode }) {
-	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
+	const [cursors, setCursors] = useState<Map<Event, Event | null | undefined>>(() => {
 		// TODO: Add cache alignment to the initial cursor
 
-		const initialCursor = createId({
-			blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
-			tableId: 0, // Irrelevant
-			chainId: "0x1", // Irrelevant but must specify a known chain id
-			txIndex: "0x0", // Irrelevant
-			logIndex: "0x0", // Irrelevant
-			blockNumber: "0x0", // Irrelevant
-		});
+		const initialCursor: Event = {
+			chain: 1,
+			tx_index: 0,
+			log_index: 0,
+			block_number: 0,
+			tag: REVERSE_TABLES[0],
+			block_timestamp: new Date(),
+		};
 
 		return new Map().set(initialCursor, undefined);
 	});
 
 	function refreshCursors() {
 		setCursors(() => {
-			const initialCursor = createId({
-				blockTimestamp: numberToHex(Math.floor(Date.now() / 1000)),
-				tableId: 0, // Irrelevant
-				chainId: "0x1", // Irrelevant but must specify a known chain id
-				txIndex: "0x0", // Irrelevant
-				logIndex: "0x0", // Irrelevant
-				blockNumber: "0x0", // Irrelevant
-			});
+			const initialCursor: Event = {
+				chain: 1,
+				tx_index: 0,
+				log_index: 0,
+				block_number: 0,
+				tag: REVERSE_TABLES[0],
+				block_timestamp: new Date(),
+			};
 
 			return new Map().set(initialCursor, undefined);
 		});
 	}
 
-	function insertNextCursor(startCursor: string) {
+	function insertNextCursor(startCursor: Event) {
 		setCursors((cursors) => {
 			const result = new Map(cursors); // Must be a new map to force react to rerender
 			result.set(startCursor, undefined);
@@ -69,7 +70,7 @@ function CursorContextProviderChild(props: { children: ReactNode }) {
 		});
 	}
 
-	function insertStopCursor(startCursor: string, stopCursor: string | null) {
+	function insertStopCursor(startCursor: Event, stopCursor: Event | null) {
 		setCursors((cursors) => {
 			const result = new Map(cursors); // Must be a new map to force react to rerender
 			result.set(startCursor, stopCursor);

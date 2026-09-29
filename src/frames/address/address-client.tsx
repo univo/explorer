@@ -10,7 +10,7 @@ import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { iife } from "@/utils";
-import { parseId } from "@/helpers";
+import type { Event } from "@/events";
 import { Spinner } from "@/components/spinner";
 import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
@@ -97,8 +97,8 @@ function Events(props: { address: `0x${string}` }) {
 	);
 }
 
-function getNextCursor(cursors: Map<string, string | null | undefined>): string | null {
-	let final_cursor: string | undefined;
+function getNextCursor(cursors: Map<Event, Event | null | undefined>): Event | null {
+	let final_cursor: Event | undefined;
 
 	for (const [key, value] of cursors) {
 		if (value === null) {
@@ -138,7 +138,7 @@ function Banner(props: { address: `0x${string}` }) {
 			throw new Error("Expected atleast the initial cursor");
 		}
 
-		return parseId(key).blockTimestamp;
+		return key.block_timestamp;
 	});
 
 	const getLatestEventForAccount = useServerFn(sf_getLatestEventForAccount);
@@ -151,7 +151,7 @@ function Banner(props: { address: `0x${string}` }) {
 		queryFn: () => getLatestEventForAccount({ data: { address, preset: preset.value } }),
 	});
 
-	const show = query.status === "success" && typeof query.data === "string" && parseId(query.data).blockTimestamp > timestamp;
+	const show = query.status === "success" && typeof query.data === "string" && query.data.block_timestamp > timestamp;
 
 	return (
 		<div className="flex justify-center pt-4 pointer-events-none">
