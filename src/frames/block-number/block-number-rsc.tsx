@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 
 import { getEvents } from "@/events";
+import type { Event } from "@/events";
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
 import { getBlockByNumber } from "@/state/block";
@@ -15,7 +16,7 @@ import { getEventsForBlockNumber } from "@/indexes/index_block_number_tx_index_v
 // TODO: Add timestamp to header and include other block info
 
 export async function BlockNumberRsc(props: { number: number }) {
-	const [block, ids] = await Promise.all([
+	const [block, events] = await Promise.all([
 		getBlockByNumber(props.number), //
 		getEventsForBlockNumber(1, props.number),
 	]);
@@ -23,7 +24,7 @@ export async function BlockNumberRsc(props: { number: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header block={block} />
-			<EventsTable ids={ids} />
+			<EventsTable events={events} />
 		</div>
 	);
 }
@@ -47,8 +48,8 @@ function Header(props: { block: Block }) {
 	);
 }
 
-async function EventsTable(props: { ids: string[] }) {
-	if (props.ids.length === 0) {
+async function EventsTable(props: { events: Event[] }) {
+	if (props.events.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-128">
 				<div className="flex flex-col gap-1 text-center max-w-xs">
@@ -60,16 +61,21 @@ async function EventsTable(props: { ids: string[] }) {
 		);
 	}
 
-	const events = await getEvents(props.ids);
+	const events = await getEvents(props.events);
 	const ordered = getOrderedEvents(events, "latest");
 
 	return (
 		<div className="relative grow overflow-scroll isolate">
-			{ordered.map((event) => {
+			{ordered.map((event, i) => {
 				return (
-					<ErrorBoundary key={event.id} fallback={null}>
+					<ErrorBoundary key={i} fallback={null}>
 						<div className="border-b border-gray-200">
-							<EventTableRow id={event.id} previousId={event.id}>
+							<EventTableRow
+								txIndex={event.tx_index}
+								blockNumber={event.block_number}
+								blockTimestamp={event.block_timestamp.getTime()}
+								previousBlockTimestamp={event.block_timestamp.getTime()}
+							>
 								<div className="px-3 py-1.5 overflow-hidden grow">
 									<EventDescription event={event} address={undefined} />
 								</div>
