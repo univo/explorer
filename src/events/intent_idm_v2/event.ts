@@ -5,7 +5,7 @@ import { table } from "./table";
 import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { Event } from "@/events";
+import type { EventId } from "@/events";
 import { getEventSuccess } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -162,8 +162,8 @@ function countValidChars(string: string) {
 	return count;
 }
 
-export async function getIntentIdmV2(events: Event[]) {
-	const filtered = events.filter((event) => TABLES[event.tag] === TABLES.intent_idm_v2);
+export async function getIntentIdmV2(ids: EventId[]) {
+	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_idm_v2);
 
 	if (filtered.length === 0) {
 		return [];
@@ -178,11 +178,11 @@ export async function getIntentIdmV2(events: Event[]) {
 			and(
 				inArray(
 					table.block_timestamp,
-					filtered.map((event) => event.block_timestamp),
+					filtered.map((id) => id.block_timestamp),
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					filtered.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+					filtered.map((id) => [id.block_timestamp, id.block_number, id.tx_index, id.log_index, id.chain]),
 				),
 			),
 		)
