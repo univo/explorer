@@ -2,7 +2,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { PRESETS } from "@/constants";
 import type { Preset } from "@/constants";
-import { getEventsForIds } from "@/db/events";
+import { getEventsForIds } from "@/events";
 import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";

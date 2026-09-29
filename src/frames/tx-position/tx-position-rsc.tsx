@@ -9,7 +9,7 @@ import { Timestamp } from "@/components/timestamp";
 import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
 import { balances_v1 } from "@/aggregates/balances_v1";
-import { getEventsForIds, type Event } from "@/db/events";
+import { getEventsForIds, type Event } from "@/events";
 import { Erc20, getTokenPrice } from "@/components/erc-20";
 import { getBlockByNumber, type Block } from "@/state/block";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";

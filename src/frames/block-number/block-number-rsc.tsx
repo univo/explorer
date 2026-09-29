@@ -2,7 +2,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
-import { getEventsForIds } from "@/db/events";
+import { getEventsForIds } from "@/events";
 import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
 import { formatNumber, hexToNumber } from "@/utils";
