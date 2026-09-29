@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { getOrderedEvents } from "@/helpers";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
 import { getEvents, type Event } from "@/events";
 import { EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
-import { getOrderedEvents, parseId } from "@/helpers";
 import { IconButton } from "@/components/icon-button";
 import { balances_v1 } from "@/aggregates/balances_v1";
 import { Erc20, getTokenPrice } from "@/components/erc-20";
@@ -16,8 +16,10 @@ import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
-import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
+import type { LogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
+import type { LogErc721TransferV2 } from "@/events/log_erc721_transfer_v2/event";
 import { getEventsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
+import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
@@ -46,7 +48,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const ordered = getOrderedEvents(events, "reverse");
 
 	const intent = events.find((event) => {
-		return isHexEqual(numberToHex(parseId(event.id).logIndex), TRANSACTION_EVENT);
+		return isHexEqual(numberToHex(event.log_index), TRANSACTION_EVENT);
 	});
 
 	return (
@@ -151,7 +153,7 @@ function Logs(props: { events: Event[] }) {
 	}
 
 	const logs = props.events.filter((event) => {
-		return !isHexEqual(numberToHex(parseId(event.id).logIndex), TRANSACTION_EVENT);
+		return !isHexEqual(numberToHex(event.log_index), TRANSACTION_EVENT);
 	});
 
 	return (
@@ -161,13 +163,11 @@ function Logs(props: { events: Event[] }) {
 			</div>
 
 			<div className="p-3 flex flex-col gap-1">
-				{logs.map((event) => {
-					const { logIndex } = parseId(event.id);
-
+				{logs.map((event, i) => {
 					return (
-						<ErrorBoundary key={event.id} fallback={null}>
+						<ErrorBoundary key={i} fallback={null}>
 							<div className="flex">
-								<span className="text-sm text-gray-500 min-w-12 sm:min-w-24">({formatNumber(logIndex)})</span>
+								<span className="text-sm text-gray-500 min-w-12 sm:min-w-24">({formatNumber(event.log_index)})</span>
 
 								<EventDescription event={event} address={undefined} />
 							</div>
@@ -183,7 +183,7 @@ function Balances(props: { block: Block; events: Event[] }) {
 	// Compute sum of transfers
 
 	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v2");
-	const result = execute(balances_v1, transfers);
+	const result = execute(balances_v1, transfers as (LogErc20TransferV2 | LogErc721TransferV2)[]);
 
 	// Remove values where the net-change is zero, and also remove the null address
 

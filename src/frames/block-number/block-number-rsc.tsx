@@ -16,7 +16,7 @@ import { getEventsForBlockNumber } from "@/indexes/index_block_number_tx_index_v
 // TODO: Add timestamp to header and include other block info
 
 export async function BlockNumberRsc(props: { number: number }) {
-	const [block, events] = await Promise.all([
+	const [block, ids] = await Promise.all([
 		getBlockByNumber(props.number), //
 		getEventsForBlockNumber(1, props.number),
 	]);
@@ -24,7 +24,7 @@ export async function BlockNumberRsc(props: { number: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
 			<Header block={block} />
-			<EventsTable events={events} />
+			<EventsTable ids={ids} />
 		</div>
 	);
 }
@@ -48,8 +48,8 @@ function Header(props: { block: Block }) {
 	);
 }
 
-async function EventsTable(props: { events: Event[] }) {
-	if (props.events.length === 0) {
+async function EventsTable(props: { ids: Event[] }) {
+	if (props.ids.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-128">
 				<div className="flex flex-col gap-1 text-center max-w-xs">
@@ -61,7 +61,7 @@ async function EventsTable(props: { events: Event[] }) {
 		);
 	}
 
-	const events = await getEvents(props.events);
+	const events = await getEvents(props.ids);
 	const ordered = getOrderedEvents(events, "latest");
 
 	return (
