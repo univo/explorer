@@ -18,7 +18,7 @@ export function EventTableRow(props: { id: string; previousId: string; children:
 			return;
 		}
 
-		frames.push(props.id, index);
+		frames.push(`${blockNumber}-${txIndex}`, index);
 	}
 
 	const timestamp = new Date(parseId(props.id).blockTimestamp * 1000);

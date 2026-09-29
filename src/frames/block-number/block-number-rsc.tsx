@@ -10,14 +10,14 @@ import { IconButton } from "@/components/icon-button";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
-import { getEventIdsForBlockNumber } from "@/indexes/index_block_number_tx_index_v4";
+import { getEventsForBlockNumber } from "@/indexes/index_block_number_tx_index_v4";
 
 // TODO: Add timestamp to header and include other block info
 
 export async function BlockNumberRsc(props: { number: number }) {
 	const [block, ids] = await Promise.all([
 		getBlockByNumber(props.number), //
-		getEventIdsForBlockNumber(1, props.number),
+		getEventsForBlockNumber(1, props.number),
 	]);
 
 	return (

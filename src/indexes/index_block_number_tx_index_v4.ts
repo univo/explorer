@@ -1,9 +1,9 @@
 import { and, eq, sql } from "drizzle-orm";
 import { integer, pgTable, primaryKey, smallint } from "drizzle-orm/pg-core";
 
-import { createId } from "@/helpers";
-import { logger, numberToHex } from "@/utils";
-import type { Event, Chain } from "@/constants";
+import { logger } from "@/utils";
+import type { Event } from "@/events";
+import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 
@@ -108,7 +108,7 @@ export const index_block_number_tx_index_v4 = {
 	},
 };
 
-export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
+export async function getEventsForBlockNumber(chain: Chain, block: number) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
@@ -126,19 +126,21 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map((result) => {
-		return createId({
-			tableId: result.table_id,
-			chainId: numberToHex(result.chain),
-			txIndex: numberToHex(result.tx_index),
-			logIndex: numberToHex(result.log_index),
-			blockNumber: numberToHex(result.block_number),
-			blockTimestamp: numberToHex(result.block_timestamp),
-		});
+	return rows.map<Event>((result) => {
+		const tag = TABLES[result.table_id];
+
+		return {
+			tag,
+			chain: result.chain,
+			tx_index: result.tx_index,
+			log_index: result.log_index,
+			block_number: result.block_number,
+			block_timestamp: new Date(result.block_timestamp),
+		};
 	});
 }
 
-export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: number) {
+export async function getEventsForTxPosition(chain: Chain, block: number, tx: number) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
@@ -156,14 +158,16 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
-	return rows.map((result) => {
-		return createId({
-			tableId: result.table_id,
-			chainId: numberToHex(result.chain),
-			txIndex: numberToHex(result.tx_index),
-			logIndex: numberToHex(result.log_index),
-			blockNumber: numberToHex(result.block_number),
-			blockTimestamp: numberToHex(result.block_timestamp),
-		});
+	return rows.map<Event>((result) => {
+		const tag = TABLES[result.table_id];
+
+		return {
+			tag,
+			chain: result.chain,
+			tx_index: result.tx_index,
+			log_index: result.log_index,
+			block_number: result.block_number,
+			block_timestamp: new Date(result.block_timestamp),
+		};
 	});
 }

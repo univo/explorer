@@ -3,10 +3,10 @@ import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { index, integer, pgTable, smallint } from "drizzle-orm/pg-core";
 
 import { TABLES } from "@/constants";
+import type { Event } from "@/events";
+import type { Chain } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { logger, numberToHex } from "@/utils";
-import { createId, parseId } from "@/helpers";
-import type { Event, Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
@@ -151,25 +151,27 @@ type Opts = {
 	// Pagination
 
 	limit: number;
-	cursor?: string;
+	cursor?: Event;
 
 	// Ordering
 
 	order: "latest" | "reverse";
 };
 
-export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) {
+export async function getEventsForAccount(account: `0x${string}`, opts: Opts) {
 	const start = Date.now();
 
 	const client = await createPostgresClient();
 
 	if (opts.cursor) {
-		const { blockTimestamp, blockNumber, txIndex, logIndex, chainId, tableId } = parseId(opts.cursor);
+		const { block_timestamp, block_number, tx_index, log_index, chain, tag } = opts.cursor;
+
+		const table_id = TABLES[tag];
 
 		const cursor =
 			opts.order === "latest"
-				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${blockTimestamp},${blockNumber},${txIndex},${logIndex},${chainId},${tableId})`
-				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${blockTimestamp},${blockNumber},${txIndex},${logIndex},${chainId},${tableId})`;
+				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${block_timestamp},${block_number},${tx_index},${log_index},${chain},${table_id})`
+				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${block_timestamp},${block_number},${tx_index},${log_index},${chain},${table_id})`;
 
 		const rows = await client
 			.selectDistinct({

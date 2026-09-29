@@ -17,14 +17,14 @@ import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
 import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
-import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
+import { getEventsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
 		getBlockByNumber(props.block),
 		getTxByPosition({ block: props.block, tx: props.tx }), //
-		getEventIdsForTxPosition(1, props.block, props.tx),
+		getEventsForTxPosition(1, props.block, props.tx),
 	]);
 
 	const timestamp = new Date(hexToNumber(block.timestamp) * 1000);
