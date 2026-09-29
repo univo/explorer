@@ -4,15 +4,15 @@ import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
 import { raise } from "@/utils";
-import type { Id } from "@/events";
+import { serializeCursor } from "./cursor";
 import { REVERSE_TABLES } from "@/constants";
 import { usePresetContext } from "./preset-context";
 
 type CursorContextValue = {
-	cursors: Map<Id, Id | null | undefined>;
+	cursors: Map<string, string | null | undefined>;
 	refreshCursors: () => void;
-	insertNextCursor: (startCursor: Id) => void;
-	insertStopCursor: (startCursor: Id, stopCursor: Id | null) => void;
+	insertNextCursor: (startCursor: string) => void;
+	insertStopCursor: (startCursor: string, stopCursor: string | null) => void;
 };
 
 const CursorContext = createContext<CursorContextValue | null>(null);
@@ -32,37 +32,37 @@ export function CursorContextProvider(props: { children: ReactNode }) {
 }
 
 function CursorContextProviderChild(props: { children: ReactNode }) {
-	const [cursors, setCursors] = useState<Map<Id, Id | null | undefined>>(() => {
+	const [cursors, setCursors] = useState<Map<string, string | null | undefined>>(() => {
 		// TODO: Add cache alignment to the initial cursor
 
-		const initialCursor: Id = {
+		const initialCursor = serializeCursor({
 			chain: 1,
 			tx_index: 0,
 			log_index: 0,
 			block_number: 0,
 			tag: REVERSE_TABLES[0],
 			block_timestamp: new Date(),
-		};
+		});
 
 		return new Map().set(initialCursor, undefined);
 	});
 
 	function refreshCursors() {
 		setCursors(() => {
-			const initialCursor: Id = {
+			const initialCursor = serializeCursor({
 				chain: 1,
 				tx_index: 0,
 				log_index: 0,
 				block_number: 0,
 				tag: REVERSE_TABLES[0],
 				block_timestamp: new Date(),
-			};
+			});
 
 			return new Map().set(initialCursor, undefined);
 		});
 	}
 
-	function insertNextCursor(startCursor: Id) {
+	function insertNextCursor(startCursor: string) {
 		setCursors((cursors) => {
 			const result = new Map(cursors); // Must be a new map to force react to rerender
 			result.set(startCursor, undefined);
@@ -70,7 +70,7 @@ function CursorContextProviderChild(props: { children: ReactNode }) {
 		});
 	}
 
-	function insertStopCursor(startCursor: Id, stopCursor: Id | null) {
+	function insertStopCursor(startCursor: string, stopCursor: string | null) {
 		setCursors((cursors) => {
 			const result = new Map(cursors); // Must be a new map to force react to rerender
 			result.set(startCursor, stopCursor);

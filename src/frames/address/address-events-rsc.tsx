@@ -3,8 +3,9 @@ import { ErrorBoundary } from "react-error-boundary";
 import { getEvents } from "@/events";
 import { PRESETS } from "@/constants";
 import type { Preset } from "@/constants";
+import { getOrderedEvents } from "@/helpers";
+import { deserializeCursor, serializeCursor } from "./cursor";
 import { Timestamp } from "@/components/timestamp";
-import { getOrderedEvents, parseId } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
 import { getEventIdsForAccount } from "@/indexes/index_account_v4";
@@ -12,11 +13,13 @@ import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; preset: Preset; startCursor: string }) {
+	const cursor = deserializeCursor(props.startCursor);
+
 	const ids = await getEventIdsForAccount(props.address, {
+		cursor,
 		limit: 100,
 		chains: [1],
 		order: "latest",
-		cursor: props.startCursor,
 		tables: PRESETS[props.preset],
 	});
 
@@ -27,24 +30,30 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; preset: 
 	const events = await getEvents(ids);
 	const ordered = getOrderedEvents(events, "latest");
 
-	const stopCursor = ids.length < 100 ? null : ordered[ordered.length - 1].id;
+	const stopCursor = ids.length < 100 ? null : ordered[ordered.length - 1];
+	const parsedStopCursor = stopCursor === null ? null : serializeCursor(stopCursor);
 
 	return (
-		<StopCursorContainer startCursor={props.startCursor} stopCursor={stopCursor}>
+		<StopCursorContainer startCursor={props.startCursor} stopCursor={parsedStopCursor}>
 			<VirtualisationContainer>
 				{ordered.map((event, i) => {
 					const previous = ordered[i - 1];
-					const previousId = previous === undefined ? props.startCursor : previous.id;
+					const previousEvent = previous === undefined ? deserializeCursor(props.startCursor) : previous;
 
 					return (
-						<ErrorBoundary key={event.id} fallback={null}>
-							<EventTableRow id={event.id} previousId={previousId}>
+						<ErrorBoundary key={i} fallback={null}>
+							<EventTableRow
+								txIndex={event.tx_index}
+								blockNumber={event.block_number}
+								blockTimestamp={event.block_timestamp.getTime()}
+								previousBlockTimestamp={previousEvent.block_timestamp.getTime()}
+							>
 								<div className="px-3 py-1.5 overflow-hidden grow">
 									<EventDescription event={event} address={props.address} />
 								</div>
 
 								<div className="px-3 py-1.5 overflow-hidden shrink-0">
-									<EventTimestamp timestamp={new Date(parseId(event.id).blockTimestamp * 1000)} />
+									<EventTimestamp timestamp={event.block_timestamp} />
 								</div>
 							</EventTableRow>
 						</ErrorBoundary>
