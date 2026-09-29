@@ -91,8 +91,8 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event, account: event.contract_address }, //
-				{ event, account: event.deployer_address },
+				{ id: event, account: event.contract_address }, //
+				{ id: event, account: event.deployer_address },
 			];
 		});
 	},

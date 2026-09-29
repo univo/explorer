@@ -19,7 +19,7 @@ import { REVERSE_TABLES, TABLES } from "@/constants";
 // explorer this massively improves insert performance.
 
 type Index = {
-	event: Id;
+	id: Id;
 	account: `0x${string}`;
 };
 
@@ -60,12 +60,12 @@ export const index_account_v4 = {
 
 			const key = [
 				account,
-				index.event.chain,
-				index.event.block_timestamp,
-				index.event.block_number,
-				index.event.tx_index,
-				index.event.log_index,
-				index.event.tag,
+				index.id.chain,
+				index.id.block_timestamp,
+				index.id.block_number,
+				index.id.tx_index,
+				index.id.log_index,
+				index.id.tag,
 			].join(":");
 
 			if (unique[key]) {
@@ -76,13 +76,13 @@ export const index_account_v4 = {
 
 			batch.push({
 				account,
-				chain: index.event.chain,
-				table_id: TABLES[index.event.tag],
-				block_timestamp: index.event.block_timestamp.getTime(),
+				chain: index.id.chain,
+				table_id: TABLES[index.id.tag],
+				block_timestamp: index.id.block_timestamp.getTime(),
 
-				tx_index: index.event.tx_index,
-				log_index: index.event.log_index,
-				block_number: index.event.block_number,
+				tx_index: index.id.tx_index,
+				log_index: index.id.log_index,
+				block_number: index.id.block_number,
 			});
 		}
 
@@ -116,14 +116,14 @@ export const index_account_v4 = {
 					return [
 						// Indexed columns
 						index.account,
-						index.event.block_timestamp.getTime(),
-						index.event.chain,
-						TABLES[index.event.tag],
+						index.id.block_timestamp.getTime(),
+						index.id.chain,
+						TABLES[index.id.tag],
 
 						// Non-indexed columns
-						index.event.tx_index,
-						index.event.log_index,
-						index.event.block_number,
+						index.id.tx_index,
+						index.id.log_index,
+						index.id.block_number,
 					];
 				}),
 			),

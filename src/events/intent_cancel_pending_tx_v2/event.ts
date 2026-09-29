@@ -110,7 +110,7 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event, account: event.from_address }, //
+				{ id: event, account: event.from_address }, //
 			];
 		});
 	},

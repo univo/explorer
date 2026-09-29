@@ -120,9 +120,9 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event, account: FWA_ADDRESS },
-				{ event, account: event.depositor_address },
-				{ event, account: event.collection_address },
+				{ id: event, account: FWA_ADDRESS },
+				{ id: event, account: event.depositor_address },
+				{ id: event, account: event.collection_address },
 			];
 		});
 	},

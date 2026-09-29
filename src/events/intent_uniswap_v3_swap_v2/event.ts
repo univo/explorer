@@ -317,11 +317,11 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event, account: event.router_address },
-				{ event, account: event.sender_address },
-				{ event, account: event.token_in_address },
-				{ event, account: event.recipient_address },
-				{ event, account: event.token_out_address },
+				{ id: event, account: event.router_address },
+				{ id: event, account: event.sender_address },
+				{ id: event, account: event.token_in_address },
+				{ id: event, account: event.recipient_address },
+				{ id: event, account: event.token_out_address },
 			];
 		});
 	},

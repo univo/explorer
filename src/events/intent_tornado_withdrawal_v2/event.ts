@@ -158,11 +158,11 @@ univo.event({
 	handler: (block) => {
 		return event.handler(block).flatMap((event) => {
 			return [
-				{ event, account: event.to_address },
-				{ event, account: event.from_address },
-				{ event, account: event.pool_address },
-				{ event, account: event.relayer_address },
-				{ event, account: event.recipient_address },
+				{ id: event, account: event.to_address },
+				{ id: event, account: event.from_address },
+				{ id: event, account: event.pool_address },
+				{ id: event, account: event.relayer_address },
+				{ id: event, account: event.recipient_address },
 			];
 		});
 	},
