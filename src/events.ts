@@ -1,5 +1,5 @@
 import { logger } from "@/utils";
-import type { TABLES } from "./constants";
+import type { Table } from "./constants";
 import { getIntentIdmV2 } from "@/events/intent_idm_v2/event";
 import { getIntentFwaWonV3 } from "@/events/intent_fwa_won_v3/event";
 import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
@@ -33,7 +33,7 @@ import { getIntentContractDeploymentV2 } from "@/events/intent_contract_deployme
 import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_changed_v2/event";
 
 export type Id = {
-	tag: keyof typeof TABLES;
+	tag: Table;
 	chain: number;
 	tx_index: number;
 	log_index: number;
