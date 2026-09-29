@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
-import type { Event, Id } from "@/events";
+import type { Event } from "@/events";
 import { getEventsForIds } from "@/events";
 import { getOrderedEvents } from "@/helpers";
 import { Erc721 } from "@/components/erc-721";
@@ -17,10 +17,8 @@ import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
-import type { LogErc20TransferV2 } from "@/events/log_erc20_transfer_v2/event";
-import type { LogErc721TransferV2 } from "@/events/log_erc721_transfer_v2/event";
-import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
+import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
 export async function TxPositionRsc(props: { block: number; tx: number }) {
@@ -180,11 +178,11 @@ function Logs(props: { events: Event[] }) {
 	);
 }
 
-function Balances(props: { block: Block; events: Id[] }) {
+function Balances(props: { block: Block; events: Event[] }) {
 	// Compute sum of transfers
 
 	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v2");
-	const result = execute(balances_v1, transfers as (LogErc20TransferV2 | LogErc721TransferV2)[]);
+	const result = execute(balances_v1, transfers);
 
 	// Remove values where the net-change is zero, and also remove the null address
 
