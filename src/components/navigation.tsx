@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Logo } from "./logo";
 import { SearchIcon } from "./icons";
 import { Container } from "./container";
+import { MAINTENANCE_MODE } from "@/constants";
 import { setSearchOpen, useSearchOpen } from "./search-dialog";
 import { ClearFramesButton } from "@/frames/frame-context-provider";
 
@@ -22,20 +23,22 @@ export function Navigation() {
 							</ClearFramesButton>
 						</div>
 
-						<div className="col-span-8 flex items-center justify-end">
-							<button
-								type="button"
-								onMouseDown={() => setSearchOpen(true)}
-								className={clsx(
-									open && "bg-gray-100",
-									"hover:text-gray-500 hover:bg-gray-100",
-									"cursor-pointer rounded-full -mx-2.5 px-2.5 py-1 flex items-center space-x-2 text-sm text-gray-400",
-								)}
-							>
-								<SearchIcon className="size-3.5" />
-								<span>Search</span>
-							</button>
-						</div>
+						{MAINTENANCE_MODE === false && (
+							<div className="col-span-8 flex items-center justify-end">
+								<button
+									type="button"
+									onMouseDown={() => setSearchOpen(true)}
+									className={clsx(
+										open && "bg-gray-100",
+										"hover:text-gray-500 hover:bg-gray-100",
+										"cursor-pointer rounded-full -mx-2.5 px-2.5 py-1 flex items-center space-x-2 text-sm text-gray-400",
+									)}
+								>
+									<SearchIcon className="size-3.5" />
+									<span>Search</span>
+								</button>
+							</div>
+						)}
 					</div>
 				</div>
 			</Container>
