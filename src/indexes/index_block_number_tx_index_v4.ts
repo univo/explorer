@@ -128,14 +128,12 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
 	return rows.map<Id>((result) => {
-		const tag = REVERSE_TABLES[result.table_id];
-
 		return {
-			tag,
 			chain: result.chain,
 			tx_index: result.tx_index,
 			log_index: result.log_index,
 			block_number: result.block_number,
+			tag: REVERSE_TABLES[result.table_id],
 			block_timestamp: new Date(result.block_timestamp),
 		};
 	});
@@ -160,14 +158,12 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 	logger.debug(`Found ${rows.length} events for block in ${Date.now() - start}ms`);
 
 	return rows.map<Id>((result) => {
-		const tag = REVERSE_TABLES[result.table_id];
-
 		return {
-			tag,
 			chain: result.chain,
 			tx_index: result.tx_index,
 			log_index: result.log_index,
 			block_number: result.block_number,
+			tag: REVERSE_TABLES[result.table_id],
 			block_timestamp: new Date(result.block_timestamp),
 		};
 	});
