@@ -91,7 +91,7 @@ export const event = univo.event({
 					tx_index: hexToNumber(tx.transactionIndex),
 					block_number: hexToNumber(block.eth_getBlockByNumber.number),
 					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
-					name: args[0],
+					name: sanitizeText(args[0]),
 					duration: numberToHex(args[2]),
 					success: getEventSuccess(receipt),
 					owner_address: getAddress(args[1]),
@@ -154,6 +154,12 @@ univo.event({
 		});
 	},
 });
+
+function sanitizeText(text: string) {
+	// Postgres prohibits null characters inside text columns because it uses null bytes
+	// internally to denote the end of strings.
+	return text.replaceAll(/\0/g, "");
+}
 
 export async function getIntentEnsNameRegisteredV2(ids: Id[]) {
 	const filtered = ids.filter((id) => TABLES[id.tag] === TABLES.intent_ens_name_registered_v2);
