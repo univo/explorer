@@ -1,36 +1,42 @@
 import { defineIndexer } from "univo";
+import { http } from "univo/transport";
 import { env } from "cloudflare:workers";
 import { defineStorage } from "univo/metadata";
 import { r2 } from "univo/metadata/adapters/r2-binding";
-import type { RpcBlock, RpcTransactionReceipt } from "viem";
 
-import { rpc } from "@/helpers";
+import { action as invalidate_ens_cache } from "./actions/invalidate_ens_cache";
 
-const metadataStorage = defineStorage({
-	adapter: r2({
-		binding: env.BUCKET,
-	}),
-});
+import { event as log_ens_name_for_addr_changed_v2 } from "./events/log_ens_name_for_addr_changed_v2/event";
+
+const node = http(process.env.ETHEREUM_URL);
 
 export const univo = defineIndexer({
-	getBlock,
 	quiet: false,
-	metadataStorage,
-	signingKey: process.env.UNIVO_SIGNING_KEY,
+
+	metadataStorage: defineStorage({
+		adapter: r2({
+			binding: env.BUCKET,
+		}),
+	}),
+
+	getBlock: async (head) => {
+		const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
+			node.request({ method: "eth_getBlockByNumber", params: [head.number, true] }),
+			node.request({ method: "eth_getBlockReceipts", params: [head.number] }),
+		]);
+
+		return {
+			eth_chainId: head.chain,
+			eth_getBlockByNumber,
+			eth_getBlockReceipts,
+		};
+	},
+
+	actions: [
+		invalidate_ens_cache, //
+	],
+
+	events: [
+		log_ens_name_for_addr_changed_v2, //
+	],
 });
-
-async function getBlock(block: { chain: `0x${string}`; number: string }) {
-	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
-		rpc({ jsonrpc: "2.0", id: 1, method: "eth_getBlockByNumber", params: [block.number, true] }),
-		rpc({ jsonrpc: "2.0", id: 2, method: "eth_getBlockReceipts", params: [block.number] }),
-	]);
-
-	if (!eth_getBlockByNumber) throw new Error("eth_getBlockByNumber is null");
-	if (!eth_getBlockReceipts) throw new Error("eth_getBlockReceipts is null");
-
-	return {
-		eth_chainId: block.chain,
-		eth_getBlockByNumber: eth_getBlockByNumber as RpcBlock<"latest", true>,
-		eth_getBlockReceipts: eth_getBlockReceipts as RpcTransactionReceipt[],
-	};
-}
