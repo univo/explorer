@@ -1,11 +1,13 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
+import { indexer } from "@/univo";
 import { isHexEqual } from "@/utils";
-import { test_client, test_getBlock } from "@/tests/utils";
+import { test_getBlock } from "@/tests/utils";
 import { event, getIntentEnsNameRegisteredV2 } from "./event";
 
 test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 18732525 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(18732525) });
 
 	const events = event.handler(block);
 
@@ -15,7 +17,7 @@ test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from s
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -52,7 +54,7 @@ test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from s
 });
 
 test.concurrent("intent_ens_name_registered_v2 decodes registration submissions", async ({ expect }) => {
-	const b23643423 = await test_getBlock({ chain: 1, block_number: 23643423 });
+	const b23643423 = await test_getBlock({ chain: "0x1", number: numberToHex(23643423) });
 
 	expect(event.handler(b23643423)).toMatchInlineSnapshot(`
 		[
@@ -73,7 +75,7 @@ test.concurrent("intent_ens_name_registered_v2 decodes registration submissions"
 		]
 	`);
 
-	const b18732525 = await test_getBlock({ chain: 1, block_number: 18732525 });
+	const b18732525 = await test_getBlock({ chain: "0x1", number: numberToHex(18732525) });
 
 	expect(event.handler(b18732525)).toMatchInlineSnapshot(`
 		[
@@ -96,7 +98,7 @@ test.concurrent("intent_ens_name_registered_v2 decodes registration submissions"
 });
 
 test.concurrent("intent_ens_name_registered_v2 includes failed submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 18732525 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(18732525) });
 
 	const failed = {
 		...block,

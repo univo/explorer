@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
+import { indexer } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 import { event, getIntentFwaAcquireV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_fwa_acquire_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25873188 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25873188) });
 
 	const events = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("intent_fwa_acquire_v2 deletes, writes, and reads from storage",
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

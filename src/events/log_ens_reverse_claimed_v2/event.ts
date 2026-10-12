@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
@@ -26,7 +26,7 @@ export const ENS_REVERSE_REGISTRAR_V2_DEPLOYED_BLOCK = 16925606;
 
 const REVERSE_CLAIMED_ABI = parseAbiItem("event ReverseClaimed(address indexed addr, bytes32 indexed node)");
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_ens_reverse_claimed_v2",
 
 	filters: [
@@ -103,7 +103,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_ens_reverse_claimed_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),

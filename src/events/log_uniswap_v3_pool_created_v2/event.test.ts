@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
-import { test_client, test_getBlock } from "@/tests/utils";
+import { indexer } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 import { event, getLogUniswapV3PoolCreatedV2 } from "./event";
 
 test.concurrent("log_uniswap_v3_pool_created_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 12369760 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(12369760) });
 
 	const events = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("log_uniswap_v3_pool_created_v2 deletes, writes, and reads from 
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
+import { indexer } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 import { event, getIntentErc721ApprovalV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_erc721_approval_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25798547 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25798547) });
 
 	const handled = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("intent_erc721_approval_v2 deletes, writes, and reads from stora
 
 	expect(await getIntentErc721ApprovalV2(handled)).toStrictEqual([]);
 
-	await test_client.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

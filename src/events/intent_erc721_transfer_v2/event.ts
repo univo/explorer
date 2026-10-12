@@ -1,3 +1,4 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import {
 	decodeEventLog,
@@ -11,7 +12,6 @@ import {
 } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
@@ -45,7 +45,7 @@ const TRANSFER_SELECTORS = new Set(TRANSFER_ABI.map((item) => toFunctionSelector
 const TRANSFER_EVENT_ABI = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)");
 const TRANSFER_EVENT_SELECTOR = toEventSelector(TRANSFER_EVENT_ABI);
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_erc721_transfer_v2",
 
 	filters: [
@@ -158,14 +158,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_erc721_transfer_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_erc721_transfer_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_erc721_transfer_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_erc721_transfer_v2_index_account_v4",

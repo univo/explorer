@@ -1,13 +1,15 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
-import { test_client, test_getBlock } from "@/tests/utils";
+import { indexer } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 import { event, FWA_ADDRESS, getIntentFwaDepositedV2 } from "./event";
 
 const BLOCK_NUMBER = 25641949;
 const DEPOSIT_TX_HASH = "0x2fe93ab36544d28f6997d5f2dceac1eea8985edbe2a59f6df8e7a70f74fc8786";
 
 test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: BLOCK_NUMBER });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(BLOCK_NUMBER) });
 
 	const events = event.handler(block);
 
@@ -17,7 +19,7 @@ test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -53,7 +55,7 @@ test.concurrent("intent_fwa_deposited_v2 deletes, writes, and reads from storage
 });
 
 test.concurrent("intent_fwa_deposited_v2 includes failed submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: BLOCK_NUMBER });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(BLOCK_NUMBER) });
 
 	const failed = {
 		...block,
@@ -82,7 +84,7 @@ test.concurrent("intent_fwa_deposited_v2 includes failed submissions", async ({ 
 });
 
 test.concurrent("intent_fwa_deposited_v2 requires the FWA address and listNFT selector", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: BLOCK_NUMBER });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(BLOCK_NUMBER) });
 
 	const depositTx = block.eth_getBlockByNumber.transactions.find((tx) => tx.hash === DEPOSIT_TX_HASH);
 

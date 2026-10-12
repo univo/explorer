@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
@@ -32,7 +32,7 @@ const SWAP_ABI = parseAbiItem(
 	"event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)",
 );
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_uniswap_v3_swap_v2",
 
 	filters: [
@@ -110,7 +110,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_uniswap_v3_swap_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),

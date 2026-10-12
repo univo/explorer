@@ -1,8 +1,19 @@
+import { http } from "univo/transport";
 import type { RpcTransactionReceipt } from "viem";
 
 import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
 import { CHAINS, REVERSE_CHAINS } from "./constants";
+
+export const node = http(process.env.ETHEREUM_URL);
+
+export function isMobile() {
+	return window.innerWidth < 768;
+}
+
+export function isDesktop() {
+	return window.innerWidth >= 768;
+}
 
 export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
 	if (receipt === undefined) {
@@ -101,34 +112,4 @@ export function getExternalChain(internal_chain: number) {
 		(REVERSE_CHAINS[internal_chain as keyof typeof REVERSE_CHAINS] as keyof typeof CHAINS) ||
 		raise(`Unknown internal chain id ${internal_chain}`)
 	);
-}
-
-export function isMobile() {
-	return window.innerWidth < 768;
-}
-
-export function isDesktop() {
-	return window.innerWidth >= 768;
-}
-
-export async function rpc(opts: { jsonrpc: "2.0"; id: number; method: string; params: any[] }) {
-	const res = await fetch(process.env.ETHEREUM_URL, {
-		method: "POST",
-		body: JSON.stringify(opts),
-		headers: { "Content-Type": "application/json" },
-	});
-
-	if (!res.ok || res.status < 200 || res.status >= 300) {
-		throw new Error("Failed to get response from ETHEREUM_URL");
-	}
-
-	const json: any = await res.json().catch((cause) => {
-		throw new Error("Unable to parse json response", { cause });
-	});
-
-	if (json.error) {
-		throw new Error(json.error.message);
-	}
-
-	return json.result;
 }

@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { getAddress, hexToNumber } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
@@ -24,7 +24,7 @@ export interface IntentCancelPendingTxV2 {
 	from_address: `0x${string}`;
 }
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_cancel_pending_tx_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
@@ -96,14 +96,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_cancel_pending_tx_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_cancel_pending_tx_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_cancel_pending_tx_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_cancel_pending_tx_v2_index_account_v4",

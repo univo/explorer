@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
 import type { Id } from "@/events";
@@ -29,7 +29,7 @@ const USDC_ADDRESS = getAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 const BLACKLIST_ABI = parseAbiItem("function blacklist(address _account)");
 const BLACKLIST_SELECTOR = toFunctionSelector(BLACKLIST_ABI);
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_usdc_blacklist_v2",
 
 	filters: [
@@ -101,14 +101,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_usdc_blacklist_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_usdc_blacklist_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_usdc_blacklist_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_usdc_blacklist_v2_index_account_v4",

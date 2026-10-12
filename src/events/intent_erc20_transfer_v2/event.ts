@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
@@ -29,7 +29,7 @@ export interface IntentErc20TransferV2 {
 const TRANSFER_ABI = parseAbiItem("function transfer(address to, uint256 value)");
 const TRANSFER_SELECTOR = toFunctionSelector(TRANSFER_ABI);
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_erc20_transfer_v2",
 
 	filters: [{ chain: 1, fromBlock: 0 }],
@@ -102,14 +102,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_erc20_transfer_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_erc20_transfer_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_erc20_transfer_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_erc20_transfer_v2_index_account_v4",

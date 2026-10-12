@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, keccak256, parseAbiItem, stringToHex, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
 import type { Id } from "@/events";
@@ -31,7 +31,7 @@ export const ENS_ADDR_REVERSE_NODE = "0x91d1777781884d03a6757a803996e38de2a42967
 const NEW_OWNER_ABI = parseAbiItem("event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)");
 const ENS_REGISTRIES = [ENS_REGISTRY_V1_ADDRESS, ENS_REGISTRY_V2_ADDRESS];
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_ens_new_owner_v2",
 
 	filters: [
@@ -118,7 +118,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_ens_new_owner_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),

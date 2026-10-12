@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
+import { indexer } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 import { event, getIntentUniswapV3SwapV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25678351 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25678351) });
 
 	const events = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -122,7 +124,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 deletes, writes, and reads from stora
 });
 
 test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", async ({ expect }) => {
-	const b25678346 = await test_getBlock({ chain: 1, block_number: 25678346 });
+	const b25678346 = await test_getBlock({ chain: "0x1", number: numberToHex(25678346) });
 
 	expect(event.handler(b25678346)).toMatchInlineSnapshot(`
 		[
@@ -180,7 +182,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		]
 	`);
 
-	const b25678324 = await test_getBlock({ chain: 1, block_number: 25678324 });
+	const b25678324 = await test_getBlock({ chain: "0x1", number: numberToHex(25678324) });
 
 	expect(event.handler(b25678324)).toMatchInlineSnapshot(`
 		[
@@ -238,7 +240,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		]
 	`);
 
-	const b25678267 = await test_getBlock({ chain: 1, block_number: 25678267 });
+	const b25678267 = await test_getBlock({ chain: "0x1", number: numberToHex(25678267) });
 
 	expect(event.handler(b25678267)).toMatchInlineSnapshot(`
 		[
@@ -262,7 +264,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		]
 	`);
 
-	const b25678351 = await test_getBlock({ chain: 1, block_number: 25678351 });
+	const b25678351 = await test_getBlock({ chain: "0x1", number: numberToHex(25678351) });
 
 	expect(event.handler(b25678351)).toMatchInlineSnapshot(`
 		[
@@ -354,7 +356,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		]
 	`);
 
-	const b25677874 = await test_getBlock({ chain: 1, block_number: 25677874 });
+	const b25677874 = await test_getBlock({ chain: "0x1", number: numberToHex(25677874) });
 
 	expect(event.handler(b25677874)).toMatchInlineSnapshot(`
 		[
@@ -395,7 +397,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		]
 	`);
 
-	const b25677937 = await test_getBlock({ chain: 1, block_number: 25677937 });
+	const b25677937 = await test_getBlock({ chain: "0x1", number: numberToHex(25677937) });
 
 	expect(event.handler(b25677937)).toMatchInlineSnapshot(`
 		[
@@ -419,7 +421,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 		]
 	`);
 
-	const b25676459 = await test_getBlock({ chain: 1, block_number: 25676459 });
+	const b25676459 = await test_getBlock({ chain: "0x1", number: numberToHex(25676459) });
 
 	expect(event.handler(b25676459)).toMatchInlineSnapshot(`
 		[
@@ -479,7 +481,7 @@ test.concurrent("intent_uniswap_v3_swap_v2 handles all function selectors", asyn
 });
 
 test.concurrent("intent_uniswap_v3_swap_v2 includes failed submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25678351 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25678351) });
 
 	const failed = {
 		...block,

@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
@@ -31,7 +31,7 @@ const NFT_LISTED_ABI = parseAbiItem(
 	"event NFTListed(uint256 indexed listingId, uint256 indexed slot, address indexed depositor, address collection, uint256 tokenId, uint256 weight, uint256 value)",
 );
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_fwa_nft_listed_v2",
 
 	filters: [
@@ -109,7 +109,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_fwa_nft_listed_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),

@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbi, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
@@ -225,7 +225,7 @@ function normalizeSwapRouter02Recipient(recipient: `0x${string}`, sender: `0x${s
 	return getAddress(recipient);
 }
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_uniswap_v3_swap_v2",
 
 	filters: [
@@ -303,14 +303,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_uniswap_v3_swap_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_uniswap_v3_swap_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_uniswap_v3_swap_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_uniswap_v3_swap_v2_index_account_v4",
