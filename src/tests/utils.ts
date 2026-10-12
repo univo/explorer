@@ -1,7 +1,6 @@
 import type { Block } from "univo";
-import { http } from "univo/transport";
 
-const node = http(process.env.ETHEREUM_URL);
+import { node } from "@/helpers";
 
 export async function test_getBlock(head: { chain: `0x${string}`; number: `0x${string}` | "finalized" }): Promise<Block> {
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
