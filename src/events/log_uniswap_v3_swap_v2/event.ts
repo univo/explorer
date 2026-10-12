@@ -62,7 +62,7 @@ export const event = univo.event({
 						tag: "log_uniswap_v3_swap_v2",
 						log_index: hexToNumber(log.logIndex),
 						chain: hexToNumber(block.eth_chainId),
-						tx_index: hexToNumber(log.transactionIndex),
+						tx_index: hexToNumber(receipt.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 						tick: args.tick,
