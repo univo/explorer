@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getIntentErc20TransferV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_erc20_transfer_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 10000000 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(10000000) });
 
 	const handled = event.handler(block);
 
@@ -16,7 +18,7 @@ test.concurrent("intent_erc20_transfer_v2 deletes, writes, and reads from storag
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{

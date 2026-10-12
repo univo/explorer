@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getIntentFwaWonV3 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_fwa_won_v3 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25641950 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25641950) });
 
 	const events = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("intent_fwa_won_v3 deletes, writes, and reads from storage", asy
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -51,7 +53,7 @@ test.concurrent("intent_fwa_won_v3 deletes, writes, and reads from storage", asy
 });
 
 test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expect }) => {
-	const b25641950 = await test_getBlock({ chain: 1, block_number: 25641950 });
+	const b25641950 = await test_getBlock({ chain: "0x1", number: numberToHex(25641950) });
 
 	expect(event.handler(b25641950)).toMatchInlineSnapshot(`
 		[
@@ -71,7 +73,7 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 		]
 	`);
 
-	const b25642834 = await test_getBlock({ chain: 1, block_number: 25642834 });
+	const b25642834 = await test_getBlock({ chain: "0x1", number: numberToHex(25642834) });
 
 	expect(event.handler(b25642834)).toMatchInlineSnapshot(`
 		[
@@ -104,7 +106,7 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 		]
 	`);
 
-	const b25641960 = await test_getBlock({ chain: 1, block_number: 25641960 });
+	const b25641960 = await test_getBlock({ chain: "0x1", number: numberToHex(25641960) });
 
 	expect(event.handler(b25641960)).toMatchInlineSnapshot(`
 		[
@@ -126,7 +128,7 @@ test.concurrent("intent_fwa_won_v3 handles all settlement types", async ({ expec
 });
 
 test.concurrent("intent_fwa_won_v3 uses sentinels for failed settlements", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25642555 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25642555) });
 
 	expect(event.handler(block)).toMatchInlineSnapshot(`
 		[

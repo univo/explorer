@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
@@ -31,7 +31,7 @@ const POOL_CREATED_ABI = parseAbiItem(
 	"event PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)",
 );
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_uniswap_v3_pool_created_v2",
 
 	filters: [
@@ -111,7 +111,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_uniswap_v3_pool_created_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),

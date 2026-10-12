@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
@@ -31,7 +31,7 @@ const NFT_ALLOCATED_ABI = parseAbiItem(
 	"event NFTAllocated(uint256 indexed requestId, uint256 indexed listingId, address indexed purchaser, address depositor, uint256 value, uint256 randomWord)",
 );
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_fwa_nft_allocated_v2",
 
 	filters: [
@@ -112,7 +112,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_fwa_nft_allocated_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
@@ -121,7 +121,7 @@ univo.event({
 
 // Allocations settle asynchronously, so index the result for both the winner and the depositor.
 
-univo.event({
+export const log_fwa_nft_allocated_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "log_fwa_nft_allocated_v2_index_account_v4",

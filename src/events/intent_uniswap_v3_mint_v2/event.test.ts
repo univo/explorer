@@ -1,11 +1,13 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { isHexEqual } from "@/utils";
 import { event, getIntentUniswapV3MintV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25678336 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25678336) });
 	const events = event.handler(block);
 
 	await event.storage.delete(events);
@@ -14,7 +16,7 @@ test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from stora
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -56,7 +58,7 @@ test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from stora
 });
 
 test.concurrent("intent_uniswap_v3_mint_v2 decodes mint submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25678336 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25678336) });
 
 	expect(event.handler(block)).toMatchInlineSnapshot(`
 		[
@@ -84,7 +86,7 @@ test.concurrent("intent_uniswap_v3_mint_v2 decodes mint submissions", async ({ e
 });
 
 test.concurrent("intent_uniswap_v3_mint_v2 includes failed submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25678336 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25678336) });
 
 	const failed = {
 		...block,

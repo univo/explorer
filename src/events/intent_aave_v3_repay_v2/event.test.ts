@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getIntentAaveV3RepayV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_aave_v3_repay_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25621858 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25621858) });
 
 	const events = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("intent_aave_v3_repay_v2 deletes, writes, and reads from storage
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -50,7 +52,7 @@ test.concurrent("intent_aave_v3_repay_v2 deletes, writes, and reads from storage
 });
 
 test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async ({ expect }) => {
-	const b25621858 = await test_getBlock({ chain: 1, block_number: 25621858 });
+	const b25621858 = await test_getBlock({ chain: "0x1", number: numberToHex(25621858) });
 
 	expect(event.handler(b25621858)).toMatchInlineSnapshot(`
 		[
@@ -69,7 +71,7 @@ test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async 
 		]
 	`);
 
-	const b25622279 = await test_getBlock({ chain: 1, block_number: 25622279 });
+	const b25622279 = await test_getBlock({ chain: "0x1", number: numberToHex(25622279) });
 
 	expect(event.handler(b25622279)).toMatchInlineSnapshot(`
 		[
@@ -88,7 +90,7 @@ test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async 
 		]
 	`);
 
-	const b25621977 = await test_getBlock({ chain: 1, block_number: 25621977 });
+	const b25621977 = await test_getBlock({ chain: "0x1", number: numberToHex(25621977) });
 
 	expect(event.handler(b25621977)).toMatchInlineSnapshot(`
 		[
@@ -109,7 +111,7 @@ test.concurrent("intent_aave_v3_repay_v2 handles all function selectors", async 
 });
 
 test.concurrent("intent_aave_v3_repay_v2 includes failed submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25621858 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25621858) });
 
 	const failed = {
 		...block,

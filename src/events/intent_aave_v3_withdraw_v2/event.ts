@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
 import { getEventSuccess } from "@/helpers";
@@ -32,7 +32,7 @@ export const AAVE_V3_ETHEREUM_POOL_ADDRESS = getAddress("0x87870Bca3F3fD6335C3F4
 const WITHDRAW_ABI = parseAbiItem("function withdraw(address asset, uint256 amount, address to)");
 const WITHDRAW_SELECTOR = toFunctionSelector(WITHDRAW_ABI);
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_aave_v3_withdraw_v2",
 
 	filters: [
@@ -111,14 +111,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_aave_v3_withdraw_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_aave_v3_withdraw_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_aave_v3_withdraw_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_aave_v3_withdraw_v2_index_account_v4",

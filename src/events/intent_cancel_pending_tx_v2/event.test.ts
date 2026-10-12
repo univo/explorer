@@ -1,12 +1,14 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getIntentCancelPendingTxV2 } from "./event";
-import { test_getBlock, test_client } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 // Example 0xfa14e402325f30b24add5d897cb801d31486669f6d48f14348b6844955946a03
 
 test.concurrent("intent_cancel_pending_tx_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 10782880 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(10782880) });
 
 	const handled = event.handler(block);
 
@@ -16,7 +18,7 @@ test.concurrent("intent_cancel_pending_tx_v2 deletes, writes, and reads from sto
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{

@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getIntentAaveV3WithdrawV2 } from "./event";
-import { test_client, test_getBlock } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 test.concurrent("intent_aave_v3_withdraw_v2 deletes, writes, and reads from storage", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25621865 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25621865) });
 
 	const events = event.handler(block);
 
@@ -14,7 +16,7 @@ test.concurrent("intent_aave_v3_withdraw_v2 deletes, writes, and reads from stor
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -50,7 +52,7 @@ test.concurrent("intent_aave_v3_withdraw_v2 deletes, writes, and reads from stor
 });
 
 test.concurrent("intent_aave_v3_withdraw_v2 handles all function selectors", async ({ expect }) => {
-	const b25621865 = await test_getBlock({ chain: 1, block_number: 25621865 });
+	const b25621865 = await test_getBlock({ chain: "0x1", number: numberToHex(25621865) });
 
 	expect(event.handler(b25621865)).toMatchInlineSnapshot(`
 		[
@@ -69,7 +71,7 @@ test.concurrent("intent_aave_v3_withdraw_v2 handles all function selectors", asy
 		]
 	`);
 
-	const b25621839 = await test_getBlock({ chain: 1, block_number: 25621839 });
+	const b25621839 = await test_getBlock({ chain: "0x1", number: numberToHex(25621839) });
 
 	expect(event.handler(b25621839)).toMatchInlineSnapshot(`
 		[
@@ -90,7 +92,7 @@ test.concurrent("intent_aave_v3_withdraw_v2 handles all function selectors", asy
 });
 
 test.concurrent("intent_aave_v3_withdraw_v2 includes failed submissions", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 25621865 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25621865) });
 
 	const failed = {
 		...block,

@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
 import { iife, numberToHex } from "@/utils";
@@ -30,7 +30,7 @@ export interface IntentTornadoWithdrawalV2 {
 
 const TORNADO_CASH_DEPLOYED_BLOCK = 9116966;
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "intent_tornado_withdrawal_v2",
 
 	filters: [{ chain: 1, fromBlock: TORNADO_CASH_DEPLOYED_BLOCK }],
@@ -144,14 +144,14 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const intent_tornado_withdrawal_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
 	id: "intent_tornado_withdrawal_v2_index_block_number_tx_index_v4",
 });
 
-univo.event({
+export const intent_tornado_withdrawal_v2_index_account_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_account_v4,
 	id: "intent_tornado_withdrawal_v2_index_account_v4",

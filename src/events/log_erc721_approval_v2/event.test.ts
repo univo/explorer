@@ -1,10 +1,12 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getLogErc721ApprovalV2 } from "./event";
-import { test_getBlock, test_client } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 13657776 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(13657776) });
 
 	await event.storage.delete(event.handler(block));
 
@@ -14,7 +16,7 @@ test.concurrent("log_erc721_approval_v2", async ({ expect }) => {
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{

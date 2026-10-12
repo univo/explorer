@@ -1,13 +1,15 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { event, getIntentTornadoWithdrawalV2 } from "./event";
-import { test_getBlock, test_client } from "@/tests/utils";
+import { univo } from "@/univo";
+import { test_getBlock } from "@/tests/utils";
 
 // 0x9bb7303af6ce69085abc3d9f4f5b7884a90023fd6e5925cb6ffed9737ebff78c
 // From address, recipient address, and relay address are all the same
 
 test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 9117176 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(9117176) });
 
 	await event.storage.delete(event.handler(block));
 
@@ -16,7 +18,7 @@ test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ 
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -57,7 +59,7 @@ test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ 
 // From address, recipient address, and relay address are all different
 
 test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect }) => {
-	const block = await test_getBlock({ chain: 1, block_number: 11843313 });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(11843313) });
 
 	await event.storage.delete(event.handler(block));
 
@@ -66,7 +68,7 @@ test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect
 
 	expect(initial).toStrictEqual([]);
 
-	await test_client.request({
+	await univo.request({
 		method: "private_writeEvents",
 		params: [
 			{

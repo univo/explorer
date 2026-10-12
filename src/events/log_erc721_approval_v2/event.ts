@@ -1,8 +1,8 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
@@ -25,7 +25,7 @@ export interface LogErc721ApprovalV2 {
 
 const abi = parseAbiItem("event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)");
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_erc721_approval_v2",
 
 	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
@@ -87,7 +87,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_erc721_approval_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),

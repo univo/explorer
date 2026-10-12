@@ -1,12 +1,12 @@
+import { defineEvent } from "univo";
 import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
-import { univo } from "@/univo";
+import type { Id } from "@/events";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { Id } from "@/events";
 import { createPostgresClient } from "@/db/client";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
@@ -26,7 +26,7 @@ export const ENS_DEFAULT_REVERSE_REGISTRAR_DEPLOYED_BLOCK = 22764819;
 
 const NAME_FOR_ADDR_CHANGED_ABI = parseAbiItem("event NameForAddrChanged(address indexed addr, string name)");
 
-export const event = univo.event({
+export const event = defineEvent({
 	id: "log_ens_name_for_addr_changed_v2",
 
 	filters: [
@@ -103,7 +103,7 @@ export const event = univo.event({
 	},
 });
 
-univo.event({
+export const log_ens_name_for_addr_changed_v2_index_block_number_tx_index_v4 = defineEvent({
 	filters: event.filters,
 	storage: index_block_number_tx_index_v4,
 	handler: (block) => event.handler(block),
