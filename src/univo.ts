@@ -7,6 +7,7 @@ import { r2 } from "univo/metadata/adapters/r2-binding";
 import { action as invalidate_ens_cache } from "./actions/invalidate_ens_cache";
 
 import { event as log_ens_name_for_addr_changed_v2 } from "./events/log_ens_name_for_addr_changed_v2/event";
+import { log_ens_name_for_addr_changed_v2_index_block_number_tx_index_v4 } from "./events/log_ens_name_for_addr_changed_v2/event";
 
 const node = http(process.env.ETHEREUM_URL);
 
@@ -38,5 +39,6 @@ export const univo = defineIndexer({
 
 	events: [
 		log_ens_name_for_addr_changed_v2, //
+		log_ens_name_for_addr_changed_v2_index_block_number_tx_index_v4,
 	],
 });

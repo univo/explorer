@@ -1,14 +1,12 @@
 import type { RpcTransaction, RpcTransactionReceipt } from "viem";
 
-import { rpc } from "@/helpers";
+import { node } from "@/helpers";
 import { numberToHex } from "@/utils";
 
 export type Tx = RpcTransaction<false>;
 
 export async function getTxByPosition(opts: { block: number; tx: number }) {
-	const tx = await rpc({
-		id: 1,
-		jsonrpc: "2.0",
+	const tx = await node.request({
 		method: "eth_getTransactionByBlockNumberAndIndex",
 		params: [numberToHex(opts.block), numberToHex(opts.tx)],
 	});
@@ -23,11 +21,9 @@ export async function getTxByPosition(opts: { block: number; tx: number }) {
 export type TxReceipt = RpcTransactionReceipt;
 
 export async function getTxReceiptByHash(hash: `0x${string}`) {
-	const receipt = await rpc({
-		id: 1,
-		jsonrpc: "2.0",
-		params: [hash],
+	const receipt = await node.request({
 		method: "eth_getTransactionReceipt",
+		params: [hash],
 	});
 
 	if (receipt === null) {
