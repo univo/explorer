@@ -1,9 +1,9 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
-import { event, getIntentCancelPendingTxV2 } from "./event";
-import { univo } from "@/univo";
+import { indexer } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
+import { event, getIntentCancelPendingTxV2 } from "./event";
 
 // Example 0xfa14e402325f30b24add5d897cb801d31486669f6d48f14348b6844955946a03
 
@@ -18,7 +18,7 @@ test.concurrent("intent_cancel_pending_tx_v2 deletes, writes, and reads from sto
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

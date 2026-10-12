@@ -1,9 +1,9 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
-import { event, getIntentNativeTransferV2 } from "./event";
-import { univo } from "@/univo";
+import { indexer } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
+import { event, getIntentNativeTransferV2 } from "./event";
 
 test.concurrent("intent_native_transfer_v2 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: "0x1", number: numberToHex(10000000) });
@@ -16,7 +16,7 @@ test.concurrent("intent_native_transfer_v2 deletes, writes, and reads from stora
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

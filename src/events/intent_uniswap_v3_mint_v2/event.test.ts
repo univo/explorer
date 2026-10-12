@@ -1,10 +1,10 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
+import { indexer } from "@/univo";
 import { isHexEqual } from "@/utils";
-import { event, getIntentUniswapV3MintV2 } from "./event";
-import { univo } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
+import { event, getIntentUniswapV3MintV2 } from "./event";
 
 test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from storage", async ({ expect }) => {
 	const block = await test_getBlock({ chain: "0x1", number: numberToHex(25678336) });
@@ -16,7 +16,7 @@ test.concurrent("intent_uniswap_v3_mint_v2 deletes, writes, and reads from stora
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

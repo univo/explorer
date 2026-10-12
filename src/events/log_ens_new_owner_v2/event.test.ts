@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
-import { univo } from "@/univo";
+import { indexer } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
 import { event, getEnsExistsForAccounts, getLogEnsNewOwnerV2 } from "./event";
 
@@ -16,7 +16,7 @@ test.concurrent("log_ens_new_owner_v2 deletes, writes, and reads from storage", 
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

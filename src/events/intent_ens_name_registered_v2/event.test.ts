@@ -1,8 +1,8 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
+import { indexer } from "@/univo";
 import { isHexEqual } from "@/utils";
-import { univo } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
 import { event, getIntentEnsNameRegisteredV2 } from "./event";
 
@@ -17,7 +17,7 @@ test.concurrent("intent_ens_name_registered_v2 deletes, writes, and reads from s
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

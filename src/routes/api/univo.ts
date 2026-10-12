@@ -1,9 +1,9 @@
 import { http } from "univo/proxy";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { univo } from "@/univo";
+import { indexer } from "@/univo";
 
-const fetch = http({ indexer: univo, signingKey: process.env.UNIVO_SIGNING_KEY });
+const fetch = http({ indexer, signingKey: process.env.UNIVO_SIGNING_KEY });
 
 export const Route = createFileRoute("/api/univo")({
 	server: {

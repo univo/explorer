@@ -91,7 +91,7 @@ import { log_ens_name_for_addr_changed_v2_index_block_number_tx_index_v4 } from 
 
 const node = http(process.env.ETHEREUM_URL);
 
-export const univo = defineIndexer({
+export const indexer = defineIndexer({
 	quiet: false,
 
 	metadataStorage: defineStorage({

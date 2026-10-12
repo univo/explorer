@@ -1,9 +1,9 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
-import { event, getIntentTornadoWithdrawalV2 } from "./event";
-import { univo } from "@/univo";
+import { indexer } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
+import { event, getIntentTornadoWithdrawalV2 } from "./event";
 
 // 0x9bb7303af6ce69085abc3d9f4f5b7884a90023fd6e5925cb6ffed9737ebff78c
 // From address, recipient address, and relay address are all the same
@@ -18,7 +18,7 @@ test.concurrent("intent_tornado_withdrawal_v2 direct pool withdrawal", async ({ 
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{
@@ -68,7 +68,7 @@ test.concurrent("intent_tornado_withdrawal_v2 proxy withdrawal", async ({ expect
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{

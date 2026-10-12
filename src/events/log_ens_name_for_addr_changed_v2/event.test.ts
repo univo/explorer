@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { numberToHex } from "viem";
 
-import { univo } from "@/univo";
+import { indexer } from "@/univo";
 import { test_getBlock } from "@/tests/utils";
 import { event, getLogEnsNameForAddrChangedV2 } from "./event";
 
@@ -16,7 +16,7 @@ test.concurrent("log_ens_name_for_addr_changed_v2 deletes, writes, and reads fro
 
 	expect(initial).toStrictEqual([]);
 
-	await univo.request({
+	await indexer.request({
 		method: "private_writeEvents",
 		params: [
 			{
