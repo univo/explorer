@@ -1,14 +1,24 @@
+import { realtime } from "univo/realtime";
+import { http, browser } from "univo/transport";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 
 import { Logo } from "@/components/logo";
 import css from "@/styles/tailwind.css?url";
+import { MAINTENANCE_MODE } from "@/constants";
 import { Devtools } from "@/components/devtools";
 import { Navigation } from "@/components/navigation";
 import { SearchDialog } from "@/components/search-dialog";
 import { GlobalLoading } from "@/components/global-loading";
 import { FrameContextProvider } from "@/frames/frame-context-provider";
 import { QueryClientProvider } from "@/components/query-client-provider";
-import { MAINTENANCE_MODE } from "@/constants";
+
+if (typeof window !== "undefined" && import.meta.env.PROD) {
+	realtime({
+		quiet: false,
+		node: browser(),
+		indexer: http("https://explorer.univo.app/api/univo"),
+	});
+}
 
 export const Route = createRootRoute({
 	head: () => ({
