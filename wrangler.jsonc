@@ -25,8 +25,7 @@
 		}
 	},
 	"vars": {
-		"LOG_LEVEL": "DEBUG",
-		"ENVIRONMENT": "DEVELOPMENT"
+		"LOG_LEVEL": "DEBUG"
 	},
 	"assets": {
 		"not_found_handling": "single-page-application",
@@ -35,7 +34,7 @@
 	"r2_buckets": [
 		{
 			"binding": "BUCKET",
-			"bucket_name": "explorer-staging"
+			"bucket_name": "explorer-production"
 		}
 	],
 	"hyperdrive": [
@@ -48,8 +47,7 @@
 	"env": {
 		"production": {
 			"vars": {
-				"LOG_LEVEL": "WARN",
-				"ENVIRONMENT": "PRODUCTION"
+				"LOG_LEVEL": "WARN"
 			},
 			"route": {
 				"custom_domain": true,
