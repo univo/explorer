@@ -60,6 +60,7 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			function: MINT_SELECTOR,
+			address: UNISWAP_V3_POSITION_MANAGER_ADDRESS,
 			fromBlock: UNISWAP_V3_POSITION_MANAGER_DEPLOYED_BLOCK,
 		},
 	],
