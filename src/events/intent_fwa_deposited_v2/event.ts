@@ -39,6 +39,7 @@ export const event = defineEvent({
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(LIST_NFT_ABI),
 		},
 	],
 

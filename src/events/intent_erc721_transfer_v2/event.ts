@@ -52,7 +52,17 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			fromBlock: 0,
-			event: TRANSFER_EVENT_SELECTOR,
+			function: toFunctionSelector(TRANSFER_ABI[0]),
+		},
+		{
+			chain: 1,
+			fromBlock: 0,
+			function: toFunctionSelector(TRANSFER_ABI[1]),
+		},
+		{
+			chain: 1,
+			fromBlock: 0,
+			function: toFunctionSelector(TRANSFER_ABI[2]),
 		},
 	],
 

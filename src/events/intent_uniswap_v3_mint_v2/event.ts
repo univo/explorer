@@ -59,6 +59,7 @@ export const event = defineEvent({
 	filters: [
 		{
 			chain: 1,
+			function: MINT_SELECTOR,
 			fromBlock: UNISWAP_V3_POSITION_MANAGER_DEPLOYED_BLOCK,
 		},
 	],

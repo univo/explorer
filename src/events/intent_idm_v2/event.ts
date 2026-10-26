@@ -28,7 +28,12 @@ export interface IntentIdmV2 {
 export const event = defineEvent({
 	id: "intent_idm_v2",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+		},
+	],
 
 	handler(block) {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentIdmV2>((tx) => {

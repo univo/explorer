@@ -38,6 +38,7 @@ export const event = defineEvent({
 	filters: [
 		{
 			chain: 1,
+			function: WITHDRAW_SELECTOR,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},

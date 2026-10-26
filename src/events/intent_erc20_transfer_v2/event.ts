@@ -32,7 +32,13 @@ const TRANSFER_SELECTOR = toFunctionSelector(TRANSFER_ABI);
 export const event = defineEvent({
 	id: "intent_erc20_transfer_v2",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+			function: TRANSFER_SELECTOR,
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc20TransferV2>((tx) => {

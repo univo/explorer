@@ -48,11 +48,19 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: ENS_REGISTRAR_CONTROLLER_V2_ADDRESS,
+			function: toFunctionSelector(V2_REGISTER_ABI),
 			fromBlock: ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
+			address: ENS_REGISTRAR_CONTROLLER_V2_ADDRESS,
+			fromBlock: ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK,
+			function: toFunctionSelector(V2_REGISTER_WITH_CONFIG_ABI),
+		},
+		{
+			chain: 1,
 			address: ENS_REGISTRAR_CONTROLLER_V3_ADDRESS,
+			function: toFunctionSelector(V3_REGISTER_ABI),
 			fromBlock: ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK,
 		},
 	],

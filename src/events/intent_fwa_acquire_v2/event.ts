@@ -47,6 +47,25 @@ export const event = defineEvent({
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(ACQUIRE_ABI),
+		},
+		{
+			chain: 1,
+			address: FWA_ADDRESS,
+			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(ACQUIRE_BATCH_ABI),
+		},
+		{
+			chain: 1,
+			address: FWA_ADDRESS,
+			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(ACQUIRE_WITH_SLIPPAGE_ABI),
+		},
+		{
+			chain: 1,
+			address: FWA_ADDRESS,
+			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(ACQUIRE_BATCH_WITH_SLIPPAGE_ABI),
 		},
 	],
 
