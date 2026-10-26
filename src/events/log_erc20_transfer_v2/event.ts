@@ -28,7 +28,13 @@ const abi = parseAbiItem("event Transfer(address indexed from, address indexed t
 export const event = defineEvent({
 	id: "log_erc20_transfer_v2",
 
-	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+			event: toEventSelector(abi),
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
