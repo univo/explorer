@@ -67,7 +67,7 @@ export const event = defineEvent({
 
 	storage: {
 		async upsert(events) {
-			const MAX_BATCH_SIZE = 4000;
+			const MAX_BATCH_SIZE = 6000;
 			const client = await createPostgresClient();
 
 			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
