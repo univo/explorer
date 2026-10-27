@@ -36,6 +36,7 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: USDC_ADDRESS,
+			function: BLACKLIST_SELECTOR,
 			fromBlock: USDC_DEPLOYED_BLOCK,
 		},
 	],

@@ -231,6 +231,42 @@ export const event = defineEvent({
 	filters: [
 		{
 			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_ABI[0]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_ABI[1]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_ABI[2]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_ABI[3]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_02_ABI[0]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_02_ABI[1]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_02_ABI[2]),
+			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: toFunctionSelector(SWAP_ROUTER_02_ABI[3]),
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 	],

@@ -28,7 +28,13 @@ const abi = parseAbiItem("event Approval(address indexed owner, address indexed 
 export const event = defineEvent({
 	id: "log_erc20_approval_v2",
 
-	filters: [{ chain: 1, fromBlock: 0, event: toEventSelector(abi) }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+			event: toEventSelector(abi),
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {

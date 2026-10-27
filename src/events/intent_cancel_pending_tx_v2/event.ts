@@ -27,7 +27,12 @@ export interface IntentCancelPendingTxV2 {
 export const event = defineEvent({
 	id: "intent_cancel_pending_tx_v2",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentCancelPendingTxV2>((tx) => {

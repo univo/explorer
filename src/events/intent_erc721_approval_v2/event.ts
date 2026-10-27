@@ -38,7 +38,7 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			fromBlock: 0,
-			event: APPROVAL_SELECTOR,
+			function: APPROVE_SELECTOR,
 		},
 	],
 

@@ -30,10 +30,31 @@ export interface IntentTornadoWithdrawalV2 {
 
 const TORNADO_CASH_DEPLOYED_BLOCK = 9116966;
 
+const DIRECT_WITHDRAWAL_ABI = parseAbiItem(
+	"function withdraw(bytes _proof, bytes32 _root, bytes32 _nullifierHash, address _recipient, address _relayer, uint256 _fee, uint256 _refund)",
+);
+const PROXY_WITHDRAWAL_ABI = parseAbiItem(
+	"function withdraw(address _tornado, bytes _proof, bytes32 _root, bytes32 _nullifierHash, address _recipient, address _relayer, uint256 _fee, uint256 _refund)",
+);
+
+const PROXY_WITHDRAWAL_SELECTOR = toFunctionSelector(PROXY_WITHDRAWAL_ABI);
+const DIRECT_WITHDRAWAL_SELECTOR = toFunctionSelector(DIRECT_WITHDRAWAL_ABI);
+
 export const event = defineEvent({
 	id: "intent_tornado_withdrawal_v2",
 
-	filters: [{ chain: 1, fromBlock: TORNADO_CASH_DEPLOYED_BLOCK }],
+	filters: [
+		{
+			chain: 1,
+			function: DIRECT_WITHDRAWAL_SELECTOR,
+			fromBlock: TORNADO_CASH_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			function: PROXY_WITHDRAWAL_SELECTOR,
+			fromBlock: TORNADO_CASH_DEPLOYED_BLOCK,
+		},
+	],
 
 	handler(block) {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentTornadoWithdrawalV2>((tx) => {
@@ -253,16 +274,6 @@ const pools = [
 export function getTornadoCashPool(address: `0x${string}`) {
 	return pools.find((pool) => isAddressEqual(pool.pool, address));
 }
-
-const DIRECT_WITHDRAWAL_ABI = parseAbiItem(
-	"function withdraw(bytes _proof, bytes32 _root, bytes32 _nullifierHash, address _recipient, address _relayer, uint256 _fee, uint256 _refund)",
-);
-const PROXY_WITHDRAWAL_ABI = parseAbiItem(
-	"function withdraw(address _tornado, bytes _proof, bytes32 _root, bytes32 _nullifierHash, address _recipient, address _relayer, uint256 _fee, uint256 _refund)",
-);
-
-const PROXY_WITHDRAWAL_SELECTOR = toFunctionSelector(PROXY_WITHDRAWAL_ABI);
-const DIRECT_WITHDRAWAL_SELECTOR = toFunctionSelector(DIRECT_WITHDRAWAL_ABI);
 
 const WITHDRAWAL_PROXY_ADDRESSES = [
 	"0x905b63Fff465B9fFBF41DeA908CEb12478ec7601",

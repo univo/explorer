@@ -44,6 +44,19 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
+			function: toFunctionSelector(REPAY_ABI[0]),
+			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
+			function: toFunctionSelector(REPAY_ABI[1]),
+			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 1,
+			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
+			function: toFunctionSelector(REPAY_ABI[2]),
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 	],

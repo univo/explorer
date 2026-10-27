@@ -56,6 +56,25 @@ export const event = defineEvent({
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(KEEP_NFT_ABI),
+		},
+		{
+			chain: 1,
+			address: FWA_ADDRESS,
+			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(RELIST_NFT_ABI),
+		},
+		{
+			chain: 1,
+			address: FWA_ADDRESS,
+			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(ACCEPT_DEPOSITOR_BID_ABI),
+		},
+		{
+			chain: 1,
+			address: FWA_ADDRESS,
+			fromBlock: FWA_DEPLOYED_BLOCK,
+			function: toFunctionSelector(ACCEPT_BID_AS_TOKENS_ABI),
 		},
 	],
 

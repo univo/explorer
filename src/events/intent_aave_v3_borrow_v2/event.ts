@@ -42,6 +42,7 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
+			function: toFunctionSelector(BORROW_ABI),
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 	],

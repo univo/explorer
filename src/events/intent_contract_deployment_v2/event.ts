@@ -26,7 +26,12 @@ export interface IntentContractDeploymentV2 {
 export const event = defineEvent({
 	id: "intent_contract_deployment_v2",
 
-	filters: [{ chain: 1, fromBlock: 0 }],
+	filters: [
+		{
+			chain: 1,
+			fromBlock: 0,
+		},
+	],
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap<IntentContractDeploymentV2>((receipt) => {
