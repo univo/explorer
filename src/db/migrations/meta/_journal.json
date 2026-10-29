@@ -372,6 +372,13 @@
       "when": 1790638327648,
       "tag": "0052_intent-usdc-blacklist-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1793266343069,
+      "tag": "0053_hypertable-columnstore-policies",
+      "breakpoints": true
     }
   ]
 }
