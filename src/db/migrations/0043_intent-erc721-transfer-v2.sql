@@ -14,16 +14,4 @@ CREATE TABLE "intent_erc721_transfer_v2" (
 --> statement-breakpoint
 CREATE INDEX "intent_erc721_transfer_v2_block_timestamp_idx" ON "intent_erc721_transfer_v2" USING btree ("block_timestamp" DESC NULLS LAST);
 --> statement-breakpoint
-SELECT create_hypertable(
-	'intent_erc721_transfer_v2',
-	by_range('block_timestamp', INTERVAL '1 day'),
-	create_default_indexes => FALSE
-);
---> statement-breakpoint
-ALTER TABLE "intent_erc721_transfer_v2" SET (
-	timescaledb.enable_columnstore = TRUE,
-	timescaledb.segmentby = 'chain',
-	timescaledb.orderby = 'block_timestamp DESC, block_number DESC, tx_index DESC, log_index DESC'
-);
---> statement-breakpoint
 DROP TABLE "intent_erc721_transfer_v1" CASCADE;
