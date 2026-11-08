@@ -14,16 +14,4 @@ CREATE TABLE "intent_fwa_won_v3" (
 --> statement-breakpoint
 CREATE INDEX "intent_fwa_won_v3_block_timestamp_idx" ON "intent_fwa_won_v3" USING btree ("block_timestamp" DESC NULLS LAST);
 --> statement-breakpoint
-SELECT create_hypertable(
-	'intent_fwa_won_v3',
-	by_range('block_timestamp', INTERVAL '1 day'),
-	create_default_indexes => FALSE
-);
---> statement-breakpoint
-ALTER TABLE "intent_fwa_won_v3" SET (
-	timescaledb.enable_columnstore = TRUE,
-	timescaledb.segmentby = 'chain',
-	timescaledb.orderby = 'block_timestamp DESC, block_number DESC, tx_index DESC, log_index DESC'
-);
---> statement-breakpoint
 DROP TABLE "intent_fwa_won_v2" CASCADE;
