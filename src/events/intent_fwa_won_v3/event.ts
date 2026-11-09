@@ -48,6 +48,15 @@ const DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI = parseAbiItem(
 
 const ZERO_VALUE = numberToHex(0);
 
+const KEEP_NFT_SELECTOR = toFunctionSelector(KEEP_NFT_ABI);
+const RELIST_NFT_SELECTOR = toFunctionSelector(RELIST_NFT_ABI);
+const ACCEPT_DEPOSITOR_BID_SELECTOR = toFunctionSelector(ACCEPT_DEPOSITOR_BID_ABI);
+const ACCEPT_BID_AS_TOKENS_SELECTOR = toFunctionSelector(ACCEPT_BID_AS_TOKENS_ABI);
+const NFT_KEPT_SELECTOR = toEventSelector(NFT_KEPT_ABI);
+const NFT_RELISTED_SELECTOR = toEventSelector(NFT_RELISTED_ABI);
+const DEPOSITOR_BID_ACCEPTED_SELECTOR = toEventSelector(DEPOSITOR_BID_ACCEPTED_ABI);
+const DEPOSITOR_BID_ACCEPTED_AS_TOKENS_SELECTOR = toEventSelector(DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI);
+
 export const event = defineEvent({
 	id: "intent_fwa_won_v3",
 
@@ -55,26 +64,26 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
+			function: KEEP_NFT_SELECTOR,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(KEEP_NFT_ABI),
 		},
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(RELIST_NFT_ABI),
+			function: RELIST_NFT_SELECTOR,
 		},
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(ACCEPT_DEPOSITOR_BID_ABI),
+			function: ACCEPT_DEPOSITOR_BID_SELECTOR,
 		},
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(ACCEPT_BID_AS_TOKENS_ABI),
+			function: ACCEPT_BID_AS_TOKENS_SELECTOR,
 		},
 	],
 
@@ -93,16 +102,16 @@ export const event = defineEvent({
 				let listingId: bigint;
 				let settlementType: "kept" | "relisted" | "accepted_eth" | "accepted_fwa";
 
-				if (tx.input.startsWith(toFunctionSelector(KEEP_NFT_ABI))) {
+				if (tx.input.startsWith(KEEP_NFT_SELECTOR)) {
 					settlementType = "kept";
 					listingId = decodeFunctionData({ abi: [KEEP_NFT_ABI], data: tx.input }).args[0];
-				} else if (tx.input.startsWith(toFunctionSelector(RELIST_NFT_ABI))) {
+				} else if (tx.input.startsWith(RELIST_NFT_SELECTOR)) {
 					settlementType = "relisted";
 					listingId = decodeFunctionData({ abi: [RELIST_NFT_ABI], data: tx.input }).args[0];
-				} else if (tx.input.startsWith(toFunctionSelector(ACCEPT_DEPOSITOR_BID_ABI))) {
+				} else if (tx.input.startsWith(ACCEPT_DEPOSITOR_BID_SELECTOR)) {
 					settlementType = "accepted_eth";
 					listingId = decodeFunctionData({ abi: [ACCEPT_DEPOSITOR_BID_ABI], data: tx.input }).args[0];
-				} else if (tx.input.startsWith(toFunctionSelector(ACCEPT_BID_AS_TOKENS_ABI))) {
+				} else if (tx.input.startsWith(ACCEPT_BID_AS_TOKENS_SELECTOR)) {
 					settlementType = "accepted_fwa";
 					listingId = decodeFunctionData({ abi: [ACCEPT_BID_AS_TOKENS_ABI], data: tx.input }).args[0];
 				} else {
@@ -118,43 +127,39 @@ export const event = defineEvent({
 
 				if (success) {
 					if (settlementType === "kept") {
-						const log = receipt?.logs.find(
-							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_KEPT_ABI),
-						);
+						const log = receipt?.logs.find((log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === NFT_KEPT_SELECTOR);
 
 						if (log === undefined) {
 							throw new Error("Expected NFTKept log");
 						}
 
 						const { args } = decodeEventLog({
-							abi: [NFT_KEPT_ABI],
+							strict: true,
 							data: log.data,
 							topics: log.topics,
-							strict: true,
+							abi: [NFT_KEPT_ABI],
 						});
 
 						payoutEth = numberToHex(args.backing);
 						purchaserAddress = getAddress(args.purchaser);
 					} else if (settlementType === "relisted") {
-						const log = receipt?.logs.find(
-							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(NFT_RELISTED_ABI),
-						);
+						const log = receipt?.logs.find((log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === NFT_RELISTED_SELECTOR);
 
 						if (log === undefined) {
 							throw new Error("Expected NFTRelisted log");
 						}
 
 						const { args } = decodeEventLog({
-							abi: [NFT_RELISTED_ABI],
+							strict: true,
 							data: log.data,
 							topics: log.topics,
-							strict: true,
+							abi: [NFT_RELISTED_ABI],
 						});
 
 						payoutEth = numberToHex(args.toDepositor);
 					} else if (settlementType === "accepted_eth") {
 						const log = receipt?.logs.find(
-							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(DEPOSITOR_BID_ACCEPTED_ABI),
+							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === DEPOSITOR_BID_ACCEPTED_SELECTOR,
 						);
 
 						if (log === undefined) {
@@ -172,7 +177,7 @@ export const event = defineEvent({
 						purchaserAddress = getAddress(args.purchaser);
 					} else {
 						const log = receipt?.logs.find(
-							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === toEventSelector(DEPOSITOR_BID_ACCEPTED_AS_TOKENS_ABI),
+							(log) => isHexEqual(log.address, FWA_ADDRESS) && log.topics[0] === DEPOSITOR_BID_ACCEPTED_AS_TOKENS_SELECTOR,
 						);
 
 						if (log === undefined) {

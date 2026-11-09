@@ -31,6 +31,8 @@ const NFT_LISTED_ABI = parseAbiItem(
 	"event NFTListed(uint256 indexed listingId, uint256 indexed slot, address indexed depositor, address collection, uint256 tokenId, uint256 weight, uint256 value)",
 );
 
+const NFT_LISTED_SELECTOR = toEventSelector(NFT_LISTED_ABI);
+
 export const event = defineEvent({
 	id: "log_fwa_nft_listed_v2",
 
@@ -39,7 +41,7 @@ export const event = defineEvent({
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			event: toEventSelector(NFT_LISTED_ABI),
+			event: NFT_LISTED_SELECTOR,
 		},
 	],
 
@@ -47,7 +49,7 @@ export const event = defineEvent({
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap<LogFwaNftListedV2>((log) => {
 				try {
-					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], toEventSelector(NFT_LISTED_ABI))) {
+					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], NFT_LISTED_SELECTOR)) {
 						return [];
 					}
 

@@ -41,26 +41,30 @@ const V3_REGISTER_ABI = parseAbiItem(
 	"function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses)",
 );
 
+const V2_REGISTER_SELECTOR = toFunctionSelector(V2_REGISTER_ABI);
+const V3_REGISTER_SELECTOR = toFunctionSelector(V3_REGISTER_ABI);
+const V2_REGISTER_WITH_CONFIG_SELECTOR = toFunctionSelector(V2_REGISTER_WITH_CONFIG_ABI);
+
 export const event = defineEvent({
 	id: "intent_ens_name_registered_v2",
 
 	filters: [
 		{
 			chain: 1,
+			function: V2_REGISTER_SELECTOR,
 			address: ENS_REGISTRAR_CONTROLLER_V2_ADDRESS,
-			function: toFunctionSelector(V2_REGISTER_ABI),
 			fromBlock: ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
+			function: V2_REGISTER_WITH_CONFIG_SELECTOR,
 			address: ENS_REGISTRAR_CONTROLLER_V2_ADDRESS,
 			fromBlock: ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK,
-			function: toFunctionSelector(V2_REGISTER_WITH_CONFIG_ABI),
 		},
 		{
 			chain: 1,
+			function: V3_REGISTER_SELECTOR,
 			address: ENS_REGISTRAR_CONTROLLER_V3_ADDRESS,
-			function: toFunctionSelector(V3_REGISTER_ABI),
 			fromBlock: ENS_REGISTRAR_CONTROLLER_V2_DEPLOYED_BLOCK,
 		},
 	],
@@ -76,14 +80,14 @@ export const event = defineEvent({
 				let abi: typeof V2_REGISTER_ABI | typeof V2_REGISTER_WITH_CONFIG_ABI | typeof V3_REGISTER_ABI;
 
 				if (isHexEqual(tx.to, ENS_REGISTRAR_CONTROLLER_V2_ADDRESS)) {
-					if (tx.input.startsWith(toFunctionSelector(V2_REGISTER_ABI))) {
+					if (tx.input.startsWith(V2_REGISTER_SELECTOR)) {
 						abi = V2_REGISTER_ABI;
-					} else if (tx.input.startsWith(toFunctionSelector(V2_REGISTER_WITH_CONFIG_ABI))) {
+					} else if (tx.input.startsWith(V2_REGISTER_WITH_CONFIG_SELECTOR)) {
 						abi = V2_REGISTER_WITH_CONFIG_ABI;
 					} else {
 						return [];
 					}
-				} else if (isHexEqual(tx.to, ENS_REGISTRAR_CONTROLLER_V3_ADDRESS) && tx.input.startsWith(toFunctionSelector(V3_REGISTER_ABI))) {
+				} else if (isHexEqual(tx.to, ENS_REGISTRAR_CONTROLLER_V3_ADDRESS) && tx.input.startsWith(V3_REGISTER_SELECTOR)) {
 					abi = V3_REGISTER_ABI;
 				} else {
 					return [];

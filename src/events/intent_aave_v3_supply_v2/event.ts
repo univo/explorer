@@ -36,7 +36,8 @@ const SUPPLY_ABI = parseAbi([
 	"function deposit(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
 ]);
 
-const SUPPLY_SELECTORS = new Set<string>(SUPPLY_ABI.map(toFunctionSelector));
+const SUPPLY_FUNCTION_SELECTORS = SUPPLY_ABI.map(toFunctionSelector);
+const SUPPLY_SELECTORS = new Set<string>(SUPPLY_FUNCTION_SELECTORS);
 
 export const event = defineEvent({
 	id: "intent_aave_v3_supply_v2",
@@ -45,19 +46,19 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(SUPPLY_ABI[0]),
+			function: SUPPLY_FUNCTION_SELECTORS[0],
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(SUPPLY_ABI[1]),
+			function: SUPPLY_FUNCTION_SELECTORS[1],
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(SUPPLY_ABI[2]),
+			function: SUPPLY_FUNCTION_SELECTORS[2],
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 	],

@@ -26,14 +26,16 @@ export const ENS_REVERSE_REGISTRAR_V2_DEPLOYED_BLOCK = 16925606;
 
 const REVERSE_CLAIMED_ABI = parseAbiItem("event ReverseClaimed(address indexed addr, bytes32 indexed node)");
 
+const REVERSE_CLAIMED_SELECTOR = toEventSelector(REVERSE_CLAIMED_ABI);
+
 export const event = defineEvent({
 	id: "log_ens_reverse_claimed_v2",
 
 	filters: [
 		{
 			chain: 1,
+			event: REVERSE_CLAIMED_SELECTOR,
 			address: ENS_REVERSE_REGISTRAR_V2_ADDRESS,
-			event: toEventSelector(REVERSE_CLAIMED_ABI),
 			fromBlock: ENS_REVERSE_REGISTRAR_V2_DEPLOYED_BLOCK,
 		},
 	],
@@ -46,7 +48,7 @@ export const event = defineEvent({
 						return [];
 					}
 
-					if (!isHexEqual(log.topics[0], toEventSelector(REVERSE_CLAIMED_ABI))) {
+					if (!isHexEqual(log.topics[0], REVERSE_CLAIMED_SELECTOR)) {
 						return [];
 					}
 
