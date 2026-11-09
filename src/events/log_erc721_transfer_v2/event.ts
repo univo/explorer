@@ -24,6 +24,7 @@ export interface LogErc721TransferV2 {
 }
 
 const abi = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)");
+const TRANSFER_SELECTOR = toEventSelector(abi);
 
 export const event = defineEvent({
 	id: "log_erc721_transfer_v2",
@@ -32,7 +33,7 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			fromBlock: 0,
-			event: toEventSelector(abi),
+			event: TRANSFER_SELECTOR,
 		},
 	],
 
@@ -40,7 +41,7 @@ export const event = defineEvent({
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap<LogErc721TransferV2>((log) => {
 				try {
-					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
+					if (!isHexEqual(log.topics[0], TRANSFER_SELECTOR)) {
 						return [];
 					}
 

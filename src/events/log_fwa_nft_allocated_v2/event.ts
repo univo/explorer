@@ -31,6 +31,8 @@ const NFT_ALLOCATED_ABI = parseAbiItem(
 	"event NFTAllocated(uint256 indexed requestId, uint256 indexed listingId, address indexed purchaser, address depositor, uint256 value, uint256 randomWord)",
 );
 
+const NFT_ALLOCATED_SELECTOR = toEventSelector(NFT_ALLOCATED_ABI);
+
 export const event = defineEvent({
 	id: "log_fwa_nft_allocated_v2",
 
@@ -39,7 +41,7 @@ export const event = defineEvent({
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			event: toEventSelector(NFT_ALLOCATED_ABI),
+			event: NFT_ALLOCATED_SELECTOR,
 		},
 	],
 
@@ -47,7 +49,7 @@ export const event = defineEvent({
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap<LogFwaNftAllocatedV2>((log) => {
 				try {
-					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], toEventSelector(NFT_ALLOCATED_ABI))) {
+					if (!isHexEqual(log.address, FWA_ADDRESS) || !isHexEqual(log.topics[0], NFT_ALLOCATED_SELECTOR)) {
 						return [];
 					}
 

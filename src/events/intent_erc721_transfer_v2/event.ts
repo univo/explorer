@@ -41,7 +41,8 @@ const TRANSFER_ABI = parseAbi([
 	"function safeTransferFrom(address from, address to, uint256 tokenId)",
 	"function safeTransferFrom(address from, address to, uint256 tokenId, bytes data)",
 ]);
-const TRANSFER_SELECTORS = new Set(TRANSFER_ABI.map((item) => toFunctionSelector(item)));
+const TRANSFER_FUNCTION_SELECTORS = TRANSFER_ABI.map((item) => toFunctionSelector(item));
+const TRANSFER_SELECTORS = new Set(TRANSFER_FUNCTION_SELECTORS);
 const TRANSFER_EVENT_ABI = parseAbiItem("event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)");
 const TRANSFER_EVENT_SELECTOR = toEventSelector(TRANSFER_EVENT_ABI);
 
@@ -52,17 +53,17 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			fromBlock: 0,
-			function: toFunctionSelector(TRANSFER_ABI[0]),
+			function: TRANSFER_FUNCTION_SELECTORS[0],
 		},
 		{
 			chain: 1,
 			fromBlock: 0,
-			function: toFunctionSelector(TRANSFER_ABI[1]),
+			function: TRANSFER_FUNCTION_SELECTORS[1],
 		},
 		{
 			chain: 1,
 			fromBlock: 0,
-			function: toFunctionSelector(TRANSFER_ABI[2]),
+			function: TRANSFER_FUNCTION_SELECTORS[2],
 		},
 	],
 

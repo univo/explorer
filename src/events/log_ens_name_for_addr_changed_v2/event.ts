@@ -26,14 +26,16 @@ export const ENS_DEFAULT_REVERSE_REGISTRAR_DEPLOYED_BLOCK = 22764819;
 
 const NAME_FOR_ADDR_CHANGED_ABI = parseAbiItem("event NameForAddrChanged(address indexed addr, string name)");
 
+const NAME_FOR_ADDR_CHANGED_SELECTOR = toEventSelector(NAME_FOR_ADDR_CHANGED_ABI);
+
 export const event = defineEvent({
 	id: "log_ens_name_for_addr_changed_v2",
 
 	filters: [
 		{
 			chain: 1,
+			event: NAME_FOR_ADDR_CHANGED_SELECTOR,
 			address: ENS_DEFAULT_REVERSE_REGISTRAR_ADDRESS,
-			event: toEventSelector(NAME_FOR_ADDR_CHANGED_ABI),
 			fromBlock: ENS_DEFAULT_REVERSE_REGISTRAR_DEPLOYED_BLOCK,
 		},
 	],
@@ -46,7 +48,7 @@ export const event = defineEvent({
 						return [];
 					}
 
-					if (!isHexEqual(log.topics[0], toEventSelector(NAME_FOR_ADDR_CHANGED_ABI))) {
+					if (!isHexEqual(log.topics[0], NAME_FOR_ADDR_CHANGED_SELECTOR)) {
 						return [];
 					}
 

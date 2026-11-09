@@ -32,13 +32,15 @@ const SWAP_ABI = parseAbiItem(
 	"event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)",
 );
 
+const SWAP_SELECTOR = toEventSelector(SWAP_ABI);
+
 export const event = defineEvent({
 	id: "log_uniswap_v3_swap_v2",
 
 	filters: [
 		{
 			chain: 1,
-			event: toEventSelector(SWAP_ABI),
+			event: SWAP_SELECTOR,
 			fromBlock: UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
 		},
 	],
@@ -47,7 +49,7 @@ export const event = defineEvent({
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap<LogUniswapV3SwapV2>((log) => {
 				try {
-					if (!isHexEqual(log.topics[0], toEventSelector(SWAP_ABI))) {
+					if (!isHexEqual(log.topics[0], SWAP_SELECTOR)) {
 						return [];
 					}
 

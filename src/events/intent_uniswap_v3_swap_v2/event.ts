@@ -50,8 +50,10 @@ const SWAP_ROUTER_02_ABI = parseAbi([
 	"function exactOutput((bytes path, address recipient, uint256 amountOut, uint256 amountInMaximum) params) payable returns (uint256 amountIn)",
 ]);
 
-const SWAP_ROUTER_SELECTORS = new Set<string>(SWAP_ROUTER_ABI.map(toFunctionSelector));
-const SWAP_ROUTER_02_SELECTORS = new Set<string>(SWAP_ROUTER_02_ABI.map(toFunctionSelector));
+const SWAP_ROUTER_FUNCTION_SELECTORS = SWAP_ROUTER_ABI.map(toFunctionSelector);
+const SWAP_ROUTER_02_FUNCTION_SELECTORS = SWAP_ROUTER_02_ABI.map(toFunctionSelector);
+const SWAP_ROUTER_SELECTORS = new Set<string>(SWAP_ROUTER_FUNCTION_SELECTORS);
+const SWAP_ROUTER_02_SELECTORS = new Set<string>(SWAP_ROUTER_02_FUNCTION_SELECTORS);
 
 const MSG_SENDER = getAddress("0x0000000000000000000000000000000000000001");
 const ADDRESS_THIS = getAddress("0x0000000000000000000000000000000000000002");
@@ -231,42 +233,42 @@ export const event = defineEvent({
 	filters: [
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_ABI[0]),
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[0],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_ABI[1]),
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[1],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_ABI[2]),
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[2],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_ABI[3]),
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[3],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_02_ABI[0]),
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[0],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_02_ABI[1]),
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[1],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_02_ABI[2]),
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[2],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
-			function: toFunctionSelector(SWAP_ROUTER_02_ABI[3]),
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[3],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
 		},
 	],

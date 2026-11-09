@@ -39,6 +39,11 @@ const ACQUIRE_BATCH_WITH_SLIPPAGE_ABI = parseAbiItem(
 	"function acquireBatch(uint256 count, uint256 maxAcquisitionFee, uint256 minWeightedValue, uint256 maxNegativeSlippageBps)",
 );
 
+const ACQUIRE_SELECTOR = toFunctionSelector(ACQUIRE_ABI);
+const ACQUIRE_BATCH_SELECTOR = toFunctionSelector(ACQUIRE_BATCH_ABI);
+const ACQUIRE_WITH_SLIPPAGE_SELECTOR = toFunctionSelector(ACQUIRE_WITH_SLIPPAGE_ABI);
+const ACQUIRE_BATCH_WITH_SLIPPAGE_SELECTOR = toFunctionSelector(ACQUIRE_BATCH_WITH_SLIPPAGE_ABI);
+
 export const event = defineEvent({
 	id: "intent_fwa_acquire_v2",
 
@@ -47,25 +52,25 @@ export const event = defineEvent({
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(ACQUIRE_ABI),
+			function: ACQUIRE_SELECTOR,
 		},
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(ACQUIRE_BATCH_ABI),
+			function: ACQUIRE_BATCH_SELECTOR,
 		},
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(ACQUIRE_WITH_SLIPPAGE_ABI),
+			function: ACQUIRE_WITH_SLIPPAGE_SELECTOR,
 		},
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(ACQUIRE_BATCH_WITH_SLIPPAGE_ABI),
+			function: ACQUIRE_BATCH_WITH_SLIPPAGE_SELECTOR,
 		},
 	],
 
@@ -78,15 +83,15 @@ export const event = defineEvent({
 
 				let acquisitionCount: bigint;
 
-				if (tx.input.startsWith(toFunctionSelector(ACQUIRE_ABI))) {
+				if (tx.input.startsWith(ACQUIRE_SELECTOR)) {
 					decodeFunctionData({ abi: [ACQUIRE_ABI], data: tx.input });
 					acquisitionCount = 1n;
-				} else if (tx.input.startsWith(toFunctionSelector(ACQUIRE_WITH_SLIPPAGE_ABI))) {
+				} else if (tx.input.startsWith(ACQUIRE_WITH_SLIPPAGE_SELECTOR)) {
 					decodeFunctionData({ abi: [ACQUIRE_WITH_SLIPPAGE_ABI], data: tx.input });
 					acquisitionCount = 1n;
-				} else if (tx.input.startsWith(toFunctionSelector(ACQUIRE_BATCH_ABI))) {
+				} else if (tx.input.startsWith(ACQUIRE_BATCH_SELECTOR)) {
 					acquisitionCount = decodeFunctionData({ abi: [ACQUIRE_BATCH_ABI], data: tx.input }).args[0];
-				} else if (tx.input.startsWith(toFunctionSelector(ACQUIRE_BATCH_WITH_SLIPPAGE_ABI))) {
+				} else if (tx.input.startsWith(ACQUIRE_BATCH_WITH_SLIPPAGE_SELECTOR)) {
 					acquisitionCount = decodeFunctionData({ abi: [ACQUIRE_BATCH_WITH_SLIPPAGE_ABI], data: tx.input }).args[0];
 				} else {
 					return [];

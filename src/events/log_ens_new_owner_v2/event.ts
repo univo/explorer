@@ -29,6 +29,8 @@ export const ENS_REGISTRY_V2_DEPLOYED_BLOCK = 9380380;
 export const ENS_ADDR_REVERSE_NODE = "0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2";
 
 const NEW_OWNER_ABI = parseAbiItem("event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)");
+const NEW_OWNER_SELECTOR = toEventSelector(NEW_OWNER_ABI);
+
 const ENS_REGISTRIES = [ENS_REGISTRY_V1_ADDRESS, ENS_REGISTRY_V2_ADDRESS];
 
 export const event = defineEvent({
@@ -37,14 +39,14 @@ export const event = defineEvent({
 	filters: [
 		{
 			chain: 1,
+			event: NEW_OWNER_SELECTOR,
 			address: ENS_REGISTRY_V1_ADDRESS,
-			event: toEventSelector(NEW_OWNER_ABI),
 			fromBlock: ENS_REGISTRY_V1_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
+			event: NEW_OWNER_SELECTOR,
 			address: ENS_REGISTRY_V2_ADDRESS,
-			event: toEventSelector(NEW_OWNER_ABI),
 			fromBlock: ENS_REGISTRY_V2_DEPLOYED_BLOCK,
 		},
 	],
@@ -57,7 +59,7 @@ export const event = defineEvent({
 						return [];
 					}
 
-					if (!isHexEqual(log.topics[0], toEventSelector(NEW_OWNER_ABI))) {
+					if (!isHexEqual(log.topics[0], NEW_OWNER_SELECTOR)) {
 						return [];
 					}
 

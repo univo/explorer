@@ -31,6 +31,8 @@ export const FWA_ADDRESS = getAddress("0xB276F62DB0ce8CA2Ca5bc522695bE604521eAc1
 
 const LIST_NFT_ABI = parseAbiItem("function listNFT(address collection, uint256 tokenId)");
 
+const LIST_NFT_SELECTOR = toFunctionSelector(LIST_NFT_ABI);
+
 export const event = defineEvent({
 	id: "intent_fwa_deposited_v2",
 
@@ -38,8 +40,8 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: FWA_ADDRESS,
+			function: LIST_NFT_SELECTOR,
 			fromBlock: FWA_DEPLOYED_BLOCK,
-			function: toFunctionSelector(LIST_NFT_ABI),
 		},
 	],
 
@@ -51,7 +53,7 @@ export const event = defineEvent({
 					return [];
 				}
 
-				if (!isHexEqual(tx.to, FWA_ADDRESS) || !tx.input.startsWith(toFunctionSelector(LIST_NFT_ABI))) {
+				if (!isHexEqual(tx.to, FWA_ADDRESS) || !tx.input.startsWith(LIST_NFT_SELECTOR)) {
 					return [];
 				}
 

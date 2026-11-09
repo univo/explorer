@@ -31,14 +31,16 @@ const POOL_CREATED_ABI = parseAbiItem(
 	"event PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)",
 );
 
+const POOL_CREATED_SELECTOR = toEventSelector(POOL_CREATED_ABI);
+
 export const event = defineEvent({
 	id: "log_uniswap_v3_pool_created_v2",
 
 	filters: [
 		{
 			chain: 1,
+			event: POOL_CREATED_SELECTOR,
 			address: UNISWAP_V3_FACTORY_ADDRESS,
-			event: toEventSelector(POOL_CREATED_ABI),
 			fromBlock: UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
 		},
 	],
@@ -51,7 +53,7 @@ export const event = defineEvent({
 						return [];
 					}
 
-					if (!isHexEqual(log.topics[0], toEventSelector(POOL_CREATED_ABI))) {
+					if (!isHexEqual(log.topics[0], POOL_CREATED_SELECTOR)) {
 						return [];
 					}
 

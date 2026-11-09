@@ -35,14 +35,16 @@ const BORROW_ABI = parseAbiItem(
 	"function borrow(address asset, uint256 amount, uint256 interestRateMode, uint16 referralCode, address onBehalfOf)",
 );
 
+const BORROW_SELECTOR = toFunctionSelector(BORROW_ABI);
+
 export const event = defineEvent({
 	id: "intent_aave_v3_borrow_v2",
 
 	filters: [
 		{
 			chain: 1,
+			function: BORROW_SELECTOR,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(BORROW_ABI),
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 	],
@@ -59,7 +61,7 @@ export const event = defineEvent({
 					return [];
 				}
 
-				if (!tx.input.startsWith(toFunctionSelector(BORROW_ABI))) {
+				if (!tx.input.startsWith(BORROW_SELECTOR)) {
 					return [];
 				}
 

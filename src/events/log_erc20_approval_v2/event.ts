@@ -25,6 +25,8 @@ export interface LogErc20ApprovalV2 {
 
 const abi = parseAbiItem("event Approval(address indexed owner, address indexed spender, uint256 value)");
 
+const APPROVAL_SELECTOR = toEventSelector(abi);
+
 export const event = defineEvent({
 	id: "log_erc20_approval_v2",
 
@@ -32,7 +34,7 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			fromBlock: 0,
-			event: toEventSelector(abi),
+			event: APPROVAL_SELECTOR,
 		},
 	],
 
@@ -40,7 +42,7 @@ export const event = defineEvent({
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap<LogErc20ApprovalV2>((log) => {
 				try {
-					if (!isHexEqual(log.topics[0], toEventSelector(abi))) {
+					if (!isHexEqual(log.topics[0], APPROVAL_SELECTOR)) {
 						return [];
 					}
 

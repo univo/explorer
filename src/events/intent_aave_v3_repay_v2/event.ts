@@ -35,7 +35,8 @@ const REPAY_ABI = parseAbi([
 	"function repayWithATokens(address asset, uint256 amount, uint256 interestRateMode)",
 ]);
 
-const REPAY_SELECTORS = new Set<string>(REPAY_ABI.map(toFunctionSelector));
+const REPAY_FUNCTION_SELECTORS = REPAY_ABI.map(toFunctionSelector);
+const REPAY_SELECTORS = new Set<string>(REPAY_FUNCTION_SELECTORS);
 
 export const event = defineEvent({
 	id: "intent_aave_v3_repay_v2",
@@ -44,19 +45,19 @@ export const event = defineEvent({
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(REPAY_ABI[0]),
+			function: REPAY_FUNCTION_SELECTORS[0],
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(REPAY_ABI[1]),
+			function: REPAY_FUNCTION_SELECTORS[1],
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 		{
 			chain: 1,
 			address: AAVE_V3_ETHEREUM_POOL_ADDRESS,
-			function: toFunctionSelector(REPAY_ABI[2]),
+			function: REPAY_FUNCTION_SELECTORS[2],
 			fromBlock: AAVE_V3_ETHEREUM_POOL_DEPLOYED_BLOCK,
 		},
 	],
