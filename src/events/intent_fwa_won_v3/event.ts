@@ -3,9 +3,8 @@ import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toEventSelector, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
-import { getEventSuccess } from "@/helpers";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -119,7 +118,7 @@ export const event = defineEvent({
 				}
 
 				const receipt = block.eth_getBlockReceipts.find((receipt) => isHexEqual(receipt.transactionIndex, tx.transactionIndex));
-				const success = getEventSuccess(receipt);
+				const success = receipt?.status === "0x1";
 
 				let tokenOut: `0x${string}` = ZERO_VALUE;
 				let payoutEth: `0x${string}` = ZERO_VALUE;

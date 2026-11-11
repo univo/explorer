@@ -3,10 +3,9 @@ import { and, asc, inArray } from "drizzle-orm";
 import { getAddress, hexToNumber } from "viem";
 
 import { table } from "./table";
+import type { Id } from "@/events";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { Id } from "@/events";
-import { getEventSuccess } from "@/helpers";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -72,7 +71,7 @@ export const event = defineEvent({
 					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					message,
 					to_address: getAddress(tx.to),
-					success: getEventSuccess(receipt),
+					success: receipt?.status === "0x1",
 					from_address: getAddress(tx.from),
 				};
 			} catch {
