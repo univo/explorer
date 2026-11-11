@@ -3,9 +3,8 @@ import { and, asc, inArray } from "drizzle-orm";
 import { decodeFunctionData, getAddress, hexToNumber, parseAbiItem, toFunctionSelector } from "viem";
 
 import { table } from "./table";
-import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
-import { getEventSuccess } from "@/helpers";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -107,7 +106,7 @@ export const event = defineEvent({
 					block_number: hexToNumber(block.eth_getBlockByNumber.number),
 					block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),
 					submitted_eth: tx.value,
-					success: getEventSuccess(receipt),
+					success: receipt?.status === "0x1",
 					purchaser_address: getAddress(tx.from),
 					acquisition_count: numberToHex(acquisitionCount),
 				};

@@ -1,5 +1,4 @@
 import { http } from "univo/transport";
-import type { RpcTransactionReceipt } from "viem";
 
 import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
@@ -13,29 +12,6 @@ export function isMobile() {
 
 export function isDesktop() {
 	return window.innerWidth >= 768;
-}
-
-export function getEventSuccess(receipt: RpcTransactionReceipt | undefined) {
-	if (receipt === undefined) {
-		throw new Error("No receipt");
-	}
-
-	// Correctly the types suggest that `status` is always available on the receipt. This is only true for
-	// blocks after the Byzantium upgrade in 2017 at block 4,370,000.
-
-	// We have to use the `in` syntax here to prevent univo returning an 'incomplete_error'. This occurs
-	// because we attempt to read a property on an object that doesn't exist. Which the impl detail of univo
-	// uses to determine if new properties of the block are being accessed during historical indexes.
-
-	if ("status" in receipt) {
-		return receipt.status === "0x1";
-	}
-
-	// At the moment we default to this being true. This could be misleading for events before the upgrade if
-	// they actually did fail (there might be a different way to detect this?). The reasoning is that data
-	// this old is less important to be equally as accurate as fresher data.
-
-	return true;
 }
 
 export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {

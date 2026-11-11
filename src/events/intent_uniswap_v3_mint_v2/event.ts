@@ -12,9 +12,8 @@ import {
 } from "viem";
 
 import { table } from "./table";
-import { inTuple } from "@/db/types";
 import type { Id } from "@/events";
-import { getEventSuccess } from "@/helpers";
+import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
@@ -107,7 +106,7 @@ export const event = defineEvent({
 					token_0_address: token0,
 					pool_address: poolAddress,
 					fee: numberToHex(params.fee),
-					success: getEventSuccess(receipt),
+					success: receipt?.status === "0x1",
 					sender_address: getAddress(tx.from),
 					recipient_address: getAddress(params.recipient),
 					token_0_minimum_quantity: numberToHex(params.amount0Min),

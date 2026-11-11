@@ -3,10 +3,9 @@ import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
+import type { Id } from "@/events";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
-import type { Id } from "@/events";
-import { getEventSuccess } from "@/helpers";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
@@ -63,7 +62,7 @@ export const event = defineEvent({
 					// Normally we don't record a success indicator for a log event. In this case, we use
 					// the log event in our account index so it's necessary to show failures in-line.
 
-					const success = getEventSuccess(receipt);
+					const success = receipt?.status === "0x1";
 
 					return {
 						tag: "log_fwa_nft_allocated_v2",
