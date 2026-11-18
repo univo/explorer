@@ -8,6 +8,7 @@ import { Account } from "./account";
 import { frame } from "@/frames/frame";
 import { Hoverable } from "./hoverable";
 import { Description } from "./description";
+import { getInternalChain } from "@/helpers";
 import { getErc20Account } from "@/state/account";
 import { createPostgresClient } from "@/db/client";
 import { ETH_ADDRESS, type Chain } from "@/constants";
@@ -180,7 +181,7 @@ interface TokenPrice {
 }
 
 interface TokenPriceRow extends Record<string, unknown> {
-	chain: Chain;
+	chain: number;
 	token_address: `0x${string}`;
 	price_usd: string;
 	period_end: string;
@@ -208,7 +209,7 @@ export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInpu
 		const queryToken = isAddressEqual(token, ETH_ADDRESS) ? WETH_ADDRESSES[input.chain] : token;
 		const periodEnd = new Date(Date.UTC(input.timestamp.getUTCFullYear(), input.timestamp.getUTCMonth(), 1));
 
-		return { ...input, token, queryToken, periodEnd };
+		return { ...input, internalChain: getInternalChain(input.chain), token, queryToken, periodEnd };
 	});
 
 	const unique = new Map<string, (typeof requests)[number]>();
@@ -218,7 +219,7 @@ export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInpu
 	}
 
 	const tuples = [...unique.values()].map((request) => {
-		return sql`(${request.chain}, decode(${request.queryToken.slice(2)}, 'hex'), ${request.periodEnd})`;
+		return sql`(${request.internalChain}, decode(${request.queryToken.slice(2)}, 'hex'), ${request.periodEnd})`;
 	});
 
 	const client = await createPostgresClient();
@@ -241,7 +242,7 @@ export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInpu
 	return requests.map<TokenPrice | null>((request) => {
 		const row = result.rows.find((row) => {
 			return (
-				row.chain === request.chain &&
+				row.chain === request.internalChain &&
 				isHexEqual(row.token_address, request.queryToken) &&
 				new Date(row.period_end).getTime() === request.periodEnd.getTime()
 			);

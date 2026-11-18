@@ -91,15 +91,9 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
  * @param external_chain External chain identifier
  * @returns Internal chain identifier for the provided chain
  */
-export function getInternalChain(external_chain: `0x${string}` | keyof typeof CHAINS) {
-	if (typeof external_chain === "string") {
-		return (
-			CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] || //
-			raise(`Unsupported chain id ${hexToNumber(external_chain)}`)
-		);
-	}
-
-	return CHAINS[external_chain];
+export function getInternalChain(external_chain: `0x${string}` | number) {
+	const chain = typeof external_chain === "string" ? hexToNumber(external_chain) : external_chain;
+	return CHAINS[chain as Chain] ?? raise(`Unsupported chain id ${chain}`);
 }
 
 /**

@@ -12,6 +12,7 @@ import {
 	UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
 	UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
 } from "@/events/log_uniswap_v3_pool_created_v2/event";
+import { getExternalChain, getInternalChain } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogUniswapV3SwapV2 {
@@ -97,7 +98,8 @@ export const event = defineEvent({
 			const client = await createPostgresClient();
 
 			for (let i = 0; i < events.length; i += MAX_BATCH_SIZE) {
-				await client.insert(table).values(events.slice(i, i + MAX_BATCH_SIZE));
+				const rows = events.slice(i, i + MAX_BATCH_SIZE).map((event) => ({ ...event, chain: getInternalChain(event.chain) }));
+				await client.insert(table).values(rows);
 			}
 		},
 
@@ -112,7 +114,13 @@ export const event = defineEvent({
 					),
 					inTuple(
 						[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-						events.map((event) => [event.block_timestamp, event.block_number, event.tx_index, event.log_index, event.chain]),
+						events.map((event) => [
+							event.block_timestamp,
+							event.block_number,
+							event.tx_index,
+							event.log_index,
+							getInternalChain(event.chain),
+						]),
 					),
 				),
 			);
@@ -147,7 +155,7 @@ export async function getLogUniswapV3SwapV2(ids: Id[]) {
 				),
 				inTuple(
 					[table.block_timestamp, table.block_number, table.tx_index, table.log_index, table.chain],
-					filtered.map((id) => [id.block_timestamp, id.block_number, id.tx_index, id.log_index, id.chain]),
+					filtered.map((id) => [id.block_timestamp, id.block_number, id.tx_index, id.log_index, getInternalChain(id.chain)]),
 				),
 			),
 		)
@@ -156,7 +164,7 @@ export async function getLogUniswapV3SwapV2(ids: Id[]) {
 	return rows.map<LogUniswapV3SwapV2>((row) => {
 		return {
 			tag: "log_uniswap_v3_swap_v2",
-			chain: row.chain,
+			chain: getExternalChain(row.chain),
 			tx_index: row.tx_index,
 			log_index: row.log_index,
 			block_number: row.block_number,
