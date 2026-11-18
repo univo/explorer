@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { createServerFn } from "@tanstack/react-start";
 
-import { node } from "./helpers";
+import { ethereum } from "./helpers";
 import { hexToNumber } from "./utils";
 import { PRESETS } from "./constants";
 import { getEventIdsForAccount } from "./indexes/index_account_v4";
@@ -20,7 +20,7 @@ import { AddressSchema, PresetSchema, TxHashSchema } from "./schema";
 export const sf_getTxPosition = createServerFn({ method: "GET" })
 	.inputValidator(v.object({ tx_hash: TxHashSchema }))
 	.handler(async ({ data }) => {
-		const tx = await node.request({
+		const tx = await ethereum.request({
 			method: "eth_getTransactionByHash",
 			params: [data.tx_hash],
 		});

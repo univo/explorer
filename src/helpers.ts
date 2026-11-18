@@ -4,7 +4,9 @@ import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
 import { CHAINS, REVERSE_CHAINS } from "./constants";
 
-export const node = http(process.env.ETHEREUM_URL);
+export const ethereum = http(process.env.ETHEREUM_URL);
+
+export const arbitrum = http(process.env.ARBITRUM_URL);
 
 export function isMobile() {
 	return window.innerWidth < 768;

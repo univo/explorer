@@ -1,4 +1,4 @@
-import { mainnet } from "viem/chains";
+import { arbitrum, mainnet } from "viem/chains";
 import { http, createPublicClient } from "viem";
 
 import type { Chain } from "./constants";
@@ -10,6 +10,11 @@ const clients = {
 		cacheTime: 0,
 		chain: mainnet,
 		transport: http(process.env.ETHEREUM_URL, { batch: { batchSize: 1000, wait: 0 } }),
+	}),
+	42161: createPublicClient({
+		cacheTime: 0,
+		chain: arbitrum,
+		transport: http(process.env.ARBITRUM_URL, { batch: { batchSize: 1000, wait: 0 } }),
 	}),
 };
 
