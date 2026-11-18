@@ -30,6 +30,10 @@ export const event = defineEvent({
 			chain: 1,
 			fromBlock: 0,
 		},
+		{
+			chain: 42161,
+			fromBlock: 0,
+		},
 	],
 
 	handler: (block) => {
