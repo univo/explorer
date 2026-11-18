@@ -3,7 +3,7 @@ import { env } from "cloudflare:workers";
 import { defineStorage } from "univo/metadata";
 import { r2 } from "univo/metadata/adapters/r2-binding";
 
-import { node } from "./helpers";
+import { getNode } from "./helpers";
 
 import { action as invalidate_ens_cache } from "./actions/invalidate_ens_cache";
 
@@ -102,6 +102,8 @@ export const indexer = defineIndexer({
 	}),
 
 	getBlock: async (head) => {
+		const node = getNode(head.chain);
+
 		const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
 			node.request({ method: "eth_getBlockByNumber", params: [head.number, true] }),
 			node.request({ method: "eth_getBlockReceipts", params: [head.number] }),

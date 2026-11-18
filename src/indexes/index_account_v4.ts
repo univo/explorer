@@ -8,6 +8,7 @@ import type { Chain } from "@/constants";
 import { inTuple, hex } from "@/db/types";
 import { createPostgresClient } from "@/db/client";
 import { REVERSE_TABLES, TABLES } from "@/constants";
+import { getExternalChain, getInternalChain } from "@/helpers";
 
 // This table uses indexes slightly differently than others. Noticably, we use a normal index as opposed to a primary key.
 // This means duplicates are possible and we do not enforce uniqueness. Note the usage of selectDistinct in our query to
@@ -76,7 +77,7 @@ export const index_account_v4 = {
 
 			batch.push({
 				account,
-				chain: index.id.chain,
+				chain: getInternalChain(index.id.chain),
 				table_id: TABLES[index.id.tag],
 				block_timestamp: Math.floor(index.id.block_timestamp.getTime() / 1000),
 
@@ -117,7 +118,7 @@ export const index_account_v4 = {
 						// Indexed columns
 						index.account,
 						Math.floor(index.id.block_timestamp.getTime() / 1000),
-						index.id.chain,
+						getInternalChain(index.id.chain),
 						TABLES[index.id.tag],
 
 						// Non-indexed columns
@@ -168,11 +169,12 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 
 		const table_id = TABLES[tag];
 		const block_timestamp_seconds = Math.floor(block_timestamp.getTime() / 1000);
+		const internal_chain = getInternalChain(chain);
 
 		const cursor =
 			opts.order === "latest"
-				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${chain},${table_id})`
-				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${chain},${table_id})`;
+				? sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) < (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${internal_chain},${table_id})`
+				: sql`(${table.block_timestamp},${table.block_number},${table.tx_index},${table.log_index},${table.chain},${table.table_id}) > (${block_timestamp_seconds},${block_number},${tx_index},${log_index},${internal_chain},${table_id})`;
 
 		const rows = await client
 			.selectDistinct({
@@ -188,7 +190,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 			.where(
 				and(
 					eq(table.account, account), //
-					inArray(table.chain, opts.chains),
+					inArray(table.chain, opts.chains.map(getInternalChain)),
 					inArray(table.table_id, opts.tables),
 					cursor,
 				),
@@ -207,7 +209,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 
 		return rows.map((result) => {
 			return {
-				chain: result.chain,
+				chain: getExternalChain(result.chain),
 				tx_index: result.tx_index,
 				log_index: result.log_index,
 				block_number: result.block_number,
@@ -231,7 +233,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 		.where(
 			and(
 				eq(table.account, account), //
-				inArray(table.chain, opts.chains),
+				inArray(table.chain, opts.chains.map(getInternalChain)),
 				inArray(table.table_id, opts.tables),
 			),
 		)
@@ -249,7 +251,7 @@ export async function getEventIdsForAccount(account: `0x${string}`, opts: Opts) 
 
 	return rows.map((result) => {
 		return {
-			chain: result.chain,
+			chain: getExternalChain(result.chain),
 			tx_index: result.tx_index,
 			log_index: result.log_index,
 			block_number: result.block_number,

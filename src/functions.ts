@@ -1,11 +1,9 @@
 import * as v from "valibot";
 import { createServerFn } from "@tanstack/react-start";
 
-import { node } from "./helpers";
-import { hexToNumber } from "./utils";
 import { PRESETS } from "./constants";
+import { AddressSchema, PresetSchema } from "./schema";
 import { getEventIdsForAccount } from "./indexes/index_account_v4";
-import { AddressSchema, PresetSchema, TxHashSchema } from "./schema";
 
 // It is vitally important that neither the file name nor the function name is changed. Server function
 // identifiers are stable according to these two things. So any time they are updated we will break old
@@ -15,27 +13,6 @@ import { AddressSchema, PresetSchema, TxHashSchema } from "./schema";
 // https://tanstack.com/start/v0/docs/framework/react/guide/server-functions#function-id-generation-for-production-build
 
 /**
- * Allow us to to convert a transaction hash to its transaction position
- */
-export const sf_getTxPosition = createServerFn({ method: "GET" })
-	.inputValidator(v.object({ tx_hash: TxHashSchema }))
-	.handler(async ({ data }) => {
-		const tx = await node.request({
-			method: "eth_getTransactionByHash",
-			params: [data.tx_hash],
-		});
-
-		if (tx === null) {
-			throw new Error("Unknown transaction");
-		}
-
-		return {
-			block: hexToNumber(tx.blockNumber),
-			tx: hexToNumber(tx.transactionIndex),
-		};
-	});
-
-/**
  * Returns the latest event id for a given account
  */
 export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
@@ -43,8 +20,8 @@ export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		const [id] = await getEventIdsForAccount(data.address, {
 			limit: 1,
-			chains: [1],
 			order: "latest",
+			chains: [1, 42161],
 			tables: PRESETS[data.preset],
 		});
 

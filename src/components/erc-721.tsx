@@ -3,6 +3,7 @@ import { getAddress } from "viem";
 import { Img } from "./img";
 import { Account } from "./account";
 import { getClient } from "@/clients";
+import { frame } from "@/frames/frame";
 import { Hoverable } from "./hoverable";
 import type { Chain } from "@/constants";
 import { defined, logger } from "@/utils";
@@ -23,7 +24,7 @@ export async function Erc721(props: { chain: Chain; address: `0x${string}`; id: 
 	}
 
 	return (
-		<AddFrameButton frame={address} className="select-none touch-none cursor-pointer">
+		<AddFrameButton frame={frame.format({ type: "address", data: address })} className="select-none touch-none cursor-pointer">
 			<Hoverable id={`${props.chain}:${address}:${props.id}`}>
 				<Description>
 					{defined(metadata) && <Image src={metadata.image} />}

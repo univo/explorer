@@ -1,4 +1,5 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { test_getBlock } from "@/tests/utils";
 import { event as log_erc20_transfer_v2 } from "@/events/log_erc20_transfer_v2/event";
@@ -8,7 +9,7 @@ import { getEventIdsForBlockNumber, getEventIdsForTxPosition, index_block_number
 test.concurrent("intent_native_transfer_v2", async ({ expect }) => {
 	const block_number = 10000000;
 
-	const block = await test_getBlock({ chain: 1, block_number });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(block_number) });
 
 	const indexes = intent_native_transfer_v2.handler(block);
 
@@ -275,7 +276,7 @@ test.concurrent("intent_native_transfer_v2", async ({ expect }) => {
 test.concurrent("log_erc20_transfer_v2", async ({ expect }) => {
 	const block_number = 20000000;
 
-	const block = await test_getBlock({ chain: 1, block_number });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(block_number) });
 
 	const indexes = log_erc20_transfer_v2.handler(block);
 

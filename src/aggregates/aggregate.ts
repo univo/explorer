@@ -10,9 +10,9 @@ import type { Event } from "univo";
 
 // Expresses a computation
 
-type InferEvents<TEvent> = TEvent extends Event<any, infer TValue> ? TValue : never;
+type InferEvents<TEvent> = TEvent extends Event<infer TValue> ? TValue : never;
 
-interface Aggregate<TEvents extends readonly Event<any, any>[], TValue> {
+interface Aggregate<TEvents extends readonly Event<any>[], TValue> {
 	id: string;
 
 	events: TEvents;
@@ -24,13 +24,13 @@ interface Aggregate<TEvents extends readonly Event<any, any>[], TValue> {
 	};
 }
 
-export function aggregate<const TEvents extends readonly Event<any, any>[], TValue>(aggregate: Aggregate<TEvents, TValue>) {
+export function aggregate<const TEvents extends readonly Event<any>[], TValue>(aggregate: Aggregate<TEvents, TValue>) {
 	return aggregate;
 }
 
 // Performs that computation. Assumes that the entire dataset fits on this machine.
 
-export function execute<TEvents extends readonly Event<any, any>[], TValue>(
+export function execute<TEvents extends readonly Event<any>[], TValue>(
 	aggregate: Aggregate<TEvents, TValue>,
 	events: InferEvents<TEvents[number]>[],
 ) {

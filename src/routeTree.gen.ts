@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as RscTxPositionRouteImport } from './routes/rsc/tx-position'
+import { Route as RscTxHashRouteImport } from './routes/rsc/tx-hash'
 import { Route as RscBlockNumberRouteImport } from './routes/rsc/block-number'
 import { Route as RscAddressHeaderRouteImport } from './routes/rsc/address-header'
 import { Route as RscAddressEventsRouteImport } from './routes/rsc/address-events'
@@ -24,6 +25,11 @@ const SplatRoute = SplatRouteImport.update({
 const RscTxPositionRoute = RscTxPositionRouteImport.update({
   id: '/rsc/tx-position',
   path: '/rsc/tx-position',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RscTxHashRoute = RscTxHashRouteImport.update({
+  id: '/rsc/tx-hash',
+  path: '/rsc/tx-hash',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RscBlockNumberRoute = RscBlockNumberRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
   '/rsc/block-number': typeof RscBlockNumberRoute
+  '/rsc/tx-hash': typeof RscTxHashRoute
   '/rsc/tx-position': typeof RscTxPositionRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
   '/rsc/block-number': typeof RscBlockNumberRoute
+  '/rsc/tx-hash': typeof RscTxHashRoute
   '/rsc/tx-position': typeof RscTxPositionRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/rsc/address-events': typeof RscAddressEventsRoute
   '/rsc/address-header': typeof RscAddressHeaderRoute
   '/rsc/block-number': typeof RscBlockNumberRoute
+  '/rsc/tx-hash': typeof RscTxHashRoute
   '/rsc/tx-position': typeof RscTxPositionRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/rsc/address-events'
     | '/rsc/address-header'
     | '/rsc/block-number'
+    | '/rsc/tx-hash'
     | '/rsc/tx-position'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/rsc/address-events'
     | '/rsc/address-header'
     | '/rsc/block-number'
+    | '/rsc/tx-hash'
     | '/rsc/tx-position'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/rsc/address-events'
     | '/rsc/address-header'
     | '/rsc/block-number'
+    | '/rsc/tx-hash'
     | '/rsc/tx-position'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   RscAddressEventsRoute: typeof RscAddressEventsRoute
   RscAddressHeaderRoute: typeof RscAddressHeaderRoute
   RscBlockNumberRoute: typeof RscBlockNumberRoute
+  RscTxHashRoute: typeof RscTxHashRoute
   RscTxPositionRoute: typeof RscTxPositionRoute
 }
 
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/rsc/tx-position'
       fullPath: '/rsc/tx-position'
       preLoaderRoute: typeof RscTxPositionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rsc/tx-hash': {
+      id: '/rsc/tx-hash'
+      path: '/rsc/tx-hash'
+      fullPath: '/rsc/tx-hash'
+      preLoaderRoute: typeof RscTxHashRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rsc/block-number': {
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   RscAddressEventsRoute: RscAddressEventsRoute,
   RscAddressHeaderRoute: RscAddressHeaderRoute,
   RscBlockNumberRoute: RscBlockNumberRoute,
+  RscTxHashRoute: RscTxHashRoute,
   RscTxPositionRoute: RscTxPositionRoute,
 }
 export const routeTree = rootRouteImport
@@ -168,10 +189,13 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
+
 import type { createStart } from '@tanstack/react-start'
+
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
+
     router: Awaited<ReturnType<typeof getRouter>>
   }
 }

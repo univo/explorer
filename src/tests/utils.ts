@@ -1,8 +1,10 @@
 import type { Block } from "univo";
 
-import { node } from "@/helpers";
+import { getNode } from "@/helpers";
 
 export async function test_getBlock(head: { chain: `0x${string}`; number: `0x${string}` | "finalized" }): Promise<Block> {
+	const node = getNode(head.chain);
+
 	const [eth_getBlockByNumber, eth_getBlockReceipts] = await Promise.all([
 		node.request({ method: "eth_getBlockByNumber", params: [head.number, true] }),
 		node.request({ method: "eth_getBlockReceipts", params: [head.number] }),

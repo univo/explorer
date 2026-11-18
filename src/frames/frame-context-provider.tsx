@@ -1,31 +1,22 @@
 "use client";
 
-import * as v from "valibot";
 import { create } from "zustand";
 import { useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import type { ComponentProps, ReactNode } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
 import { XIcon } from "../components/icons";
-import { sf_getTxPosition } from "@/functions";
+import { getFrame } from "./frame";
 import { IconButton } from "../components/icon-button";
-import { AddressClient } from "@/frames/address/address-client";
-import { TxPositionClient } from "@/frames/tx-position/tx-position-client";
-import { BlockNumberClient } from "@/frames/block-number/block-number-client";
-import { AddressSchema, BlockNumberSchema, TxHashSchema, TxPositionSchema } from "@/schema";
+import { AddressClient } from "@/frames/3-address/3-address-client";
+import { TxPositionClient } from "@/frames/1-chain-tx-position/1-chain-tx-position-client";
+import { BlockNumberClient } from "@/frames/2-chain-block-number/2-chain-block-number-client";
+import { TxHashClient } from "@/frames/4-chain-tx-hash/4-chain-tx-hash-client";
 import { FrameContext, FrameIndexContext, useFrameIndex, useFrames } from "@/frames/frame-context";
-
-export type Frame =
-	| { type: "block-number"; data: number; raw: string }
-	| { type: "address"; data: `0x${string}`; raw: string }
-	| { type: "transaction-hash"; data: `0x${string}`; raw: string }
-	| { type: "transaction-position"; data: { block: number; tx: number }; raw: string };
 
 export function FrameContextProvider(props: { children?: ReactNode }) {
 	const navigate = useNavigate();
 	const params = useParams({ from: "/$" });
-	const getTxPosition = useServerFn(sf_getTxPosition);
 
 	const [state, setState] = useState(() => {
 		return {
@@ -58,27 +49,16 @@ export function FrameContextProvider(props: { children?: ReactNode }) {
 		await navigate({ to: `/$`, params: { _splat: updated.join("/") } });
 	}
 
-	async function push(frame: string, index: number | null): Promise<void> {
-		const parsed = getFrame(frame);
+	async function push(rawFrame: string, index: number | null): Promise<void> {
+		const parsed = getFrame(rawFrame);
 
 		if (parsed === null) {
 			return; // Ignore invalid frames
 		}
 
-		if (parsed.type === "transaction-hash") {
-			setState((state) => ({ ...state, status: "pending" }));
-
-			const position = await getTxPosition({ data: { tx_hash: parsed.data } });
-
-			// We recursively push the tx frame so that the next state update will remove the
-			// loading status and push the new frame in the same update
-
-			return push(`${position.block}-${position.tx}`, index);
-		}
-
-		if (state.value.includes(frame)) {
+		if (state.value.includes(rawFrame)) {
 			return setState((state) => {
-				scrollToFrame(state.value.findIndex((s) => s === frame)); // Scroll to existing frame
+				scrollToFrame(state.value.findIndex((s) => s === rawFrame)); // Scroll to existing frame
 				return { ...state, status: "idle" };
 			});
 		}
@@ -86,7 +66,7 @@ export function FrameContextProvider(props: { children?: ReactNode }) {
 		if (index === null) {
 			return setState((state) => {
 				scrollToFrame(state.value.length);
-				const updated = [...state.value, frame];
+				const updated = [...state.value, rawFrame];
 				navigate({ to: `/$`, params: { _splat: updated.join("/") } });
 				return { status: "idle", value: updated };
 			});
@@ -94,7 +74,7 @@ export function FrameContextProvider(props: { children?: ReactNode }) {
 
 		return setState((state) => {
 			scrollToFrame(index + 1);
-			const updated = [...state.value.filter((_, i) => i <= index), frame];
+			const updated = [...state.value.filter((_, i) => i <= index), rawFrame];
 			navigate({ to: "/$", params: { _splat: updated.join("/") } });
 			return { status: "idle", value: updated };
 		});
@@ -103,24 +83,6 @@ export function FrameContextProvider(props: { children?: ReactNode }) {
 	const value = { ...state, push, remove, clear };
 
 	return <FrameContext value={value}>{props.children}</FrameContext>;
-}
-
-export function getFrame(frame: string): Frame | null {
-	// Defaults to Ethereum mainnet. We will need some way to specify chain
-
-	const address = v.safeParse(AddressSchema, frame);
-	if (address.success) return { type: "address", data: address.output, raw: frame };
-
-	const tx_hash = v.safeParse(TxHashSchema, frame);
-	if (tx_hash.success) return { type: "transaction-hash", data: tx_hash.output, raw: frame };
-
-	const tx_position = v.safeParse(TxPositionSchema, frame);
-	if (tx_position.success) return { type: "transaction-position", data: tx_position.output, raw: frame };
-
-	const block_number = v.safeParse(BlockNumberSchema, frame);
-	if (block_number.success) return { type: "block-number", data: block_number.output, raw: frame };
-
-	return null;
 }
 
 const useFrameScroll = create<number | null>(() => null);
@@ -173,9 +135,13 @@ export function Frame(props: { frame: string; index: number }) {
 
 			{frame !== null && frame.type === "address" && <AddressClient address={frame.data} />}
 
-			{frame !== null && frame.type === "block-number" && <BlockNumberClient number={frame.data} />}
+			{frame !== null && frame.type === "chain-block-number" && <BlockNumberClient chain={frame.data.chain} number={frame.data.block} />}
 
-			{frame !== null && frame.type === "transaction-position" && <TxPositionClient block={frame.data.block} tx={frame.data.tx} />}
+			{frame !== null && frame.type === "chain-tx-position" && (
+				<TxPositionClient chain={frame.data.chain} block={frame.data.block} tx={frame.data.tx} />
+			)}
+
+			{frame !== null && frame.type === "chain-tx-hash" && <TxHashClient chain={frame.data.chain} tx_hash={frame.data.tx_hash} />}
 		</FrameIndexContext>
 	);
 }

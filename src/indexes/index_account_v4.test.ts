@@ -1,4 +1,5 @@
 import { test } from "vitest";
+import { numberToHex } from "viem";
 
 import { PRESETS } from "@/constants";
 import { test_getBlock } from "@/tests/utils";
@@ -8,7 +9,7 @@ import { getEventIdsForAccount, index_account_v4 } from "./index_account_v4";
 test.concurrent("index_account_v4", async ({ expect }) => {
 	const block_number = 10000000;
 
-	const block = await test_getBlock({ chain: 1, block_number });
+	const block = await test_getBlock({ chain: "0x1", number: numberToHex(block_number) });
 
 	const indexes = event.handler(block).flatMap((event) => {
 		return [
