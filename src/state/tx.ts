@@ -2,12 +2,12 @@ import type { RpcTransaction, RpcTransactionReceipt } from "viem";
 
 import { numberToHex } from "@/utils";
 import type { Chain } from "@/constants";
-import { arbitrum, ethereum } from "@/helpers";
+import { getNode } from "@/helpers";
 
 export type Tx = RpcTransaction<false>;
 
 export async function getTxByHash(opts: { chain: Chain; hash: `0x${string}` }) {
-	const node = opts.chain === 1 ? ethereum : arbitrum;
+	const node = getNode(opts.chain);
 
 	const tx = await node.request({
 		method: "eth_getTransactionByHash",
@@ -26,7 +26,7 @@ export async function getTxByHash(opts: { chain: Chain; hash: `0x${string}` }) {
 }
 
 export async function getTxByPosition(opts: { chain: Chain; block: number; tx: number }) {
-	const node = opts.chain === 1 ? ethereum : arbitrum;
+	const node = getNode(opts.chain);
 
 	const tx = await node.request({
 		method: "eth_getTransactionByBlockNumberAndIndex",
@@ -43,7 +43,7 @@ export async function getTxByPosition(opts: { chain: Chain; block: number; tx: n
 export type TxReceipt = RpcTransactionReceipt;
 
 export async function getTxReceiptByHash(opts: { chain: Chain; hash: `0x${string}` }) {
-	const node = opts.chain === 1 ? ethereum : arbitrum;
+	const node = getNode(opts.chain);
 
 	const receipt = await node.request({
 		method: "eth_getTransactionReceipt",

@@ -1,12 +1,26 @@
 import { http } from "univo/transport";
 
 import type { Event } from "./events";
+import type { Chain } from "./constants";
 import { hexToNumber, raise } from "./utils";
 import { CHAINS, REVERSE_CHAINS, TABLES } from "./constants";
 
 export const ethereum = http(process.env.ETHEREUM_URL);
 
 export const arbitrum = http(process.env.ARBITRUM_URL);
+
+export function getNode(chain: Chain | `0x${string}`) {
+	const chainId = typeof chain === "string" ? hexToNumber(chain) : chain;
+
+	switch (chainId) {
+		case 1:
+			return ethereum;
+		case 42161:
+			return arbitrum;
+		default:
+			return raise(`Unsupported chain id ${chainId}`);
+	}
+}
 
 export function isMobile() {
 	return window.innerWidth < 768;
