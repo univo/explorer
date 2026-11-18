@@ -3,14 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { formatNumber } from "@/utils";
+import type { Chain } from "@/constants";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
 
-export function BlockNumberClient(props: { number: number }) {
+export function BlockNumberClient(props: { chain: Chain; number: number }) {
 	const query = useQuery({
-		queryKey: [`/rsc/block-number?number=${props.number}`],
+		queryKey: [`/rsc/block-number?chain=${props.chain}&number=${props.number}`],
 		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 

@@ -1,0 +1,315 @@
+import clsx from "clsx";
+import { ErrorBoundary } from "react-error-boundary";
+
+import type { Event } from "@/events";
+import { frame } from "@/frames/frame";
+import type { Chain } from "@/constants";
+import { getEventsForIds } from "@/events";
+import { getOrderedEvents } from "@/helpers";
+import { Erc721 } from "@/components/erc-721";
+import { Account } from "@/components/account";
+import { execute } from "@/aggregates/aggregate";
+import { EtherscanIcon } from "@/components/icons";
+import { Timestamp } from "@/components/timestamp";
+import { IconButton } from "@/components/icon-button";
+import { balances_v1 } from "@/aggregates/balances_v1";
+import { Erc20, getTokenPrice } from "@/components/erc-20";
+import { getBlockByNumber, type Block } from "@/state/block";
+import { getTxByHash, getTxReceiptByHash } from "@/state/tx";
+import { EventDescription } from "@/components/event-description";
+import { RelativeTimestamp } from "@/components/relative-timestamp";
+import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
+import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provider";
+import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
+import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
+
+export async function TxHashRsc(props: { chain: Chain; tx_hash: `0x${string}` }) {
+	const tx = await getTxByHash({ chain: props.chain, hash: props.tx_hash });
+
+	const [block, ids] = await Promise.all([
+		getBlockByNumber(props.chain, hexToNumber(tx.blockNumber)),
+		getEventIdsForTxPosition(props.chain, hexToNumber(tx.blockNumber), hexToNumber(tx.transactionIndex)),
+	]);
+
+	const timestamp = new Date(hexToNumber(block.timestamp) * 1000);
+
+	const [events, receipt, price] = await Promise.all([
+		getEventsForIds(ids),
+		getTxReceiptByHash({ chain: props.chain, hash: tx.hash }), //
+		getTokenPrice({ chain: props.chain, token: ETH_ADDRESS, timestamp }),
+	]);
+
+	const feeWei = BigInt(receipt.effectiveGasPrice) * BigInt(receipt.gasUsed);
+	const feeEth = Number(feeWei) / 10 ** 18;
+	const formattedFeeEth = formatNumber(feeEth, feeEth < 1 ? { maximumSignificantDigits: 2 } : { maximumFractionDigits: 2 });
+
+	const feeUsd = price === null ? null : Number(price.price_usd) * feeEth;
+	const options = { style: "currency", currency: "USD", currencyDisplay: "narrowSymbol" } as const;
+	const formattedFeeUsd = feeUsd === null ? null : formatNumber(feeUsd, options);
+
+	const ordered = getOrderedEvents(events, "reverse");
+
+	const intent = events.find((event) => {
+		return isHexEqual(numberToHex(event.log_index), TRANSACTION_EVENT);
+	});
+
+	return (
+		<div className="h-full flex flex-col bg-white">
+			<div>
+				<div className="bg-white p-3 flex items-center justify-between gap-3">
+					<div className="flex items-center overflow-hidden">
+						<p className="text-gray-900 font-semibold text-base select-all min-w-24">Transaction</p>
+						<p className="text-gray-500 text-base select-all truncate">{tx.hash}</p>
+					</div>
+
+					<div className="flex items-center gap-2">
+						<IconButton href={`https://etherscan.io/tx/${tx.hash}`}>
+							<EtherscanIcon className="shrink-0 size-4" />
+						</IconButton>
+
+						<CloseFrameButton />
+					</div>
+				</div>
+			</div>
+
+			<div className="relative isolate overflow-scroll">
+				<div className="px-3 pb-3">
+					<div className="flex flex-col items-start gap-1">
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">Status</span>
+
+							<span className={clsx("text-sm capitalize", receipt.status === "0x1" ? "text-green-500" : "text-red-500")}>
+								{receipt.status === "0x1" ? "Success" : "Failed"}
+							</span>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">Timestamp</span>
+
+							<div className="flex items-center gap-1 text-sm text-gray-900">
+								<span className="flex-none">
+									<Timestamp date time utc={timestamp} />
+								</span>
+
+								<span className="flex-initial truncate text-gray-500">
+									(<RelativeTimestamp utc={timestamp} />)
+								</span>
+							</div>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">Block #</span>
+
+							<AddFrameButton
+								frame={frame.format({ type: "chain-block-number", data: { chain: props.chain, block: hexToNumber(tx.blockNumber) } })}
+								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-100 data-[hovered=true]:bg-gray-100 select-none"
+							>
+								{formatNumber(hexToNumber(tx.blockNumber))}
+							</AddFrameButton>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">Tx Fee</span>
+
+							<div className="text-sm text-gray-900 flex items-center gap-1">
+								<span>{formattedFeeEth} ETH</span>
+								{formattedFeeUsd === null ? null : <span className="text-gray-500">({formattedFeeUsd})</span>}
+							</div>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">By</span>
+
+							<span className="text-sm text-gray-900">
+								<Account chain={props.chain} address={tx.from} />
+							</span>
+						</div>
+
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">Intent</span>
+
+							{defined(intent) && (
+								<ErrorBoundary fallback={null}>
+									<EventDescription event={intent} address={tx.from} />
+								</ErrorBoundary>
+							)}
+						</div>
+					</div>
+				</div>
+
+				<Balances chain={props.chain} block={block} events={ordered} />
+
+				<Logs events={ordered} />
+			</div>
+		</div>
+	);
+}
+
+function Logs(props: { events: Event[] }) {
+	if (props.events.length === 0) {
+		return (
+			<div className="p-3 flex items-center justify-center">
+				<p className="text-gray-900 text-sm">No events found</p>
+			</div>
+		);
+	}
+
+	const logs = props.events.filter((event) => {
+		return !isHexEqual(numberToHex(event.log_index), TRANSACTION_EVENT);
+	});
+
+	return (
+		<div>
+			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">Logs</p>
+			</div>
+
+			<div className="p-3 flex flex-col gap-1">
+				{logs.map((event, i) => {
+					return (
+						<ErrorBoundary key={i} fallback={null}>
+							<div className="flex">
+								<span className="text-sm text-gray-500 min-w-12 sm:min-w-24">({formatNumber(event.log_index)})</span>
+
+								<EventDescription event={event} address={undefined} />
+							</div>
+						</ErrorBoundary>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
+
+function Balances(props: { chain: Chain; block: Block; events: Event[] }) {
+	// Compute sum of transfers
+
+	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v2");
+	const result = execute(balances_v1, transfers);
+
+	// Remove values where the net-change is zero, and also remove the null address
+
+	const filtered = Object.entries(result).filter(([key, quantity]) => {
+		if (quantity === 0n) {
+			return false;
+		}
+
+		if (key.startsWith(ZERO_ADDRESS)) {
+			return false;
+		}
+
+		return true;
+	});
+
+	if (filtered.length === 0) {
+		return;
+	}
+
+	// After filtering we perform sorting. The basic sort order from most to least important:
+	// - Sort accounts by quantity of balance changes
+	// - Within accounts, put positive changes before negative changes
+	// - Within that, put erc20 before erc721
+
+	const counts = filtered.reduce(
+		(result, [key]) => {
+			const [address] = key.split(":");
+
+			result.set(address, (result.get(address) ?? 0) + 1);
+
+			return result;
+		},
+		new Map<string, number>(), //
+	);
+
+	const rank = (address: string, asset: string, quantity: bigint) => {
+		let assetRank = 2;
+
+		if (asset === "erc20") {
+			assetRank = 0;
+		}
+
+		if (asset === "erc721") {
+			assetRank = 1;
+		}
+
+		const countRank = filtered.length - counts.get(address)!;
+
+		const quantityRank = quantity > 0n ? 0 : 1;
+
+		return countRank * 6 + quantityRank * 3 + assetRank;
+	};
+
+	const ordered = filtered.sort(([keyA, quantityA], [keyB, quantityB]) => {
+		const [addressA, assetA] = keyA.split(":");
+		const [addressB, assetB] = keyB.split(":");
+
+		return rank(addressA, assetA, quantityA) - rank(addressB, assetB, quantityB);
+	});
+
+	// Group by address
+
+	const nested = ordered.reduce(
+		(result, [key, value]) => {
+			const [address, ...rest] = key.split(":");
+
+			result[address] ??= {};
+			result[address][rest.join(":")] = value;
+
+			return result;
+		},
+		{} as Record<string, Record<string, bigint>>,
+	);
+
+	return (
+		<div>
+			<div className="flex items-center justify-between px-3 h-8 bg-gray-100 sticky top-0 z-10">
+				<p className="text-sm text-gray-500 font-normal text-nowrap select-all">Transfers</p>
+			</div>
+
+			<div className="">
+				{Object.entries(nested).map(([address, assets]) => {
+					return (
+						<div key={address} className="p-3 flex flex-col space-y-3 sm:flex-row sm:space-y-0 not-last:border-b">
+							<div className="sm:flex-1 flex flex-col items-start">
+								<span className="text-sm text-gray-900">
+									<Account chain={props.chain} address={address as `0x${string}`} />
+								</span>
+							</div>
+
+							<div className="sm:flex-1 flex flex-col items-start">
+								{Object.entries(assets).map(([asset, quantity]) => {
+									if (asset.startsWith("erc20")) {
+										const change = quantity > 0n ? "increase" : "decrease";
+										const [_, address] = asset.split(":") as [string, `0x${string}`];
+
+										return (
+											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
+												<Erc20
+													change={change}
+													chain={props.chain}
+													address={address}
+													quantity={quantity}
+													at={hexToNumber(props.block.timestamp)}
+												/>
+											</div>
+										);
+									}
+
+									if (asset.startsWith("erc721")) {
+										const [_, address, id] = asset.split(":") as [string, `0x${string}`, `0x${string}`];
+
+										return (
+											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
+												<Erc721 chain={props.chain} address={address} id={id} />
+											</div>
+										);
+									}
+								})}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
+}

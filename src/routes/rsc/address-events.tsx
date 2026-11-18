@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
 import { AddressSchema, PresetSchema } from "@/schema";
-import { AddressEventsRsc } from "@/frames/address/address-events-rsc";
+import { AddressEventsRsc } from "@/frames/3-address/3-address-events-rsc";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(

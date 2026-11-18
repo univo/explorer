@@ -6,7 +6,7 @@ import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
 import { getAccount, getAccountName } from "@/state/account";
-import { AddressEventFilters } from "./address-event-filters";
+import { AddressEventFilters } from "./3-address-event-filters";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
 
 // TODO

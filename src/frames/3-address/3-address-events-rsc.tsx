@@ -10,12 +10,12 @@ import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
 import { getEventIdsForAccount } from "@/indexes/index_account_v4";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
-import { StopCursorContainer, VirtualisationContainer } from "@/frames/address/address-client";
+import { StopCursorContainer, VirtualisationContainer } from "@/frames/3-address/3-address-client";
 
 export async function AddressEventsRsc(props: { address: `0x${string}`; preset: Preset; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
-		chains: [1],
+		chains: [1, 42161],
 		order: "latest",
 		tables: PRESETS[props.preset],
 		cursor: deserializeCursor(props.startCursor),
@@ -41,6 +41,7 @@ export async function AddressEventsRsc(props: { address: `0x${string}`; preset: 
 					return (
 						<ErrorBoundary key={i} fallback={null}>
 							<EventTableRow
+								chain={event.chain}
 								txIndex={event.tx_index}
 								blockNumber={event.block_number}
 								blockTimestamp={event.block_timestamp.getTime()}

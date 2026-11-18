@@ -3,10 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { CloseFrameButton } from "@/frames/frame-context-provider";
+import type { Chain } from "@/constants";
 
-export function TxPositionClient(props: { block: number; tx: number }) {
+export function TxPositionClient(props: { chain: Chain; block: number; tx: number }) {
 	const query = useQuery({
-		queryKey: [`/rsc/tx-position?block=${props.block}&tx=${props.tx}`],
+		queryKey: [`/rsc/tx-position?chain=${props.chain}&block=${props.block}&tx=${props.tx}`],
 		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 

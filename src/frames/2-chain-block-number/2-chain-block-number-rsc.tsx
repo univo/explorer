@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 
 import type { Id } from "@/events";
+import type { Chain } from "@/constants";
 import { getEventsForIds } from "@/events";
 import type { Block } from "@/state/block";
 import { getOrderedEvents } from "@/helpers";
@@ -15,10 +16,10 @@ import { getEventIdsForBlockNumber } from "@/indexes/index_block_number_tx_index
 
 // TODO: Add timestamp to header and include other block info
 
-export async function BlockNumberRsc(props: { number: number }) {
+export async function BlockNumberRsc(props: { chain: Chain; number: number }) {
 	const [block, ids] = await Promise.all([
-		getBlockByNumber(props.number), //
-		getEventIdsForBlockNumber(1, props.number),
+		getBlockByNumber(props.chain, props.number), //
+		getEventIdsForBlockNumber(props.chain, props.number),
 	]);
 
 	return (
@@ -71,6 +72,7 @@ async function EventsTable(props: { ids: Id[] }) {
 					<ErrorBoundary key={i} fallback={null}>
 						<div className="border-b border-gray-200">
 							<EventTableRow
+								chain={event.chain}
 								txIndex={event.tx_index}
 								blockNumber={event.block_number}
 								blockTimestamp={event.block_timestamp.getTime()}

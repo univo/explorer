@@ -17,7 +17,7 @@ import { CopyButton } from "@/components/copy-button";
 import { sf_getLatestEventForAccount } from "@/functions";
 import { ArrowUpIcon, EtherscanIcon } from "@/components/icons";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
-import { AddressEventFiltersSkeleton } from "./address-event-filters";
+import { AddressEventFiltersSkeleton } from "./3-address-event-filters";
 import { PresetContextProvider, usePresetContext } from "./preset-context";
 import { CursorContextProvider, useCursorContext } from "./cursor-context";
 

@@ -1,11 +1,14 @@
 import { numberToHex, type RpcBlock } from "viem";
 
-import { ethereum } from "@/helpers";
+import { arbitrum, ethereum } from "@/helpers";
+import type { Chain } from "@/constants";
 
 export type Block = RpcBlock;
 
-export async function getBlockByNumber(number: number) {
-	const block = await ethereum.request({
+export async function getBlockByNumber(chain: Chain, number: number) {
+	const node = chain === 1 ? ethereum : arbitrum;
+
+	const block = await node.request({
 		method: "eth_getBlockByNumber",
 		params: [numberToHex(number), false],
 	});

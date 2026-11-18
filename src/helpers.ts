@@ -2,7 +2,7 @@ import { http } from "univo/transport";
 
 import type { Event } from "./events";
 import { hexToNumber, raise } from "./utils";
-import { CHAINS, REVERSE_CHAINS } from "./constants";
+import { CHAINS, REVERSE_CHAINS, TABLES } from "./constants";
 
 export const ethereum = http(process.env.ETHEREUM_URL);
 
@@ -35,7 +35,10 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
 			const log = b.log_index - a.log_index;
 			if (log !== 0) return log;
 
-			return 0; // Can't order between these two events
+			const chain = b.chain - a.chain;
+			if (chain !== 0) return chain;
+
+			return TABLES[b.tag] - TABLES[a.tag];
 		});
 	}
 
@@ -56,7 +59,10 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
 		const log = a.log_index - b.log_index;
 		if (log !== 0) return log;
 
-		return 0; // Can't order between these two events
+		const chain = a.chain - b.chain;
+		if (chain !== 0) return chain;
+
+		return TABLES[a.tag] - TABLES[b.tag];
 	});
 }
 

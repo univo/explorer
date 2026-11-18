@@ -5,12 +5,14 @@ import { Fragment } from "react";
 import type { MouseEvent, ReactNode } from "react";
 
 import { Timestamp } from "./timestamp";
+import { frame } from "@/frames/frame";
 import { RelativeTimestamp } from "./relative-timestamp";
 import { useFrameIndex, useFrames } from "@/frames/frame-context";
 
 type EventTableRowProps = {
-	blockNumber: number;
+	chain: number;
 	txIndex: number;
+	blockNumber: number;
 
 	blockTimestamp: number;
 	previousBlockTimestamp: number;
@@ -27,7 +29,10 @@ export function EventTableRow(props: EventTableRowProps) {
 			return;
 		}
 
-		frames.push(`${props.blockNumber}-${props.txIndex}`, index);
+		frames.push(
+			frame.format({ type: "chain-tx-position", data: { chain: props.chain, block: props.blockNumber, tx: props.txIndex } }),
+			index,
+		);
 	}
 
 	const timestamp = new Date(props.blockTimestamp);
