@@ -10,6 +10,7 @@ import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { iife } from "@/utils";
+import { getExplorerUrl } from "@/helpers";
 import { deserializeCursor } from "./cursor";
 import { Spinner } from "@/components/spinner";
 import { IconButton } from "@/components/icon-button";
@@ -56,7 +57,7 @@ function HeaderSkeleton(props: { address: `0x${string}` }) {
 				<div className="flex items-center gap-2">
 					<CopyButton value={props.address} />
 
-					<IconButton href={`https://etherscan.io/address/${props.address}`}>
+					<IconButton href={getExplorerUrl(1, `/address/${props.address}`)} title="View on Etherscan" aria-label="View on Etherscan">
 						<EtherscanIcon className="shrink-0 size-4" />
 					</IconButton>
 

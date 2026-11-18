@@ -15,7 +15,14 @@ export function IconButton(props: IconButtonProps) {
 
 	if (props.href) {
 		return (
-			<a target="_blank" rel="noopener noreferrer" href={props.href} className={className}>
+			<a
+				target="_blank"
+				href={props.href}
+				title={props.title}
+				className={className}
+				rel="noopener noreferrer"
+				aria-label={props["aria-label"]}
+			>
 				{props.children}
 			</a>
 		);

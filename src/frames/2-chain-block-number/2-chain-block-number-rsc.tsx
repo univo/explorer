@@ -4,11 +4,11 @@ import type { Id } from "@/events";
 import type { Chain } from "@/constants";
 import { getEventsForIds } from "@/events";
 import type { Block } from "@/state/block";
-import { getOrderedEvents } from "@/helpers";
 import { getBlockByNumber } from "@/state/block";
 import { EtherscanIcon } from "@/components/icons";
 import { formatNumber, hexToNumber } from "@/utils";
 import { IconButton } from "@/components/icon-button";
+import { getExplorerUrl, getOrderedEvents } from "@/helpers";
 import { EventTableRow } from "@/components/event-table-row";
 import { EventDescription } from "@/components/event-description";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
@@ -24,13 +24,13 @@ export async function BlockNumberRsc(props: { chain: Chain; number: number }) {
 
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header block={block} />
+			<Header chain={props.chain} block={block} />
 			<EventsTable ids={ids} />
 		</div>
 	);
 }
 
-function Header(props: { block: Block }) {
+function Header(props: { chain: Chain; block: Block }) {
 	return (
 		<div className="border-b border-gray-200 bg-white px-3 py-3 flex items-center justify-between">
 			<div className="flex items-center gap-2 overflow-hidden">
@@ -39,7 +39,7 @@ function Header(props: { block: Block }) {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<IconButton href={`https://etherscan.io/block/${props.block.number}`}>
+				<IconButton href={getExplorerUrl(props.chain, `/block/${hexToNumber(props.block.number as string)}`)}>
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 

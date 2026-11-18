@@ -1,5 +1,10 @@
 export type Chain = 1 | 42161;
 
+export const EXPLORERS: Record<Chain, string> = {
+	1: "https://etherscan.io",
+	42161: "https://arbiscan.io",
+};
+
 // Responsible for mapping the full set of supported chain ids with our internal chain id representation.
 // We use an internal representation so that we can use the minimum number of bytes to represent a chain id.
 // E.g. in our id creation we use a 2 byte unsigned integer allowing 65,535 chains

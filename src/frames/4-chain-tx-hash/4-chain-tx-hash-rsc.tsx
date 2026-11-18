@@ -5,7 +5,6 @@ import type { Event } from "@/events";
 import { frame } from "@/frames/frame";
 import type { Chain } from "@/constants";
 import { getEventsForIds } from "@/events";
-import { getOrderedEvents } from "@/helpers";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
@@ -16,6 +15,7 @@ import { balances_v1 } from "@/aggregates/balances_v1";
 import { Erc20, getTokenPrice } from "@/components/erc-20";
 import { getBlockByNumber, type Block } from "@/state/block";
 import { getTxByHash, getTxReceiptByHash } from "@/state/tx";
+import { getExplorerUrl, getOrderedEvents } from "@/helpers";
 import { EventDescription } from "@/components/event-description";
 import { RelativeTimestamp } from "@/components/relative-timestamp";
 import { ETH_ADDRESS, TRANSACTION_EVENT, ZERO_ADDRESS } from "@/constants";
@@ -63,7 +63,7 @@ export async function TxHashRsc(props: { chain: Chain; tx_hash: `0x${string}` })
 					</div>
 
 					<div className="flex items-center gap-2">
-						<IconButton href={`https://etherscan.io/tx/${tx.hash}`}>
+						<IconButton href={getExplorerUrl(props.chain, `/tx/${tx.hash}`)}>
 							<EtherscanIcon className="shrink-0 size-4" />
 						</IconButton>
 

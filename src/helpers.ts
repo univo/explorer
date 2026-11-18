@@ -3,11 +3,15 @@ import { http } from "univo/transport";
 import type { Event } from "./events";
 import type { Chain } from "./constants";
 import { hexToNumber, raise } from "./utils";
-import { CHAINS, REVERSE_CHAINS, TABLES } from "./constants";
+import { CHAINS, EXPLORERS, REVERSE_CHAINS, TABLES } from "./constants";
 
 export const ethereum = http(process.env.ETHEREUM_URL);
 
 export const arbitrum = http(process.env.ARBITRUM_URL);
+
+export function getExplorerUrl(chain: Chain, path: `/${string}`) {
+	return `${EXPLORERS[chain]}${path}`;
+}
 
 export function getNode(chain: Chain | `0x${string}`) {
 	const chainId = typeof chain === "string" ? hexToNumber(chain) : chain;
