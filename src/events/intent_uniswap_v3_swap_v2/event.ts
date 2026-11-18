@@ -32,6 +32,11 @@ export interface IntentUniswapV3SwapV2 {
 type DecodedSwap = Omit<IntentUniswapV3SwapV2, "tag" | "chain" | "tx_index" | "log_index" | "block_number" | "block_timestamp" | "success">;
 
 export const UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK = 12369634;
+export const UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK = 169;
+export const UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK = 3856803;
+// These routers have the same addresses and contract versions on both chains:
+// v3-periphery@1.0.0 and swap-router-contracts@1.1.0, respectively.
+// https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_SWAP_ROUTER_ADDRESS = getAddress("0xE592427A0AEce92De3Edee1F18E0157C05861564");
 export const UNISWAP_V3_SWAP_ROUTER_02_ADDRESS = getAddress("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45");
 
@@ -269,6 +274,54 @@ export const event = defineEvent({
 			chain: 1,
 			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[3],
 			fromBlock: UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_ADDRESS,
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[0],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_ADDRESS,
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[1],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_ADDRESS,
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[2],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_ADDRESS,
+			function: SWAP_ROUTER_FUNCTION_SELECTORS[3],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[0],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[1],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[2],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			address: UNISWAP_V3_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[3],
+			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK,
 		},
 	],
 

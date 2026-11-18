@@ -8,7 +8,10 @@ import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
 import type { Id } from "@/events";
 import { createPostgresClient } from "@/db/client";
-import { UNISWAP_V3_FACTORY_DEPLOYED_BLOCK } from "@/events/log_uniswap_v3_pool_created_v2/event";
+import {
+	UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
+	UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
+} from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogUniswapV3SwapV2 {
@@ -42,6 +45,11 @@ export const event = defineEvent({
 			chain: 1,
 			event: SWAP_SELECTOR,
 			fromBlock: UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			event: SWAP_SELECTOR,
+			fromBlock: UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
 		},
 	],
 

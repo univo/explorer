@@ -41,6 +41,9 @@ export interface IntentUniswapV3MintV2 {
 }
 
 export const UNISWAP_V3_POSITION_MANAGER_DEPLOYED_BLOCK = 12369651;
+export const UNISWAP_V3_ARBITRUM_POSITION_MANAGER_DEPLOYED_BLOCK = 173;
+// Both chains use v3-periphery@1.0.0 with the same factory and pool init-code hash.
+// https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_POSITION_MANAGER_ADDRESS = getAddress("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
 
 const UNISWAP_V3_FACTORY_ADDRESS = getAddress("0x1F98431c8aD98523631AE4a59f267346ea31F984");
@@ -61,6 +64,12 @@ export const event = defineEvent({
 			function: MINT_SELECTOR,
 			address: UNISWAP_V3_POSITION_MANAGER_ADDRESS,
 			fromBlock: UNISWAP_V3_POSITION_MANAGER_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 42161,
+			function: MINT_SELECTOR,
+			address: UNISWAP_V3_POSITION_MANAGER_ADDRESS,
+			fromBlock: UNISWAP_V3_ARBITRUM_POSITION_MANAGER_DEPLOYED_BLOCK,
 		},
 	],
 
