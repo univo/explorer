@@ -35,6 +35,7 @@ type DecodedSwap = Omit<IntentUniswapV3SwapV2, "tag" | "chain" | "tx_index" | "l
 export const UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK = 12369634;
 export const UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK = 169;
 export const UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK = 3856803;
+
 // These routers have the same addresses and contract versions on both chains:
 // v3-periphery@1.0.0 and swap-router-contracts@1.1.0, respectively.
 // https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
