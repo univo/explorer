@@ -27,6 +27,7 @@ export interface LogUniswapV3PoolCreatedV2 {
 
 export const UNISWAP_V3_FACTORY_DEPLOYED_BLOCK = 12369621;
 export const UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK = 165;
+
 // Both chains use v3-core@1.0.0 at this address:
 // https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_FACTORY_ADDRESS = getAddress("0x1F98431c8aD98523631AE4a59f267346ea31F984");
