@@ -43,6 +43,7 @@ export interface IntentUniswapV3MintV2 {
 
 export const UNISWAP_V3_POSITION_MANAGER_DEPLOYED_BLOCK = 12369651;
 export const UNISWAP_V3_ARBITRUM_POSITION_MANAGER_DEPLOYED_BLOCK = 173;
+
 // Both chains use v3-periphery@1.0.0 with the same factory and pool init-code hash.
 // https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_POSITION_MANAGER_ADDRESS = getAddress("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
