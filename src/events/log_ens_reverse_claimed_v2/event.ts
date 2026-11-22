@@ -3,10 +3,10 @@ import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
+import type { Id } from "@/events";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { Id } from "@/events";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { getChain, getExternalChain, getInternalChain } from "@/helpers";

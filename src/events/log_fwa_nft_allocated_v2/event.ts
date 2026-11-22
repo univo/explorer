@@ -4,15 +4,15 @@ import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector 
 
 import { table } from "./table";
 import type { Id } from "@/events";
-import type { Chain } from "@/constants";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
+import type { Chain } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { getChain, getExternalChain, getInternalChain } from "@/helpers";
-import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v2/event";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogFwaNftAllocatedV2 {
 	tag: "log_fwa_nft_allocated_v2";

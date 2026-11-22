@@ -4,10 +4,10 @@ import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector 
 
 import { table } from "./table";
 import type { Id } from "@/events";
-import type { Chain } from "@/constants";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
+import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";

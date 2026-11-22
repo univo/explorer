@@ -4,8 +4,8 @@ import { decodeFunctionData, getAddress, hexToNumber, isAddressEqual, parseAbi, 
 
 import { table } from "./table";
 import type { Id } from "@/events";
-import type { Chain } from "@/constants";
 import { inTuple } from "@/db/types";
+import type { Chain } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";

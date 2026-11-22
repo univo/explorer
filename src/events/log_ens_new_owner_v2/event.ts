@@ -3,9 +3,9 @@ import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, keccak256, parseAbiItem, stringToHex, toEventSelector } from "viem";
 
 import { table } from "./table";
+import type { Id } from "@/events";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
-import type { Id } from "@/events";
 import { TABLES, type Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import { getChain, getExternalChain, getInternalChain } from "@/helpers";

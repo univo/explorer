@@ -3,15 +3,15 @@ import { and, asc, inArray } from "drizzle-orm";
 import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector } from "viem";
 
 import { table } from "./table";
+import type { Id } from "@/events";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
-import type { Id } from "@/events";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
-import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { defineLoader, isHexEqual, numberToHex } from "@/utils";
-import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
+import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v2/event";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogFwaNftListedV2 {
 	tag: "log_fwa_nft_listed_v2";
