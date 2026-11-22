@@ -3,7 +3,6 @@ import { getTornadoCashPool } from "./event";
 import { Action } from "@/components/action";
 import { Account } from "@/components/account";
 import { isHexEqual } from "@/utils";
-import { getExternalChain } from "@/helpers";
 import { Description } from "@/components/description";
 import type { IntentTornadoWithdrawalV2 } from "./event";
 
@@ -11,7 +10,7 @@ export function IntentTornadoWithdrawalV2AccountDescription(props: {
 	event: IntentTornadoWithdrawalV2;
 	address: `0x${string}` | undefined;
 }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const at = props.event.block_timestamp.getTime() / 1000;
 
 	const pool = getTornadoCashPool(props.event.pool_address);

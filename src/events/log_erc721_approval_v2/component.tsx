@@ -1,12 +1,11 @@
 import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { LogErc721ApprovalV2 } from "./event";
 import { Description } from "@/components/description";
 
 export function LogErc721ApprovalV2Description(props: { event: LogErc721ApprovalV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const revoked = props.event.spender_address === "0x0000000000000000000000000000000000000000";
 
 	if (revoked) {

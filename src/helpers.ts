@@ -92,8 +92,17 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
  * @returns Internal chain identifier for the provided chain
  */
 export function getInternalChain(external_chain: `0x${string}` | number) {
+	return CHAINS[getChain(external_chain)];
+}
+
+export function getChain(external_chain: `0x${string}` | number): Chain {
 	const chain = typeof external_chain === "string" ? hexToNumber(external_chain) : external_chain;
-	return CHAINS[chain as Chain] ?? raise(`Unsupported chain id ${chain}`);
+
+	if (chain === 1 || chain === 42161) {
+		return chain;
+	}
+
+	return raise(`Unsupported chain id ${chain}`);
 }
 
 /**
@@ -103,9 +112,6 @@ export function getInternalChain(external_chain: `0x${string}` | number) {
  * @param internal_chain Internal chain identifier
  * @returns External chain identifier
  */
-export function getExternalChain(internal_chain: number) {
-	return (
-		(REVERSE_CHAINS[internal_chain as keyof typeof REVERSE_CHAINS] as keyof typeof CHAINS) ||
-		raise(`Unknown internal chain id ${internal_chain}`)
-	);
+export function getExternalChain(internal_chain: number): Chain {
+	return REVERSE_CHAINS[internal_chain] ?? raise(`Unknown internal chain id ${internal_chain}`);
 }

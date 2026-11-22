@@ -2,13 +2,12 @@ import { isHexEqual } from "@/utils";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { IntentNativeTransferV2 } from "./event";
 import { Description } from "@/components/description";
 
 export function IntentNativeTransferV2AccountDescription(props: { event: IntentNativeTransferV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const at = props.event.block_timestamp.getTime() / 1000;
 
 	// (tx.from) from_address

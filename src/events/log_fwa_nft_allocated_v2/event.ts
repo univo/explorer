@@ -4,18 +4,19 @@ import { decodeEventLog, getAddress, hexToNumber, parseAbiItem, toEventSelector 
 
 import { table } from "./table";
 import type { Id } from "@/events";
+import type { Chain } from "@/constants";
 import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { index_account_v4 } from "@/indexes/index_account_v4";
-import { getExternalChain, getInternalChain } from "@/helpers";
+import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v2/event";
 
 export interface LogFwaNftAllocatedV2 {
 	tag: "log_fwa_nft_allocated_v2";
-	chain: number;
+	chain: Chain;
 	tx_index: number;
 	log_index: number;
 	block_number: number;
@@ -68,7 +69,7 @@ export const event = defineEvent({
 					return {
 						tag: "log_fwa_nft_allocated_v2",
 						log_index: hexToNumber(log.logIndex),
-						chain: hexToNumber(block.eth_chainId),
+						chain: getChain(block.eth_chainId),
 						tx_index: hexToNumber(receipt.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),

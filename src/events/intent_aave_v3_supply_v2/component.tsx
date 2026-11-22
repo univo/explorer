@@ -1,13 +1,12 @@
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import { AAVE_V3_ETHEREUM_POOL_ADDRESS, type IntentAaveV3SupplyV2 } from "./event";
 
 export function IntentAaveV3SupplyV2AccountDescription(props: { event: IntentAaveV3SupplyV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	// (tx.from) supplier_address: the account initiating the action and always supplying the collateral

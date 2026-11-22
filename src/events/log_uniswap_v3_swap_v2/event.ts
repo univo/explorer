@@ -7,17 +7,18 @@ import { TABLES } from "@/constants";
 import { inTuple } from "@/db/types";
 import { isHexEqual } from "@/utils";
 import type { Id } from "@/events";
+import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import {
 	UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
 	UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
 } from "@/events/log_uniswap_v3_pool_created_v2/event";
-import { getExternalChain, getInternalChain } from "@/helpers";
+import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface LogUniswapV3SwapV2 {
 	tag: "log_uniswap_v3_swap_v2";
-	chain: number;
+	chain: Chain;
 	tx_index: number;
 	log_index: number;
 	block_number: number;
@@ -72,7 +73,7 @@ export const event = defineEvent({
 					return {
 						tag: "log_uniswap_v3_swap_v2",
 						log_index: hexToNumber(log.logIndex),
-						chain: hexToNumber(block.eth_chainId),
+						chain: getChain(block.eth_chainId),
 						tx_index: hexToNumber(receipt.transactionIndex),
 						block_number: hexToNumber(block.eth_getBlockByNumber.number),
 						block_timestamp: new Date(hexToNumber(block.eth_getBlockByNumber.timestamp) * 1000),

@@ -3,13 +3,12 @@ import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Erc721 } from "@/components/erc-721";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import { FWA_ADDRESS, type IntentFwaDepositedV2 } from "./event";
 
 export function IntentFwaDepositedV2AccountDescription(props: { event: IntentFwaDepositedV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const timestamp = props.event.block_timestamp.getTime() / 1000;
 
 	// (tx.from) depositer_address: the account performing the deposit

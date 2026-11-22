@@ -3,13 +3,12 @@ import { Fragment } from "react";
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { IntentUniswapV3MintV2 } from "./event";
 import { Description } from "@/components/description";
 
 export function IntentUniswapV3MintV2AccountDescription(props: { event: IntentUniswapV3MintV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 
 	// (tx.from) sender_address: supplier of liquidity
 
@@ -117,7 +116,7 @@ function Liquidity(props: { event: IntentUniswapV3MintV2 }) {
 	// Normally I avoid making utility functions like this but in this case it's worth it.
 	// In Uniswap it's possible to supply only one side of the liquidity pool
 
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const token0DesiredQuantity = BigInt(props.event.token_0_desired_quantity);

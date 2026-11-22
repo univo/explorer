@@ -1,5 +1,5 @@
 import { logger } from "@/utils";
-import type { Table } from "./constants";
+import type { Chain, Table } from "./constants";
 import { getIntentIdmV2 } from "@/events/intent_idm_v2/event";
 import { getIntentFwaWonV3 } from "@/events/intent_fwa_won_v3/event";
 import { getLogEnsNewOwnerV2 } from "@/events/log_ens_new_owner_v2/event";
@@ -34,7 +34,7 @@ import { getLogEnsNameForAddrChangedV2 } from "@/events/log_ens_name_for_addr_ch
 
 export type Id = {
 	tag: Table;
-	chain: number;
+	chain: Chain;
 	tx_index: number;
 	log_index: number;
 	block_number: number;
