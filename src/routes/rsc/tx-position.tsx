@@ -3,18 +3,19 @@ import { createServerFn } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { renderToReadableStream } from "@tanstack/react-start/rsc";
 
-import { BlockNumberSchema, TxIndexSchema } from "@/schema";
-import { TxPositionRsc } from "@/frames/tx-position/tx-position-rsc";
+import { TxPositionRsc } from "@/frames/1-chain-tx-position/1-chain-tx-position-rsc";
+import { BlockNumberSchema, ChainStringSchema, TxIndexSchema } from "@/schema";
 
 const getFlightStream = createServerFn({ method: "GET" })
 	.inputValidator(
 		v.object({
+			chain: ChainStringSchema,
 			block: BlockNumberSchema,
 			tx: TxIndexSchema,
 		}),
 	)
 	.handler(({ data }) => {
-		return renderToReadableStream(<TxPositionRsc block={data.block} tx={data.tx} />);
+		return renderToReadableStream(<TxPositionRsc chain={data.chain} block={data.block} tx={data.tx} />);
 	});
 
 export const Route = createFileRoute("/rsc/tx-position")({
@@ -29,7 +30,10 @@ export const Route = createFileRoute("/rsc/tx-position")({
 				const tx = search.get("tx");
 				if (tx === null) throw new Error("Expected tx");
 
-				const stream = await getFlightStream({ data: { block, tx } });
+				const chain = search.get("chain");
+				if (chain === null) throw new Error("Expected chain");
+
+				const stream = await getFlightStream({ data: { chain, block, tx } });
 
 				return new Response(stream, {
 					headers: {

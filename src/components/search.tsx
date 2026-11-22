@@ -1,11 +1,13 @@
 import clsx from "clsx";
+import * as v from "valibot";
 import { useState } from "react";
-import { getAddress } from "viem";
+import { getAddress, isAddress } from "viem";
 import { Command, useCommandState } from "cmdk";
 
+import { TxHashSchema } from "@/schema";
 import { SearchIcon, XIcon } from "./icons";
+import { frame, getFrame } from "@/frames/frame";
 import { useFrames } from "@/frames/frame-context";
-import { getFrame } from "@/frames/frame-context-provider";
 
 // TODO
 // Probably need to add a dropdown for the supported chains, this makes it explictly clear when pasting
@@ -15,6 +17,20 @@ interface SearchProps {
 	onClose?: () => void;
 }
 
+function getSearchFrame(search: string) {
+	if (isAddress(search)) {
+		return getFrame(frame.format({ type: "address", data: getAddress(search) }));
+	}
+
+	const hash = v.safeParse(TxHashSchema, search);
+
+	if (hash.success) {
+		return getFrame(frame.format({ type: "chain-tx-hash", data: { chain: 1, tx_hash: hash.output } }));
+	}
+
+	return getFrame(search);
+}
+
 export function Search(props: SearchProps) {
 	const frames = useFrames();
 	const [search, setSearch] = useState("");
@@ -22,9 +38,9 @@ export function Search(props: SearchProps) {
 	async function onPaste() {
 		const search = await navigator.clipboard.readText();
 
-		const frame = getFrame(search); // Determine if search satisfies a known frame
+		const parsed = getSearchFrame(search);
 
-		if (!frame) {
+		if (!parsed) {
 			return;
 		}
 
@@ -32,7 +48,7 @@ export function Search(props: SearchProps) {
 			props.onClose();
 		}
 
-		frames.push(frame.raw, null);
+		frames.push(parsed.raw, null);
 	}
 
 	return (
@@ -82,15 +98,7 @@ function EmptyState() {
 		return null;
 	}
 
-	if (isTxHash(search)) {
-		return null;
-	}
-
-	if (isAccount(search)) {
-		return null;
-	}
-
-	if (isBlockNumber(search)) {
+	if (getSearchFrame(search)) {
 		return null;
 	}
 
@@ -99,31 +107,6 @@ function EmptyState() {
 			<p className="text-sm text-center text-gray-900">No results found. Please try again.</p>
 		</Command.Empty>
 	);
-}
-
-function isAccount(search: string) {
-	return search.length === 42 && search.startsWith("0x");
-}
-
-function isTxHash(search: string) {
-	return search.length === 66 && search.startsWith("0x");
-}
-
-function isBlockNumber(search: string) {
-	try {
-		if (search.startsWith("0x")) {
-			return false;
-		}
-
-		const number = Number.parseInt(search);
-
-		if (Number.isNaN(number)) {
-			return false;
-		}
-		return true;
-	} catch {
-		return false;
-	}
 }
 
 const tokens = [
@@ -214,7 +197,7 @@ function Tokens(props: { onClose?: () => void }) {
 		<Command.Group className="p-2" heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}>
 			{tokens.map((token) => {
 				async function onSelect() {
-					await frames.push(getAddress(token.address), null);
+					await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
 
 					if (props.onClose) {
 						props.onClose();

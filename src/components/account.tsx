@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { getAddress } from "viem";
 
+import { frame } from "@/frames/frame";
 import { Hoverable } from "./hoverable";
 import type { Chain } from "@/constants";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
@@ -20,7 +21,7 @@ export async function Account(props: { chain: Chain; address: `0x${string}` }) {
 	return (
 		<Hoverable id={`${props.chain}:${address}`}>
 			<AddFrameButton
-				frame={address}
+				frame={frame.format({ type: "address", data: address })}
 				className={clsx(
 					"select-none cursor-pointer truncate", //
 					showAddress && "inline-block align-top w-18 lg:w-24",

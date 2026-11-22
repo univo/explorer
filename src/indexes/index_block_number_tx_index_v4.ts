@@ -5,6 +5,7 @@ import { logger } from "@/utils";
 import type { Id } from "@/events";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
+import { getExternalChain, getInternalChain } from "@/helpers";
 import { REVERSE_TABLES, TABLES, TRANSACTION_EVENT } from "@/constants";
 
 // Transactions can be uniquely represented in two ways: their transaction hash, or the combination of their block number
@@ -53,7 +54,7 @@ export const index_block_number_tx_index_v4 = {
 			unique[key] = true;
 
 			batch.push({
-				chain: id.chain,
+				chain: getInternalChain(id.chain),
 				tx_index: id.tx_index,
 				log_index: id.log_index,
 				table_id: TABLES[id.tag],
@@ -105,7 +106,7 @@ export const index_block_number_tx_index_v4 = {
 
 		const client = await createPostgresClient();
 
-		await client.delete(table).where(and(eq(table.chain, chain), eq(table.block_number, block_number)));
+		await client.delete(table).where(and(eq(table.chain, getInternalChain(chain)), eq(table.block_number, block_number)));
 	},
 };
 
@@ -119,7 +120,7 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 		.from(table)
 		.where(
 			and(
-				eq(table.chain, chain), //
+				eq(table.chain, getInternalChain(chain)), //
 				eq(table.block_number, block),
 				eq(table.log_index, Number(TRANSACTION_EVENT)),
 			),
@@ -129,7 +130,7 @@ export async function getEventIdsForBlockNumber(chain: Chain, block: number) {
 
 	return rows.map<Id>((result) => {
 		return {
-			chain: result.chain,
+			chain: getExternalChain(result.chain),
 			tx_index: result.tx_index,
 			log_index: result.log_index,
 			block_number: result.block_number,
@@ -149,7 +150,7 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 		.from(table)
 		.where(
 			and(
-				eq(table.chain, chain), //
+				eq(table.chain, getInternalChain(chain)), //
 				eq(table.block_number, block),
 				eq(table.tx_index, tx),
 			),
@@ -159,7 +160,7 @@ export async function getEventIdsForTxPosition(chain: Chain, block: number, tx: 
 
 	return rows.map<Id>((result) => {
 		return {
-			chain: result.chain,
+			chain: getExternalChain(result.chain),
 			tx_index: result.tx_index,
 			log_index: result.log_index,
 			block_number: result.block_number,

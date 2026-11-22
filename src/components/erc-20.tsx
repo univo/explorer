@@ -5,15 +5,15 @@ import { getAddress, isAddressEqual } from "viem";
 
 import { Img } from "./img";
 import { Account } from "./account";
+import { frame } from "@/frames/frame";
 import { Hoverable } from "./hoverable";
 import { Description } from "./description";
+import { getInternalChain } from "@/helpers";
 import { getErc20Account } from "@/state/account";
 import { createPostgresClient } from "@/db/client";
 import { ETH_ADDRESS, type Chain } from "@/constants";
 import { AddFrameButton } from "@/frames/frame-context-provider";
 import { defineLoader, formatNumber, isHexEqual } from "@/utils";
-
-const WETH_ADDRESS = getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
 
 interface Erc20Props {
 	/** Chain identifier */
@@ -36,7 +36,7 @@ export async function Erc20(props: Erc20Props) {
 	const address = getAddress(props.address);
 	const timestamp = new Date(props.at * 1000);
 
-	if (props.chain === 1 && isAddressEqual(address, ETH_ADDRESS)) {
+	if (isAddressEqual(address, ETH_ADDRESS)) {
 		const price = await getTokenPrice({ chain: props.chain, token: address, timestamp });
 
 		return (
@@ -69,7 +69,7 @@ export async function Erc20(props: Erc20Props) {
 		<Fragment>
 			<Quantity change={props.change} quantity={props.quantity} decimals={account["erc20.decimals"]} />
 
-			<AddFrameButton frame={address} className="select-none cursor-pointer touch-none">
+			<AddFrameButton frame={frame.format({ type: "address", data: address })} className="select-none cursor-pointer touch-none">
 				<Hoverable id={`${props.chain}:${address}`}>
 					<Description>
 						<Image src={account["erc20.image"]} />
@@ -181,7 +181,7 @@ interface TokenPrice {
 }
 
 interface TokenPriceRow extends Record<string, unknown> {
-	chain: Chain;
+	chain: number;
 	token_address: `0x${string}`;
 	price_usd: string;
 	period_end: string;
@@ -194,6 +194,11 @@ interface TokenPriceRow extends Record<string, unknown> {
 
 type TokenPriceInput = { chain: Chain; token: `0x${string}`; timestamp: Date };
 
+const WETH_ADDRESSES: Record<Chain, `0x${string}`> = {
+	1: getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+	42161: getAddress("0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"),
+};
+
 export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInput[]) => {
 	if (inputs.length === 0) {
 		return [];
@@ -201,10 +206,10 @@ export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInpu
 
 	const requests = inputs.map((input) => {
 		const token = getAddress(input.token);
-		const queryToken = input.chain === 1 && isAddressEqual(token, ETH_ADDRESS) ? WETH_ADDRESS : token;
+		const queryToken = isAddressEqual(token, ETH_ADDRESS) ? WETH_ADDRESSES[input.chain] : token;
 		const periodEnd = new Date(Date.UTC(input.timestamp.getUTCFullYear(), input.timestamp.getUTCMonth(), 1));
 
-		return { ...input, token, queryToken, periodEnd };
+		return { ...input, internalChain: getInternalChain(input.chain), token, queryToken, periodEnd };
 	});
 
 	const unique = new Map<string, (typeof requests)[number]>();
@@ -214,7 +219,7 @@ export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInpu
 	}
 
 	const tuples = [...unique.values()].map((request) => {
-		return sql`(${request.chain}, decode(${request.queryToken.slice(2)}, 'hex'), ${request.periodEnd})`;
+		return sql`(${request.internalChain}, decode(${request.queryToken.slice(2)}, 'hex'), ${request.periodEnd})`;
 	});
 
 	const client = await createPostgresClient();
@@ -237,7 +242,7 @@ export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInpu
 	return requests.map<TokenPrice | null>((request) => {
 		const row = result.rows.find((row) => {
 			return (
-				row.chain === request.chain &&
+				row.chain === request.internalChain &&
 				isHexEqual(row.token_address, request.queryToken) &&
 				new Date(row.period_end).getTime() === request.periodEnd.getTime()
 			);

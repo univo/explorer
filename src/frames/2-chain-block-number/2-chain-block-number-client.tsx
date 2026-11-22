@@ -3,34 +3,36 @@ import { useQuery } from "@tanstack/react-query";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { formatNumber } from "@/utils";
+import type { Chain } from "@/constants";
+import { getExplorerUrl } from "@/helpers";
 import { Spinner } from "@/components/spinner";
 import { EtherscanIcon } from "@/components/icons";
 import { IconButton } from "@/components/icon-button";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
 
-export function BlockNumberClient(props: { number: number }) {
+export function BlockNumberClient(props: { chain: Chain; number: number }) {
 	const query = useQuery({
-		queryKey: [`/rsc/block-number?number=${props.number}`],
+		queryKey: [`/rsc/block-number?chain=${props.chain}&number=${props.number}`],
 		queryFn: ({ queryKey }) => createFromFetch(fetch(queryKey.join())),
 	});
 
 	if (query.status === "pending") {
-		return <BlockNumberClientFallback number={props.number} />;
+		return <BlockNumberClientFallback chain={props.chain} number={props.number} />;
 	}
 
-	return <Suspense fallback={<BlockNumberClientFallback number={props.number} />}>{query.data}</Suspense>;
+	return <Suspense fallback={<BlockNumberClientFallback chain={props.chain} number={props.number} />}>{query.data}</Suspense>;
 }
 
-function BlockNumberClientFallback(props: { number: number }) {
+function BlockNumberClientFallback(props: { chain: Chain; number: number }) {
 	return (
 		<div className="h-full flex flex-col bg-white">
-			<Header number={props.number} />
+			<Header chain={props.chain} number={props.number} />
 			<Events />
 		</div>
 	);
 }
 
-function Header(props: { number: number }) {
+function Header(props: { chain: Chain; number: number }) {
 	return (
 		<div className="border-b border-gray-200 bg-white px-3 py-3 flex items-center justify-between">
 			<div className="flex items-center gap-2 overflow-hidden">
@@ -39,7 +41,7 @@ function Header(props: { number: number }) {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<IconButton href={`https://etherscan.io/block/${props.number}`}>
+				<IconButton href={getExplorerUrl(props.chain, `/block/${props.number}`)}>
 					<EtherscanIcon className="shrink-0 size-4" />
 				</IconButton>
 

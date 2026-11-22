@@ -1,4 +1,9 @@
-export type Chain = 1;
+export type Chain = 1 | 42161;
+
+export const EXPLORERS: Record<Chain, string> = {
+	1: "https://etherscan.io",
+	42161: "https://arbiscan.io",
+};
 
 // Responsible for mapping the full set of supported chain ids with our internal chain id representation.
 // We use an internal representation so that we can use the minimum number of bytes to represent a chain id.
@@ -6,12 +11,14 @@ export type Chain = 1;
 
 export const CHAINS: Record<Chain, number> = {
 	1: 1,
+	42161: 2,
 };
 
 // Reverse look up table for chains to convert back
 
 export const REVERSE_CHAINS: Record<number, Chain> = {
 	1: 1,
+	2: 42161,
 };
 
 // Similarly we use a 2 byte unsigned integer to store table identifiers

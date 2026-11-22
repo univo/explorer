@@ -2,8 +2,9 @@ import clsx from "clsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import type { Event } from "@/events";
+import { frame } from "@/frames/frame";
+import type { Chain } from "@/constants";
 import { getEventsForIds } from "@/events";
-import { getOrderedEvents } from "@/helpers";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
@@ -12,6 +13,7 @@ import { Timestamp } from "@/components/timestamp";
 import { IconButton } from "@/components/icon-button";
 import { balances_v1 } from "@/aggregates/balances_v1";
 import { Erc20, getTokenPrice } from "@/components/erc-20";
+import { getExplorerUrl, getOrderedEvents } from "@/helpers";
 import { getBlockByNumber, type Block } from "@/state/block";
 import { getTxByPosition, getTxReceiptByHash } from "@/state/tx";
 import { EventDescription } from "@/components/event-description";
@@ -21,19 +23,19 @@ import { AddFrameButton, CloseFrameButton } from "@/frames/frame-context-provide
 import { getEventIdsForTxPosition } from "@/indexes/index_block_number_tx_index_v4";
 import { defined, formatNumber, hexToNumber, isHexEqual, numberToHex } from "@/utils";
 
-export async function TxPositionRsc(props: { block: number; tx: number }) {
+export async function TxPositionRsc(props: { chain: Chain; block: number; tx: number }) {
 	const [block, tx, ids] = await Promise.all([
-		getBlockByNumber(props.block),
-		getTxByPosition({ block: props.block, tx: props.tx }), //
-		getEventIdsForTxPosition(1, props.block, props.tx),
+		getBlockByNumber(props.chain, props.block),
+		getTxByPosition({ chain: props.chain, block: props.block, tx: props.tx }), //
+		getEventIdsForTxPosition(props.chain, props.block, props.tx),
 	]);
 
 	const timestamp = new Date(hexToNumber(block.timestamp) * 1000);
 
 	const [events, receipt, price] = await Promise.all([
 		getEventsForIds(ids),
-		getTxReceiptByHash(tx.hash), //
-		getTokenPrice({ chain: 1, token: ETH_ADDRESS, timestamp }),
+		getTxReceiptByHash({ chain: props.chain, hash: tx.hash }), //
+		getTokenPrice({ chain: props.chain, token: ETH_ADDRESS, timestamp }),
 	]);
 
 	const feeWei = BigInt(receipt.effectiveGasPrice) * BigInt(receipt.gasUsed);
@@ -60,7 +62,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 					</div>
 
 					<div className="flex items-center gap-2">
-						<IconButton href={`https://etherscan.io/tx/${tx.hash}`}>
+						<IconButton href={getExplorerUrl(props.chain, `/tx/${tx.hash}`)}>
 							<EtherscanIcon className="shrink-0 size-4" />
 						</IconButton>
 
@@ -98,7 +100,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 							<span className="min-w-24 text-sm text-gray-500">Block #</span>
 
 							<AddFrameButton
-								frame={String(hexToNumber(tx.blockNumber))}
+								frame={frame.format({ type: "chain-block-number", data: { chain: props.chain, block: hexToNumber(tx.blockNumber) } })}
 								className="text-sm text-gray-900 cursor-pointer -mx-px px-px rounded hover:bg-gray-100 data-[hovered=true]:bg-gray-100 select-none"
 							>
 								{formatNumber(hexToNumber(tx.blockNumber))}
@@ -118,7 +120,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 							<span className="min-w-24 text-sm text-gray-500">By</span>
 
 							<span className="text-sm text-gray-900">
-								<Account chain={1} address={tx.from} />
+								<Account chain={props.chain} address={tx.from} />
 							</span>
 						</div>
 
@@ -134,7 +136,7 @@ export async function TxPositionRsc(props: { block: number; tx: number }) {
 					</div>
 				</div>
 
-				<Balances block={block} events={ordered} />
+				<Balances chain={props.chain} block={block} events={ordered} />
 
 				<Logs events={ordered} />
 			</div>
@@ -178,7 +180,7 @@ function Logs(props: { events: Event[] }) {
 	);
 }
 
-function Balances(props: { block: Block; events: Event[] }) {
+function Balances(props: { chain: Chain; block: Block; events: Event[] }) {
 	// Compute sum of transfers
 
 	const transfers = props.events.filter((event) => event.tag === "log_erc20_transfer_v2" || event.tag === "log_erc721_transfer_v2");
@@ -269,7 +271,7 @@ function Balances(props: { block: Block; events: Event[] }) {
 						<div key={address} className="p-3 flex flex-col space-y-3 sm:flex-row sm:space-y-0 not-last:border-b">
 							<div className="sm:flex-1 flex flex-col items-start">
 								<span className="text-sm text-gray-900">
-									<Account chain={1} address={address as `0x${string}`} />
+									<Account chain={props.chain} address={address as `0x${string}`} />
 								</span>
 							</div>
 
@@ -281,7 +283,13 @@ function Balances(props: { block: Block; events: Event[] }) {
 
 										return (
 											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
-												<Erc20 change={change} chain={1} address={address} quantity={quantity} at={hexToNumber(props.block.timestamp)} />
+												<Erc20
+													change={change}
+													chain={props.chain}
+													address={address}
+													quantity={quantity}
+													at={hexToNumber(props.block.timestamp)}
+												/>
 											</div>
 										);
 									}
@@ -291,7 +299,7 @@ function Balances(props: { block: Block; events: Event[] }) {
 
 										return (
 											<div key={asset} className="flex flex-wrap wrap-anywhere items-center gap-1 text-sm text-gray-900">
-												<Erc721 chain={1} address={address} id={id} />
+												<Erc721 chain={props.chain} address={address} id={id} />
 											</div>
 										);
 									}

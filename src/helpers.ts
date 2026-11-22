@@ -1,10 +1,30 @@
 import { http } from "univo/transport";
 
 import type { Event } from "./events";
+import type { Chain } from "./constants";
 import { hexToNumber, raise } from "./utils";
-import { CHAINS, REVERSE_CHAINS } from "./constants";
+import { CHAINS, EXPLORERS, REVERSE_CHAINS, TABLES } from "./constants";
 
-export const node = http(process.env.ETHEREUM_URL);
+export const ethereum = http(process.env.ETHEREUM_URL);
+
+export const arbitrum = http(process.env.ARBITRUM_URL);
+
+export function getExplorerUrl(chain: Chain, path: `/${string}`) {
+	return `${EXPLORERS[chain]}${path}`;
+}
+
+export function getNode(chain: Chain | `0x${string}`) {
+	const chainId = typeof chain === "string" ? hexToNumber(chain) : chain;
+
+	switch (chainId) {
+		case 1:
+			return ethereum;
+		case 42161:
+			return arbitrum;
+		default:
+			return raise(`Unsupported chain id ${chainId}`);
+	}
+}
 
 export function isMobile() {
 	return window.innerWidth < 768;
@@ -33,7 +53,10 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
 			const log = b.log_index - a.log_index;
 			if (log !== 0) return log;
 
-			return 0; // Can't order between these two events
+			const chain = b.chain - a.chain;
+			if (chain !== 0) return chain;
+
+			return TABLES[b.tag] - TABLES[a.tag];
 		});
 	}
 
@@ -54,7 +77,10 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
 		const log = a.log_index - b.log_index;
 		if (log !== 0) return log;
 
-		return 0; // Can't order between these two events
+		const chain = a.chain - b.chain;
+		if (chain !== 0) return chain;
+
+		return TABLES[a.tag] - TABLES[b.tag];
 	});
 }
 
@@ -65,15 +91,9 @@ export function getOrderedEvents(events: Event[], order: "latest" | "reverse") {
  * @param external_chain External chain identifier
  * @returns Internal chain identifier for the provided chain
  */
-export function getInternalChain(external_chain: `0x${string}` | keyof typeof CHAINS) {
-	if (typeof external_chain === "string") {
-		return (
-			CHAINS[hexToNumber(external_chain) as keyof typeof CHAINS] || //
-			raise(`Unsupported chain id ${hexToNumber(external_chain)}`)
-		);
-	}
-
-	return CHAINS[external_chain];
+export function getInternalChain(external_chain: `0x${string}` | number) {
+	const chain = typeof external_chain === "string" ? hexToNumber(external_chain) : external_chain;
+	return CHAINS[chain as Chain] ?? raise(`Unsupported chain id ${chain}`);
 }
 
 /**
