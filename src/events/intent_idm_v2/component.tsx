@@ -1,12 +1,11 @@
 import { isHexEqual } from "@/utils";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { IntentIdmV2 } from "./event";
 import { Description } from "@/components/description";
 
 export function IntentIdmV2AccountDescription(props: { event: IntentIdmV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 
 	// (tx.from) from_address
 

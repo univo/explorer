@@ -1,4 +1,3 @@
-import { getExternalChain } from "@/helpers";
 import { isHexEqual } from "@/utils";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
@@ -11,7 +10,7 @@ import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v2/event";
 import { getFwaListingById } from "@/events/log_fwa_nft_listed_v2/event";
 
 export async function LogFwaNftAllocatedV2Description(props: { event: LogFwaNftAllocatedV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const listing = await getFwaListingById(props.event.listing_id);

@@ -1,4 +1,3 @@
-import { getExternalChain } from "@/helpers";
 import { ETH_ADDRESS } from "@/constants";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
@@ -9,7 +8,7 @@ import { Description } from "@/components/description";
 import { FWA_ADDRESS } from "@/events/intent_fwa_deposited_v2/event";
 
 export function LogFwaNftListedV2Description(props: { event: LogFwaNftListedV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	return (

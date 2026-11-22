@@ -6,14 +6,13 @@ import type { IntentFwaWonV3 } from "./event";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
-import { getExternalChain } from "@/helpers";
 import { FWA_ADDRESS } from "../intent_fwa_deposited_v2/event";
 import { getFwaListingById } from "../log_fwa_nft_listed_v2/event";
 
 const FWA_TOKEN_ADDRESS = "0xa0Df17B5aC76ABaBA36E1450E2cbCd18A620C845";
 
 export async function IntentFwaWonV3AccountDescription(props: { event: IntentFwaWonV3; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const timestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const listing = await getFwaListingById(props.event.listing_id);

@@ -1,6 +1,5 @@
 import { isHexEqual } from "@/utils";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import { Description } from "@/components/description";
 import type { IntentEnsNameRegisteredV2 } from "./event";
@@ -9,7 +8,7 @@ export function IntentEnsNameRegisteredV2AccountDescription(props: {
 	event: IntentEnsNameRegisteredV2;
 	address: `0x${string}` | undefined;
 }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 	const expiry = BigInt(blockTimestamp) + BigInt(props.event.duration);
 

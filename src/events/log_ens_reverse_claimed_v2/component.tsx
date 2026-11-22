@@ -1,5 +1,4 @@
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { LogEnsReverseClaimedV2 } from "./event";
 import { Description } from "@/components/description";
@@ -11,7 +10,7 @@ import { Description } from "@/components/description";
 // I've decided it's not really worth it for a legacy event
 
 export function LogEnsReverseClaimedV2Description(props: { event: LogEnsReverseClaimedV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 
 	return (
 		<Description>

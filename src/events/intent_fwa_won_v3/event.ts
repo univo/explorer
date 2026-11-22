@@ -5,17 +5,18 @@ import { decodeEventLog, decodeFunctionData, getAddress, hexToNumber, parseAbiIt
 import { table } from "./table";
 import type { Id } from "@/events";
 import { inTuple } from "@/db/types";
+import type { Chain } from "@/constants";
 import { isHexEqual, numberToHex } from "@/utils";
 import { createPostgresClient } from "@/db/client";
 import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
-import { getExternalChain, getInternalChain } from "@/helpers";
-import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
+import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { FWA_ADDRESS, FWA_DEPLOYED_BLOCK } from "@/events/intent_fwa_deposited_v2/event";
+import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
 
 export interface IntentFwaWonV3 {
 	tag: "intent_fwa_won_v3";
-	chain: number;
+	chain: Chain;
 	tx_index: number;
 	log_index: number;
 	block_number: number;
@@ -199,7 +200,7 @@ export const event = defineEvent({
 
 				return {
 					tag: "intent_fwa_won_v3",
-					chain: hexToNumber(block.eth_chainId),
+					chain: getChain(block.eth_chainId),
 					log_index: hexToNumber(TRANSACTION_EVENT),
 					tx_index: hexToNumber(tx.transactionIndex),
 					block_number: hexToNumber(block.eth_getBlockByNumber.number),

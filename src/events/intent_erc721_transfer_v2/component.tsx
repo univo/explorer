@@ -2,13 +2,12 @@ import { isHexEqual } from "@/utils";
 import { ZERO_ADDRESS } from "@/constants";
 import { Action } from "@/components/action";
 import { Erc721 } from "@/components/erc-721";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { IntentErc721TransferV2 } from "./event";
 import { Description } from "@/components/description";
 
 export function IntentErc721TransferV2AccountDescription(props: { event: IntentErc721TransferV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 
 	// (tx.from) caller_address: the account that initiated the transfer
 

@@ -1,14 +1,13 @@
 import { isHexEqual } from "@/utils";
 import { Erc20 } from "@/components/erc-20";
 import { Action } from "@/components/action";
-import { getExternalChain } from "@/helpers";
 import { Account } from "@/components/account";
 import type { LogUniswapV3SwapV2 } from "./event";
 import { Description } from "@/components/description";
 import { getPoolByAddress, type LogUniswapV3PoolCreatedV2 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 
 export async function LogUniswapV3SwapV2Description(props: { event: LogUniswapV3SwapV2; address: `0x${string}` | undefined }) {
-	const chain = getExternalChain(props.event.chain);
+	const chain = props.event.chain;
 	const blockTimestamp = props.event.block_timestamp.getTime() / 1000;
 
 	const pool = await getPoolByAddress(props.event.pool_address);
