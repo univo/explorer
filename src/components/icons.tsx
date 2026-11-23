@@ -103,7 +103,7 @@ export function TwitterLogoWhite(props: ComponentProps<"svg">) {
 
 export function ArbitrumLogo(props: ComponentProps<"svg">) {
 	return (
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 741.07 788.07" {...props}>
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="185.04 185.04 370.07 417.47" {...props}>
 			<defs>
 				<clipPath id="clippath">
 					<rect fill="none" x="185.04" y="185.04" width="370.07" height="417.47" />

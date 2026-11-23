@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
-import { GitHubLogoWhite, SearchIcon, TwitterLogoWhite } from "@/components/icons";
+import { ArbitrumLogo, GitHubLogoWhite, SearchIcon, TwitterLogoWhite } from "@/components/icons";
 import { useFrames } from "@/frames/frame-context";
 import { OpenSearchButton } from "@/components/open-search-button";
 import { Frame, FrameContainer, FramesContainer } from "@/frames/frame-context-provider";
@@ -40,17 +40,8 @@ function Component() {
 function IndexFrame() {
 	return (
 		<div className="relative h-full">
-			<div
-				aria-hidden="true"
-				className="pointer-events-none absolute inset-x-0 bottom-0 -top-px overflow-hidden"
-			>
-				<img
-					alt=""
-					src="/img/home-grid.svg"
-					width={768}
-					height={1024}
-					className="absolute inset-0 size-full"
-				/>
+			<div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -top-px overflow-hidden">
+				<img alt="" src="/img/home-grid.svg" width={768} height={1024} className="absolute inset-0 size-full" />
 				<img
 					alt=""
 					src="/img/grid-trails.svg"
@@ -64,12 +55,12 @@ function IndexFrame() {
 
 			<div className="relative w-full h-full flex flex-col justify-between">
 				<div className="px-4">
-					<div className="mt-40 flex gap-2">
+					<div className="mt-40 flex gap-2.5">
 						<a
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://x.com/univo_app"
-							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-black border border-gray-150"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-black shadow-md"
 						>
 							<TwitterLogoWhite className="size-4" />
 
@@ -80,7 +71,7 @@ function IndexFrame() {
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://github.com/univo/explorer"
-							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-[#101411] border border-gray-150"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-[#101411] shadow-md"
 						>
 							<GitHubLogoWhite className="size-4" />
 
@@ -113,11 +104,17 @@ function IndexFrame() {
 						</div>
 					</OpenSearchButton>
 
-					<div className="mt-[40px] flex gap-2">
+					<div className="mt-[40px] flex gap-2.5">
 						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5">
 							<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
 
 							<span className="text-gray-900 text-sm">Ethereum</span>
+						</div>
+
+						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5">
+							<ArbitrumLogo className="size-4" />
+
+							<span className="text-gray-900 text-sm">Arbitrum</span>
 						</div>
 					</div>
 				</div>
