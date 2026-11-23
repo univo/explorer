@@ -22,7 +22,6 @@
 		"dataloader": "2.2.3",
 		"drizzle-orm": "0.45.2",
 		"pg": "8.22.0",
-		"radix-ui": "1.4.3",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"react-error-boundary": "6.1.2",
