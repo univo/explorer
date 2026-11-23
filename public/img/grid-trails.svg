@@ -9,7 +9,7 @@
 		#glow-3 { offset-path: url(#route-3); }
 		#glow-4 { offset-path: url(#route-4); }
 		#glow-5 { offset-path: url(#route-5); }
-		#glow-6 { offset-path: url(#route-6); }
+		#glow-6, .glow-6-extra { offset-path: url(#route-6); }
 		#glow-7 { offset-path: url(#route-7); }
 		#glow-8 { offset-path: url(#route-8); }
 		@keyframes travel {
@@ -88,7 +88,15 @@
 			</g>
 		</g>
 		<g mask="url(#mask-6)">
+			<!-- Three equally spaced trails share this narrow-screen-safe route.
+			     Keep their 46s periods identical so the spacing never drifts. -->
 			<g id="glow-6" class="glow" style="--duration: 46s; --delay: -21s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
+			</g>
+			<g class="glow glow-6-extra" style="--duration: 46s; --delay: -36.333333s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
+			</g>
+			<g class="glow glow-6-extra" style="--duration: 46s; --delay: -5.666667s" transform="translate(-50, 0)">
 				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
