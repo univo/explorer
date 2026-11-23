@@ -31,75 +31,75 @@
 		<path id="route-7" d="M479.5 1152V768.5H543.5V480.5H447.5V-128"/>
 		<path id="route-8" d="M1183.5-128V288.5H1247.5V640.5H1151.5V1152"/>
 		<radialGradient id="trail" cx="1" cy=".5" r=".5" gradientUnits="objectBoundingBox">
-			<stop stop-color="#15616d" stop-opacity=".9"/>
+			<stop stop-color="#15616d" stop-opacity="1"/>
 			<stop offset="1" stop-color="#15616d" stop-opacity="0"/>
 		</radialGradient>
 		<mask id="mask-1" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-1" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-1" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-2" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-2" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-2" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-3" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-3" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-3" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-4" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-4" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-4" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-5" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-5" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-5" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-6" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-6" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-6" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-7" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-7" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-7" stroke="white" stroke-width="1"/>
 		</mask>
 		<mask id="mask-8" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024">
-			<use xlink:href="#route-8" stroke="white" stroke-width="1.5"/>
+			<use xlink:href="#route-8" stroke="white" stroke-width="1"/>
 		</mask>
 	</defs>
 	<!-- Same technique as the reference: a radial glow moved with CSS offset-path,
 	     clipped to a stationary route mask. -->
 	<g class="trails" fill="url(#trail)">
 		<g mask="url(#mask-1)">
-			<g id="glow-1" class="glow" style="--duration: 48s; --delay: -8s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-1" class="glow" style="--duration: 48s; --delay: -8s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-2)">
-			<g id="glow-2" class="glow" style="--duration: 54s; --delay: -29s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-2" class="glow" style="--duration: 54s; --delay: -29s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-3)">
-			<g id="glow-3" class="glow" style="--duration: 50s; --delay: -17s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-3" class="glow" style="--duration: 50s; --delay: -17s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-4)">
-			<g id="glow-4" class="glow" style="--duration: 58s; --delay: -43s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-4" class="glow" style="--duration: 58s; --delay: -43s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-5)">
-			<g id="glow-5" class="glow" style="--duration: 52s; --delay: -5s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-5" class="glow" style="--duration: 52s; --delay: -5s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-6)">
-			<g id="glow-6" class="glow" style="--duration: 46s; --delay: -21s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-6" class="glow" style="--duration: 46s; --delay: -21s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-7)">
-			<g id="glow-7" class="glow" style="--duration: 56s; --delay: -39s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-7" class="glow" style="--duration: 56s; --delay: -39s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 		<g mask="url(#mask-8)">
-			<g id="glow-8" class="glow" style="--duration: 49s; --delay: -12s" transform="translate(-112, 0)">
-				<rect x="-112" y="-112" width="224" height="224"/>
+			<g id="glow-8" class="glow" style="--duration: 49s; --delay: -12s" transform="translate(-50, 0)">
+				<rect x="-50" y="-50" width="100" height="100"/>
 			</g>
 		</g>
 	</g>
