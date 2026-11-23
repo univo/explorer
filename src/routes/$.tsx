@@ -60,7 +60,7 @@ function IndexFrame() {
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://x.com/univo_app"
-							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-black shadow-md"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-black"
 						>
 							<TwitterLogoWhite className="size-4" />
 
@@ -71,7 +71,7 @@ function IndexFrame() {
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://github.com/univo/explorer"
-							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-[#101411] shadow-md"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-[#101411]"
 						>
 							<GitHubLogoWhite className="size-4" />
 
