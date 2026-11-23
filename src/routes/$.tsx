@@ -41,9 +41,15 @@ function IndexFrame() {
 	return (
 		<div className="relative h-full">
 			<div
+				aria-hidden="true"
 				style={{ backgroundSize: "32px", backgroundPosition: "16px 0px" }}
-				className="absolute inset-x-0 bottom-0 -top-px bg-[url('/img/grid.svg')]"
-			/>
+				className="pointer-events-none absolute inset-x-0 bottom-0 -top-px bg-[url('/img/grid.svg')]"
+			>
+				<div
+					style={{ backgroundSize: "1536px 1024px", backgroundPosition: "16px 0px" }}
+					className="absolute inset-0 bg-[url('/img/grid-trails.svg')] motion-reduce:hidden"
+				/>
+			</div>
 
 			<div className="absolute inset-0 bg-linear-to-b from-white" />
 
