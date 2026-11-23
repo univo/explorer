@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
-import { SearchIcon } from "@/components/icons";
+import { GitHubLogoWhite, SearchIcon, TwitterLogoWhite } from "@/components/icons";
 import { useFrames } from "@/frames/frame-context";
 import { OpenSearchButton } from "@/components/open-search-button";
 import { Frame, FrameContainer, FramesContainer } from "@/frames/frame-context-provider";
@@ -49,23 +49,41 @@ function IndexFrame() {
 
 			<div className="relative w-full h-full flex flex-col justify-between">
 				<div className="px-4">
-					<div className="mt-40 h-7 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5">
-						<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
+					<div className="mt-40 flex gap-2">
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://x.com/univo_app"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-black border border-gray-150"
+						>
+							<TwitterLogoWhite className="size-4" />
 
-						<span className="text-gray-900 text-sm">Ethereum</span>
+							<span className="text-white text-sm">Twitter</span>
+						</a>
+
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://github.com/univo/explorer"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-[#101411] border border-gray-150"
+						>
+							<GitHubLogoWhite className="size-4" />
+
+							<span className="text-white text-sm">GitHub</span>
+						</a>
 					</div>
 
-					<h1 className="mt-6 text-3xl font-semibold text-gray-900">
+					<h1 className="mt-[34px] text-3xl font-semibold text-gray-900">
 						explorer.<span className="text-primary-500">univo</span>.app
 					</h1>
 
-					<h2 className="mt-2 text-xl text-gray-500">
+					<h2 className="mt-[4px] text-xl text-gray-500">
 						Explore billions of <span className="hidden md:inline-block">public</span> blockchain events
 					</h2>
 
 					<OpenSearchButton
 						type="button"
-						className="mt-[27px] relative w-full cursor-pointer flex items-center justify-between bg-white rounded-lg ring-1 ring-black/5 shadow-sm h-10 px-4"
+						className="mt-[34px] h-[47px] relative w-full cursor-pointer flex items-center justify-between bg-white rounded-lg ring-1 ring-black/5 shadow-sm px-4"
 					>
 						<div className="flex items-center gap-4">
 							<SearchIcon className="shrink-0 text-gray-500 size-4" />
@@ -80,24 +98,12 @@ function IndexFrame() {
 						</div>
 					</OpenSearchButton>
 
-					<div className="flex gap-2">
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://github.com/univo/explorer"
-							className="mt-8 h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-150 text-gray-900 text-sm"
-						>
-							GitHub
-						</a>
+					<div className="mt-[40px] flex gap-2">
+						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5">
+							<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
 
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://x.com/univo_app"
-							className="mt-8 h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-150 text-gray-900 text-sm"
-						>
-							Twitter
-						</a>
+							<span className="text-gray-900 text-sm">Ethereum</span>
+						</div>
 					</div>
 				</div>
 			</div>
