@@ -42,12 +42,21 @@ function IndexFrame() {
 		<div className="relative h-full">
 			<div
 				aria-hidden="true"
-				style={{ backgroundSize: "32px", backgroundPosition: "16px 0px" }}
-				className="pointer-events-none absolute inset-x-0 bottom-0 -top-px bg-[url('/img/grid.svg')]"
+				className="pointer-events-none absolute inset-x-0 bottom-0 -top-px overflow-hidden"
 			>
-				<div
-					style={{ backgroundSize: "1536px 1024px", backgroundPosition: "16px 0px" }}
-					className="absolute inset-0 bg-[url('/img/grid-trails.svg')] motion-reduce:hidden"
+				<img
+					alt=""
+					src="/img/home-grid.svg"
+					width={768}
+					height={1024}
+					className="absolute inset-0 size-full"
+				/>
+				<img
+					alt=""
+					src="/img/grid-trails.svg"
+					width={768}
+					height={1024}
+					className="absolute left-0 top-0 h-[1024px] w-[768px] max-w-none motion-reduce:hidden"
 				/>
 			</div>
 
