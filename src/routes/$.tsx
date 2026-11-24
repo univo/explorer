@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
-import { ArbitrumLogo, GitHubLogoWhite, SearchIcon, TwitterLogo } from "@/components/icons";
 import { useFrames } from "@/frames/frame-context";
 import { OpenSearchButton } from "@/components/open-search-button";
 import { Frame, FrameContainer, FramesContainer } from "@/frames/frame-context-provider";
+import { ArbitrumLogo, BaseLogo, GitHubLogoWhite, SearchIcon, TwitterLogo } from "@/components/icons";
 
 export const Route = createFileRoute("/$")({
 	component: Component,
@@ -104,6 +104,12 @@ function IndexFrame() {
 							<ArbitrumLogo className="size-4" />
 
 							<span className="text-gray-900 text-sm">Arbitrum</span>
+						</div>
+
+						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm">
+							<BaseLogo className="size-4" />
+
+							<span className="text-gray-900 text-sm">Base</span>
 						</div>
 					</div>
 				</div>

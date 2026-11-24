@@ -9,6 +9,8 @@ export const ethereum = http(process.env.ETHEREUM_URL);
 
 export const arbitrum = http(process.env.ARBITRUM_URL);
 
+export const base = http(process.env.BASE_URL);
+
 export function getExplorerUrl(chain: Chain, path: `/${string}`) {
 	return `${EXPLORERS[chain]}${path}`;
 }
@@ -21,6 +23,8 @@ export function getNode(chain: Chain | `0x${string}`) {
 			return ethereum;
 		case 42161:
 			return arbitrum;
+		case 8453:
+			return base;
 		default:
 			return raise(`Unsupported chain id ${chainId}`);
 	}
@@ -98,7 +102,7 @@ export function getInternalChain(external_chain: `0x${string}` | number) {
 export function getChain(external_chain: `0x${string}` | number): Chain {
 	const chain = typeof external_chain === "string" ? hexToNumber(external_chain) : external_chain;
 
-	if (chain === 1 || chain === 42161) {
+	if (chain === 1 || chain === 42161 || chain === 8453) {
 		return chain;
 	}
 

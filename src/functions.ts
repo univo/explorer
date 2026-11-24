@@ -21,7 +21,7 @@ export const sf_getLatestEventForAccount = createServerFn({ method: "GET" })
 		const [id] = await getEventIdsForAccount(data.address, {
 			limit: 1,
 			order: "latest",
-			chains: [1, 42161],
+			chains: [1, 42161, 8453],
 			tables: PRESETS[data.preset],
 		});
 

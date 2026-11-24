@@ -5,12 +5,13 @@ import { getAddress, isAddress } from "viem";
 import { Command, useCommandState } from "cmdk";
 import { Select } from "@base-ui/react/select";
 
+import { isMobile } from "@/helpers";
 import { TxHashSchema } from "@/schema";
+import { ChainLogo } from "./chain-logo";
 import type { Chain } from "@/constants";
 import { frame, getFrame } from "@/frames/frame";
 import { useFrames } from "@/frames/frame-context";
-import { ArbitrumLogo, ChevronUpDownIcon, SearchIcon, XIcon } from "./icons";
-import { isMobile } from "@/helpers";
+import { ChevronUpDownIcon, SearchIcon, XIcon } from "./icons";
 
 interface SearchProps {
 	onClose?: () => void;
@@ -100,15 +101,8 @@ export function Search(props: SearchProps) {
 const chains = [
 	{ value: 1, label: "Ethereum" },
 	{ value: 42161, label: "Arbitrum" },
+	{ value: 8453, label: "Base" },
 ] satisfies { value: Chain; label: string }[];
-
-function ChainLogo({ chain }: { chain: Chain }) {
-	return chain === 42161 ? (
-		<ArbitrumLogo className="size-4 shrink-0" aria-hidden="true" />
-	) : (
-		<img alt="" className="size-4 shrink-0 rounded-full" src="https://etherscan.io/token/images/ether.png" />
-	);
-}
 
 function ChainSelect(props: { value: Chain; onValueChange: (chain: Chain) => void }) {
 	return (
@@ -175,6 +169,20 @@ function EmptyState(props: { chain: Chain }) {
 }
 
 const tokens = [
+	{
+		chain: 8453,
+		name: "USDC",
+		symbol: "USDC",
+		address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+		image: "https://etherscan.io/token/images/centre-usdc_28.png",
+	},
+	{
+		chain: 8453,
+		name: "Wrapped Ether",
+		symbol: "WETH",
+		address: "0x4200000000000000000000000000000000000006",
+		image: "https://etherscan.io/token/images/weth_28.png?v=2",
+	},
 	{
 		chain: 1,
 		name: "USDC",

@@ -15,8 +15,8 @@ import { StopCursorContainer, VirtualisationContainer } from "@/frames/3-address
 export async function AddressEventsRsc(props: { address: `0x${string}`; preset: Preset; startCursor: string }) {
 	const ids = await getEventIdsForAccount(props.address, {
 		limit: 100,
-		chains: [1, 42161],
 		order: "latest",
+		chains: [1, 42161, 8453],
 		tables: PRESETS[props.preset],
 		cursor: deserializeCursor(props.startCursor),
 	});
