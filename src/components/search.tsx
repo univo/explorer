@@ -190,13 +190,6 @@ const tokens = [
 	},
 	{
 		chain: 1,
-		symbol: "stETH",
-		name: "Lido Staked Ether",
-		address: "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-		image: "https://etherscan.io/token/images/steth_32.svg",
-	},
-	{
-		chain: 1,
 		symbol: "AAVE",
 		name: "Aave Token",
 		address: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
@@ -252,6 +245,76 @@ const tokens = [
 		address: "0x6c3ea9036406852006290770bedfcaba0e23a0e8",
 		image: "https://etherscan.io/token/images/paypalusd_32.png",
 	},
+	{
+		chain: 42161,
+		name: "USDC",
+		symbol: "USDC",
+		address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+		image: "https://etherscan.io/token/images/centre-usdc_28.png",
+	},
+	{
+		chain: 42161,
+		symbol: "USDT",
+		name: "Tether USD",
+		address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9", // Migrated to USDT0.
+		image: "https://etherscan.io/token/images/tethernew_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "AAVE",
+		name: "Aave Token",
+		address: "0xba5ddd1f9d7f570dc94a51479a000e3bce967196",
+		image: "https://etherscan.io/token/images/aaverplce_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "UNI",
+		name: "Uniswap",
+		address: "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+		image: "https://etherscan.io/token/images/uniswap_ofc_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "LINK",
+		name: "Chainlink",
+		address: "0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
+		image: "https://etherscan.io/token/images/chainlink_ofc_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "SHIB",
+		name: "SHIBA INU",
+		address: "0x5033833c9fe8b9d3e09eed2f73d2aaf7e3872fd1",
+		image: "https://etherscan.io/token/images/shibainu_ofc_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "DAI",
+		name: "Dai Stablecoin",
+		address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
+		image: "https://etherscan.io/token/images/dairplce_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "WBTC",
+		name: "Wrapped BTC",
+		address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+		image: "https://etherscan.io/token/images/wrappedbtc_ofc_32.svg",
+	},
+	{
+		chain: 42161,
+		symbol: "WETH",
+		name: "Wrapped Ether",
+		address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+		image: "https://etherscan.io/token/images/weth_28.png?v=2",
+	},
+	{
+		chain: 42161,
+		symbol: "PYUSD",
+		name: "PayPal USD",
+		address: "0x46850ad61c2b7d64d08c9c754f45254596696984",
+		image: "https://etherscan.io/token/images/paypalusd_32.png",
+	},
 ];
 
 function Tokens(props: { chain: Chain; onClose?: () => void }) {
@@ -259,36 +322,35 @@ function Tokens(props: { chain: Chain; onClose?: () => void }) {
 
 	return (
 		<Command.Group className="p-2" heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}>
-			{tokens
-				.filter((token) => token.chain === props.chain)
-				.map((token) => {
-					async function onSelect() {
-						await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
+			{tokens.filter((token) => token.chain === props.chain).map((token) => {
+				async function onSelect() {
+					await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
 
-						if (props.onClose) {
-							props.onClose();
-						}
+					if (props.onClose) {
+						props.onClose();
 					}
+				}
 
-					return (
-						<Command.Item
-							onSelect={onSelect}
-							key={token.chain + token.address}
-							className="group flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer aria-selected:bg-gray-100"
-						>
-							<div className="flex items-center gap-2.5 min-w-0">
-								<div className="shrink-0 rounded-full overflow-hidden size-4">
-									<img alt="" src={token.image} />
-								</div>
-
-								<div className="flex items-center gap-1">
-									<span className="text-sm">{token.name}</span>
-									<span className="text-sm text-gray-500">({token.symbol})</span>
-								</div>
+				return (
+					<Command.Item
+						onSelect={onSelect}
+						key={token.symbol}
+						value={`${token.name} ${token.symbol}`}
+						className="group flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer aria-selected:bg-gray-100"
+					>
+						<div className="flex items-center gap-2.5 min-w-0">
+							<div className="shrink-0 rounded-full overflow-hidden size-4">
+								<img alt="" src={token.image} />
 							</div>
-						</Command.Item>
-					);
-				})}
+
+							<div className="flex items-center gap-1">
+								<span className="text-sm">{token.name}</span>
+								<span className="text-sm text-gray-500">({token.symbol})</span>
+							</div>
+						</div>
+					</Command.Item>
+				);
+			})}
 		</Command.Group>
 	);
 }
