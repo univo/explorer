@@ -91,6 +91,7 @@ const scrollToFrame = (segment: number) => useFrameScroll.setState(segment);
 
 export function FramesContainer(props: { children: ReactNode }) {
 	const frame = useFrameScroll();
+	const frames = useFrames();
 	const ref = useRef<HTMLDivElement>(null);
 
 	const isScrolling = typeof frame === "number";
@@ -108,6 +109,10 @@ export function FramesContainer(props: { children: ReactNode }) {
 	return (
 		<div ref={ref} className="h-full flex overflow-x-auto scroll-smooth snap-x snap-mandatory">
 			{props.children}
+
+			{frames.value.length <= 1 && (
+				<div aria-hidden="true" className="hidden md:block shrink-0 w-(--frame-width) border-r border-dashed border-gray-200" />
+			)}
 
 			{isScrolling && <div className="shrink-0 w-screen md:w-(--frame-width)" />}
 		</div>
