@@ -21,6 +21,7 @@ import { TABLES, TRANSACTION_EVENT } from "@/constants";
 import { index_account_v4 } from "@/indexes/index_account_v4";
 import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
+import { getUniswapV3FactoryAddress } from "@/events/log_uniswap_v3_pool_created_v2/event";
 
 export interface IntentUniswapV3MintV2 {
 	tag: "intent_uniswap_v3_mint_v2";
@@ -44,12 +45,13 @@ export interface IntentUniswapV3MintV2 {
 
 export const UNISWAP_V3_POSITION_MANAGER_DEPLOYED_BLOCK = 12369651;
 export const UNISWAP_V3_ARBITRUM_POSITION_MANAGER_DEPLOYED_BLOCK = 173;
+export const UNISWAP_V3_BASE_POSITION_MANAGER_DEPLOYED_BLOCK = 1371714;
+export const UNISWAP_V3_BASE_POSITION_MANAGER_ADDRESS = getAddress("0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1");
 
-// Both chains use v3-periphery@1.0.0 with the same factory and pool init-code hash.
+// Ethereum and Arbitrum share this v3-periphery@1.0.0 position manager.
 // https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_POSITION_MANAGER_ADDRESS = getAddress("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
 
-const UNISWAP_V3_FACTORY_ADDRESS = getAddress("0x1F98431c8aD98523631AE4a59f267346ea31F984");
 const UNISWAP_V3_POOL_INIT_CODE_HASH = "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54";
 
 const MINT_ABI = parseAbi([
@@ -74,17 +76,30 @@ export const event = defineEvent({
 			address: UNISWAP_V3_POSITION_MANAGER_ADDRESS,
 			fromBlock: UNISWAP_V3_ARBITRUM_POSITION_MANAGER_DEPLOYED_BLOCK,
 		},
+		{
+			chain: 8453,
+			function: MINT_SELECTOR,
+			address: UNISWAP_V3_BASE_POSITION_MANAGER_ADDRESS,
+			fromBlock: UNISWAP_V3_BASE_POSITION_MANAGER_DEPLOYED_BLOCK,
+		},
 	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentUniswapV3MintV2>((tx) => {
 			try {
+				if (getChain(block.eth_chainId) === 8453 && Number(tx.type) === 126) {
+					return [];
+				}
+
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
 					return [];
 				}
 
-				if (!isHexEqual(tx.to, UNISWAP_V3_POSITION_MANAGER_ADDRESS)) {
+				const chain = getChain(block.eth_chainId);
+				const positionManager = chain === 8453 ? UNISWAP_V3_BASE_POSITION_MANAGER_ADDRESS : UNISWAP_V3_POSITION_MANAGER_ADDRESS;
+
+				if (!isHexEqual(tx.to, positionManager)) {
 					return [];
 				}
 
@@ -98,7 +113,7 @@ export const event = defineEvent({
 				const token1 = getAddress(params.token1);
 
 				const poolAddress = getCreate2Address({
-					from: UNISWAP_V3_FACTORY_ADDRESS,
+					from: getUniswapV3FactoryAddress(chain),
 					bytecodeHash: UNISWAP_V3_POOL_INIT_CODE_HASH,
 					salt: keccak256(
 						encodeAbiParameters([{ type: "address" }, { type: "address" }, { type: "uint24" }], [token0, token1, params.fee]),

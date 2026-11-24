@@ -38,10 +38,19 @@ export const event = defineEvent({
 			chain: 42161,
 			fromBlock: 0,
 		},
+		{
+			chain: 8453,
+			fromBlock: 0,
+		},
 	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentNativeTransferV2>((tx) => {
+			// Deposit transactions are protocol operations, not user transfer intents.
+			if (getChain(block.eth_chainId) === 8453 && Number(tx.type) === 126) {
+				return [];
+			}
+
 			if (BigInt(tx.value) === 0n) {
 				return [];
 			}

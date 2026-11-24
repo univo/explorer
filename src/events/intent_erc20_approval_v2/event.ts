@@ -46,11 +46,20 @@ export const event = defineEvent({
 			fromBlock: 0,
 			function: APPROVE_SELECTOR,
 		},
+		{
+			chain: 8453,
+			fromBlock: 0,
+			function: APPROVE_SELECTOR,
+		},
 	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc20ApprovalV2>((tx) => {
 			try {
+				if (getChain(block.eth_chainId) === 8453 && Number(tx.type) === 126) {
+					return [];
+				}
+
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
 					return [];
