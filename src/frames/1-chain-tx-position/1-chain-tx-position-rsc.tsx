@@ -158,14 +158,6 @@ export async function TxPositionRsc(props: { chain: Chain; block: number; tx: nu
 }
 
 function Logs(props: { events: Event[] }) {
-	if (props.events.length === 0) {
-		return (
-			<div className="p-3 flex items-center justify-center">
-				<p className="text-gray-900 text-sm">No events found</p>
-			</div>
-		);
-	}
-
 	const logs = props.events.filter((event) => {
 		return !isHexEqual(numberToHex(event.log_index), TRANSACTION_EVENT);
 	});
@@ -177,6 +169,8 @@ function Logs(props: { events: Event[] }) {
 			</div>
 
 			<div className="p-3 flex flex-col gap-1">
+				{logs.length === 0 && <p className="text-gray-900 text-sm text-center">No events found</p>}
+
 				{logs.map((event, i) => {
 					return (
 						<ErrorBoundary key={i} fallback={null}>
