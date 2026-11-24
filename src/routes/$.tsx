@@ -41,12 +41,12 @@ function IndexFrame() {
 	return (
 		<div className="relative h-full">
 			<div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -top-px overflow-hidden">
-				<img alt="" src="/img/home-grid.svg" width={768} height={1024} className="absolute inset-0 size-full" />
+				<img alt="" src="/img/grid-background.svg" width={768} height={1024} className="absolute inset-0 size-full" />
 				<img
 					alt=""
-					src="/img/grid-trails.svg"
 					width={768}
 					height={1024}
+					src="/img/grid-trails.svg"
 					className="absolute left-0 top-0 h-[1024px] w-[768px] max-w-none motion-reduce:hidden"
 				/>
 			</div>
