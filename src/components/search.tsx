@@ -3,21 +3,19 @@ import * as v from "valibot";
 import { useState } from "react";
 import { getAddress, isAddress } from "viem";
 import { Command, useCommandState } from "cmdk";
+import { Select } from "@base-ui/react/select";
 
 import { TxHashSchema } from "@/schema";
-import { SearchIcon, XIcon } from "./icons";
+import type { Chain } from "@/constants";
 import { frame, getFrame } from "@/frames/frame";
 import { useFrames } from "@/frames/frame-context";
-
-// TODO
-// Probably need to add a dropdown for the supported chains, this makes it explictly clear when pasting
-// an address or block number which chain is actually intended for the search
+import { ArbitrumLogo, ChevronUpDownIcon, SearchIcon, XIcon } from "./icons";
 
 interface SearchProps {
 	onClose?: () => void;
 }
 
-function getSearchFrame(search: string) {
+function getSearchFrame(chain: Chain, search: string) {
 	if (isAddress(search)) {
 		return getFrame(frame.format({ type: "address", data: getAddress(search) }));
 	}
@@ -25,7 +23,7 @@ function getSearchFrame(search: string) {
 	const hash = v.safeParse(TxHashSchema, search);
 
 	if (hash.success) {
-		return getFrame(frame.format({ type: "chain-tx-hash", data: { chain: 1, tx_hash: hash.output } }));
+		return getFrame(frame.format({ type: "chain-tx-hash", data: { chain, tx_hash: hash.output } }));
 	}
 
 	return getFrame(search);
@@ -33,12 +31,14 @@ function getSearchFrame(search: string) {
 
 export function Search(props: SearchProps) {
 	const frames = useFrames();
+
 	const [search, setSearch] = useState("");
+	const [chain, setChain] = useState<Chain>(1);
 
 	async function onPaste() {
 		const search = await navigator.clipboard.readText();
 
-		const parsed = getSearchFrame(search);
+		const parsed = getSearchFrame(chain, search);
 
 		if (!parsed) {
 			return;
@@ -53,8 +53,8 @@ export function Search(props: SearchProps) {
 
 	return (
 		<Command className="bg-white shadow-xl w-full rounded-none sm:rounded-lg ring-1 ring-black/5 outline-hidden overflow-hidden">
-			<div className="flex flex-col flex-1 min-h-screen md:min-h-0 divide-y divide-gray-100">
-				<div className="relative flex items-center">
+			<div className="flex flex-col flex-1 min-h-screen md:min-h-0">
+				<div className="relative flex items-center border-b border-gray-100">
 					<SearchIcon className="shrink-0 absolute text-gray-500 size-4 start-4" />
 
 					<Command.Input
@@ -62,43 +62,107 @@ export function Search(props: SearchProps) {
 						onPaste={onPaste}
 						onValueChange={setSearch}
 						placeholder="Search tokens, transactions, accounts..."
-						className="w-full placeholder-gray-500 bg-transparent border-0 text-gray-900 focus:ring-0 focus:outline-hidden text-sm h-11 md:h-12 px-4 ps-11 pe-10"
+						className="w-full min-w-0 placeholder-gray-500 bg-transparent border-0 text-gray-900 focus:ring-0 focus:outline-hidden text-sm h-11 md:h-12 px-4 ps-11"
 					/>
 
-					{!!props.onClose && (
-						<button
-							type="button"
-							onClick={props.onClose}
-							className={clsx(
-								"cursor-pointer inline-flex items-center absolute end-2.5 rounded-md shrink-0 p-1.5 text-gray-400",
-								"focus:outline-hidden focus-visible:outline-0",
-								"focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500",
-								"disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75",
-								"hover:text-gray-500 hover:bg-gray-100",
-							)}
-						>
-							<XIcon className="shrink-0 size-4" />
-						</button>
-					)}
+					<div className="flex shrink-0 items-center gap-1 pr-2.5" onKeyDown={(event) => event.stopPropagation()}>
+						<ChainSelect value={chain} onValueChange={setChain} />
+
+						{!!props.onClose && (
+							<button
+								type="button"
+								onClick={props.onClose}
+								className={clsx(
+									"hover:text-gray-500 hover:bg-gray-100",
+									"focus:outline-hidden focus-visible:outline-0",
+									"focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:border-blue-300",
+									"disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75",
+									"cursor-pointer inline-flex items-center rounded-md shrink-0 p-1.5 text-gray-400 border border-transparent",
+								)}
+							>
+								<XIcon className="shrink-0 size-4" />
+							</button>
+						)}
+					</div>
 				</div>
 
 				<Command.List className="outline-hidden overflow-y-auto grow sm:h-[398px]">
-					<EmptyState />
-					<Tokens onClose={props.onClose} />
+					<EmptyState chain={chain} />
+
+					<Tokens chain={chain} onClose={props.onClose} />
 				</Command.List>
 			</div>
 		</Command>
 	);
 }
 
-function EmptyState() {
+const chains = [
+	{ value: 1, label: "Ethereum" },
+	{ value: 42161, label: "Arbitrum" },
+] satisfies { value: Chain; label: string }[];
+
+function ChainLogo({ chain }: { chain: Chain }) {
+	return chain === 42161 ? (
+		<ArbitrumLogo className="size-4 shrink-0" aria-hidden="true" />
+	) : (
+		<img alt="" className="size-4 shrink-0 rounded-full" src="https://etherscan.io/token/images/ether.png" />
+	);
+}
+
+function ChainSelect(props: { value: Chain; onValueChange: (chain: Chain) => void }) {
+	return (
+		<Select.Root
+			items={chains}
+			value={props.value}
+			onValueChange={(value) => {
+				if (value !== null) {
+					props.onValueChange(value);
+				}
+			}}
+		>
+			<Select.Trigger
+				aria-label="Chain"
+				className="inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-sm text-gray-400 cursor-pointer hover:text-gray-500 hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-200 border border-transparent focus-visible:border-blue-300"
+			>
+				<ChainLogo chain={props.value} />
+
+				<Select.Value />
+
+				<Select.Icon className="">
+					<ChevronUpDownIcon className="size-4" aria-hidden="true" />
+				</Select.Icon>
+			</Select.Trigger>
+
+			<Select.Portal>
+				<Select.Positioner alignItemWithTrigger className="z-50">
+					<Select.Popup className="min-w-(--anchor-width) rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 outline-hidden">
+						<Select.List>
+							{chains.map((chain) => (
+								<Select.Item
+									key={chain.value}
+									value={chain.value}
+									className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1 text-sm text-gray-900 outline-hidden data-highlighted:bg-gray-100"
+								>
+									<ChainLogo chain={chain.value} />
+									<Select.ItemText>{chain.label}</Select.ItemText>
+								</Select.Item>
+							))}
+						</Select.List>
+					</Select.Popup>
+				</Select.Positioner>
+			</Select.Portal>
+		</Select.Root>
+	);
+}
+
+function EmptyState(props: { chain: Chain }) {
 	const search = useCommandState((state) => state.search);
 
 	if (search === "") {
 		return null;
 	}
 
-	if (getSearchFrame(search)) {
+	if (getSearchFrame(props.chain, search)) {
 		return null;
 	}
 
@@ -190,39 +254,41 @@ const tokens = [
 	},
 ];
 
-function Tokens(props: { onClose?: () => void }) {
+function Tokens(props: { chain: Chain; onClose?: () => void }) {
 	const frames = useFrames();
 
 	return (
 		<Command.Group className="p-2" heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}>
-			{tokens.map((token) => {
-				async function onSelect() {
-					await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
+			{tokens
+				.filter((token) => token.chain === props.chain)
+				.map((token) => {
+					async function onSelect() {
+						await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
 
-					if (props.onClose) {
-						props.onClose();
+						if (props.onClose) {
+							props.onClose();
+						}
 					}
-				}
 
-				return (
-					<Command.Item
-						onSelect={onSelect}
-						key={token.chain + token.address}
-						className="group flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer aria-selected:bg-gray-100"
-					>
-						<div className="flex items-center gap-2.5 min-w-0">
-							<div className="shrink-0 rounded-full overflow-hidden size-4">
-								<img alt="" src={token.image} />
-							</div>
+					return (
+						<Command.Item
+							onSelect={onSelect}
+							key={token.chain + token.address}
+							className="group flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer aria-selected:bg-gray-100"
+						>
+							<div className="flex items-center gap-2.5 min-w-0">
+								<div className="shrink-0 rounded-full overflow-hidden size-4">
+									<img alt="" src={token.image} />
+								</div>
 
-							<div className="flex items-center gap-1">
-								<span className="text-sm">{token.name}</span>
-								<span className="text-sm text-gray-500">({token.symbol})</span>
+								<div className="flex items-center gap-1">
+									<span className="text-sm">{token.name}</span>
+									<span className="text-sm text-gray-500">({token.symbol})</span>
+								</div>
 							</div>
-						</div>
-					</Command.Item>
-				);
-			})}
+						</Command.Item>
+					);
+				})}
 		</Command.Group>
 	);
 }
