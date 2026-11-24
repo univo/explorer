@@ -1,9 +1,6 @@
 import { getAddress } from "viem";
 
-import { getExplorerUrl } from "@/helpers";
 import type { Account } from "@/state/account";
-import { EtherscanIcon } from "@/components/icons";
-import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
 import { getEnsNameForAccount } from "@/cache/ens/ens";
 import { getAccount, getAccountName } from "@/state/account";
@@ -30,10 +27,6 @@ export async function AddressHeaderRsc(props: { address: `0x${string}` }) {
 
 				<div className="flex items-center gap-2">
 					<CopyButton value={props.address} />
-
-					<IconButton href={getExplorerUrl(1, `/address/${props.address}`)} title="View on Etherscan" aria-label="View on Etherscan">
-						<EtherscanIcon className="shrink-0 size-4" />
-					</IconButton>
 
 					<CloseFrameButton />
 				</div>
