@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1024" viewBox="-16 0 768 1024" fill="none">
+	<!-- Use the reference's structure: a motion path, a direct path mask with
+	     default bounds, and one 100px radial glow per route. -->
+	<path id="route-1" d="M-64 192.5H191.5V256.5H832" stroke="transparent"/>
+	<mask id="mask-1">
+		<rect width="768" height="1024" fill="black"/>
+		<path d="M-64 192.5H191.5V256.5H832" stroke="white"/>
+	</mask>
+	<g class="trails" mask="url(#mask-1)">
+		<g id="glow-1" transform="translate(-50, 0)">
+			<rect x="-50" y="-50" width="100" height="100" fill="url(#glow)"/>
+		</g>
+	</g>
+	<path id="route-2" d="M832 384.5H351.5V352.5H-64" stroke="transparent"/>
+	<mask id="mask-2">
+		<rect width="768" height="1024" fill="black"/>
+		<path d="M832 384.5H351.5V352.5H-64" stroke="white"/>
+	</mask>
+	<g class="trails" mask="url(#mask-2)">
+		<g id="glow-2" transform="translate(-50, 0)">
+			<rect x="-50" y="-50" width="100" height="100" fill="url(#glow)"/>
+		</g>
+	</g>
+	<path id="route-3" d="M-64 544.5H287.5V608.5H832" stroke="transparent"/>
+	<mask id="mask-3">
+		<rect width="768" height="1024" fill="black"/>
+		<path d="M-64 544.5H287.5V608.5H832" stroke="white"/>
+	</mask>
+	<g class="trails" mask="url(#mask-3)">
+		<g id="glow-3" transform="translate(-50, 0)">
+			<rect x="-50" y="-50" width="100" height="100" fill="url(#glow)"/>
+		</g>
+	</g>
+	<path id="route-4" d="M832 736.5H127.5V800.5H-64" stroke="transparent"/>
+	<mask id="mask-4">
+		<rect width="768" height="1024" fill="black"/>
+		<path d="M832 736.5H127.5V800.5H-64" stroke="white"/>
+	</mask>
+	<g class="trails" mask="url(#mask-4)">
+		<g id="glow-4" transform="translate(-50, 0)">
+			<rect x="-50" y="-50" width="100" height="100" fill="url(#glow)"/>
+		</g>
+	</g>
+	<path id="route-5" d="M159.5-64V320.5H223.5V672.5H191.5V1088" stroke="transparent"/>
+	<mask id="mask-5">
+		<rect width="768" height="1024" fill="black"/>
+		<path d="M159.5-64V320.5H223.5V672.5H191.5V1088" stroke="white"/>
+	</mask>
+	<g class="trails" mask="url(#mask-5)">
+		<g id="glow-5" transform="translate(-50, 0)">
+			<rect x="-50" y="-50" width="100" height="100" fill="url(#glow)"/>
+		</g>
+	</g>
+	<path id="route-6" d="M479.5 1088V768.5H543.5V480.5H447.5V-64" stroke="transparent"/>
+	<mask id="mask-6">
+		<rect width="768" height="1024" fill="black"/>
+		<path d="M479.5 1088V768.5H543.5V480.5H447.5V-64" stroke="white"/>
+	</mask>
+	<g class="trails" mask="url(#mask-6)">
+		<g id="glow-6" transform="translate(-50, 0)">
+			<rect x="-50" y="-50" width="100" height="100" fill="url(#glow)"/>
+		</g>
+	</g>
+	<defs>
+		<style>
+			#glow-1 { offset-path: url(#route-1); animation: move 32s linear infinite; animation-delay: -8s; }
+			#glow-2 { offset-path: url(#route-2); animation: move 32s linear infinite; animation-delay: -24s; }
+			#glow-3 { offset-path: url(#route-3); animation: move 32s linear infinite; animation-delay: -16s; }
+			#glow-4 { offset-path: url(#route-4); animation: move 32s linear infinite; animation-delay: -4s; }
+			#glow-5 { offset-path: url(#route-5); animation: move 40s linear infinite; animation-delay: -20s; }
+			#glow-6 { offset-path: url(#route-6); animation: move 40s linear infinite; animation-delay: -36s; }
+			@keyframes move {
+				from { offset-distance: 0%; }
+				to { offset-distance: 100%; }
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.trails { display: none; }
+			}
+		</style>
+		<radialGradient id="glow" cx="1" cy=".5" r=".5" gradientUnits="objectBoundingBox">
+			<stop stop-color="#15616d" stop-opacity="1"/>
+			<stop offset="1" stop-color="#15616d" stop-opacity="0"/>
+		</radialGradient>
+	</defs>
+</svg>

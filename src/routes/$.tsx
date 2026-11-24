@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
-import { SearchIcon } from "@/components/icons";
+import { ArbitrumLogo, GitHubLogoWhite, SearchIcon, TwitterLogo } from "@/components/icons";
 import { useFrames } from "@/frames/frame-context";
 import { OpenSearchButton } from "@/components/open-search-button";
 import { Frame, FrameContainer, FramesContainer } from "@/frames/frame-context-provider";
@@ -40,32 +40,45 @@ function Component() {
 function IndexFrame() {
 	return (
 		<div className="relative h-full">
-			<div
-				style={{ backgroundSize: "32px", backgroundPosition: "16px 0px" }}
-				className="absolute inset-x-0 bottom-0 -top-px bg-[url('/img/grid.svg')]"
-			/>
+			<div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -top-px overflow-hidden">
+				<img alt="" src="/img/grid-background.svg" width={768} height={1024} className="absolute inset-0 size-full" />
+				<img
+					alt=""
+					width={768}
+					height={1024}
+					src="/img/grid-trails.svg"
+					className="absolute left-0 top-0 h-[1024px] w-[768px] max-w-none motion-reduce:hidden"
+				/>
+			</div>
 
 			<div className="absolute inset-0 bg-linear-to-b from-white" />
 
 			<div className="relative w-full h-full flex flex-col justify-between">
 				<div className="px-4">
-					<div className="mt-40 h-7 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5">
-						<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
-
-						<span className="text-gray-900 text-sm">Ethereum</span>
+					<div className="mt-40 flex gap-2.5">
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://x.com/univo_app"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5"
+						>
+							<span className="text-gray-900 text-sm">Follow us on</span>
+							<TwitterLogo className="size-3 text-gray-900" aria-label="X" role="img" />
+							<span className="text-gray-900 text-sm">for updates</span>
+						</a>
 					</div>
 
-					<h1 className="mt-6 text-3xl font-semibold text-gray-900">
+					<h1 className="mt-[34px] text-3xl font-semibold text-gray-900">
 						explorer.<span className="text-primary-500">univo</span>.app
 					</h1>
 
-					<h2 className="mt-2 text-xl text-gray-500">
+					<h2 className="mt-[4px] text-xl text-gray-500">
 						Explore billions of <span className="hidden md:inline-block">public</span> blockchain events
 					</h2>
 
 					<OpenSearchButton
 						type="button"
-						className="mt-[27px] relative w-full cursor-pointer flex items-center justify-between bg-white rounded-lg ring-1 ring-black/5 shadow-sm h-10 px-4"
+						className="mt-[34px] h-[47px] relative w-[calc(100%+1px)] cursor-pointer flex items-center justify-between bg-white rounded-md ring-1 ring-black/5 shadow-sm px-4"
 					>
 						<div className="flex items-center gap-4">
 							<SearchIcon className="shrink-0 text-gray-500 size-4" />
@@ -80,25 +93,38 @@ function IndexFrame() {
 						</div>
 					</OpenSearchButton>
 
-					<div className="flex gap-2">
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://github.com/univo/explorer"
-							className="mt-8 h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-150 text-gray-900 text-sm"
-						>
-							GitHub
-						</a>
+					<div className="mt-[40px] flex gap-2.5">
+						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm">
+							<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
+
+							<span className="text-gray-900 text-sm">Ethereum</span>
+						</div>
+
+						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm">
+							<ArbitrumLogo className="size-4" />
+
+							<span className="text-gray-900 text-sm">Arbitrum</span>
+						</div>
+					</div>
+				</div>
+
+				<div className="mt-auto px-4 pb-4 pt-10">
+					<aside
+						aria-label="Explore our source code"
+						className="relative hidden md:flex items-center justify-between gap-4 w-[calc(100%+1px)] rounded-md bg-white p-3 shadow-sm"
+					>
+						<p className="text-sm leading-relaxed text-gray-500">By using this site, you agree to check out its source code</p>
 
 						<a
+							href="https://github.com/univo/explorer"
 							target="_blank"
 							rel="noopener noreferrer"
-							href="https://x.com/univo_app"
-							className="mt-8 h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-150 text-gray-900 text-sm"
+							className="h-8 px-3 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#101411]"
 						>
-							Twitter
+							<GitHubLogoWhite className="size-4" />
+							<span className="text-white text-sm">GitHub</span>
 						</a>
-					</div>
+					</aside>
 				</div>
 			</div>
 		</div>

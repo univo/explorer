@@ -31,7 +31,8 @@ export function Navigation() {
 									className={clsx(
 										open && "bg-gray-100",
 										"hover:text-gray-500 hover:bg-gray-100",
-										"cursor-pointer rounded-full -mx-2.5 px-2.5 py-1 flex items-center space-x-2 text-sm text-gray-400",
+										"focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:border-blue-300",
+										"cursor-pointer rounded-full -mx-2.5 px-2.5 py-1 flex items-center space-x-2 text-sm text-gray-400 border border-transparent",
 									)}
 								>
 									<SearchIcon className="size-3.5" />

@@ -10,13 +10,11 @@ import { useInView } from "react-intersection-observer";
 import { createFromFetch } from "@tanstack/react-start/rsc";
 
 import { iife } from "@/utils";
-import { getExplorerUrl } from "@/helpers";
 import { deserializeCursor } from "./cursor";
 import { Spinner } from "@/components/spinner";
-import { IconButton } from "@/components/icon-button";
 import { CopyButton } from "@/components/copy-button";
 import { sf_getLatestEventForAccount } from "@/functions";
-import { ArrowUpIcon, EtherscanIcon } from "@/components/icons";
+import { ArrowUpIcon } from "@/components/icons";
 import { CloseFrameButton } from "@/frames/frame-context-provider";
 import { AddressEventFiltersSkeleton } from "./3-address-event-filters";
 import { PresetContextProvider, usePresetContext } from "./preset-context";
@@ -56,10 +54,6 @@ function HeaderSkeleton(props: { address: `0x${string}` }) {
 
 				<div className="flex items-center gap-2">
 					<CopyButton value={props.address} />
-
-					<IconButton href={getExplorerUrl(1, `/address/${props.address}`)} title="View on Etherscan" aria-label="View on Etherscan">
-						<EtherscanIcon className="shrink-0 size-4" />
-					</IconButton>
 
 					<CloseFrameButton />
 				</div>

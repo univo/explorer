@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { useEffect } from "react";
-import { Dialog as Radix } from "radix-ui";
+import { Dialog as BaseDialog } from "@base-ui/react/dialog";
 import { ClientOnly } from "@tanstack/react-router";
 
 import { Search } from "./search";
@@ -29,35 +29,34 @@ function Dialog() {
 
 	if (isMobile()) {
 		return (
-			<Radix.Root open={open} onOpenChange={setSearchOpen}>
-				<Radix.Portal>
-					<div className="fixed inset-0">
+			<BaseDialog.Root open={open} onOpenChange={setSearchOpen}>
+				<BaseDialog.Portal>
+					<BaseDialog.Popup className="fixed inset-0 overflow-y-auto outline-hidden">
+						<BaseDialog.Title className="sr-only">Search</BaseDialog.Title>
+						<BaseDialog.Description className="sr-only">Search tokens, transactions, and accounts.</BaseDialog.Description>
 						<Search onClose={() => setSearchOpen(false)} />
-					</div>
-				</Radix.Portal>
-			</Radix.Root>
+					</BaseDialog.Popup>
+				</BaseDialog.Portal>
+			</BaseDialog.Root>
 		);
 	}
 
 	return (
-		<Radix.Root open={open} onOpenChange={setSearchOpen}>
-			<Radix.Portal>
-				<Radix.Overlay className="fixed inset-0 bg-gray-200/75">
-					<div className="h-full md:px-4 md:pt-4 md:pb-4 overflow-y-auto">
-						<div className="flex justify-center min-h-full items-end md:items-center">
-							<Radix.Content className="w-3xl sm:my-8">
-								<div className="hidden">
-									<Radix.Title>Search</Radix.Title>
-									<Radix.Description>Search</Radix.Description>
-								</div>
+		<BaseDialog.Root open={open} onOpenChange={setSearchOpen}>
+			<BaseDialog.Portal>
+				<BaseDialog.Backdrop className="fixed inset-0 bg-gray-200/75" />
+				<BaseDialog.Viewport className="fixed inset-0 md:px-4 md:pt-4 md:pb-4 overflow-y-auto">
+					<div className="flex justify-center min-h-full items-end md:items-center">
+						<BaseDialog.Popup className="w-3xl sm:my-8 outline-hidden">
+							<BaseDialog.Title className="sr-only">Search</BaseDialog.Title>
+							<BaseDialog.Description className="sr-only">Search tokens, transactions, and accounts.</BaseDialog.Description>
 
-								<Search onClose={() => setSearchOpen(false)} />
-							</Radix.Content>
-						</div>
+							<Search onClose={() => setSearchOpen(false)} />
+						</BaseDialog.Popup>
 					</div>
-				</Radix.Overlay>
-			</Radix.Portal>
-		</Radix.Root>
+				</BaseDialog.Viewport>
+			</BaseDialog.Portal>
+		</BaseDialog.Root>
 	);
 }
 

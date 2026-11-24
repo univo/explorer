@@ -8,7 +8,7 @@ import { getEventsForIds } from "@/events";
 import { Erc721 } from "@/components/erc-721";
 import { Account } from "@/components/account";
 import { execute } from "@/aggregates/aggregate";
-import { EtherscanIcon } from "@/components/icons";
+import { ArbitrumLogo, EtherscanIcon } from "@/components/icons";
 import { Timestamp } from "@/components/timestamp";
 import { IconButton } from "@/components/icon-button";
 import { balances_v1 } from "@/aggregates/balances_v1";
@@ -75,6 +75,19 @@ export async function TxHashRsc(props: { chain: Chain; tx_hash: `0x${string}` })
 			<div className="relative isolate overflow-scroll">
 				<div className="px-3 pb-3">
 					<div className="flex flex-col items-start gap-1">
+						<div className="flex items-start justify-between">
+							<span className="min-w-24 text-sm text-gray-500">Chain</span>
+
+							<span className="flex items-center gap-1.5 text-sm text-gray-900">
+								{props.chain === 1 ? "Ethereum" : "Arbitrum"}
+								{props.chain === 1 ? (
+									<img alt="" className="size-4 rounded-full" src="https://etherscan.io/token/images/ether.png" />
+								) : (
+									<ArbitrumLogo className="size-4" aria-hidden="true" />
+								)}
+							</span>
+						</div>
+
 						<div className="flex items-start justify-between">
 							<span className="min-w-24 text-sm text-gray-500">Status</span>
 
@@ -146,14 +159,6 @@ export async function TxHashRsc(props: { chain: Chain; tx_hash: `0x${string}` })
 }
 
 function Logs(props: { events: Event[] }) {
-	if (props.events.length === 0) {
-		return (
-			<div className="p-3 flex items-center justify-center">
-				<p className="text-gray-900 text-sm">No events found</p>
-			</div>
-		);
-	}
-
 	const logs = props.events.filter((event) => {
 		return !isHexEqual(numberToHex(event.log_index), TRANSACTION_EVENT);
 	});
@@ -165,6 +170,8 @@ function Logs(props: { events: Event[] }) {
 			</div>
 
 			<div className="p-3 flex flex-col gap-1">
+				{logs.length === 0 && <p className="text-gray-900 text-sm text-center">No events found</p>}
+
 				{logs.map((event, i) => {
 					return (
 						<ErrorBoundary key={i} fallback={null}>

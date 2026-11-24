@@ -42,6 +42,7 @@ function Header() {
 
 			<div className="flex items-center gap-12 text-sm text-gray-500">
 				<div className="flex flex-col items-start gap-1">
+					<p>Chain</p>
 					<p>Status</p>
 					<p>Timestamp</p>
 					<p>Block #</p>
