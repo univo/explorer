@@ -10,6 +10,7 @@ import type { Chain } from "@/constants";
 import { frame, getFrame } from "@/frames/frame";
 import { useFrames } from "@/frames/frame-context";
 import { ArbitrumLogo, ChevronUpDownIcon, SearchIcon, XIcon } from "./icons";
+import { isMobile } from "@/helpers";
 
 interface SearchProps {
 	onClose?: () => void;
@@ -61,7 +62,7 @@ export function Search(props: SearchProps) {
 						value={search}
 						onPaste={onPaste}
 						onValueChange={setSearch}
-						placeholder="Search tokens, transactions, accounts..."
+						placeholder={isMobile() ? "Search..." : "Search tokens, transactions, accounts..."}
 						className="w-full min-w-0 placeholder-gray-500 bg-transparent border-0 text-gray-900 focus:ring-0 focus:outline-hidden text-sm h-11 md:h-12 px-4 ps-11"
 					/>
 
@@ -322,35 +323,37 @@ function Tokens(props: { chain: Chain; onClose?: () => void }) {
 
 	return (
 		<Command.Group className="p-2" heading={<h2 className="px-2.5 my-2 text-xs font-semibold text-gray-900">Tokens</h2>}>
-			{tokens.filter((token) => token.chain === props.chain).map((token) => {
-				async function onSelect() {
-					await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
+			{tokens
+				.filter((token) => token.chain === props.chain)
+				.map((token) => {
+					async function onSelect() {
+						await frames.push(frame.format({ type: "address", data: getAddress(token.address) }), null);
 
-					if (props.onClose) {
-						props.onClose();
+						if (props.onClose) {
+							props.onClose();
+						}
 					}
-				}
 
-				return (
-					<Command.Item
-						onSelect={onSelect}
-						key={token.symbol}
-						value={`${token.name} ${token.symbol}`}
-						className="group flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer aria-selected:bg-gray-100"
-					>
-						<div className="flex items-center gap-2.5 min-w-0">
-							<div className="shrink-0 rounded-full overflow-hidden size-4">
-								<img alt="" src={token.image} />
-							</div>
+					return (
+						<Command.Item
+							onSelect={onSelect}
+							key={token.symbol}
+							value={`${token.name} ${token.symbol}`}
+							className="group flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer aria-selected:bg-gray-100"
+						>
+							<div className="flex items-center gap-2.5 min-w-0">
+								<div className="shrink-0 rounded-full overflow-hidden size-4">
+									<img alt="" src={token.image} />
+								</div>
 
-							<div className="flex items-center gap-1">
-								<span className="text-sm">{token.name}</span>
-								<span className="text-sm text-gray-500">({token.symbol})</span>
+								<div className="flex items-center gap-1">
+									<span className="text-sm">{token.name}</span>
+									<span className="text-sm text-gray-500">({token.symbol})</span>
+								</div>
 							</div>
-						</div>
-					</Command.Item>
-				);
-			})}
+						</Command.Item>
+					);
+				})}
 		</Command.Group>
 	);
 }
