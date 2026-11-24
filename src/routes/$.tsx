@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Kbd } from "@/components/kbd";
-import { Banner } from "@/components/banner";
-import { ArbitrumLogo, SearchIcon, TwitterLogoWhite } from "@/components/icons";
+import { ArbitrumLogo, GitHubLogoWhite, SearchIcon, TwitterLogo } from "@/components/icons";
 import { useFrames } from "@/frames/frame-context";
 import { OpenSearchButton } from "@/components/open-search-button";
 import { Frame, FrameContainer, FramesContainer } from "@/frames/frame-context-provider";
@@ -61,11 +60,11 @@ function IndexFrame() {
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://x.com/univo_app"
-							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-black"
+							className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm ring-1 ring-black/5"
 						>
-							<TwitterLogoWhite className="size-4" />
-
-							<span className="text-white text-sm">Twitter</span>
+							<span className="text-gray-900 text-sm">Follow us on</span>
+							<TwitterLogo className="size-3 text-gray-900" aria-label="X" role="img" />
+							<span className="text-gray-900 text-sm">for updates</span>
 						</a>
 					</div>
 
@@ -79,7 +78,7 @@ function IndexFrame() {
 
 					<OpenSearchButton
 						type="button"
-						className="mt-[34px] h-[47px] relative w-[calc(100%+1px)] cursor-pointer flex items-center justify-between bg-white rounded-lg ring-1 ring-black/5 shadow-sm px-4"
+						className="mt-[34px] h-[47px] relative w-[calc(100%+1px)] cursor-pointer flex items-center justify-between bg-white rounded-md ring-1 ring-black/5 shadow-sm px-4"
 					>
 						<div className="flex items-center gap-4">
 							<SearchIcon className="shrink-0 text-gray-500 size-4" />
@@ -98,19 +97,34 @@ function IndexFrame() {
 						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm">
 							<img alt="Ethereum logo" className="rounded-full overflow-hidden size-4" src="https://etherscan.io/token/images/ether.png" />
 
-							<span className="text-gray-500 text-sm">Ethereum</span>
+							<span className="text-gray-900 text-sm">Ethereum</span>
 						</div>
 
 						<div className="h-8 px-3 inline-flex items-center gap-1.5 rounded-full bg-white shadow-sm">
 							<ArbitrumLogo className="size-4" />
 
-							<span className="text-gray-500 text-sm">Arbitrum</span>
+							<span className="text-gray-900 text-sm">Arbitrum</span>
 						</div>
 					</div>
 				</div>
 
 				<div className="mt-auto px-4 pb-4 pt-10">
-					<Banner />
+					<aside
+						aria-label="Explore our source code"
+						className="relative hidden md:flex items-center justify-between gap-4 w-[calc(100%+1px)] rounded-md bg-white p-3 shadow-sm"
+					>
+						<p className="text-sm leading-relaxed text-gray-500">By using this site, you agree to check out its source code</p>
+
+						<a
+							href="https://github.com/univo/explorer"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="h-8 px-3 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#101411]"
+						>
+							<GitHubLogoWhite className="size-4" />
+							<span className="text-white text-sm">GitHub</span>
+						</a>
+					</aside>
 				</div>
 			</div>
 		</div>
