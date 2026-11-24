@@ -79,7 +79,7 @@ function IndexFrame() {
 
 					<OpenSearchButton
 						type="button"
-						className="mt-[34px] h-[47px] relative w-full cursor-pointer flex items-center justify-between bg-white rounded-lg ring-1 ring-black/5 shadow-sm px-4"
+						className="mt-[34px] h-[47px] relative w-[calc(100%+1px)] cursor-pointer flex items-center justify-between bg-white rounded-lg ring-1 ring-black/5 shadow-sm px-4"
 					>
 						<div className="flex items-center gap-4">
 							<SearchIcon className="shrink-0 text-gray-500 size-4" />

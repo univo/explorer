@@ -4,7 +4,7 @@ export function Banner() {
 	return (
 		<aside
 			aria-label="Explore our source code"
-			className="relative hidden md:flex items-center justify-between gap-4 w-full rounded-md bg-white p-3 shadow-sm"
+			className="relative hidden md:flex items-center justify-between gap-4 w-[calc(100%+1px)] rounded-md bg-white p-3 shadow-sm"
 		>
 			<p className="text-sm leading-relaxed text-gray-500">By using this site, you agree to check out its source code</p>
 
