@@ -135,13 +135,13 @@ function ChainSelect(props: { value: Chain; onValueChange: (chain: Chain) => voi
 
 			<Select.Portal>
 				<Select.Positioner alignItemWithTrigger className="z-50">
-					<Select.Popup className="min-w-(--anchor-width) rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 outline-hidden">
+					<Select.Popup className="min-w-[calc(var(--anchor-width)+0.5rem)] rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 outline-hidden">
 						<Select.List>
 							{chains.map((chain) => (
 								<Select.Item
 									key={chain.value}
 									value={chain.value}
-									className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1 text-sm text-gray-900 outline-hidden data-highlighted:bg-gray-100"
+									className="flex cursor-pointer items-center gap-2 rounded-md border border-transparent px-2.5 py-1 text-sm text-gray-900 outline-hidden data-highlighted:bg-gray-100"
 								>
 									<ChainLogo chain={chain.value} />
 									<Select.ItemText>{chain.label}</Select.ItemText>
