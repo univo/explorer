@@ -87,6 +87,7 @@ export const event = defineEvent({
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentUniswapV3MintV2>((tx) => {
 			try {
+				// 126 (0x7e) is the OP Stack deposit transaction type: exclude L1-originated/protocol calls from user intents.
 				if (getChain(block.eth_chainId) === 8453 && Number(tx.type) === 126) {
 					return [];
 				}
