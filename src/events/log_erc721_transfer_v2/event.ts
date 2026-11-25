@@ -42,6 +42,11 @@ export const event = defineEvent({
 			fromBlock: 0,
 			event: TRANSFER_SELECTOR,
 		},
+		{
+			chain: 8453,
+			fromBlock: 0,
+			event: TRANSFER_SELECTOR,
+		},
 	],
 
 	handler: (block) => {

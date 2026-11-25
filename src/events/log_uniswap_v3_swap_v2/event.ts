@@ -10,8 +10,9 @@ import { isHexEqual } from "@/utils";
 import type { Chain } from "@/constants";
 import { createPostgresClient } from "@/db/client";
 import {
-	UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
 	UNISWAP_V3_FACTORY_DEPLOYED_BLOCK,
+	UNISWAP_V3_BASE_FACTORY_DEPLOYED_BLOCK,
+	UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
 } from "@/events/log_uniswap_v3_pool_created_v2/event";
 import { getChain, getExternalChain, getInternalChain } from "@/helpers";
 import { index_block_number_tx_index_v4 } from "@/indexes/index_block_number_tx_index_v4";
@@ -52,6 +53,11 @@ export const event = defineEvent({
 			chain: 42161,
 			event: SWAP_SELECTOR,
 			fromBlock: UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 8453,
+			event: SWAP_SELECTOR,
+			fromBlock: UNISWAP_V3_BASE_FACTORY_DEPLOYED_BLOCK,
 		},
 	],
 

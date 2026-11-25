@@ -43,6 +43,11 @@ export const event = defineEvent({
 			fromBlock: 0,
 			event: APPROVAL_SELECTOR,
 		},
+		{
+			chain: 8453,
+			fromBlock: 0,
+			event: APPROVAL_SELECTOR,
+		},
 	],
 
 	handler: (block) => {

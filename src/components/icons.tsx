@@ -101,6 +101,14 @@ export function TwitterLogo(props: ComponentProps<"svg">) {
 	);
 }
 
+export function BaseLogo(props: ComponentProps<"svg">) {
+	return (
+		<svg viewBox="0 0 100 100" fill="none" {...props}>
+			<path fill="#0052FF" d="M49.8 100C77.5 100 100 77.6 100 50S77.5 0 49.8 0C23.5 0 1.9 20.2 0 45.9h66.1v8.2H0C1.9 79.8 23.5 100 49.8 100Z" />
+		</svg>
+	);
+}
+
 export function ArbitrumLogo(props: ComponentProps<"svg">) {
 	return (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="185.04 185.04 370.07 417.47" {...props}>

@@ -46,11 +46,21 @@ export const event = defineEvent({
 			fromBlock: 0,
 			function: APPROVE_SELECTOR,
 		},
+		{
+			chain: 8453,
+			fromBlock: 0,
+			function: APPROVE_SELECTOR,
+		},
 	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentErc721ApprovalV2>((tx) => {
 			try {
+				// 126 (0x7e) is the OP Stack deposit transaction type: exclude L1-originated/protocol calls from user intents.
+				if (getChain(block.eth_chainId) === 8453 && Number(tx.type) === 126) {
+					return [];
+				}
+
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
 					return [];

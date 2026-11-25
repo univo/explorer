@@ -36,8 +36,10 @@ type DecodedSwap = Omit<IntentUniswapV3SwapV2, "tag" | "chain" | "tx_index" | "l
 export const UNISWAP_V3_SWAP_ROUTER_DEPLOYED_BLOCK = 12369634;
 export const UNISWAP_V3_ARBITRUM_SWAP_ROUTER_DEPLOYED_BLOCK = 169;
 export const UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK = 3856803;
+export const UNISWAP_V3_BASE_SWAP_ROUTER_02_DEPLOYED_BLOCK = 1371947;
+export const UNISWAP_V3_BASE_SWAP_ROUTER_02_ADDRESS = getAddress("0x2626664c2603336E57B271c5C0b26F421741e481");
 
-// These routers have the same addresses and contract versions on both chains:
+// Ethereum and Arbitrum share these router addresses and contract versions:
 // v3-periphery@1.0.0 and swap-router-contracts@1.1.0, respectively.
 // https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_SWAP_ROUTER_ADDRESS = getAddress("0xE592427A0AEce92De3Edee1F18E0157C05861564");
@@ -66,12 +68,17 @@ const MSG_SENDER = getAddress("0x0000000000000000000000000000000000000001");
 const ADDRESS_THIS = getAddress("0x0000000000000000000000000000000000000002");
 const ZERO_ADDRESS = getAddress("0x0000000000000000000000000000000000000000");
 
-export function decodeUniswapV3Swap(routerAddress: `0x${string}`, senderAddress: `0x${string}`, data: `0x${string}`): DecodedSwap | null {
+export function decodeUniswapV3Swap(
+	routerAddress: `0x${string}`,
+	senderAddress: `0x${string}`,
+	data: `0x${string}`,
+	chain: Chain = 1,
+): DecodedSwap | null {
 	const selector = data.slice(0, 10);
 	const router = getAddress(routerAddress);
 	const sender = getAddress(senderAddress);
 
-	if (isAddressEqual(router, UNISWAP_V3_SWAP_ROUTER_ADDRESS)) {
+	if (chain !== 8453 && isAddressEqual(router, UNISWAP_V3_SWAP_ROUTER_ADDRESS)) {
 		if (!SWAP_ROUTER_SELECTORS.has(selector)) {
 			return null;
 		}
@@ -141,7 +148,9 @@ export function decodeUniswapV3Swap(routerAddress: `0x${string}`, senderAddress:
 		};
 	}
 
-	if (!isAddressEqual(router, UNISWAP_V3_SWAP_ROUTER_02_ADDRESS) || !SWAP_ROUTER_02_SELECTORS.has(selector)) {
+	const router02 = chain === 8453 ? UNISWAP_V3_BASE_SWAP_ROUTER_02_ADDRESS : UNISWAP_V3_SWAP_ROUTER_02_ADDRESS;
+
+	if (!isAddressEqual(router, router02) || !SWAP_ROUTER_02_SELECTORS.has(selector)) {
 		return null;
 	}
 
@@ -326,17 +335,46 @@ export const event = defineEvent({
 			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[3],
 			fromBlock: UNISWAP_V3_ARBITRUM_SWAP_ROUTER_02_DEPLOYED_BLOCK,
 		},
+		{
+			chain: 8453,
+			address: UNISWAP_V3_BASE_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[0],
+			fromBlock: UNISWAP_V3_BASE_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 8453,
+			address: UNISWAP_V3_BASE_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[1],
+			fromBlock: UNISWAP_V3_BASE_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 8453,
+			address: UNISWAP_V3_BASE_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[2],
+			fromBlock: UNISWAP_V3_BASE_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
+		{
+			chain: 8453,
+			address: UNISWAP_V3_BASE_SWAP_ROUTER_02_ADDRESS,
+			function: SWAP_ROUTER_02_FUNCTION_SELECTORS[3],
+			fromBlock: UNISWAP_V3_BASE_SWAP_ROUTER_02_DEPLOYED_BLOCK,
+		},
 	],
 
 	handler: (block) => {
 		return block.eth_getBlockByNumber.transactions.flatMap<IntentUniswapV3SwapV2>((tx) => {
 			try {
+				// 126 (0x7e) is the OP Stack deposit transaction type: exclude L1-originated/protocol calls from user intents.
+				if (getChain(block.eth_chainId) === 8453 && Number(tx.type) === 126) {
+					return [];
+				}
+
 				// When deploying a contract the `to` field is null
 				if (tx.to === null) {
 					return [];
 				}
 
-				const swap = decodeUniswapV3Swap(tx.to, tx.from, tx.input);
+				const swap = decodeUniswapV3Swap(tx.to, tx.from, tx.input, getChain(block.eth_chainId));
 
 				if (swap === null) {
 					return [];

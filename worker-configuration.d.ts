@@ -8,6 +8,7 @@ interface __BaseEnv_Env {
 	UNIVO_SIGNING_KEY: string;
 	ETHEREUM_URL: string;
 	ARBITRUM_URL: string;
+	BASE_URL: string;
 	CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_PG: string;
 }
 declare namespace Cloudflare {
@@ -18,6 +19,7 @@ declare namespace Cloudflare {
 		UNIVO_SIGNING_KEY: string;
 		ETHEREUM_URL: string;
 		ARBITRUM_URL: string;
+		BASE_URL: string;
 		CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_PG: string;
 	}
 	interface Env extends __BaseEnv_Env {}
@@ -27,7 +29,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "LOG_LEVEL" | "UNIVO_SIGNING_KEY" | "ETHEREUM_URL" | "ARBITRUM_URL" | "CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_PG">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "LOG_LEVEL" | "UNIVO_SIGNING_KEY" | "ETHEREUM_URL" | "ARBITRUM_URL" | "BASE_URL" | "CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_PG">> {}
 }
 
 // Begin runtime types

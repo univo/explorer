@@ -197,6 +197,7 @@ type TokenPriceInput = { chain: Chain; token: `0x${string}`; timestamp: Date };
 const WETH_ADDRESSES: Record<Chain, `0x${string}`> = {
 	1: getAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
 	42161: getAddress("0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"),
+	8453: getAddress("0x4200000000000000000000000000000000000006"),
 };
 
 export const getTokenPrice = defineLoader(async (inputs: readonly TokenPriceInput[]) => {

@@ -1,8 +1,15 @@
-export type Chain = 1 | 42161;
+export type Chain = 1 | 42161 | 8453;
+
+export const CHAIN_NAMES: Record<Chain, string> = {
+	1: "Ethereum",
+	42161: "Arbitrum",
+	8453: "Base",
+};
 
 export const EXPLORERS: Record<Chain, string> = {
 	1: "https://etherscan.io",
 	42161: "https://arbiscan.io",
+	8453: "https://basescan.org",
 };
 
 // Responsible for mapping the full set of supported chain ids with our internal chain id representation.
@@ -12,6 +19,7 @@ export const EXPLORERS: Record<Chain, string> = {
 export const CHAINS: Record<Chain, number> = {
 	1: 1,
 	42161: 2,
+	8453: 3,
 };
 
 // Reverse look up table for chains to convert back
@@ -19,6 +27,7 @@ export const CHAINS: Record<Chain, number> = {
 export const REVERSE_CHAINS: Record<number, Chain> = {
 	1: 1,
 	2: 42161,
+	3: 8453,
 };
 
 // Similarly we use a 2 byte unsigned integer to store table identifiers

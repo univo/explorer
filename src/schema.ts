@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { getAddress } from "viem";
 
-export const ChainSchema = v.picklist([1, 42161]);
+export const ChainSchema = v.picklist([1, 42161, 8453]);
 
 export const ChainStringSchema = v.pipe(v.string(), v.toNumber(), ChainSchema);
 

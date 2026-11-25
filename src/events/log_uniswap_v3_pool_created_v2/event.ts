@@ -28,10 +28,16 @@ export interface LogUniswapV3PoolCreatedV2 {
 
 export const UNISWAP_V3_FACTORY_DEPLOYED_BLOCK = 12369621;
 export const UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK = 165;
+export const UNISWAP_V3_BASE_FACTORY_DEPLOYED_BLOCK = 1371680;
+export const UNISWAP_V3_BASE_FACTORY_ADDRESS = getAddress("0x33128a8fC17869897dcE68Ed026d694621f6FDfD");
 
-// Both chains use v3-core@1.0.0 at this address:
+// Ethereum and Arbitrum use v3-core@1.0.0 at this address:
 // https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments
 export const UNISWAP_V3_FACTORY_ADDRESS = getAddress("0x1F98431c8aD98523631AE4a59f267346ea31F984");
+
+export function getUniswapV3FactoryAddress(chain: Chain) {
+	return chain === 8453 ? UNISWAP_V3_BASE_FACTORY_ADDRESS : UNISWAP_V3_FACTORY_ADDRESS;
+}
 
 const POOL_CREATED_ABI = parseAbiItem(
 	"event PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)",
@@ -55,13 +61,19 @@ export const event = defineEvent({
 			address: UNISWAP_V3_FACTORY_ADDRESS,
 			fromBlock: UNISWAP_V3_ARBITRUM_FACTORY_DEPLOYED_BLOCK,
 		},
+		{
+			chain: 8453,
+			event: POOL_CREATED_SELECTOR,
+			address: UNISWAP_V3_BASE_FACTORY_ADDRESS,
+			fromBlock: UNISWAP_V3_BASE_FACTORY_DEPLOYED_BLOCK,
+		},
 	],
 
 	handler: (block) => {
 		return block.eth_getBlockReceipts.flatMap((receipt) => {
 			return receipt.logs.flatMap<LogUniswapV3PoolCreatedV2>((log) => {
 				try {
-					if (!isHexEqual(log.address, UNISWAP_V3_FACTORY_ADDRESS)) {
+					if (!isHexEqual(log.address, getUniswapV3FactoryAddress(getChain(block.eth_chainId)))) {
 						return [];
 					}
 
