@@ -47,7 +47,7 @@
 	"env": {
 		"production": {
 			"vars": {
-				"LOG_LEVEL": "WARN"
+				"LOG_LEVEL": "ERROR"
 			},
 			"route": {
 				"custom_domain": true,
