@@ -95,6 +95,8 @@ import { log_ens_name_for_addr_changed_v2_index_block_number_tx_index_v4 } from 
 export const indexer = defineIndexer({
 	quiet: false,
 
+	maxFinalizationBatchSize: 64,
+
 	metadataStorage: defineStorage({
 		adapter: r2({
 			binding: env.BUCKET,
